@@ -4,22 +4,16 @@ const ap = new APlayer({
     autoplay: false,
     audio: [
       {
-        name: "PDD洪荒之力",
-        artist: '徐梦圆',
-        url: 'http://up.mcyt.net/?down/39868.mp3',
-        cover: 'http://oeff2vktt.bkt.clouddn.com/image/84.jpg',
+        name: "You are my sunshine",
+        artist: 'Elizabeth Mitchell',
+        url: 'https://s1.ax1x.com/2020/03/18/8dQvnI.th.jpg',
+        cover: 'https://imgchr.com/i/8dQvnI',
       },
       {
-        name: '9420',
-        artist: '麦小兜',
-        url: 'http://up.mcyt.net/?down/45967.mp3',
-        cover: 'http://oeff2vktt.bkt.clouddn.com/image/8.jpg',
+        name: 'Shallow',
+        artist: 'Lady Gaga/Bradley Cooper',
+        url: 'http://music.163.com/song/media/outer/url?id=1313096578.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/18/8d1EGD.th.jpg',
       },
-      {
-        name: '风筝误',
-        artist: '刘珂矣',
-        url: 'http://up.mcyt.net/?down/46644.mp3',
-        cover: 'http://oeff2vktt.bkt.clouddn.com/image/96.jpg',
-      }
     ]
 });
