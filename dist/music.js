@@ -2,7 +2,10 @@ const ap = new APlayer({
     container: document.getElementById('aplayer'),
     fixed: true,
     autoplay: false,
-	volume: 0.6
+	theme: '#FADFA3',
+	showlrc: 3,
+	volume: 0.7,
+	preload: 'auto',
     audio: [
       {
         name: "You are my sunshine",
@@ -15,7 +18,7 @@ const ap = new APlayer({
         artist: 'Lady Gaga/Bradley Cooper',
         url: 'http://music.163.com/song/media/outer/url?id=1313096578.mp3',
         cover: 'https://s1.ax1x.com/2020/03/18/8d1EGD.th.jpg',
-		lrc: 'D:\GitHub\Shallow - Lady Gaga,Bradley Cooper.lrc',
+		lrc: 'https://github.com/ttyong/lrc/blob/master/Shallow%20-%20Lady%20Gaga%2CBradley%20Cooper.lrc',
       },
     ]
 });
