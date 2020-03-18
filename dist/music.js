@@ -2,12 +2,13 @@ const ap = new APlayer({
     container: document.getElementById('aplayer'),
     fixed: true,
     autoplay: false,
+	volume: 0.6
     audio: [
       {
         name: "You are my sunshine",
         artist: 'Elizabeth Mitchell',
-        url: 'https://s1.ax1x.com/2020/03/18/8dQvnI.th.jpg',
-        cover: 'https://imgchr.com/i/8dQvnI',
+        url: 'http://music.163.com/song/media/outer/url?id=2533578.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/18/8dQvnI.th.jpg',
       },
       {
         name: 'Shallow',
