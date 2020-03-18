@@ -3,8 +3,8 @@ const ap = new APlayer({
     fixed: true,
     autoplay: false,
 	theme: '#FADFA3',
-	showlrc: 3,
 	volume: 0.7,
+	lrcType: 3,
 	preload: 'auto',
     audio: [
       {
@@ -12,7 +12,7 @@ const ap = new APlayer({
         artist: 'Elizabeth Mitchell',
         url: 'http://music.163.com/song/media/outer/url?id=2533578.mp3',
         cover: 'https://s1.ax1x.com/2020/03/18/8dQvnI.th.jpg',
-		lrc: 'https://github.com/ttyong/lrc/blob/master/You%20Are%20My%20Sunshine%20-%20Elizabeth%20Mitchell.lrc'
+		lrc: 'https://github.com/ttyong/lrc/blob/master/You%20Are%20My%20Sunshine%20-%20Elizabeth%20Mitchell.lrc',
       },
       {
         name: 'Shallow',
