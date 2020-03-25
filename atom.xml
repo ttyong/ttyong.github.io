@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://tianyong.fun/"/>
-  <updated>2020-03-22T06:52:56.635Z</updated>
+  <updated>2020-03-25T01:51:00.044Z</updated>
   <id>http://tianyong.fun/</id>
   
   <author>
@@ -17,13 +17,75 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>崔庆--才python爬虫之App爬取</title>
+    <link href="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython%E7%88%AC%E8%99%AB%E4%B9%8BApp%E7%88%AC%E5%8F%96.html"/>
+    <id>http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython%E7%88%AC%E8%99%AB%E4%B9%8BApp%E7%88%AC%E5%8F%96.html</id>
+    <published>2020-03-22T09:47:04.000Z</published>
+    <updated>2020-03-25T01:51:00.044Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr><script type="text/javascript" src="/js/src/bai.js"></script><h2 id="崔庆才python爬虫之App爬取"><a href="#崔庆才python爬虫之App爬取" class="headerlink" title="崔庆才python爬虫之App爬取"></a>崔庆才python爬虫之App爬取</h2><h2 id="Charless"><a href="#Charless" class="headerlink" title="Charless"></a>Charless</h2><h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><p><em>电脑和手机必须在同一局域网下，打开charless和其服务</em></p><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p><em>Charless运行时会在PC端的8888端口上开启一个Http/https的代理服务手机app的请求和服务器响应都会通过charless代理</em></p><h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p><em>找规律</em></p><h4 id="重发"><a href="#重发" class="headerlink" title="重发"></a>重发</h4><p><em>可以修改请求，重新发起请求</em></p><h2 id="mitmproxy"><a href="#mitmproxy" class="headerlink" title="mitmproxy"></a>mitmproxy</h2><p><em>mitmproxy是一个支 持 HTTP和 HTTPS的抓包程序，有 类 似 Fiddler, Charles的功能，只不过它是一个控制台的形式操作</em></p><p><em>它有两个关联组件mitmdump和mitmweb</em></p><ul><li>mitmdump</li></ul><p><em>对接python脚本，处理response和request</em></p><ul><li>mitmweb</li></ul><p><em>查看request和response</em></p><h3 id="准备工作-1"><a href="#准备工作-1" class="headerlink" title="准备工作"></a>准备工作</h3><p><em>安装好证书，同一个局域网下</em></p><h3 id="mitmproxy功能"><a href="#mitmproxy功能" class="headerlink" title="mitmproxy功能"></a>mitmproxy功能</h3><p>□ 拦 截 HTTP和 HTTPS请求和响应。<br>□ 保 存 HTTP会话并进行分析。<br>□ 模拟客户端发起请求，模拟服务端返回响应。<br>□ 利用反向代理将流量转发给指定的服务器。<br>□ 支持 Mac和 Linux上的透明代理。<br>□ 利用 Python对 HTTP请求和响应进行实时处理。  </p><h3 id="抓包原理"><a href="#抓包原理" class="headerlink" title="抓包原理"></a>抓包原理</h3><p><em>和前面一样，在8080开启服务</em></p><p><em>另外这个过程还可以对接m itm dum p,抓 取 到 的 Request和 Response的具体内容都可以<br>直 接 用 Python来处理，比如 得 到 Response之后我们可以直接进行解析，然后存入数据库，这样就完成了数据的解析和存储过程。</em>  </p><h3 id="设置代理"><a href="#设置代理" class="headerlink" title="设置代理"></a>设置代理</h3><p>mitmproxy</p><p>mitmdump</p><p><em>查看当前局域网IP(ipconfig),手机设置</em></p><h3 id="mitmproxy使用"><a href="#mitmproxy使用" class="headerlink" title="mitmproxy使用"></a>mitmproxy使用</h3><p><em>会显示请求类型，响应类型，响应码，大小，响应时间</em></p><p><em>查看请求详情，回车</em></p><p><em>TAB,切换选项卡</em></p><p><em>mitmproxy还提供了命令行式的编辑功能，我们可以在此页面中重新编辑请求 敲 击 e 键即可进入编辑功能，这时它会询问你要编辑哪部分内容，如 Cookies. Query. URL等 ，每个选项的第一个字母会高亮显示。</em></p><p><em>输入a添加</em></p><h3 id="mitmdump使用"><a href="#mitmdump使用" class="headerlink" title="mitmdump使用"></a>mitmdump使用</h3><p><em>是mitmproxy的命令行接口，也可以对接python脚本，可以自动处理请求和响应</em></p><h4 id="保存截取的数据"><a href="#保存截取的数据" class="headerlink" title="保存截取的数据"></a>保存截取的数据</h4><p>mitmdump  -w  outfile</p><h4 id="修改请求"><a href="#修改请求" class="headerlink" title="修改请求"></a>修改请求</h4><p>mitmdump  -s  script.py(<em>需要把python脚本放在当前命令执行目录</em>)</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request</span><span class="params">(flow)</span>:</span></span><br><span class="line">    flow.request.headers[<span class="string">'User-Agent'</span>] = <span class="string">'MitmProxy'</span></span><br><span class="line">    print(flow.reques.headers)</span><br></pre></td></tr></table></figure><p><em>访问<a href="http://httpbin.org/get可以查看request的相关信息" target="_blank" rel="external nofollow noopener noreferrer">http://httpbin.org/get可以查看request的相关信息</a></em></p><h4 id="日志输出"><a href="#日志输出" class="headerlink" title="日志输出"></a>日志输出</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mitmproxy <span class="keyword">import</span> ctx</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request</span><span class="params">(flow)</span>:</span></span><br><span class="line">    flow.request.headers[<span class="string">'UserAgent'</span>] = <span class="string">'MitmProxy'</span></span><br><span class="line">    ctx.log.info(str(flow.request.headers))</span><br><span class="line">    ctx.log.warn</span><br><span class="line">    ctx.log.error</span><br></pre></td></tr></table></figure><p><em>常用功能</em></p><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mirmproxy <span class="keyword">import</span> ctx</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request</span><span class="params">(flow)</span>:</span></span><br><span class="line">request = flow.request</span><br><span class="line">info = ctx.log.info</span><br><span class="line">info(requst.url)</span><br><span class="line">info(str(request.headers))</span><br><span class="line">info(str(requst.cookies))</span><br><span class="line">info(str(request.port))</span><br><span class="line">info(requst.host)</span><br><span class="line">info(request.method)</span><br><span class="line">info(request.scheme)</span><br></pre></td></tr></table></figure><p><em>当我们把request的url成某一网站后，在手机上访问任意网址，结果都是修改后的网站</em></p><p><em>更多属性：</em><a href="http://docs.mitmproxy.org/eri/latest/scripting/api.html" target="_blank" rel="external nofollow noopener noreferrer">http://docs.mitmproxy.org/eri/latest/scripting/api.html</a>   </p><h4 id="处理响应"><a href="#处理响应" class="headerlink" title="处理响应"></a>处理响应</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mitmproxy <span class="keyword">import</span> ctx</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">response</span><span class="params">(flow)</span>:</span></span><br><span class="line">response = flow.response</span><br><span class="line">info = ctx.log.info</span><br><span class="line">info(str(response.status_code))</span><br><span class="line">info(str(response.headers))</span><br><span class="line">info(str(response.cookies))</span><br><span class="line">info(str(response.text))</span><br></pre></td></tr></table></figure><h4 id="实例爬取"><a href="#实例爬取" class="headerlink" title="实例爬取"></a>实例爬取</h4><p><em>json.loads(…),用于解码json对象</em></p><p><em>flow.request.url.startwith(url)</em></p><p>client = pymongo.MongoClient(‘localhost’)</p><p>db  = client[“….”]</p><p>collection = db[‘….’]</p><p>collection.insert(dict)</p><hr><blockquote></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;\assets\css\APlayer.min.css&quot;&gt;&lt;script src=&quot;\assets\js\APlayer.min.js&quot; cla
+      
+    
+    </summary>
+    
+    
+      <category term="python爬虫" scheme="http://tianyong.fun/categories/python%E7%88%AC%E8%99%AB/"/>
+    
+    
+      <category term="崔庆才" scheme="http://tianyong.fun/tags/%E5%B4%94%E5%BA%86%E6%89%8D/"/>
+    
+      <category term="python爬虫" scheme="http://tianyong.fun/tags/python%E7%88%AC%E8%99%AB/"/>
+    
+      <category term="charless" scheme="http://tianyong.fun/tags/charless/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>崔庆才python爬虫之Charles安装</title>
+    <link href="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython%E7%88%AC%E8%99%AB%E4%B9%8BCharles%E5%AE%89%E8%A3%85.html"/>
+    <id>http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython%E7%88%AC%E8%99%AB%E4%B9%8BCharles%E5%AE%89%E8%A3%85.html</id>
+    <published>2020-03-22T09:26:28.000Z</published>
+    <updated>2020-03-22T09:43:48.390Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr><script type="text/javascript" src="/js/src/bai.js"></script><h2 id="抓包工具Charless安装"><a href="#抓包工具Charless安装" class="headerlink" title="抓包工具Charless安装"></a>抓包工具Charless安装</h2><h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><p>官方网站: <a href="https://www.charlesproxy.com/" target="_blank" rel="external nofollow noopener noreferrer">https://www.charlesproxy.com/</a></p><p>下载链接: <a href="https://www.charlesproxy.com/download/" target="_blank" rel="external nofollow noopener noreferrer">https://www.charlesproxy.com/download/</a></p><h3 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h3><p><em>可以免费使用30天，之后每次不能超过30分钟</em></p><h3 id="证书配置"><a href="#证书配置" class="headerlink" title="证书配置"></a>证书配置</h3><p><em>Https通信协议应用越来越广泛，通过加密的数据无法识别</em></p><p><em>Charless运行在PC端，抓取的数据在移动端，所以电脑和手机都要安装证书</em></p><h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><p>*打开charless的help–&gt;ssl proxying–&gt;install charless root certificate–&gt;安装证书–&gt;将所有证书放入下列存储–&gt;受信任的根证书颁发机构</p><h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><p>主机名：192.168.1.76</p><p>端口： 8888</p><p>手机上打开chls.pro/ssl,设置证书名</p><hr><blockquote><p>没有伞的孩子，必须努力奔跑!</p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;\assets\css\APlayer.min.css&quot;&gt;&lt;script src=&quot;\assets\js\APlayer.min.js&quot; cla
+      
+    
+    </summary>
+    
+    
+      <category term="python爬虫" scheme="http://tianyong.fun/categories/python%E7%88%AC%E8%99%AB/"/>
+    
+    
+      <category term="崔庆才" scheme="http://tianyong.fun/tags/%E5%B4%94%E5%BA%86%E6%89%8D/"/>
+    
+      <category term="python" scheme="http://tianyong.fun/tags/python/"/>
+    
+      <category term="爬虫" scheme="http://tianyong.fun/tags/%E7%88%AC%E8%99%AB/"/>
+    
+      <category term="charles" scheme="http://tianyong.fun/tags/charles/"/>
+    
+  </entry>
+  
+  <entry>
     <title>廖雪峰java教程笔记-快速入门</title>
     <link href="http://tianyong.fun/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0.html"/>
     <id>http://tianyong.fun/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0.html</id>
     <published>2020-03-22T05:03:56.000Z</published>
-    <updated>2020-03-22T06:52:56.635Z</updated>
+    <updated>2020-03-23T10:23:22.080Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr><script type="text/javascript" src="/js/src/bai.js"></script><hr><h2 id="java快速入门"><a href="#java快速入门" class="headerlink" title="java快速入门"></a>java快速入门</h2><h3 id="java简介"><a href="#java简介" class="headerlink" title="java简介"></a>java简介</h3><p><em>java最早由sun公司的詹姆斯.高斯林开发编写</em></p><p><em>最初名为oak，后来发现这是一门已有的计算机语言，所以改名java</em></p><p><em>java是一门介于解释和编译型的语言</em></p><p><em>C，C++,代码直接编译成机械码，有cpu执行，但由于不同平台的中央处理器的CPU的指令集不同，因此，需要编译出每一种平台的机器码。</em></p><p><em>Python,Ruby没有上述问题，直接有解释器加载源码然后运行，但运行效率太低</em></p><p><em>java是由编译器生成一种独立的字节码，然后针对不同平台开发不同的虚拟机，就可以实现一次编写，到处运行</em></p><p><em>不同厂商都可以编写自己的虚拟机，为了保证字节码能够正确运行，就需要制定一系列的虚拟机规范</em></p><p><strong>java三个不同的版本：</strong></p><p>java se: standard edition</p><p>java ee: enterprise edition</p><p>java me: micro edition</p><p><em>java ee 在java se的基础上加了一些API和库</em></p><p><em>java ee和java se 使用的虚拟机完全不同</em></p><p>** JDK和JRE:**</p><p>JDK: java development kit</p><p>JRE: java runtime environment</p><p><em>JDK包含虚拟机和编译器，调试器，JRE只有虚拟机.因此JDK包含JRE</em></p><p>JSR规范： 负责统一接口</p><p>JCP组织：审核JSP</p><h4 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h4><p>配置JAVA_HOME:安装java的路径，bin的上一级</p><p>配置Path: %JAVA_HOME%\bin</p><ul><li>java：这个可执行程序其实就是JVM，运行Java程序，就是启动JVM，然后让JVM执行指定的编译后的代码；</li><li>javac：这是Java的编译器，它用于把Java源码文件（以<code>.java</code>后缀结尾）编译为Java字节码文件（以<code>.class</code>后缀结尾）；</li><li>jar：用于把一组<code>.class</code>文件打包成一个<code>.jar</code>文件，便于发布；</li><li>javadoc：用于从Java源码中自动提取注释并生成文档；</li><li>jdb：Java调试器，用于开发阶段的运行调试。</li></ul><h4 id="第一个java程序"><a href="#第一个java程序" class="headerlink" title="第一个java程序"></a>第一个java程序</h4><p><em>一个java程序要有一个主类，文件名和主类相同</em></p><p><em>编译时要带后缀，运行时不带后缀</em></p><h4 id="使用IDE"><a href="#使用IDE" class="headerlink" title="使用IDE"></a>使用IDE</h4><p>IDE: Integrated Development Environment</p><p><em>使用IDE的好处在于按，可以把编写代码、组织项目、编译、运行、调试等放到一个环境中运行，能极大地提高开发效率。</em></p><h3 id="java程序基础"><a href="#java程序基础" class="headerlink" title="java程序基础"></a>java程序基础</h3><h4 id="java程序基本结构"><a href="#java程序基本结构" class="headerlink" title="java程序基本结构"></a>java程序基本结构</h4><p><strong>类名规范：</strong></p><ul><li>首字母大写</li><li>字母开头，数字，下划线组合</li></ul><p><strong>方法名规范：</strong></p><ul><li>首字母小写</li></ul><p><em>public是访问修饰符，表示该类公开。不写public也能正确编译，但这个类无法从命令行执行</em></p><p><em>每一行语句，分号结尾</em></p><p><strong>注释方法：</strong></p><ul><li>//</li><li>/*… */</li><li>/<em>*… */  *这是一种特殊注释方法，用在类和方法的定义出，用于自动创建文档</em></li></ul><p><em>*对于eclipse可以用快捷键ctrl+shift+f，快速格式化代码</em></p><h4 id="变量和数据类型"><a href="#变量和数据类型" class="headerlink" title="变量和数据类型"></a>变量和数据类型</h4><p><em>先定义在应用</em></p><p><em>可以一次性多个定义和赋值</em></p><p><em>没有赋值，将自动赋默认值</em></p><p><em>可以将一个基本数据类型变量赋值给另一个基本类型变量。不是指向同一个地址</em></p><p><strong>基本数据类型有：</strong></p><ul><li><p>整型 byte,short,int,long</p></li><li><p>浮点型 float,double</p><p><em>float要加上f或F，double可以省略</em></p></li><li><p>字符型 char</p><p><em>用单引号</em></p></li><li><p>布尔型 false,true</p></li><li><p>引用类型的变量</p><p><strong>常量</strong></p></li></ul><p><em>final修饰，只可以一次赋值，通常全大写</em></p><p><strong>var关键字</strong></p><p><em>定义变量时，变量类型太长，可以用var</em></p><h4 id="整数运算"><a href="#整数运算" class="headerlink" title="整数运算"></a>整数运算</h4><p><em>整数表示数值是准确的，运算也是，除了溢出情况</em></p><h5 id="自增-自减"><a href="#自增-自减" class="headerlink" title="自增/自减"></a>自增/自减</h5><p>++</p><p>–</p><p><em>写在变量前面和后面是不同的，前面先加减在运算，后面先运算再加减</em></p><h5 id="移位运算符"><a href="#移位运算符" class="headerlink" title="移位运算符"></a>移位运算符</h5><p><em>数值的最高位是一个符号位</em></p><p>》： 右位移</p><p>《： 左位移</p><p><em>上面两种不会改变符号位</em></p><p>》&gt;：会改变符号位</p><p><em>对byte和short移位会首先转换为int</em></p><p><em>右移或左移移位代表在之前的基础上乘或除2</em></p><h5 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h5><p>&amp;：同一才为一</p><p>|： 有一则为一</p><p>~： 零一互换</p><p>^:     不同才为一</p><h5 id="类型自动提升和强制转换"><a href="#类型自动提升和强制转换" class="headerlink" title="类型自动提升和强制转换"></a>类型自动提升和强制转换</h5><p><em>参与计算的类型不同自动升为较大的</em></p><p><em>强制转换，在括号里加入转换类型就可以了，超出范围会可能出错</em></p><h4 id="浮点数计算"><a href="#浮点数计算" class="headerlink" title="浮点数计算"></a>浮点数计算</h4><p><em>无法精确表示数值，不能做移位和位运算</em></p><h5 id="类型提升"><a href="#类型提升" class="headerlink" title="类型提升"></a>类型提升</h5><p><em>整数和浮点数运算，结果为浮点数</em></p><h5 id="溢出"><a href="#溢出" class="headerlink" title="溢出"></a>溢出</h5><p><em>整数在除零时编译时不出错，运行时出错</em></p><p><em>浮点数除零不会报错，会返回特殊值：</em></p><p>NaN:not a number</p><p>Infinity:无穷大</p><p>-Infinity:负无穷大</p><h5 id="强制转换"><a href="#强制转换" class="headerlink" title="强制转换"></a>强制转换</h5><p><em>保留整数，超出范围保留整数最大值</em>、</p><h4 id="布尔运算"><a href="#布尔运算" class="headerlink" title="布尔运算"></a>布尔运算</h4><p><em>布尔运算是一种关系运算，包括：</em></p><p>&lt;,&gt;,&gt;=,&lt;=,==,!=</p><p>&amp;&amp;</p><p>||</p><p>!</p><h4 id="三元运算符"><a href="#三元运算符" class="headerlink" title="三元运算符"></a>三元运算符</h4><p>*也是短路运算</p><p>x?y:z</p><h4 id="字符和字符串"><a href="#字符和字符串" class="headerlink" title="字符和字符串"></a>字符和字符串</h4><p><em>要显示一个字符Unicode编码，要把它赋值给整数</em></p><p><em>也可以用\u+unicode编码表示一个char字符</em></p><p><strong>字符串连接</strong></p><p><strong>多行字符串</strong></p><p>“””</p><p>….</p><p>“””</p><h4 id="数组类型"><a href="#数组类型" class="headerlink" title="数组类型"></a>数组类型</h4><p><em>引用类型</em></p><p><em>int[] ns = new int[5]</em></p><p>int[] ns = new int[]{…….}={…..}</p><p>Java的数组有几个特点：</p><ul><li>数组所有元素初始化为默认值，整型都是<code>0</code>，浮点型是<code>0.0</code>，布尔型是<code>false</code>；</li><li>数组一旦创建后，大小就不可改变。</li></ul><p><em>可以用索引访问数值</em></p><p><em>数组变量.length</em></p><hr><blockquote><p>今日事，今日毕。</p></blockquote>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr><script type="text/javascript" src="/js/src/bai.js"></script><hr><h2 id="java快速入门"><a href="#java快速入门" class="headerlink" title="java快速入门"></a>java快速入门</h2><h3 id="java简介"><a href="#java简介" class="headerlink" title="java简介"></a>java简介</h3><p><em>java最早由sun公司的詹姆斯.高斯林开发编写</em></p><p><em>最初名为oak，后来发现这是一门已有的计算机语言，所以改名java</em></p><p><em>java是一门介于解释和编译型的语言</em></p><p><em>C，C++,代码直接编译成机械码，有cpu执行，但由于不同平台的中央处理器的CPU的指令集不同，因此，需要编译出每一种平台的机器码。</em></p><p><em>Python,Ruby没有上述问题，直接有解释器加载源码然后运行，但运行效率太低</em></p><p><em>java是由编译器生成一种独立的字节码，然后针对不同平台开发不同的虚拟机，就可以实现一次编写，到处运行</em></p><p><em>不同厂商都可以编写自己的虚拟机，为了保证字节码能够正确运行，就需要制定一系列的虚拟机规范</em></p><p><strong>java三个不同的版本：</strong></p><p>java se: standard edition</p><p>java ee: enterprise edition</p><p>java me: micro edition</p><p><em>java ee 在java se的基础上加了一些API和库</em></p><p><em>java ee和java se 使用的虚拟机完全不同</em></p><p>** JDK和JRE:**</p><p>JDK: java development kit</p><p>JRE: java runtime environment</p><p><em>JDK包含虚拟机和编译器，调试器，JRE只有虚拟机.因此JDK包含JRE</em></p><p>JSR规范：java specification request 负责统一接口</p><p>JCP组织：java comunity process 审核JSP</p><h4 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h4><p>配置JAVA_HOME:安装java的路径，bin的上一级</p><p>配置Path: %JAVA_HOME%\bin</p><p>细心的童鞋还可以在<code>JAVA_HOME</code>的<code>bin</code>目录下找到很多可执行文件：</p><ul><li>java：这个可执行程序其实就是JVM，运行Java程序，就是启动JVM，然后让JVM执行指定的编译后的代码；</li><li>javac：这是Java的编译器，它用于把Java源码文件（以<code>.java</code>后缀结尾）编译为Java字节码文件（以<code>.class</code>后缀结尾）；</li><li>jar：用于把一组<code>.class</code>文件打包成一个<code>.jar</code>文件，便于发布；</li><li>javadoc：用于从Java源码中自动提取注释并生成文档；</li><li>jdb：Java调试器，用于开发阶段的运行调试。</li></ul><h4 id="第一个java程序"><a href="#第一个java程序" class="headerlink" title="第一个java程序"></a>第一个java程序</h4><p><em>一个java程序要有一个主类，文件名和主类相同</em></p><p><em>编译时要带后缀，运行时不带后缀</em></p><h4 id="使用IDE"><a href="#使用IDE" class="headerlink" title="使用IDE"></a>使用IDE</h4><p>IDE: Integrated Development Environment</p><p><em>使用IDE的好处在于按，可以把编写代码、组织项目、编译、运行、调试等放到一个环境中运行，能极大地提高开发效率。</em></p><h3 id="java程序基础"><a href="#java程序基础" class="headerlink" title="java程序基础"></a>java程序基础</h3><h4 id="java程序基本结构"><a href="#java程序基本结构" class="headerlink" title="java程序基本结构"></a>java程序基本结构</h4><p><strong>类名规范：</strong></p><ul><li>首字母大写</li><li>字母开头，数字，下划线组合</li></ul><p><strong>方法名规范：</strong></p><ul><li>首字母小写</li></ul><p><em>public是访问修饰符，表示该类公开。不写public也能正确编译，但这个类无法从命令行执行</em></p><p><em>每一行语句，分号结尾</em></p><p><strong>注释方法：</strong></p><ul><li>//</li><li>/*… */</li><li>/<em>*… */  *这是一种特殊注释方法，用在类和方法的定义出，用于自动创建文档</em></li></ul><p><em>*对于eclipse可以用快捷键ctrl+shift+f，快速格式化代码</em></p><h4 id="变量和数据类型"><a href="#变量和数据类型" class="headerlink" title="变量和数据类型"></a>变量和数据类型</h4><p><em>先定义再应用</em></p><p><em>可以一次性多个定义和赋值</em></p><p><em>没有赋值，将自动赋默认值</em></p><p><em>可以将一个基本数据类型变量赋值给另一个基本类型变量。不是指向同一个地址</em></p><p><strong>基本数据类型有：</strong></p><ul><li><p>整型 byte,short,int,long</p></li><li><p>浮点型 float,double</p><p><em>float要加上f或F，double可以省略</em></p></li><li><p>字符型 char</p><p><em>用单引号</em></p></li><li><p>布尔型 false,true</p></li></ul><p> <strong>常量</strong></p><p><em>final修饰，只可以一次赋值，通常全大写</em></p><p><strong>var关键字</strong></p><p><em>定义变量时，变量类型太长，可以用var</em></p><h4 id="整数运算"><a href="#整数运算" class="headerlink" title="整数运算"></a>整数运算</h4><p><em>整数表示数值是准确的，运算也是，除了溢出情况</em></p><h5 id="自增-自减"><a href="#自增-自减" class="headerlink" title="自增/自减"></a>自增/自减</h5><p>++</p><p>–</p><p><em>写在变量前面和后面是不同的，前面先加减在运算，后面先运算再加减</em></p><h5 id="移位运算符"><a href="#移位运算符" class="headerlink" title="移位运算符"></a>移位运算符</h5><p><em>数值的最高位是一个符号位</em></p><p>》： 右位移</p><p>《： 左位移</p><p><em>上面两种不会改变符号位</em></p><p>》&gt;：会改变符号位</p><p><em>对byte和short移位会首先转换为int</em></p><p><em>右移或左移移位代表在之前的基础上乘或除2的几次方倍</em></p><h5 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h5><p>&amp;：同一才为一</p><p>|： 有一则为一</p><p>~(非)： 零一互换</p><p>^(异或):     不同才为一</p><h5 id="类型自动提升和强制转换"><a href="#类型自动提升和强制转换" class="headerlink" title="类型自动提升和强制转换"></a>类型自动提升和强制转换</h5><p><em>参与计算的类型不同自动升为较大的</em></p><p><em>强制转换，在括号里加入转换类型就可以了，超出范围会可能出错</em></p><h4 id="浮点数计算"><a href="#浮点数计算" class="headerlink" title="浮点数计算"></a>浮点数计算</h4><p><em>无法精确表示数值，不能做移位和位运算</em></p><h5 id="类型提升"><a href="#类型提升" class="headerlink" title="类型提升"></a>类型提升</h5><p><em>整数和浮点数运算，结果为浮点数</em></p><h5 id="溢出"><a href="#溢出" class="headerlink" title="溢出"></a>溢出</h5><p><em>整数在除零时编译时不出错，运行时出错</em></p><p><em>浮点数除零不会报错，会返回特殊值：</em></p><p>NaN:not a number</p><p>Infinity:无穷大</p><p>-Infinity:负无穷大</p><h5 id="强制转换"><a href="#强制转换" class="headerlink" title="强制转换"></a>强制转换</h5><p><em>保留整数，超出范围保留整数最大值</em>、</p><h4 id="布尔运算"><a href="#布尔运算" class="headerlink" title="布尔运算"></a>布尔运算</h4><p><em>布尔运算是一种关系运算，包括：</em></p><p>&lt;,&gt;,&gt;=,&lt;=,==,!=</p><p>&amp;&amp;</p><p>||</p><p>!</p><h4 id="三元运算符"><a href="#三元运算符" class="headerlink" title="三元运算符"></a>三元运算符</h4><p><em>也是短路运算</em></p><p>x?y:z</p><p><em>求绝对值，x&gt;0?x:-x</em></p><h4 id="字符和字符串"><a href="#字符和字符串" class="headerlink" title="字符和字符串"></a>字符和字符串</h4><p><em>要显示一个字符Unicode编码，要把它赋值给整数</em></p><p><em>也可以用\u+unicode编码表示一个char字符</em></p><p><strong>字符串连接</strong></p><p><strong>多行字符串</strong></p><p>“””</p><p>….</p><p>“””</p><h4 id="数组类型"><a href="#数组类型" class="headerlink" title="数组类型"></a>数组类型</h4><p><em>引用类型</em></p><p><em>int[] ns = new int[5]</em></p><p>int[] ns = new int[]{…….}={…..}</p><p>Java的数组有几个特点：</p><ul><li>数组所有元素初始化为默认值，整型都是<code>0</code>，浮点型是<code>0.0</code>，布尔型是<code>false</code>；</li><li>数组一旦创建后，大小就不可改变。</li></ul><p><em>可以用索引访问数值</em></p><p><em>数组变量.length</em></p><h3 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h3><h4 id="输入输出"><a href="#输入输出" class="headerlink" title="输入输出"></a>输入输出</h4><p>输出</p><ul><li>println</li><li>print</li></ul><p>格式化输出</p><p>printf(“%.3f”, d)</p><p><em>%表示占位符，连续两个%%表示%</em></p><p><a href="https://imgchr.com/i/87yp26" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/03/23/87yp26.png" alt="87yp26.png" border="0" width="400/"></a></p><p>输入</p><p>import java.util.Scanner;/import java.util.*</p><p>Scanner scanner= new Scanner(System.in);</p><ul><li>scanner.next</li><li>scanner.nextLine</li><li>scanner.nextInt</li><li>scanner.nextDouble</li></ul><h4 id="if判断"><a href="#if判断" class="headerlink" title="if判断"></a>if判断</h4><p><em>只有一条语句时可以省略华括号</em></p><p><code>if()</code></p><p><code>{</code><br><code>}</code></p><p><code>else if()</code></p><p><code>{</code><br><code>}</code></p><p><code>else</code></p><p><code>{</code><br><code>}</code></p><p><strong>判断引用类型数据是否相等</strong></p><p><em>用==是判断引用地址是否一样，可以用equals</em></p><p><em>浮点型数据不能用==判断</em></p><p><em>注意：s1.equals(s2)，当s1为null时会报错</em></p><h4 id="switch语句"><a href="#switch语句" class="headerlink" title="switch语句"></a>switch语句</h4><p>switch(option)</p><p>{</p><p>case 1:</p><p>​    …………;</p><p>​    break;</p><p>default：</p><p>​    …..;</p><p>​    break;</p><p>}</p><p><em>case没有花括号，可以合理的增减break；比较字符串时是比较内容</em></p><p><em>switch新语法，可以不要break，没有穿透；case可以使用-&gt;</em></p><img src="https://s1.ax1x.com/2020/03/23/87fFp9.png" alt="87fFp9.png" border="0" width="400/"><p><em>还可以使用switch赋值：</em></p><p>yield</p><img src="https://s1.ax1x.com/2020/03/23/87fUAS.png" alt="87fUAS.png" border="0" width="400/"><h4 id="while"><a href="#while" class="headerlink" title="while"></a>while</h4><h4 id="do…-while"><a href="#do…-while" class="headerlink" title="do….while"></a>do….while</h4><h4 id="for"><a href="#for" class="headerlink" title="for"></a>for</h4><h4 id="break和continue"><a href="#break和continue" class="headerlink" title="break和continue"></a>break和continue</h4><hr><blockquote><p>今日事，今日毕。</p></blockquote>]]></content>
     
     <summary type="html">
     
@@ -69,28 +131,6 @@
       <category term="乱码" scheme="http://tianyong.fun/tags/%E4%B9%B1%E7%A0%81/"/>
     
       <category term="hexo" scheme="http://tianyong.fun/tags/hexo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>11</title>
-    <link href="http://tianyong.fun/11.html"/>
-    <id>http://tianyong.fun/11.html</id>
-    <published>2020-03-20T12:10:31.000Z</published>
-    <updated>2020-03-20T12:10:31.432Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr><script type="text/javascript" src="/js/src/bai.js"></script><hr><blockquote></blockquote>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;\assets\css\APlayer.min.css&quot;&gt;&lt;script src=&quot;\assets\js\APlayer.min.js&quot; cla
-      
-    
-    </summary>
-    
-    
     
   </entry>
   
@@ -206,9 +246,9 @@
     
       <category term="hexo" scheme="http://tianyong.fun/tags/hexo/"/>
     
-      <category term="seo" scheme="http://tianyong.fun/tags/seo/"/>
-    
       <category term="优化" scheme="http://tianyong.fun/tags/%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="seo" scheme="http://tianyong.fun/tags/seo/"/>
     
   </entry>
   
@@ -262,9 +302,9 @@
       <category term="Hexo" scheme="http://tianyong.fun/categories/Hexo/"/>
     
     
-      <category term="优化" scheme="http://tianyong.fun/tags/%E4%BC%98%E5%8C%96/"/>
-    
       <category term="SEO" scheme="http://tianyong.fun/tags/SEO/"/>
+    
+      <category term="优化" scheme="http://tianyong.fun/tags/%E4%BC%98%E5%8C%96/"/>
     
       <category term="关键词与描述" scheme="http://tianyong.fun/tags/%E5%85%B3%E9%94%AE%E8%AF%8D%E4%B8%8E%E6%8F%8F%E8%BF%B0/"/>
     
@@ -531,34 +571,6 @@
       <category term="评论" scheme="http://tianyong.fun/tags/%E8%AF%84%E8%AE%BA/"/>
     
       <category term="阅读时长" scheme="http://tianyong.fun/tags/%E9%98%85%E8%AF%BB%E6%97%B6%E9%95%BF/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>hexo草稿功能</title>
-    <link href="http://tianyong.fun/hexo%E8%8D%89%E7%A8%BF%E5%8A%9F%E8%83%BD.html"/>
-    <id>http://tianyong.fun/hexo%E8%8D%89%E7%A8%BF%E5%8A%9F%E8%83%BD.html</id>
-    <published>2020-03-18T10:26:09.000Z</published>
-    <updated>2020-03-20T12:00:50.910Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr><p><em>草稿不会在博客上显示</em></p><h2 id="创建草稿"><a href="#创建草稿" class="headerlink" title="创建草稿"></a>创建草稿</h2><p><em>hexo new draft 草稿名</em></p><p>*生成的草稿在source/_drafts/文件夹中</p><h2 id="强行预览草稿"><a href="#强行预览草稿" class="headerlink" title="强行预览草稿"></a>强行预览草稿</h2><p><em>render_drafts:true/hexo server-drafts</em></p><h2 id="草稿变文章"><a href="#草稿变文章" class="headerlink" title="草稿变文章"></a>草稿变文章</h2><p><em>hexo publish [layout]</em></p><hr><blockquote></blockquote>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;\assets\css\APlayer.min.css&quot;&gt;&lt;script src=&quot;\assets\js\APlayer.min.js&quot; cla
-      
-    
-    </summary>
-    
-    
-      <category term="Hexo" scheme="http://tianyong.fun/categories/Hexo/"/>
-    
-    
-      <category term="草稿" scheme="http://tianyong.fun/tags/%E8%8D%89%E7%A8%BF/"/>
-    
-      <category term="draft" scheme="http://tianyong.fun/tags/draft/"/>
     
   </entry>
   
