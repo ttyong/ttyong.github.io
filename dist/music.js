@@ -35,5 +35,47 @@ const ap = new APlayer({
         cover: 'https://s1.ax1x.com/2020/03/19/8rsH1S.jpg',
 		lrc: 'http://q7qhes5wq.bkt.clouddn.com/Fire%20-%20Gavin%20Degraw.lrc',
       },
+	  {
+        name: "迷人的危险",
+        artist: '尚士达',
+        url: 'http://music.163.com/song/media/outer/url?id=1383876635.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/29/GZD31H.png',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/%E8%BF%B7%E4%BA%BA%E7%9A%84%E5%8D%B1%E9%99%A9%20-%20%E5%B0%9A%E5%A3%AB%E8%BE%BE.lrc',
+      },
+	  {
+        name: "我走后",
+        artist: '小咪',
+        url: 'http://music.163.com/song/media/outer/url?id=1370047789.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/29/GZDPtU.th.png',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/%E6%88%91%E8%B5%B0%E5%90%8E%20-%20%E5%B0%8F%E5%92%AA.lrc',
+      },
+	  {
+        name: "冬眠",
+        artist: '司南',
+        url: 'http://music.163.com/song/media/outer/url?id=1398663411.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/29/GZDNHP.jpg',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/%E5%86%AC%E7%9C%A0%20-%20%E5%8F%B8%E5%8D%97.lrc',
+      },
+	  {
+        name: "我可以",
+        artist: '蔡旻佑',
+        url: 'http://music.163.com/song/media/outer/url?id=65681.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/29/GZ05IU.jpg',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/%E6%88%91%E5%8F%AF%E4%BB%A5%20-%20%E8%94%A1%E6%97%BB%E4%BD%91.lrc',
+      },
+	  {
+        name: "像鱼",
+        artist: '王贰浪',
+        url: 'http://music.163.com/song/media/outer/url?id=1331819951.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/29/GZ0Wq0.jpg',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/%E5%83%8F%E9%B1%BC%20-%20%E7%8E%8B%E8%B4%B0%E6%B5%AA.lrc',
+      },
+	  {
+        name: "你走",
+        artist: '松井先生(李宗锦)',
+        url: 'http://music.163.com/song/media/outer/url?id=558071673.mp3',
+        cover: 'https://s1.ax1x.com/2020/03/29/GZ0xIO.jpg',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/%E4%BD%A0%E8%B5%B0%20-%20%E6%9D%BE%E7%B4%A7%E5%85%88%E7%94%9F%EF%BC%88%E6%9D%8E%E5%AE%97%E9%94%A6%EF%BC%89.lrc',
+      },
     ]
 });
