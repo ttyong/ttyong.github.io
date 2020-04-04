@@ -7,6 +7,13 @@ const ap = new APlayer({
 	lrcType: 3,
 	preload: 'none',
     audio: [
+	  {
+        name: "Dancing With Your Ghost",
+        artist: 'Sasha Sloan',
+        url: 'http://music.163.com/song/media/outer/url?id=1374329431.mp3',
+        cover: 'https://s1.ax1x.com/2020/04/04/G0CSD1.jpg',
+		lrc: 'http://q7qhes5wq.bkt.clouddn.com/Dancing%20With%20Your%20Ghost%20-%20Sasha%20Sloan.lrc',
+      },
       {
         name: "You are my sunshine",
         artist: 'Elizabeth Mitchell',
