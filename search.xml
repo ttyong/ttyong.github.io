@@ -27,7 +27,8 @@
 
 
 
-<h2 id="MongoDB存储"><a href="#MongoDB存储" class="headerlink" title="MongoDB存储"></a>MongoDB存储</h2><p><em>MongoDB是 由 C++语言编写的非关系型数据库，是一个基于分布式文件存储的开源数据库系统，其内容存储形式类似JSON对 象 ，它的字段值可以包含其他文档、数组及文档数组，非常灵活。</em></p>
+<h2 id="MongoDB存储"><a href="#MongoDB存储" class="headerlink" title="MongoDB存储"></a>MongoDB存储</h2><p><strong>[官方文档](<a href="http://api.mongodb.com/python/current/api/pymongo/" target="_blank" rel="external nofollow noopener noreferrer">http://api.mongodb.com/python/current/api/pymongo/</a><br>collection.html)</strong>  </p>
+<p><em>MongoDB是 由 C++语言编写的非关系型数据库，是一个基于分布式文件存储的开源数据库系统，其内容存储形式类似JSON对 象 ，它的字段值可以包含其他文档、数组及文档数组，非常灵活。</em></p>
 <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p><em>安装好pymongo并启动服务</em></p>
 <h3 id="连接MongoDB"><a href="#连接MongoDB" class="headerlink" title="连接MongoDB"></a>连接MongoDB</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pymongo</span><br><span class="line">client = pymongo.MongoClient(host=<span class="string">'localhost'</span>, port=<span class="number">27017</span>) </span><br><span class="line">等同于</span><br><span class="line">client = MogoClient(<span class="string">'mongodb://localhost:27017/'</span>)</span><br></pre></td></tr></table></figure>
 
@@ -45,7 +46,7 @@
 
 
 
-<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><h4 id="find-find-one"><a href="#find-find-one" class="headerlink" title="find(), find_one()"></a>find(), find_one()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 得到一个结果</span></span><br><span class="line">result = collection.find_one(&#123;<span class="string">"a"</span>:<span class="string">"b"</span>&#125;) <span class="comment"># 没有返回None</span></span><br><span class="line">result = collection.find_one(&#123;<span class="string">"_id"</span>:<span class="string">"ObjectId('1325645654')"</span>&#125;)</span><br><span class="line"><span class="comment"># 得到生成器对象</span></span><br><span class="line">results = collection.find(&#123;<span class="string">"age"</span>:<span class="string">"20"</span>&#125;) <span class="comment"># pymongo.cursor</span></span><br><span class="line"><span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">    print(result)</span><br><span class="line"></span><br><span class="line">results = collection.find(&#123;<span class="string">"age"</span>:&#123;<span class="string">'$gt'</span>:<span class="number">20</span>&#125;&#125;) <span class="comment"># 大于20的</span></span><br></pre></td></tr></table></figure>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><h4 id="find-find-one"><a href="#find-find-one" class="headerlink" title="find(), find_one()"></a>find(), find_one()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bson.objectid <span class="keyword">import</span> ObjectId</span><br><span class="line"><span class="comment"># 得到一个结果</span></span><br><span class="line">result = collection.find_one(&#123;<span class="string">"a"</span>:<span class="string">"b"</span>&#125;) <span class="comment"># 没有返回None</span></span><br><span class="line">result = collection.find_one(&#123;<span class="string">"_id"</span>:<span class="string">"ObjectId('1325645654')"</span>&#125;)</span><br><span class="line"><span class="comment"># 得到生成器对象</span></span><br><span class="line">results = collection.find(&#123;<span class="string">"age"</span>:<span class="string">"20"</span>&#125;) <span class="comment"># pymongo.cursor</span></span><br><span class="line"><span class="keyword">for</span> result <span class="keyword">in</span> results:</span><br><span class="line">    print(result)</span><br><span class="line"></span><br><span class="line">results = collection.find(&#123;<span class="string">"age"</span>:&#123;<span class="string">'$gt'</span>:<span class="number">20</span>&#125;&#125;) <span class="comment"># 大于20的</span></span><br></pre></td></tr></table></figure>
 
 <h5 id="比较符"><a href="#比较符" class="headerlink" title="比较符"></a>比较符</h5><p><a href="https://imgchr.com/i/GyHdBV" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/06/GyHdBV.png" alt="GyHdBV.png" border="0" width="600/"></a></p>
 <h5 id="用正则表达式"><a href="#用正则表达式" class="headerlink" title="用正则表达式"></a>用正则表达式</h5><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">results = collection.find (&#123; <span class="string">'name'</span>: &#123;<span class="string">'$ regex'</span>:<span class="string">'^M.*'</span>&#125;&#125; )</span><br><span class="line"><span class="comment"># 这里使用$regex来指定正则匹配，人M.*代表以 M 开头的正则表达式。</span></span><br></pre></td></tr></table></figure>
@@ -54,7 +55,38 @@
 
 
 
-<h3 id="计数"><a href="#计数" class="headerlink" title="计数"></a>计数</h3><h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><h3 id="偏移"><a href="#偏移" class="headerlink" title="偏移"></a>偏移</h3><h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><h3 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h3><hr>
+<h3 id="计数"><a href="#计数" class="headerlink" title="计数"></a>计数</h3><h4 id="count"><a href="#count" class="headerlink" title="count()"></a>count()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">result = colletion.find().count()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><h4 id="sort"><a href="#sort" class="headerlink" title="sort()"></a>sort()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">results = colletion.find().sort(<span class="string">'name'</span>,pymongo.ASCENDING)</span><br><span class="line">print([result[<span class="string">'name'</span>] <span class="keyword">for</span> result <span class="keyword">in</span> results])</span><br></pre></td></tr></table></figure>
+
+<p><em>这里我们调用pymongo.ASCENDING指定升序。如果要降序排列，可以传入pymongo.DESCENDING</em>  </p>
+<h3 id="偏移"><a href="#偏移" class="headerlink" title="偏移"></a>偏移</h3><h4 id="skip"><a href="#skip" class="headerlink" title="skip()"></a>skip()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">results = collection.find().sort(<span class="string">'name'</span>, pymongo.ASCENDING).skip(<span class="number">2</span>)</span><br><span class="line">print([result[<span class="string">'name'</span>] <span class="keyword">for</span> resuLt <span class="keyword">in</span> results])</span><br><span class="line">运行结果如下：</span><br><span class="line">[<span class="string">'Kevin'</span>, <span class="string">'Mark'</span>, <span class="string">'Mike'</span>]</span><br></pre></td></tr></table></figure>
+
+<p><em>值得注意的是，在数据库数量非常庞大的时候，如千万、亿级别，最好不要使用大的偏移量来查询数据，因为这样很可能导致内存溢出。此时可以使用类似如下操作来查询</em>  </p>
+<h4 id="limit"><a href="#limit" class="headerlink" title="limit()"></a>limit()</h4><p><em>设置结果个数</em></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">results = collection.find().sort(<span class="string">'name'</span>, pymongo.ASCENDING).skip(<span class="number">2</span>).limit(<span class="number">2</span>)</span><br><span class="line">print([result[<span class="string">'name'</span>] <span class="keyword">for</span> result <span class="keyword">in</span> results])</span><br><span class="line">运行结果如下：</span><br><span class="line">[<span class="string">'Kevin'</span>, <span class="string">'Mark'</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><h4 id="update"><a href="#update" class="headerlink" title="update()"></a>update()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">condition &#x3D; &#123;&quot;d&quot;: &#39;c&#39;&#125;</span><br><span class="line">dict &#x3D; colletion.find_one(condition)</span><br><span class="line">dict[&quot;a&quot;] &#x3D; &quot;b&quot;</span><br><span class="line">collection.update(condition, dict) &#x2F;&#x2F; 覆盖以前的所有</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&#123;&#39;ok&#39;: 1, &#39;nModified*: 1, &#39;n&#39;: 1, &#39;updatedExisting&#39;: True&#125;</span><br><span class="line"></span><br><span class="line">collection.update(condition, &#123;&#39;$set&#39;: dict&#125;) &#x2F;&#x2F; 只更新存在的字段，其它字段不会删除</span><br></pre></td></tr></table></figure>
+
+<p><em>update( ) 方 法 其 实 也 是 官 方 不 推 荐 使 用 的 方 法 。这 里 也 分 为 update_one()方法和updatejnany()方法，用法更加严格，它们的第二个参数需要使用$类型操作符作为字典的键名</em></p>
+<h4 id="update-one"><a href="#update-one" class="headerlink" title="update_one()"></a>update_one()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="update-many"><a href="#update-many" class="headerlink" title="update_many()"></a>update_many()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><em>其返回结果是UpdateResult类型。然后分别J调用 matched_count和 modified_count<br>属性，可以获得匹配的数据条数和影响的数据条数</em></p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><h4 id="remove"><a href="#remove" class="headerlink" title="remove()"></a>remove()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">colletion.remove(condition)</span><br></pre></td></tr></table></figure>
+
+<h4 id="delete-one"><a href="#delete-one" class="headerlink" title="delete_one()"></a>delete_one()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">collection.delete_one(condtion)</span><br></pre></td></tr></table></figure>
+
+<h4 id="delete-many"><a href="#delete-many" class="headerlink" title="delete_many()"></a>delete_many()</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">colletion.delete_one(&#123;<span class="string">'age'</span>:&#123;<span class="string">'$lt'</span>: <span class="number">25</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><em>它们的返回结果 都 是 DeleteResult类型，可以调用deleted_count属性获取删除的数据条数。</em>  </p>
+<h3 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h3><p><em>另外， PyMongo 还提供了一些组合方法，女口find_one_and_delete()、 find_one_and_replace()和find_one_and_update(),它们是查找后删除、替换和更新操作，其用法与上述方法基本一致。另外，还可以对索引进行操作，相 关 方 法 有 create_index()、 create_indexes()和 drop_index()等。</em>  </p>
+<hr>
 <blockquote>
 <p>钟表可以回到起点，但永远不会回到昨天。</p>
 </blockquote>
@@ -150,6 +182,7 @@
 <h2 id="isinstance-e-reason-socket-timeout"><a href="#isinstance-e-reason-socket-timeout" class="headerlink" title="isinstance(e.reason, socket.timeout)"></a>isinstance(e.reason, socket.timeout)</h2><p><em>是在urllib实例看到的</em></p>
 <h2 id><a href="#" class="headerlink" title></a></h2><hr>
 <blockquote>
+<p>不见黄河心不死，不撞南墙头不回。</p>
 </blockquote>
 ]]></content>
   </entry>
@@ -558,8 +591,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>hexo</tag>
         <tag>乱码</tag>
+        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -731,8 +764,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>SEO</tag>
         <tag>优化</tag>
+        <tag>SEO</tag>
         <tag>关键词与描述</tag>
       </tags>
   </entry>
@@ -790,8 +823,8 @@
         <category>SEO</category>
       </categories>
       <tags>
-        <tag>seo优化</tag>
         <tag>nofollw</tag>
+        <tag>seo优化</tag>
       </tags>
   </entry>
   <entry>
@@ -852,8 +885,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>引用</tag>
         <tag>hexo</tag>
+        <tag>引用</tag>
       </tags>
   </entry>
   <entry>
@@ -1374,8 +1407,8 @@ img:hover {
         <category>Hadoop</category>
       </categories>
       <tags>
-        <tag>HDFS</tag>
         <tag>异常</tag>
+        <tag>HDFS</tag>
         <tag>Hadoop</tag>
       </tags>
   </entry>
