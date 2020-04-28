@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="tianyong">
+  <meta name="keywords" content="Mapreduce,">
 
 
 
@@ -116,9 +116,15 @@
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/13/Gv9oKs.md.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/13/Gv9Trn.md.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/13/GvCtMj.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/26/JgmCzn.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/26/JgnVXt.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/26/JgnRAO.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/27/JfsWTI.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/27/JfsR0A.md.png">
 <meta property="article:published_time" content="2020-04-13T08:13:35.000Z">
-<meta property="article:modified_time" content="2020-04-13T10:13:00.785Z">
+<meta property="article:modified_time" content="2020-04-27T09:21:28.279Z">
 <meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="Mapreduce">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s1.ax1x.com/2020/04/13/GjRro8.md.png">
 
@@ -368,6 +374,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">Hadoop</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -394,7 +422,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  199
+                  772
                 </span>
               
 
@@ -410,7 +438,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  2
                 </span>
               
             </div>
@@ -457,8 +485,37 @@
 <p><a href="https://imgchr.com/i/Gvpr7V" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/13/Gvpr7V.md.png" alt="Gvpr7V.md.png" border="0"></a><br><a href="https://imgchr.com/i/GvpykT" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/13/GvpykT.md.png" alt="GvpykT.md.png" border="0"></a></p>
 <p><a href="https://imgchr.com/i/Gv9oKs" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/13/Gv9oKs.md.png" alt="Gv9oKs.md.png" border="0"></a><br><a href="https://imgchr.com/i/Gv9Trn" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/13/Gv9Trn.md.png" alt="Gv9Trn.md.png" border="0"></a></p>
 <p><a href="https://imgchr.com/i/GvCtMj" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/13/GvCtMj.md.png" alt="GvCtMj.png" border="0"></a></p>
+<h2 id="MapReduce进阶"><a href="#MapReduce进阶" class="headerlink" title="MapReduce进阶"></a>MapReduce进阶</h2><h3 id="mapreduce的输入格式"><a href="#mapreduce的输入格式" class="headerlink" title="mapreduce的输入格式"></a>mapreduce的输入格式</h3><h4 id="物理分片"><a href="#物理分片" class="headerlink" title="物理分片"></a>物理分片</h4><p><em>分割会严格按照设定大小128m或字数分割，可能会造成不符合逻辑的分割</em></p>
+<h4 id="逻辑分片"><a href="#逻辑分片" class="headerlink" title="逻辑分片"></a>逻辑分片</h4><h5 id="inputFormat提供一下两个功能："><a href="#inputFormat提供一下两个功能：" class="headerlink" title="inputFormat提供一下两个功能："></a>inputFormat提供一下两个功能：</h5><ul>
+<li>数据切分，获得SplitInput（逻辑切片） ，FileInputFormat.getSplits()获取到。</li>
+<li>为Mapper提供输入数据</li>
+</ul>
+<p><em>有多少个SplitInput，就有多少个Mapper<br>TextInputFormat 是默认InputFormat</em></p>
+<img src="https://s1.ax1x.com/2020/04/26/JgmCzn.png" alt="JgmCzn.png" border="0">
+
+<p><em>getSplits 方法负责将一个大数据逻辑分成许多片，但每个分片只是一个逻辑上的定义，仅是提供了一个如何将数据分片的方法，并没有物理上的独立存储</em></p>
+<p> <em>createRecordReader 方法返回一个 RecordReader 对象，实现了类似的迭代器功能，将某个InputSplit 解析成一个个 key/value 对</em></p>
+<h5 id="定位记录边界"><a href="#定位记录边界" class="headerlink" title="定位记录边界"></a>定位记录边界</h5><p><em>为了能识别一条完整的记录，应该添加一些同步标示，如 TextInputFormat 的标示是换行符</em>  </p>
+<h4 id="InputFormat-接口实现类"><a href="#InputFormat-接口实现类" class="headerlink" title="InputFormat 接口实现类"></a>InputFormat 接口实现类</h4><img src="https://s1.ax1x.com/2020/04/26/JgnVXt.png" alt="JgnVXt.png" border="0">
+
+<h3 id="mapreduce的输出格式"><a href="#mapreduce的输出格式" class="headerlink" title="mapreduce的输出格式"></a>mapreduce的输出格式</h3><h4 id="outputFormat接口"><a href="#outputFormat接口" class="headerlink" title="outputFormat接口"></a>outputFormat接口</h4><p><em>OutputFormat主要用于描述输出数据的格式，通过RecordWriter能够将用户提供的key/value对写入特定格式的文件中</em></p>
+<p>（1）TextOutputFormt调用toString()方法把它们转换为字符串<br>（2）NullWritable来省略输出的key或value</p>
+<h4 id="outputFormat接口实现类"><a href="#outputFormat接口实现类" class="headerlink" title="outputFormat接口实现类"></a>outputFormat接口实现类</h4><img src="https://s1.ax1x.com/2020/04/26/JgnRAO.png" alt="JgnRAO.png" border="0">
+
+
+
+<p><strong>排序</strong>：<em>排序是针对map输出里面的key，没会对value排序；map输出和reduce输入都有排序；作用是提高效率</em></p>
+<h3 id="分区Partition"><a href="#分区Partition" class="headerlink" title="分区Partition"></a>分区Partition</h3><h4 id="Partition定义："><a href="#Partition定义：" class="headerlink" title="Partition定义："></a>Partition定义：</h4><p>Mapper任务划分数据的过程称作Partition。<br>负责实现数据的类称作Partitioner，默认的分区是Hash分区 (Hash Partition)</p>
+<h4 id="Partition作用："><a href="#Partition作用：" class="headerlink" title="Partition作用："></a>Partition作用：</h4><p>将map阶段产生的所有&lt;key,value&gt;对分配给不同的Reducer 处理，可以将Reduce阶段的处理负载进行分摊</p>
+<p><strong>Partition的数量决定Reducer的数量</strong></p>
+<h4 id="Hash分区基本原理"><a href="#Hash分区基本原理" class="headerlink" title="Hash分区基本原理"></a>Hash分区基本原理</h4><p><em>计算某个值的hash值，如果结果相同，则放入同一个分区</em></p>
+<p><em>Hash分区的作用：把数据打散进行存放，最终是为了避免热块</em></p>
+<h4 id="合并Combiner"><a href="#合并Combiner" class="headerlink" title="合并Combiner"></a>合并Combiner</h4><p><em>减少Mapper输出到Reduce的数据量，缓解网络传输瓶颈，提高reducer的执行效率</em></p>
+<p><em>需要注意的问题：一定要谨慎使用Combiner<br>有些情况不能使用Combiner —-&gt;  如：求平均值<br>保证引入Combiner以后，不能改变原来的逻辑</em></p>
+<p><a href="https://imgchr.com/i/JfsWTI" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/27/JfsWTI.md.png" alt="JfsWTI.md.png" border="0"></a><br><a href="https://imgchr.com/i/JfsR0A" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/27/JfsR0A.md.png" alt="JfsR0A.md.png" border="0"></a></p>
 <hr>
 <blockquote>
+<p>如果今天后悔昨天，那么明天就会后悔今天。</p>
 </blockquote>
 
       
@@ -479,7 +536,7 @@
   <p><span>本文标题:</span><a href="/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E4%BA%94%E7%AB%A0Mapreduce.html">hadoop理论课-第五章Mapreduce</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2020年04月13日 - 16:04</p>
-  <p><span>最后更新:</span>2020年04月13日 - 18:04</p>
+  <p><span>最后更新:</span>2020年04月27日 - 17:04</p>
   <p><span>原始链接:</span><a href="/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E4%BA%94%E7%AB%A0Mapreduce.html" title="hadoop理论课-第五章Mapreduce">http://tianyong.fun/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E4%BA%94%E7%AB%A0Mapreduce.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E4%BA%94%E7%AB%A0Mapreduce.html" aria-label="复制成功！"></i></span>
   </p>
@@ -542,6 +599,12 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Mapreduce/" rel="tag"><i class="fa fa-tag"></i> Mapreduce</a>
+          
+        </div>
       
 
       
@@ -639,7 +702,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">61</span>
+			  <span class="site-state-item-count">68</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -650,7 +713,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">15</span>
+			  <span class="site-state-item-count">17</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -661,7 +724,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">84</span>
+			  <span class="site-state-item-count">92</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -746,7 +809,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Mapreduce"><span class="nav-number">1.</span> <span class="nav-text">Mapreduce</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce概述"><span class="nav-number">1.1.</span> <span class="nav-text">MapReduce概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce是什么？"><span class="nav-number">1.1.1.</span> <span class="nav-text">MapReduce是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce设计思想"><span class="nav-number">1.1.2.</span> <span class="nav-text">MapReduce设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce特点"><span class="nav-number">1.1.3.</span> <span class="nav-text">MapReduce特点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#易于编程"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">易于编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#良好的扩展性"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">良好的扩展性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高容错性"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">高容错性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#擅长对PB级以上海量数据进行离线处理"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">擅长对PB级以上海量数据进行离线处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce不擅长的场景"><span class="nav-number">1.1.4.</span> <span class="nav-text">MapReduce不擅长的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实时计算"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">实时计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流式计算"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">流式计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DAG-有向图-计算"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">DAG(有向图)计算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce编程模型"><span class="nav-number">1.2.</span> <span class="nav-text">MapReduce编程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初识MapReduce模型"><span class="nav-number">1.2.1.</span> <span class="nav-text">初识MapReduce模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce工作流程"><span class="nav-number">1.2.2.</span> <span class="nav-text">MapReduce工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce模型要点"><span class="nav-number">1.2.3.</span> <span class="nav-text">MapReduce模型要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#案例"><span class="nav-number">1.2.4.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#案例一"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">案例一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例二"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">案例二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例三"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">案例三</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Mapreduce"><span class="nav-number">1.</span> <span class="nav-text">Mapreduce</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce概述"><span class="nav-number">1.1.</span> <span class="nav-text">MapReduce概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce是什么？"><span class="nav-number">1.1.1.</span> <span class="nav-text">MapReduce是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce设计思想"><span class="nav-number">1.1.2.</span> <span class="nav-text">MapReduce设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce特点"><span class="nav-number">1.1.3.</span> <span class="nav-text">MapReduce特点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#易于编程"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">易于编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#良好的扩展性"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">良好的扩展性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高容错性"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">高容错性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#擅长对PB级以上海量数据进行离线处理"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">擅长对PB级以上海量数据进行离线处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce不擅长的场景"><span class="nav-number">1.1.4.</span> <span class="nav-text">MapReduce不擅长的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实时计算"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">实时计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流式计算"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">流式计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DAG-有向图-计算"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">DAG(有向图)计算</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce编程模型"><span class="nav-number">1.2.</span> <span class="nav-text">MapReduce编程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初识MapReduce模型"><span class="nav-number">1.2.1.</span> <span class="nav-text">初识MapReduce模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce工作流程"><span class="nav-number">1.2.2.</span> <span class="nav-text">MapReduce工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce模型要点"><span class="nav-number">1.2.3.</span> <span class="nav-text">MapReduce模型要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#案例"><span class="nav-number">1.2.4.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#案例一"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">案例一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例二"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">案例二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例三"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">案例三</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce进阶"><span class="nav-number">1.3.</span> <span class="nav-text">MapReduce进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mapreduce的输入格式"><span class="nav-number">1.3.1.</span> <span class="nav-text">mapreduce的输入格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#物理分片"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">物理分片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑分片"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">逻辑分片</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#inputFormat提供一下两个功能："><span class="nav-number">1.3.1.2.1.</span> <span class="nav-text">inputFormat提供一下两个功能：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#定位记录边界"><span class="nav-number">1.3.1.2.2.</span> <span class="nav-text">定位记录边界</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#InputFormat-接口实现类"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">InputFormat 接口实现类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mapreduce的输出格式"><span class="nav-number">1.3.2.</span> <span class="nav-text">mapreduce的输出格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#outputFormat接口"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">outputFormat接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#outputFormat接口实现类"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">outputFormat接口实现类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分区Partition"><span class="nav-number">1.3.3.</span> <span class="nav-text">分区Partition</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Partition定义："><span class="nav-number">1.3.3.1.</span> <span class="nav-text">Partition定义：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Partition作用："><span class="nav-number">1.3.3.2.</span> <span class="nav-text">Partition作用：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hash分区基本原理"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">Hash分区基本原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#合并Combiner"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">合并Combiner</span></a></li></ol></li></ol></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -781,7 +844,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">17.2k</span>
+    <span title="Site words total count">21.3k</span>
   
 </div>
 
