@@ -110,11 +110,15 @@
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/22/JtskE8.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/24/JD4C0P.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/24/JD49mt.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/03/JzutVH.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/03/Jzu8KO.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/03/JzuJqe.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/03/JzuGrD.md.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/28/J5Po2d.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/30/JbxGT0.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/30/JqSNM4.png">
 <meta property="article:published_time" content="2020-04-01T08:53:11.000Z">
-<meta property="article:modified_time" content="2020-05-01T06:24:58.461Z">
+<meta property="article:modified_time" content="2020-05-06T05:24:55.392Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="数据查询">
 <meta property="article:tag" content="SELECT">
@@ -564,11 +568,11 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sname <span class="comment">/*外层查询或父査询*/</span></span><br><span class="line"><span class="keyword">FROM</span> Student</span><br><span class="line"><span class="keyword">WHERE</span> Sno <span class="keyword">IN</span></span><br><span class="line">	(<span class="keyword">SELECT</span> Sno <span class="comment">/*内层查询或子査询*/</span></span><br><span class="line">	<span class="keyword">FROM</span> SC</span><br><span class="line">	<span class="keyword">WHERE</span> Cno= <span class="string">'2'</span>);</span><br></pre></td></tr></table></figure>
 
 <p><em>SQ L语言允许多层嵌套查询，即一个子查询中还可以嵌套其他子查询。需要特别指出的是，<strong>子查询的 SELECT语句中不能使用ORDER B Y 子句</strong>， ORDER B Y 子句只能对最终查询结果排序。</em> </p>
-<p><em>大多数嵌套查询可以用连接查询代替</em></p>
+<p><strong>大多数嵌套查询可以用连接查询代替</strong></p>
 <h4 id="带有IN谓词的子查询"><a href="#带有IN谓词的子查询" class="headerlink" title="带有IN谓词的子查询"></a>带有IN谓词的子查询</h4><p><em>在嵌套查询中，子查询的结果往往是一个集合，所 以 谓 词 IN 是嵌套查询中最经常使用的谓词。</em>  </p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sno,Sname,Sdept <span class="comment">/*例 3.55 的解法一*/</span></span><br><span class="line"><span class="keyword">FROM</span> Student</span><br><span class="line"><span class="keyword">WHERE</span> Sdept <span class="keyword">IN</span></span><br><span class="line">	(<span class="keyword">SELECT</span> Sdept</span><br><span class="line">	<span class="keyword">FROM</span> Student</span><br><span class="line">	<span class="keyword">WHERE</span> Sname=<span class="string">'刘晨，)；</span></span><br></pre></td></tr></table></figure>
 
-<p><em>本例中，子查询的查询条件不依赖于父查询，称为*</em>不相关子查询<strong>。如果子查询的查询条件依赖于父查询，这类子查询称为</strong>相关子查询<strong>(correlated subquery) , 整个查询语句称为</strong>相关嵌套查询**(correlated<br>nested query) 语句  *</p>
+<p><em>本例中，子查询的查询条件不依赖于父查询，称为<strong>不相关子查询</strong>。如果子查询的查询条件依赖于父查询，这类子查询称为<strong>相关子查询</strong>(correlated subquery) , 整个查询语句称为<strong>相关嵌套查询</strong>(correlated nested query) 语句</em></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sl.Sno,Sl.Sname,Sl.Sdept <span class="comment">/*例 3.55 的解法二 */</span></span><br><span class="line"><span class="keyword">FROM</span> Student SI,Student S2</span><br><span class="line"><span class="keyword">WHERE</span> Sl.Sdept=S2.Sdept <span class="keyword">AND</span> S2.Sname=<span class="string">'刘晨'</span>；</span><br></pre></td></tr></table></figure>
 
 <p><em>可见，实现同一个查询请求可以有多种方法，当然不同的方法其执行效率可能会有差别 ，甚至会差别很大。这就是数据库编程人员应该掌握的数据库性能调优技术</em>  </p>
@@ -622,7 +626,8 @@
 
 <p><em>由于带EXISTS量词的相关子査询只关心内层查询是否有返回值，并不需要查具体值,因此其效率并不一定低于不相关子查询，有时是高效的方法</em>  </p>
 <h4 id="用EXISTS-NOT-EXISTS实现全称量词"><a href="#用EXISTS-NOT-EXISTS实现全称量词" class="headerlink" title="用EXISTS/NOT EXISTS实现全称量词"></a>用EXISTS/NOT EXISTS实现全称量词</h4><p><a href="https://imgchr.com/i/JD4C0P" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/24/JD4C0P.png" alt="JD4C0P.png" border="0"></a><br><a href="https://imgchr.com/i/JD49mt" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/24/JD49mt.png" alt="JD49mt.png" border="0"></a></p>
-<h4 id="用EXISTS-NOT-EXISTS实现逻辑蕴涵"><a href="#用EXISTS-NOT-EXISTS实现逻辑蕴涵" class="headerlink" title="用EXISTS/NOT EXISTS实现逻辑蕴涵"></a>用EXISTS/NOT EXISTS实现逻辑蕴涵</h4><h3 id="集合查询"><a href="#集合查询" class="headerlink" title="集合查询"></a>集合查询</h3><p><em>UNION , INTERSECT, EXCEPT</em></p>
+<h4 id="用EXISTS-NOT-EXISTS实现逻辑蕴涵"><a href="#用EXISTS-NOT-EXISTS实现逻辑蕴涵" class="headerlink" title="用EXISTS/NOT EXISTS实现逻辑蕴涵"></a>用EXISTS/NOT EXISTS实现逻辑蕴涵</h4><p><a href="https://imgchr.com/i/JzutVH" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/03/JzutVH.md.png" alt="JzutVH.md.png" border="0"></a><br><a href="https://imgchr.com/i/Jzu8KO" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/03/Jzu8KO.md.png" alt="Jzu8KO.md.png" border="0"></a><br><a href="https://imgchr.com/i/JzuJqe" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/03/JzuJqe.md.png" alt="JzuJqe.md.png" border="0"></a><br><a href="https://imgchr.com/i/JzuGrD" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/03/JzuGrD.md.png" alt="JzuGrD.md.png" border="0"></a></p>
+<h3 id="集合查询"><a href="#集合查询" class="headerlink" title="集合查询"></a>集合查询</h3><p><em>UNION , INTERSECT, EXCEPT</em></p>
 <p><em>列数相等，对应属性相同</em></p>
 <p><em>属性名无关，属性名取第一个结果属性名</em></p>
 <p><em>自动除去重复; 不去重UNION ALL</em></p>
@@ -644,7 +649,7 @@
 
 <p><em>有top的子查询可以把order by放在子查询</em></p>
 <p><a href="https://imgchr.com/i/JqSNM4" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/30/JqSNM4.png" alt="JqSNM4.png" border="0"></a></p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sno, Cno</span><br><span class="line"><span class="keyword">FROM</span> SC, (<span class="keyword">SELECT</span> Sno, <span class="keyword">Avg</span>(Grade) <span class="keyword">FROM</span> SC <span class="keyword">GROUP</span> <span class="keyword">BY</span> Sno)</span><br><span class="line"><span class="keyword">AS</span> Avg_sc(avg_sno,avg_grade) // 生成表Avg_sc,具有两个属性</span><br><span class="line"><span class="keyword">WHERE</span> SC.Sno = Avg_sc.avg sno <span class="keyword">and</span> SC.Grade ＞= <span class="keyword">Avg</span> sc.avg grade</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Sno, Cno</span><br><span class="line"><span class="keyword">FROM</span> SC, (<span class="keyword">SELECT</span> Sno, <span class="keyword">Avg</span>(Grade) <span class="keyword">FROM</span> SC <span class="keyword">GROUP</span> <span class="keyword">BY</span> Sno)</span><br><span class="line"><span class="keyword">AS</span> Avg_sc(avg_sno,avg_grade) // 生成表Avg_sc,具有两个属性</span><br><span class="line"><span class="keyword">WHERE</span> SC.Sno = Avg_sc.avg_sno <span class="keyword">and</span> SC.Grade ＞= Avg_sc.avg grade</span><br></pre></td></tr></table></figure>
 
 <p><em>如果子查询中没有聚集函数，派生表可以不指定属性列</em></p>
 <p><em>通 过 FROM 子句生成派生表时， A S 关键字可以省略，但必须为派生<br>关系指定一个别名</em></p>
@@ -671,7 +676,7 @@
   <p><span>本文标题:</span><a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2.html">数据库系统-数据查询</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2020年04月01日 - 16:04</p>
-  <p><span>最后更新:</span>2020年05月01日 - 14:05</p>
+  <p><span>最后更新:</span>2020年05月06日 - 13:05</p>
   <p><span>原始链接:</span><a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2.html" title="数据库系统-数据查询">http://tianyong.fun/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2.html" aria-label="复制成功！"></i></span>
   </p>
@@ -839,7 +844,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">68</span>
+			  <span class="site-state-item-count">79</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -850,7 +855,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">17</span>
+			  <span class="site-state-item-count">18</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -861,7 +866,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">92</span>
+			  <span class="site-state-item-count">96</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -981,7 +986,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">27.7k</span>
+    <span title="Site words total count">31.8k</span>
   
 </div>
 
