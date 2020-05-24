@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hadoop,命令,HDFS,">
+  <meta name="keywords" content="命令,HDFS,Hadoop,">
 
 
 
@@ -94,13 +94,16 @@
 <meta property="og:url" content="http://tianyong.fun/hadoop%E5%B8%B8%E7%94%A8HDFS%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4.html">
 <meta property="og:site_name" content="田勇的博客">
 <meta property="og:description" content="管理命令查看hdfs所有管理命令hdfs dfsadmin 查看命令用法hdfs dfsadmin -help 安全模式相关练习实践首先要启动hdfs: start-dfs.sh hdfs dfsadmin -safemode enter 进入安全模式 hdfs dfsadmin -safemode get  获取状态 hdfs dfsadmin -safemode wait hdfs dfsa">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YvvR2D.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YvvbPf.png">
 <meta property="article:published_time" content="2020-03-17T01:22:28.000Z">
-<meta property="article:modified_time" content="2020-03-22T03:56:46.989Z">
+<meta property="article:modified_time" content="2020-05-23T11:34:39.717Z">
 <meta property="article:author" content="TTYONG">
-<meta property="article:tag" content="Hadoop">
 <meta property="article:tag" content="命令">
 <meta property="article:tag" content="HDFS">
+<meta property="article:tag" content="Hadoop">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/05/23/YvvR2D.png">
 
 
 
@@ -396,7 +399,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  109
+                  589
                 </span>
               
 
@@ -412,7 +415,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  2
                 </span>
               
             </div>
@@ -441,13 +444,46 @@
 <p><em>hdfs dfsadmin -safemode get</em>  获取状态</p>
 <p><em>hdfs dfsadmin -safemode wait</em></p>
 <p><em>hdfs dfsadmin -safemode leave</em>  退出</p>
-<h3 id="快照相关练习实验"><a href="#快照相关练习实验" class="headerlink" title="快照相关练习实验"></a>快照相关练习实验</h3><p><strong>开启</strong></p>
+<h3 id="快照相关练习实验"><a href="#快照相关练习实验" class="headerlink" title="快照相关练习实验"></a>快照相关练习实验</h3><p><a href="https://www.cnblogs.com/JackQ/p/4586663.html" target="_blank" rel="external nofollow noopener noreferrer">url</a></p>
+<p><em>Hdfs的快照（snapshot）是在某一时间点对指定文件系统拷贝，快照采用只读模式，可以对重要数据进行恢复、防止用户错误性的操作</em></p>
+<p><em>快照是对文件数据进行保护的措施，可以对错误操作恢复数据。<strong>只能</strong>在允许的路径上创建快照，<strong>子路径</strong>也不可以。创建快照的路径不可以删除</em></p>
+<p><strong>开启</strong></p>
 <p><em>hdfs  dfsadmin  -allowSnapshot <smapshotdir></smapshotdir></em></p>
 <p><strong>关闭</strong></p>
 <p><em>hdfs  dfsadmin  -disallowSnapshot <snapshotdir></snapshotdir></em></p>
 <p><strong>例</strong></p>
 <p><em>hdfs  dfsadmin  -allowSnapshot  /001/mydemo</em></p>
 <p><em>hdfs  dfsadmin  -disallowSnapshot /001/mydemo</em></p>
+<p><strong>创建并命名</strong></p>
+<p><em>hdfs  dfs  -createSnapshot  hdfs路径 名字</em></p>
+<p><strong>删除</strong></p>
+<p><em>hdfs dfs  -deleteSnapshot  hdfs路径 名字</em></p>
+<p><strong>重命名</strong></p>
+<p><em>hdfs dfs -renameSnapshot hdfs路径 oldname newname</em></p>
+<h4 id="查看所有快照"><a href="#查看所有快照" class="headerlink" title="查看所有快照"></a>查看所有快照</h4><p><em>hdfs lsSnapshottableDir</em></p>
+<h4 id="查看某一个具体快照"><a href="#查看某一个具体快照" class="headerlink" title="查看某一个具体快照"></a>查看某一个具体快照</h4><p><em>创建快照时候，默认的文件夹是.snapshot 查看时候必须加上.snapshot才能看到里面备份的东西</em></p>
+<p><em>hdfs dfs -ls 路径/.snapshot/</em></p>
+<img src="https://s1.ax1x.com/2020/05/23/YvvR2D.png" alt="YvvR2D.png" border="0">
+
+<h4 id="快照对比"><a href="#快照对比" class="headerlink" title="快照对比"></a>快照对比</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hdfs snapshotDiff &lt;path&gt; &lt;fromSnapshot&gt; &lt;toSnapshot&gt;</span><br><span class="line">例如： </span><br><span class="line">执行命令 hdfs snapshotDiff  &#x2F;Workspace&#x2F;linlin bak1 bak2</span><br></pre></td></tr></table></figure>
+
+<img src="https://s1.ax1x.com/2020/05/23/YvvbPf.png" alt="YvvbPf.png" border="0">
+
+<h3 id="配额"><a href="#配额" class="headerlink" title="配额"></a>配额</h3><p><em>HDFS允许管理员给私人目录设置其下面文件夹和文件的总数量配额，或空间使用总量配额。所以HDFS配额的对象是目录，而非用户。如果需要实现用户级别的配额，则需要采用第三方系统进行逻辑管理并映射到文件夹配额。</em></p>
+<h4 id="文件配额"><a href="#文件配额" class="headerlink" title="文件配额"></a>文件配额</h4><p><em>文件数配额指的是可以限制当前文件夹下，所有文件和文件夹的总数量</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-- 创建</span><br><span class="line">hdfs dfsadmin  -setQuota &lt;quota&gt; &lt;dirname&gt;...&lt;dirname&gt;</span><br><span class="line">--删除</span><br><span class="line">hdfs dfsadmin -clrQuota &lt;directory&gt;...&lt;directory&gt;</span><br></pre></td></tr></table></figure>
+
+<p><em>hdfs dfsadmin  -setQuota 3  /001/mydemo3</em></p>
+<h4 id="空间配额"><a href="#空间配额" class="headerlink" title="空间配额"></a>空间配额</h4><p><em>空间配额指的是可以限制当前文件夹下，所有文件（包含子文件夹中的数据文件，会递归的去统计）的总大小</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfsadmin  -setSpaceQuota &lt;quota&gt; &lt;dirname&gt;...&lt;dirname&gt;</span><br></pre></td></tr></table></figure>
+
+<p><em>hdfs dfsadmin  -setSpaceQuota 134217728 /mydemo4</em></p>
+<h3 id="报告文件系统的基本信息和统计信息"><a href="#报告文件系统的基本信息和统计信息" class="headerlink" title="报告文件系统的基本信息和统计信息"></a>报告文件系统的基本信息和统计信息</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfsadmin -report</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看拓扑实验"><a href="#查看拓扑实验" class="headerlink" title="查看拓扑实验"></a>查看拓扑实验</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfsadmin -printTopology</span><br></pre></td></tr></table></figure>
+
+
+
 <hr>
 <blockquote>
 <p>事常与人违，事总在人为</p>
@@ -508,11 +544,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Hadoop/" rel="tag"><i class="fa fa-tag"></i> Hadoop</a>
-          
             <a href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag"><i class="fa fa-tag"></i> 命令</a>
           
             <a href="/tags/HDFS/" rel="tag"><i class="fa fa-tag"></i> HDFS</a>
+          
+            <a href="/tags/Hadoop/" rel="tag"><i class="fa fa-tag"></i> Hadoop</a>
           
         </div>
       
@@ -612,7 +648,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">86</span>
+			  <span class="site-state-item-count">91</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -623,7 +659,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">19</span>
+			  <span class="site-state-item-count">17</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -634,7 +670,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">98</span>
+			  <span class="site-state-item-count">103</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -719,7 +755,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#管理命令"><span class="nav-number">1.</span> <span class="nav-text">管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看hdfs所有管理命令"><span class="nav-number">1.1.</span> <span class="nav-text">查看hdfs所有管理命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看命令用法"><span class="nav-number">1.2.</span> <span class="nav-text">查看命令用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全模式相关练习实践"><span class="nav-number">1.3.</span> <span class="nav-text">安全模式相关练习实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快照相关练习实验"><span class="nav-number">1.4.</span> <span class="nav-text">快照相关练习实验</span></a></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#管理命令"><span class="nav-number">1.</span> <span class="nav-text">管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看hdfs所有管理命令"><span class="nav-number">1.1.</span> <span class="nav-text">查看hdfs所有管理命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看命令用法"><span class="nav-number">1.2.</span> <span class="nav-text">查看命令用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全模式相关练习实践"><span class="nav-number">1.3.</span> <span class="nav-text">安全模式相关练习实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快照相关练习实验"><span class="nav-number">1.4.</span> <span class="nav-text">快照相关练习实验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看所有快照"><span class="nav-number">1.4.1.</span> <span class="nav-text">查看所有快照</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看某一个具体快照"><span class="nav-number">1.4.2.</span> <span class="nav-text">查看某一个具体快照</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快照对比"><span class="nav-number">1.4.3.</span> <span class="nav-text">快照对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配额"><span class="nav-number">1.5.</span> <span class="nav-text">配额</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件配额"><span class="nav-number">1.5.1.</span> <span class="nav-text">文件配额</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间配额"><span class="nav-number">1.5.2.</span> <span class="nav-text">空间配额</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#报告文件系统的基本信息和统计信息"><span class="nav-number">1.6.</span> <span class="nav-text">报告文件系统的基本信息和统计信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看拓扑实验"><span class="nav-number">1.7.</span> <span class="nav-text">查看拓扑实验</span></a></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -754,7 +790,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">37.9k</span>
+    <span title="Site words total count">43.1k</span>
   
 </div>
 
