@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-bounce.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hbase,Hive,Pig,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Hbase, Hive, PigHbase采用列式存储 Hbase简介HBase是一个分布式的、面向列的开源数据库，该技术来源于Google论文。HBase在Hadoop之上提供了类似于Bigtable的能力。 HBase的特性伸缩性：表可以很“高”（数十亿个数据行），可以很“宽”（数百万个列）。自动分区：当表增长时，表会自动分裂成Region，并分布到可用节点上。线性扩展和对于新节点的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop理论课-第六章Hbase, Hive, Pig">
+<meta property="og:url" content="http://tianyong.fun/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E5%85%AD%E7%AB%A0Hbase,%20Hive,%20Pig.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="Hbase, Hive, PigHbase采用列式存储 Hbase简介HBase是一个分布式的、面向列的开源数据库，该技术来源于Google论文。HBase在Hadoop之上提供了类似于Bigtable的能力。 HBase的特性伸缩性：表可以很“高”（数十亿个数据行），可以很“宽”（数百万个列）。自动分区：当表增长时，表会自动分裂成Region，并分布到可用节点上。线性扩展和对于新节点的">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/11/YJQCZQ.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/11/YJQReg.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yf6q8e.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/11/YJ3xYj.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/11/YJ8Yhd.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfgIfO.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/11/YJmulD.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yf53HH.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfIfJI.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfoHc6.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfTbPs.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yf7rQ0.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfHiTg.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfbJUg.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfL639.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfXdFU.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfXUoT.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfjLuR.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yfjbv9.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yfx0fS.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfxwY8.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfzCnA.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfzQ7q.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YfzfHI.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YhSlKH.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YhSMxe.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YhpZLj.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/YhpWkt.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yh9pX4.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yh9BEn.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yh9r40.md.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/18/Yh9DNq.md.png">
+<meta property="article:published_time" content="2020-05-11T08:09:32.000Z">
+<meta property="article:modified_time" content="2020-05-19T01:46:08.807Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="Hbase">
+<meta property="article:tag" content="Hive">
+<meta property="article:tag" content="Pig">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/05/11/YJQCZQ.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/hadoop理论课-第六章Hbase, Hive, Pig.html">
+
+
+
+
+
+  <title>hadoop理论课-第六章Hbase, Hive, Pig | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E5%85%AD%E7%AB%A0Hbase,%20Hive,%20Pig.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">hadoop理论课-第六章Hbase, Hive, Pig</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-11T16:09:32+08:00">
+                2020-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
+                    <span itemprop="name">Hadoop</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="Hbase-Hive-Pig"><a href="#Hbase-Hive-Pig" class="headerlink" title="Hbase, Hive, Pig"></a>Hbase, Hive, Pig</h1><h2 id="Hbase"><a href="#Hbase" class="headerlink" title="Hbase"></a>Hbase</h2><p><em>采用列式存储</em></p>
+<h3 id="Hbase简介"><a href="#Hbase简介" class="headerlink" title="Hbase简介"></a>Hbase简介</h3><p><em>HBase是一个分布式的、面向列的开源数据库，该技术来源于Google论文。HBase在Hadoop之上提供了类似于Bigtable的能力。</em></p>
+<h4 id="HBase的特性"><a href="#HBase的特性" class="headerlink" title="HBase的特性"></a>HBase的特性</h4><p><strong>伸缩性</strong>：表可以很“高”（数十亿个数据行），可以很“宽”（数百万个列）。<br><strong>自动分区</strong>：当表增长时，表会自动分裂成Region，并分布到可用节点上。<br><strong>线性扩展和对于新节点的自动处理</strong>：增加节点，指它指向RegionServer，Region自动负载均衡。<br><strong>普通商用硬件支持</strong><br><strong>容错</strong>：HBase在Hadoop的文件系统之上，利用了Hadoop的文件系统（HDFS）提供的容错能力。<br><strong>检索性能</strong>：HBase是一个数据模型，类似于谷歌的大表设计，可以提供快速随机访问海量结构化数据。</p>
+<h4 id="HBase数据模型"><a href="#HBase数据模型" class="headerlink" title="HBase数据模型"></a>HBase数据模型</h4><h5 id="关系型数据库和Hbase对比"><a href="#关系型数据库和Hbase对比" class="headerlink" title="关系型数据库和Hbase对比"></a>关系型数据库和Hbase对比</h5><p><a href="https://imgchr.com/i/YJQCZQ" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/11/YJQCZQ.md.png" alt="YJQCZQ.png" border="0"></a></p>
+<h5 id="列族存储的概念"><a href="#列族存储的概念" class="headerlink" title="列族存储的概念"></a>列族存储的概念</h5><p><a href="https://imgchr.com/i/YJQReg" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/11/YJQReg.md.png" alt="YJQReg.png" border="0"></a></p>
+<h5 id="HBase的数据模型"><a href="#HBase的数据模型" class="headerlink" title="HBase的数据模型"></a>HBase的数据模型</h5><p><a href="https://imgchr.com/i/Yf6q8e" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/Yf6q8e.md.png" alt="Yf6q8e.png" border="0"></a></p>
+<img src="https://s1.ax1x.com/2020/05/11/YJ3xYj.png" alt="YJ3xYj.png" border="0">
+
+<h6 id="列数据属性"><a href="#列数据属性" class="headerlink" title="列数据属性"></a>列数据属性</h6><img src="https://s1.ax1x.com/2020/05/11/YJ8Yhd.png" alt="YJ8Yhd.png" border="0">
+
+
+
+<h3 id="Region"><a href="#Region" class="headerlink" title="Region"></a>Region</h3><p><em>Hbase的Table中的所有行都按照row key的字典序排列</em></p>
+<p><em>Table 在行的方向上分割为多个Region。Region是HBase中分布式存储和负载均衡的最小单元</em></p>
+<p><em>不同Region分布到不同RegionServer上</em></p>
+<h4 id="Region分裂-Split"><a href="#Region分裂-Split" class="headerlink" title="Region分裂(Split)"></a>Region分裂(Split)</h4><p><a href="https://imgchr.com/i/YfgIfO" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfgIfO.png" alt="YfgIfO.png" border="0"></a></p>
+<h3 id="行式存储和列式存储"><a href="#行式存储和列式存储" class="headerlink" title="行式存储和列式存储"></a>行式存储和列式存储</h3><img src="https://s1.ax1x.com/2020/05/11/YJmulD.png" alt="YJmulD.png" border="0">
+
+<h4 id="OLTP-amp-OLAP"><a href="#OLTP-amp-OLAP" class="headerlink" title="OLTP &amp; OLAP"></a>OLTP &amp; OLAP</h4><h5 id="OLTP"><a href="#OLTP" class="headerlink" title="OLTP"></a>OLTP</h5><p><em>On-Line Transaction Processing（联机事务处理过程）。<br>也称为面向交易的处理过程，其基本特征是前台接收的用户数据可以立即传送到计算中心进行处理，并在很短的时间内给出处理结果，是对用户操作快速响应的方式之一。</em></p>
+<p><em>典型案例：银行转账</em></p>
+<p>（1）对于单列，获取频率较高，就使用列式存储。<br>（2）如果针对多列查询，使用并行处理查询效率也是很高，可采用列式存储。<br>（3）对于大数据的环境，利于数据压缩和线性扩展，也可以采用列式存储。<br>（4）事务使用率不高，数据量非常大。<br>（5）对于更新某些行的频率不高，也可以选择列式存储</p>
+<h5 id="OLAP"><a href="#OLAP" class="headerlink" title="OLAP"></a>OLAP</h5><p><em>On-Line Analytic Processing（联机分析处理过程）。<br>OLAP是数据仓库系统的主要应用，支持复杂的分析操作，侧重决策支持，并且提供直观易懂的查询结果。</em></p>
+<p><em>典型案例：商品推荐</em></p>
+<p>（1）关系之间的解决方案，表与表之关联大，可以采用行式存储。主键–外键<br>（2）强事务特性，如消费、资金的业务。<br>（3）如数据小于千万级，可考虑行式存储</p>
+<p><strong>OLTP是用于事务和查询处理<br>OLAP用于数据分析</strong></p>
+<h2 id="PIG"><a href="#PIG" class="headerlink" title="PIG"></a>PIG</h2><h2 id="HIVE-重点"><a href="#HIVE-重点" class="headerlink" title="HIVE(重点)"></a>HIVE(重点)</h2><h3 id="Hive简介"><a href="#Hive简介" class="headerlink" title="Hive简介"></a>Hive简介</h3><p><em>Hive是基于Hadoop的一个<strong>数据仓库工具</strong>，可以将<strong>结构化的</strong>数据文件映射为一张<strong>数据库表</strong>，并提供简单的<strong>sql</strong>查询功能，可以将sql语句转换为MapReduce任务进行运行</em></p>
+<p><em>Hive是一个翻译器：SQL —&gt; Hive引擎  —&gt; MapReduce程序</em></p>
+<p><em>Hive是构建在HDFS上的一个数据仓库（Data Warehouse）</em></p>
+<h4 id="为什么要使用Hive？"><a href="#为什么要使用Hive？" class="headerlink" title="为什么要使用Hive？"></a>为什么要使用Hive？</h4><p>直接使用 MapReduce 所面临的问题：<br>　　1、人员学习成本太高<br>　　2、项目周期要求太短<br>　　3、MapReduce实现复杂查询逻辑开发难度太大<br>为什么要使用 Hive：<br>　    1、更友好的接口：操作接口采用类 SQL 的语法，提供快速开发的能力。<br>         2、更低的学习成本：避免了写 MapReduce，减少开发人员的学习成本，使<br>                DBA、运维人员可以通过SQL来实现操作大数据。<br>         3、更好的扩展性：可自由扩展集群规模而无需重启服务，还支持用户自定<br>               义函数。　　　　</p>
+<h3 id="安装Hive"><a href="#安装Hive" class="headerlink" title="安装Hive"></a>安装Hive</h3><h4 id="Metastore三种运行模式"><a href="#Metastore三种运行模式" class="headerlink" title="Metastore三种运行模式"></a>Metastore三种运行模式</h4><img src="https://s1.ax1x.com/2020/05/18/Yf53HH.png" alt="Yf53HH.png" border="0">
+
+<h4 id="了解Metastore配置属性"><a href="#了解Metastore配置属性" class="headerlink" title="了解Metastore配置属性"></a>了解Metastore配置属性</h4><img src="https://s1.ax1x.com/2020/05/18/YfIfJI.png" alt="YfIfJI.png" border="0">
+
+<h4 id="安装Hive-1"><a href="#安装Hive-1" class="headerlink" title="安装Hive"></a>安装Hive</h4><img src="https://s1.ax1x.com/2020/05/18/YfoHc6.png" alt="YfoHc6.png" border="0">
+
+<h3 id="Hive的架构与工作原理"><a href="#Hive的架构与工作原理" class="headerlink" title="Hive的架构与工作原理"></a>Hive的架构与工作原理</h3><h4 id="Hive体系结构"><a href="#Hive体系结构" class="headerlink" title="Hive体系结构"></a>Hive体系结构</h4><p><a href="https://imgchr.com/i/YfTbPs" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfTbPs.md.png" alt="YfTbPs.png" border="0"></a></p>
+<p><em>CLI(终端)：常采用这个</em></p>
+<h4 id="Hive工作原理"><a href="#Hive工作原理" class="headerlink" title="Hive工作原理"></a>Hive工作原理</h4><p><a href="https://imgchr.com/i/Yf7rQ0" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/Yf7rQ0.md.png" alt="Yf7rQ0.png" border="0"></a></p>
+<h4 id="Hive与传统数据库的比较"><a href="#Hive与传统数据库的比较" class="headerlink" title="Hive与传统数据库的比较"></a>Hive与传统数据库的比较</h4><img src="https://s1.ax1x.com/2020/05/18/YfHiTg.png" alt="YfHiTg.png" border="0">
+
+
+
+<h3 id="HiveQL"><a href="#HiveQL" class="headerlink" title="HiveQL"></a>HiveQL</h3><h4 id="Hive支持的数据类型"><a href="#Hive支持的数据类型" class="headerlink" title="Hive支持的数据类型"></a>Hive支持的数据类型</h4><img src="https://s1.ax1x.com/2020/05/18/YfbJUg.md.png" alt="YfbJUg.png" border="0">
+
+<h4 id="建表命令"><a href="#建表命令" class="headerlink" title="建表命令"></a>建表命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE 表名（...）</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgchr.com/i/YfL639" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfL639.md.png" alt="YfL639.png" border="0"></a></p>
+<h4 id="数据加载命名"><a href="#数据加载命名" class="headerlink" title="数据加载命名"></a>数据加载命名</h4><h5 id="导入HDFS数据"><a href="#导入HDFS数据" class="headerlink" title="导入HDFS数据"></a>导入HDFS数据</h5><p><a href="https://imgchr.com/i/YfXdFU" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfXdFU.png" alt="YfXdFU.png" border="0"></a></p>
+<p><em>会把hdfs中对应文件移动到hive仓库中</em></p>
+<h5 id="导入本地数据"><a href="#导入本地数据" class="headerlink" title="导入本地数据"></a>导入本地数据</h5><img src="https://s1.ax1x.com/2020/05/18/YfXUoT.png" alt="YfXUoT.png" border="0">
+
+<p><em>复制</em></p>
+<h4 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h4><h5 id="内部表-托管表"><a href="#内部表-托管表" class="headerlink" title="内部表(托管表)"></a>内部表(托管表)</h5><h6 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h6><p><a href="https://imgchr.com/i/YfjLuR" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfjLuR.md.png" alt="YfjLuR.md.png" border="0"></a></p>
+<h6 id="创建内部表"><a href="#创建内部表" class="headerlink" title="创建内部表"></a>创建内部表</h6><img src="https://s1.ax1x.com/2020/05/18/Yfjbv9.md.png" alt="Yfjbv9.md.png" border="0">
+
+
+
+<h5 id="外部表"><a href="#外部表" class="headerlink" title="外部表"></a>外部表</h5><h6 id="特点-1"><a href="#特点-1" class="headerlink" title="特点"></a>特点</h6><p><a href="https://imgchr.com/i/Yfx0fS" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/Yfx0fS.md.png" alt="Yfx0fS.md.png" border="0"></a></p>
+<h6 id="创建外部表"><a href="#创建外部表" class="headerlink" title="创建外部表"></a>创建外部表</h6><p><a href="https://imgchr.com/i/YfxwY8" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfxwY8.md.png" alt="YfxwY8.md.png" border="0"></a></p>
+<h5 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h5><p><a href="https://imgchr.com/i/YfzCnA" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfzCnA.md.png" alt="YfzCnA.png" border="0"></a></p>
+<h5 id="桶表"><a href="#桶表" class="headerlink" title="桶表"></a>桶表</h5><p><a href="https://imgchr.com/i/YfzQ7q" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfzQ7q.md.png" alt="YfzQ7q.png" border="0"></a></p>
+<h5 id="临时表"><a href="#临时表" class="headerlink" title="临时表"></a>临时表</h5><p><a href="https://imgchr.com/i/YfzfHI" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YfzfHI.md.png" alt="YfzfHI.png" border="0"></a></p>
+<h5 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h5><h6 id="特点-2"><a href="#特点-2" class="headerlink" title="特点"></a>特点</h6><p><a href="https://imgchr.com/i/YhSlKH" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YhSlKH.md.png" alt="YhSlKH.md.png" border="0"></a></p>
+<h6 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h6><p><a href="https://imgchr.com/i/YhSMxe" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YhSMxe.md.png" alt="YhSMxe.md.png" border="0"></a></p>
+<h5 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h5><h6 id><a href="#" class="headerlink" title></a><a href="https://imgchr.com/i/YhpZLj" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YhpZLj.md.png" alt="YhpZLj.png" border="0"></a></h6><p><a href="https://imgchr.com/i/YhpWkt" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/YhpWkt.png" alt="YhpWkt.png" border="0"></a></p>
+<h6 id="条件函数"><a href="#条件函数" class="headerlink" title="条件函数"></a>条件函数</h6><p><a href="https://imgchr.com/i/Yh9pX4" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/Yh9pX4.png" alt="Yh9pX4.png" border="0"></a></p>
+<p><strong>Hive不支持数据删除和修改</strong></p>
+<h5 id="用户自定义函数"><a href="#用户自定义函数" class="headerlink" title="用户自定义函数"></a>用户自定义函数</h5><p><a href="https://imgchr.com/i/Yh9BEn" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/Yh9BEn.md.png" alt="Yh9BEn.md.png" border="0"></a><br><a href="https://imgchr.com/i/Yh9r40" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/18/Yh9r40.md.png" alt="Yh9r40.md.png" border="0"></a></p>
+<h5 id="Hive如何调优"><a href="#Hive如何调优" class="headerlink" title="Hive如何调优"></a>Hive如何调优</h5><p><img src="https://s1.ax1x.com/2020/05/18/Yh9DNq.md.png" alt="Yh9DNq.md.png" border="0"></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E5%85%AD%E7%AB%A0Hbase,%20Hive,%20Pig.html">hadoop理论课-第六章Hbase, Hive, Pig</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年05月11日 - 16:05</p>
+  <p><span>最后更新:</span>2020年05月19日 - 09:05</p>
+  <p><span>原始链接:</span><a href="/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E5%85%AD%E7%AB%A0Hbase,%20Hive,%20Pig.html" title="hadoop理论课-第六章Hbase, Hive, Pig">http://tianyong.fun/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E5%85%AD%E7%AB%A0Hbase,%20Hive,%20Pig.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/hadoop%E7%90%86%E8%AE%BA%E8%AF%BE-%E7%AC%AC%E5%85%AD%E7%AB%A0Hbase,%20Hive,%20Pig.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hbase/" rel="tag"><i class="fa fa-tag"></i> Hbase</a>
+          
+            <a href="/tags/Hive/" rel="tag"><i class="fa fa-tag"></i> Hive</a>
+          
+            <a href="/tags/Pig/" rel="tag"><i class="fa fa-tag"></i> Pig</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E7%AE%97%E6%B3%95-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" rel="next" title="算法-第二章">
+                <i class="fa fa-chevron-left"></i> 算法-第二章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E8%A7%86%E5%9B%BE.html" rel="prev" title="数据库系统-视图">
+                数据库系统-视图 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">194</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">35</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">119</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="http://wpa.qq.com/msgrd?v=3&uin2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hbase-Hive-Pig"><span class="nav-number">1.</span> <span class="nav-text">Hbase, Hive, Pig</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hbase"><span class="nav-number">1.1.</span> <span class="nav-text">Hbase</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hbase简介"><span class="nav-number">1.1.1.</span> <span class="nav-text">Hbase简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HBase的特性"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">HBase的特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HBase数据模型"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">HBase数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#关系型数据库和Hbase对比"><span class="nav-number">1.1.1.2.1.</span> <span class="nav-text">关系型数据库和Hbase对比</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#列族存储的概念"><span class="nav-number">1.1.1.2.2.</span> <span class="nav-text">列族存储的概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HBase的数据模型"><span class="nav-number">1.1.1.2.3.</span> <span class="nav-text">HBase的数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#列数据属性"><span class="nav-number">1.1.1.2.3.1.</span> <span class="nav-text">列数据属性</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Region"><span class="nav-number">1.1.2.</span> <span class="nav-text">Region</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Region分裂-Split"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Region分裂(Split)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#行式存储和列式存储"><span class="nav-number">1.1.3.</span> <span class="nav-text">行式存储和列式存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OLTP-amp-OLAP"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">OLTP &amp; OLAP</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#OLTP"><span class="nav-number">1.1.3.1.1.</span> <span class="nav-text">OLTP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#OLAP"><span class="nav-number">1.1.3.1.2.</span> <span class="nav-text">OLAP</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PIG"><span class="nav-number">1.2.</span> <span class="nav-text">PIG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HIVE-重点"><span class="nav-number">1.3.</span> <span class="nav-text">HIVE(重点)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hive简介"><span class="nav-number">1.3.1.</span> <span class="nav-text">Hive简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么要使用Hive？"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">为什么要使用Hive？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Hive"><span class="nav-number">1.3.2.</span> <span class="nav-text">安装Hive</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Metastore三种运行模式"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Metastore三种运行模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#了解Metastore配置属性"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">了解Metastore配置属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装Hive-1"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">安装Hive</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hive的架构与工作原理"><span class="nav-number">1.3.3.</span> <span class="nav-text">Hive的架构与工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hive体系结构"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">Hive体系结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hive工作原理"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">Hive工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hive与传统数据库的比较"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">Hive与传统数据库的比较</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HiveQL"><span class="nav-number">1.3.4.</span> <span class="nav-text">HiveQL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hive支持的数据类型"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">Hive支持的数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#建表命令"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">建表命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据加载命名"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">数据加载命名</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#导入HDFS数据"><span class="nav-number">1.3.4.3.1.</span> <span class="nav-text">导入HDFS数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#导入本地数据"><span class="nav-number">1.3.4.3.2.</span> <span class="nav-text">导入本地数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据模型"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#内部表-托管表"><span class="nav-number">1.3.4.4.1.</span> <span class="nav-text">内部表(托管表)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#特点"><span class="nav-number">1.3.4.4.1.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#创建内部表"><span class="nav-number">1.3.4.4.1.2.</span> <span class="nav-text">创建内部表</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#外部表"><span class="nav-number">1.3.4.4.2.</span> <span class="nav-text">外部表</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#特点-1"><span class="nav-number">1.3.4.4.2.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#创建外部表"><span class="nav-number">1.3.4.4.2.2.</span> <span class="nav-text">创建外部表</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#分区表"><span class="nav-number">1.3.4.4.3.</span> <span class="nav-text">分区表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#桶表"><span class="nav-number">1.3.4.4.4.</span> <span class="nav-text">桶表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#临时表"><span class="nav-number">1.3.4.4.5.</span> <span class="nav-text">临时表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#视图"><span class="nav-number">1.3.4.4.6.</span> <span class="nav-text">视图</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#特点-2"><span class="nav-number">1.3.4.4.6.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#创建"><span class="nav-number">1.3.4.4.6.2.</span> <span class="nav-text">创建</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据查询"><span class="nav-number">1.3.4.4.7.</span> <span class="nav-text">数据查询</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#"><span class="nav-number">1.3.4.4.7.1.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#条件函数"><span class="nav-number">1.3.4.4.7.2.</span> <span class="nav-text">条件函数</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#用户自定义函数"><span class="nav-number">1.3.4.4.8.</span> <span class="nav-text">用户自定义函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Hive如何调优"><span class="nav-number">1.3.4.4.9.</span> <span class="nav-text">Hive如何调优</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">74.8k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+  
+  
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-hibiki"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
