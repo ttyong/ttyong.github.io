@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="linux相关问题不同的子目录不同的含义1234567891011121314不同的子目录具有不同的含义，存放不同类型的文件信息。bin 存放二进制可执行文件(ls,cat,mkdir等)boot 存放用于系统引导时使用的各种文件dev 存放设备文件etc 存放系统配置文件home 存放所有用户文件的根目录lib 存放跟文件系统中的程序运行所需要的共享库及内核模块proc 虚拟文件系统，存放">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux相关命令和异常">
+<meta property="og:url" content="http://tianyong.fun/linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E5%92%8C%E5%BC%82%E5%B8%B8.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="linux相关问题不同的子目录不同的含义1234567891011121314不同的子目录具有不同的含义，存放不同类型的文件信息。bin 存放二进制可执行文件(ls,cat,mkdir等)boot 存放用于系统引导时使用的各种文件dev 存放设备文件etc 存放系统配置文件home 存放所有用户文件的根目录lib 存放跟文件系统中的程序运行所需要的共享库及内核模块proc 虚拟文件系统，存放">
+<meta property="article:published_time" content="2020-05-24T09:23:25.000Z">
+<meta property="article:modified_time" content="2022-01-17T09:00:18.967Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/linux相关命令和异常.html">
+
+
+
+
+
+  <title>linux相关命令和异常 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E5%92%8C%E5%BC%82%E5%B8%B8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">linux相关命令和异常</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-24T17:23:25+08:00">
+                2020-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux%E5%91%BD%E4%BB%A4/" itemprop="url" rel="index">
+                    <span itemprop="name">linux命令</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux%E5%91%BD%E4%BB%A4/linux%E5%BC%82%E5%B8%B8/" itemprop="url" rel="index">
+                    <span itemprop="name">linux异常</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="linux相关问题"><a href="#linux相关问题" class="headerlink" title="linux相关问题"></a>linux相关问题</h1><h2 id="不同的子目录不同的含义"><a href="#不同的子目录不同的含义" class="headerlink" title="不同的子目录不同的含义"></a>不同的子目录不同的含义</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">不同的子目录具有不同的含义，存放不同类型的文件信息。</span><br><span class="line">bin 存放二进制可执行文件(ls,cat,mkdir等)</span><br><span class="line">boot 存放用于系统引导时使用的各种文件</span><br><span class="line">dev 存放设备文件</span><br><span class="line">etc 存放系统配置文件</span><br><span class="line">home 存放所有用户文件的根目录</span><br><span class="line">lib 存放跟文件系统中的程序运行所需要的共享库及内核模块</span><br><span class="line">proc 虚拟文件系统，存放当前内存的映射</span><br><span class="line">usr 存放系统应用程序，比较重要的目录&#x2F;usr&#x2F;local 管理员软件安装目录</span><br><span class="line">var 存放运行时需要改变数据的文件</span><br><span class="line">mnt 挂载目录</span><br><span class="line">sbin 存储管理级别的二进制执行文件</span><br><span class="line">root 超级用户主目录</span><br><span class="line">opt 额外安装的可选应用程序包安装位置</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="centOS"><a href="#centOS" class="headerlink" title="centOS"></a>centOS</h2><h3 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h3><h4 id="XXXX-is-not-in-the-sudoers-file-This-incident-will-be-reported解决方法"><a href="#XXXX-is-not-in-the-sudoers-file-This-incident-will-be-reported解决方法" class="headerlink" title="XXXX is not in the sudoers file. This incident will be reported解决方法"></a>XXXX is not in the sudoers file. This incident will be reported解决方法</h4><p><a href="https://blog.csdn.net/qq_37964379/article/details/104193627" target="_blank" rel="external nofollow noopener noreferrer">解决方案1</a></p>
+<p><a href="https://blog.csdn.net/zhanglu1236789/article/details/49073635" target="_blank" rel="external nofollow noopener noreferrer">解决方案2</a></p>
+<h4 id="Mandatory-arguments-to-long-options-are-mandatory-for-short-options-too"><a href="#Mandatory-arguments-to-long-options-are-mandatory-for-short-options-too" class="headerlink" title="Mandatory arguments to long options are mandatory for short options too."></a>Mandatory arguments to long options are mandatory for short options too.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">长选项必须是必须的参数，对于短选项也是必须的。</span><br><span class="line">举例来说，如本例的--mode&#x3D;MODE中加短选项--m使用--mode</span><br><span class="line">的权限参数，如mkdir-- mode&#x3D;755 DIRECTORY 或mkdir --mode 755 DIRECTORY,这是长选项,对于短选项-m,其权限参数同样不可省略,如mkidr -m 755 DIRECTORY</span><br></pre></td></tr></table></figure>
+
+<h4 id="Found-a-swap-file-by-the-name-“-hello-txt-swp”"><a href="#Found-a-swap-file-by-the-name-“-hello-txt-swp”" class="headerlink" title="Found a swap file by the name “.hello.txt.swp”"></a>Found a swap file by the name “.hello.txt.swp”</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vi hello.txt</span><br><span class="line">E325: ATTENTION</span><br><span class="line">Found a swap file by the name &quot;.hello.txt.swp&quot;</span><br><span class="line">          owned by: root   dated: Sun Mar 29 18:14:30 2020</span><br><span class="line">         file name: ~root&#x2F;hello.txt</span><br><span class="line">          modified: YES</span><br><span class="line">         user name: root   host name: localhost.localdomain</span><br><span class="line">        process ID: 2158</span><br><span class="line">While opening file &quot;hello.txt&quot;</span><br><span class="line">             dated: Sun Mar 29 18:02:43 2020</span><br><span class="line"></span><br><span class="line">(1) Another program may be editing the same file.  If this is the case,</span><br><span class="line">    be careful not to end up with two different instances of the same</span><br><span class="line">    file when making changes.  Quit, or continue with caution.</span><br><span class="line">(2) An edit session for this file crashed.</span><br><span class="line">    If this is the case, use &quot;:recover&quot; or &quot;vim -r hello.txt&quot;</span><br><span class="line">    to recover the changes (see &quot;:help recovery&quot;).</span><br><span class="line">    If you did this already, delete the swap file &quot;.hello.txt.swp&quot;</span><br><span class="line">    to avoid this message.</span><br><span class="line">&quot;hello.txt&quot; 6L, 78C</span><br><span class="line">Press ENTER or type command to continue</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">这一大坨英文的大致意思其实就是之前你没有正确关闭文件，所以产生了临时文件，解决这个问题最直接最暴力的方式就是找到这个临时文件，把它干掉就可以一劳永逸了。</span><br><span class="line">默认和这个原始文件在一个目录下面，只不过它是一个隐藏文件，通过ll命令看不到，这个隐藏文件的后缀名为.swp，我们通过ll -a就可以看到了，找到以后 使用rm删除掉即可。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id><a href="#" class="headerlink" title></a></h4><h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><h4 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h4><h5 id="文件查看"><a href="#文件查看" class="headerlink" title="文件查看"></a>文件查看</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwd</span><br><span class="line">ls</span><br><span class="line">ll(ls -l的缩写)   列出当前目录下的文件（带文件信息）</span><br><span class="line">ll -a     列出当前目录下的所有文件（包括隐藏文件）</span><br><span class="line">ll --help 查看ls用法，--help是一个帮助命令</span><br><span class="line">ip addr</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建，重命名文件-文件夹"><a href="#创建，重命名文件-文件夹" class="headerlink" title="创建，重命名文件\文件夹"></a>创建，重命名文件\文件夹</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv 重命名或移动文件\文件夹</span><br></pre></td></tr></table></figure>
+
+<h5 id="链接文件"><a href="#链接文件" class="headerlink" title="链接文件"></a>链接文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">linux有两种链接：硬链接、符号(软)链接</span><br><span class="line"> 软链接功能类似类似于windows的快捷方式，主要用于节省磁盘空间</span><br><span class="line">首先看硬链接：硬链接相当于对原始文件的一个复制，不能对目录使用硬链接。</span><br><span class="line"> ln hello.txt hlink</span><br><span class="line">再看符号(软)链接：</span><br><span class="line">如果想使用软连接，需要添加-s，相当于快捷方式，不能删除原文件</span><br><span class="line">命令如下：</span><br><span class="line">ln -s hello.txt vlink</span><br></pre></td></tr></table></figure>
+
+<h5 id="切换目录"><a href="#切换目录" class="headerlink" title="切换目录"></a>切换目录</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd .</span><br><span class="line">cd ..</span><br><span class="line">cd ~</span><br><span class="line">cd &#x2F;</span><br><span class="line">cd directory</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除-文件夹-目录"><a href="#删除-文件夹-目录" class="headerlink" title="删除\文件夹(目录)"></a>删除\文件夹(目录)</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  rm命令可以删除文件或者目录，也可以将某个目录及其下属的所有文件及其子目录均删除掉</span><br><span class="line">对于链接文件，只是删除整个链接文件，而原有文件保持不变。</span><br><span class="line">rm 删除文件</span><br><span class="line">  删除文件，但是会有提示确认对话，输入y确认删除！</span><br><span class="line">rm -r 删除目录，需要确认</span><br><span class="line">  删除目录需要指定r参数，否则会提示不能删除</span><br><span class="line">  r是给rm加入递归(recursion)特性，也就是目标为文件夹时删除文件夹下所有数据</span><br><span class="line">rm -f 强制删除</span><br><span class="line">  f给rm加入强制(force)特性，也就是遇到删除时不需要询问即可直接删除</span><br><span class="line">  注意：这个操作还是比较危险的，建议慎用，因为删除之后就找不到了</span><br><span class="line">  Linux系统中没有回收站</span><br><span class="line">rm -rf 递归删除目录及其文件</span><br><span class="line">  Linux中最危险的操作，最具破坏性</span><br><span class="line">  rf参数可以强制递归删除任何数据，并且没有任何提示，慎用！慎用！慎用！</span><br></pre></td></tr></table></figure>
+
+<h5 id="复制-粘贴-剪切"><a href="#复制-粘贴-剪切" class="headerlink" title="复制\粘贴\剪切"></a>复制\粘贴\剪切</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cp 复制&amp;粘贴文件</span><br><span class="line">  cp hello.txt  hello-bak.txt</span><br><span class="line">cp -r 复制&amp;粘贴文件或目录  复制目录，需要指定r参数</span><br><span class="line">  cp -r abc xyz</span><br><span class="line">mv 移动（剪切）文件或目录</span><br><span class="line">  mv xyz abc</span><br></pre></td></tr></table></figure>
+
+<h5 id="远程复制"><a href="#远程复制" class="headerlink" title="远程复制"></a>远程复制</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">~~~</span><br><span class="line">常见用法：</span><br><span class="line">从本地复制（192.168.182.131）到远程主机 （192.168.182.130）</span><br><span class="line">scp &#x2F;root&#x2F;hello.txt 192.168.182.130:&#x2F;root</span><br><span class="line">提示：</span><br><span class="line">显示进度在scp后添加-v</span><br><span class="line">复制目录在scp后添加-r</span><br><span class="line">静默复制模式在scp后添加-q</span><br><span class="line">scp -rq &#x2F;root&#x2F;abc 192.168.182.130:&#x2F;root</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  文件属性</span><br><span class="line"></span><br><span class="line">[![7tlJiD.png](https:&#x2F;&#x2F;s4.ax1x.com&#x2F;2022&#x2F;01&#x2F;16&#x2F;7tlJiD.png)](https:&#x2F;&#x2F;imgtu.com&#x2F;i&#x2F;7tlJiD)</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">黑带七段</span><br><span class="line">第一段：权限</span><br><span class="line">第一个字符代表文件（-）、目录（d），链接（l）</span><br><span class="line">其余字符每3个一组（rwx），读（r）、写（w）、执行（x）</span><br><span class="line">第一组：文件所有者的权限是读、写和执行</span><br><span class="line">第二组：与文件所有者同一组的用户的权限</span><br><span class="line">第三组：不与文件所有者同组的其他用户的权限</span><br><span class="line">也可用数字表示为：r&#x3D;4，w&#x3D;2，x&#x3D;1，如：权限6可以表示为r+w&#x3D;6</span><br><span class="line">第二段：目录&#x2F;链接个数</span><br><span class="line">对于目录文件，表示它的第一级子目录的个数</span><br><span class="line">注意：此处的值要减2才等于该目录下的子目录的实际个数(目录下默认包含.和..这两个目录)</span><br><span class="line">对于其他文件，默认是1</span><br><span class="line">第三段：所属用户</span><br><span class="line">第四段：所属组</span><br><span class="line">第五段：文件大小（字节）</span><br><span class="line">第六段：最后修改时间</span><br><span class="line">第七段：文件\文件夹名称</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">##### chmod 分配权限</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">常见用法：</span><br><span class="line">  chmod u+x xxx.txt 给当前所有者添加执行权限【x表示是执行权限】</span><br><span class="line"> 针对hello.txt文件，给当前用户添加执行权限</span><br><span class="line">  chmod 777 xxx.txt 添加rwxrwxrwx权限</span><br><span class="line">  给hello.txt添加777权限</span><br><span class="line">  chmod 777 hello.txt</span><br><span class="line">chmod -R 777 xxx 给指定目录递归添加rwxrwxrwx权限</span><br><span class="line">  给abc目录及其子目录中的所有内容添加777权限</span><br><span class="line">  chmod -R 777 abc</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  内容查看</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">cat 显示文本内容，类似windows中的type(顺序输出)</span><br><span class="line">  cat anaconda-ks.cfg </span><br><span class="line">cat -b 显示行号输出</span><br><span class="line">  cat -b anaconda-ks.cfg </span><br><span class="line">分屏显示 more</span><br><span class="line">  用一次显示一屏，没有显示完时最后一行显示进度。回车显示下一行，按b显示上一页，空格显示下一页，q退出。</span><br><span class="line">  根据当前屏幕大小显示一屏内容</span><br><span class="line">more anaconda-ks.cfg</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">##### 压缩、解压</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">常见用法：压缩和解压</span><br><span class="line">参数：</span><br><span class="line">-z 是否同时具有 gzip 的属性？亦即是否需要用 gzip 压缩？</span><br><span class="line">-c 创建一个压缩文件的参数指令(create 的意思)；</span><br><span class="line">-x 解开一个压缩文件的参数指令！</span><br><span class="line">-v 压缩的过程中显示文件！</span><br><span class="line">-f 使用档案名字，这个参数是最后一个参数，后面只能接档案名！</span><br><span class="line">注意：特别注意，在参数的下达中， c&#x2F;x 仅能存在一个！不可同时存在！</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">**压缩**</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">tar -zcvf 打包及压缩（gzip方式）</span><br><span class="line">将abc目录的内容打包压缩为abc.tar.gz</span><br><span class="line">  [root@localhost ~]# ll</span><br><span class="line">  drwxrwxrwx. 3 root root   17 Mar 29 14:24 abc</span><br><span class="line">  [root@localhost ~]# tar -zcvf abc.tar.gz abc</span><br><span class="line">  [root@localhost ~]# ll</span><br><span class="line">  drwxrwxrwx. 3 root root   17 Mar 29 14:24 abc</span><br><span class="line">  -rw-r--r--. 1 root root  130 Mar 29 15:24 abc.tar.gz</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">**解压**</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">tar -zxvf 解压（gzip包）</span><br><span class="line">tar -zxvf abc.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@localhost ~]# ll</span><br><span class="line">drwxrwxrwx. 3 root root   17 Mar 29 14:24 abc</span><br><span class="line">-rw-r--r--. 1 root root  130 Mar 29 15:24 abc.tar.gz</span><br><span class="line">[root@localhost ~]# mkdir test</span><br><span class="line">[root@localhost ~]# cd test&#x2F;</span><br><span class="line">[root@localhost test]# mv ..&#x2F;abc.tar.gz  .</span><br><span class="line">[root@localhost test]# ll</span><br><span class="line">total 4</span><br><span class="line">-rw-r--r--. 1 root root 130 Mar 29 15:24 abc.tar.gz</span><br><span class="line">[root@localhost test]# tar -zxvf abc.tar.gz </span><br><span class="line">abc&#x2F;</span><br><span class="line">abc&#x2F;xyz&#x2F;</span><br><span class="line">[root@localhost test]# ll</span><br><span class="line">total 4</span><br><span class="line">drwxrwxrwx. 3 root root  17 Mar 29 14:24 abc</span><br><span class="line">-rw-r--r--. 1 root root 130 Mar 29 15:24 abc.tar.gz</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  输出及显示</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">echo：将内容输出到设备，类似java里面的system.out.println()</span><br><span class="line">常见用法：</span><br><span class="line">echo &quot;hello\t\t world！&quot; 不解析转义字符</span><br><span class="line">echo -e &quot;hello\t\t world！&quot; 解析转义字符</span><br><span class="line">echo $PATH 输出环境变量</span><br><span class="line">注意：在打印变量信息的时候，使用echo $&#123;PATH&#125; 也可以，效果是一样的</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# echo &quot;hello\t\t world！&quot;</span><br><span class="line">hello\t\t world！</span><br><span class="line">[root@localhost ~]# echo -e &quot;hello\t\t world！&quot;</span><br><span class="line">hello            world！</span><br><span class="line">[root@localhost ~]# echo $PATH</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;sbin:&#x2F;usr&#x2F;local&#x2F;bin:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin:&#x2F;root&#x2F;bin</span><br><span class="line">[root@localhost ~]# echo $&#123;PATH&#125;</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;sbin:&#x2F;usr&#x2F;local&#x2F;bin:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin:&#x2F;root&#x2F;bin</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  软件安装和卸载</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;第一种：压缩包安装方式，直接解压，配置相应的环境变量即可使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">yum集成了连接网络，软件安装，删除，更新等功能，yum在配置好repo后，机器只要连网，就能智能化安装软件，使用yum 安装的好处在于可以自动安装软件需要的依赖包</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">安装</span><br><span class="line">  yum install -y 安装</span><br><span class="line">升级</span><br><span class="line">  yum update 不跟则更新全部</span><br><span class="line">查找和显示</span><br><span class="line">  yum info 显示包信息</span><br><span class="line">  yum list 不跟则显示已安装或可安装包</span><br><span class="line">删除程序</span><br><span class="line">  yum remove</span><br><span class="line">清除缓存</span><br><span class="line">  yum clean all 清除所有缓存（包含文件、旧软件）</span><br><span class="line">在这里大家先了解yum的基本语法，等后面具体使用到的时候我们再演示。</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  查看操作历史</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">history保留了最近执行的命令记录，默认可以保留1000。</span><br><span class="line">历史清单从0开始编号到最大值。</span><br><span class="line">常见用法：</span><br><span class="line">  history N 显示最近N条命令</span><br><span class="line">  history -c 清除所有的历史记录</span><br><span class="line">  history -w xxx.txt 保存历史记录到文本xxx.txt</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  磁盘使用情况</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">使用df命令查看硬盘使用情况</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# df -h</span><br><span class="line">Filesystem               Size  Used Avail Use% Mounted on</span><br><span class="line">devtmpfs                 898M     0  898M   0% &#x2F;dev</span><br><span class="line">tmpfs                    910M     0  910M   0% &#x2F;dev&#x2F;shm</span><br><span class="line">tmpfs                    910M  9.5M  901M   2% &#x2F;run</span><br><span class="line">tmpfs                    910M     0  910M   0% &#x2F;sys&#x2F;fs&#x2F;cgroup</span><br><span class="line">&#x2F;dev&#x2F;mapper&#x2F;centos-root   17G  1.2G   16G   7% &#x2F;</span><br><span class="line">&#x2F;dev&#x2F;sda1               1014M  150M  865M  15% &#x2F;boot</span><br><span class="line">tmpfs                    182M     0  182M   0% &#x2F;run&#x2F;user&#x2F;0</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####   清屏小命令</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">[root@localhost ~]# clear</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####   查看内存使用情况</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">free 查看内存和交换空间的使用情况</span><br><span class="line">常见用法：</span><br><span class="line">free -m：显示内存单位为MB</span><br><span class="line">free -h：根据值的大小，显示易于识别的单位</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@localhost ~]# free -m</span><br><span class="line">              total        used        free      shared  buff&#x2F;cache   available</span><br><span class="line">Mem:           1819         169        1509           9         140        1501</span><br><span class="line">Swap:          2047           0        2047</span><br><span class="line">[root@localhost ~]# free -h</span><br><span class="line">              total        used        free      shared  buff&#x2F;cache   available</span><br><span class="line">Mem:           1.8G        169M        1.5G        9.5M        140M        1.5G</span><br><span class="line">Swap:          2.0G          0B        2.0G</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">#####  关机重启快捷命令</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">shutdown -h now 关机</span><br><span class="line"></span><br><span class="line">reboot -h now 重启</span><br><span class="line"></span><br><span class="line">exit 退出当前登录状态</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 高级命令</span><br><span class="line"></span><br><span class="line">##### Linux高级命令之文件相关</span><br><span class="line"></span><br><span class="line">###### vi文件编辑利器的使用</span><br><span class="line"></span><br><span class="line">**基础操作**</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;文件不存在时，自动创建一个空文件，也可以用touch</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">不可编辑模式</span><br><span class="line">可编辑模式</span><br></pre></td></tr></table></figure>
+
+<p><strong>高级操作</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">1.查找字符串  对文件中字符串的快速查找</span><br><span class="line">  vi里的命令模式：&#x2F;查找内容</span><br><span class="line">  有多个结果是n代表下一个查询结果</span><br><span class="line">  </span><br><span class="line">2.查找某一行内容  已经知道了需要修改的内容在文件的第几行</span><br><span class="line">  vi里的命令模式：shift+冒号+具体行号</span><br><span class="line">  </span><br><span class="line">3.使vi编辑里每行具有行号</span><br><span class="line">  shift+冒号+set nu</span><br><span class="line">  </span><br><span class="line">4.复制粘贴</span><br><span class="line">  使用vi命令打开hello.txt，把光标移动到希望复制的那一行内容上面，然后连按yy，这样就把这一行内容复制上了，然后按p就会把刚才复制的内容粘贴到下一行，按一次p粘贴一行，一直按到你喊停为止。</span><br><span class="line">最后按shift和: 输入wq保存退出即可。</span><br><span class="line">5.快速删除</span><br><span class="line">  进入命令模式，把光标定位到想要删除的那一行内容上面，连按dd，就可以删除当前行的内容。</span><br><span class="line">  还有一个大招，如果想要清空当前行下的所有内容，先连按999，然后再连按dd，这样就可以清空光标所在行下的所有内容了。</span><br><span class="line">6.快速跳到文件首行和末行</span><br><span class="line">  在命令模式下，通过大写的G可以快速将光标移动到最后一行</span><br><span class="line">  在命令模式下输入小写的gg即可快速跳转到第一行</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="文件内容统计相关命令"><a href="#文件内容统计相关命令" class="headerlink" title="文件内容统计相关命令"></a>文件内容统计相关命令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1. wc：统计字数相关信息</span><br><span class="line">  Usage: wc [OPTION]... [FILE]...</span><br><span class="line">  </span><br><span class="line">  -c, --bytes            print the byte counts      字节数(含换行符)</span><br><span class="line">  -m, --chars            print the character counts  字符数(含换行符)</span><br><span class="line">  -l, --lines            print the newline counts    行数</span><br><span class="line">      --files0-from&#x3D;F    read input from the files specified by</span><br><span class="line">                           NUL-terminated names in file F;</span><br><span class="line">                           If F is - then read names from standard input</span><br><span class="line">  -L, --max-line-length print the length of the longest line 最长行字符数（不含换行）</span><br><span class="line">  -w, --words      print the word counts   表示文件中单词的个数，默认使用空白符切割</span><br><span class="line">      --help     display this help and exit</span><br><span class="line">      --version  output version information and exit</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2. sort：排序</span><br><span class="line">  sort命令是对数据进行排序的，它后面也支持很多个参数，我们在这里只讲三个</span><br><span class="line">  -n的意思是按照数据的数值大小排序</span><br><span class="line">  这个时候是正序排序，能不能倒序排序呢？当然可以，倒序需要使用-r</span><br><span class="line">  单纯使用-r是不行的，需要让n和r同时上场</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cat num.txt </span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">1</span><br><span class="line">[root@localhost ~]# sort num.txt </span><br><span class="line">1</span><br><span class="line">10</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">9</span><br><span class="line">[root@localhost ~]# sort -n num.txt </span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">[root@localhost ~]# sort -r num.txt </span><br><span class="line">9</span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">10</span><br><span class="line">1</span><br><span class="line">[root@localhost ~]# sort -nr num.txt </span><br><span class="line">10</span><br><span class="line">9</span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">~~~</span><br><span class="line">[root@localhost ~]# cat num2.txt </span><br><span class="line">bc 2</span><br><span class="line">ax 1</span><br><span class="line">aa 9</span><br><span class="line">dd 7</span><br><span class="line">xc 15</span><br><span class="line">[root@localhost ~]# sort -n num2.txt 对第一列字母排序</span><br><span class="line">aa 9</span><br><span class="line">ax 1</span><br><span class="line">bc 2</span><br><span class="line">dd 7</span><br><span class="line">xc 15</span><br><span class="line"> </span><br><span class="line">在-n的基础上增加-k 这个参数后面需要指定一个数字，这个数字表示是文件中的第几列，编号从1开始</span><br><span class="line">[root@localhost ~]# sort -k 2 -n num2.txt   </span><br><span class="line">ax 1</span><br><span class="line">bc 2</span><br><span class="line">dd 7</span><br><span class="line">aa 9</span><br><span class="line">xc 15</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">3. uniq：检查重复的行列</span><br><span class="line">什么参数都不带的</span><br><span class="line">[root@localhost ~]# cat hello.txt </span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">[root@localhost ~]# uniq  hello.txt 出现一次也是重复一次</span><br><span class="line">hello world!</span><br><span class="line"></span><br><span class="line">-c参数，这个参数表示在输出行的前面加上数据在文件中重复出现的次数</span><br><span class="line">[root@localhost ~]# uniq -c hello.txt </span><br><span class="line">      6 hello world!</span><br><span class="line">      </span><br><span class="line">-u参数，表示返回文件中不重复的行</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">我重新创建一个文件，test.txt。我想要对这个文件中的内容进行去重，最后返回hello和abc</span><br><span class="line">[root@localhost ~]# cat test.txt </span><br><span class="line">hello</span><br><span class="line">hello</span><br><span class="line">abc</span><br><span class="line">hello</span><br><span class="line">hello</span><br><span class="line"></span><br><span class="line">在这执行uniq test.txt 【对连续相同的数据行进行去重】</span><br><span class="line">[root@localhost ~]# uniq test.txt       </span><br><span class="line">hello</span><br><span class="line">abc</span><br><span class="line">hello</span><br><span class="line"></span><br><span class="line">最终显示的结果并不是我想要的</span><br><span class="line">目前使用uniq test.txt这个命令最终获取的结果有问题是因为文件中的数据没有排序，相同的数据不是连续在一起的，uniq只能对连续在一起的重复内容进行去重，那我们想要利用这个特性的话就需要先对数据进行排序，再去重</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">4. 管道命令，管道命令很简单，就是一个 |</span><br><span class="line">通过管道可以把前面一个命令的输出结果传递给后面一个命令</span><br><span class="line">[root@localhost ~]# sort test.txt | uniq</span><br><span class="line">abc</span><br><span class="line">hello</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">5. head：取前N条数据，默认返回前10条，后面可以通过指定数字来控制返回的数据条数</span><br><span class="line"> head -number xxx</span><br><span class="line"> </span><br><span class="line"> 这样是没有什么意义的，我们想取前几条数据其实就是想取topN，这样直接获取的数据是没有排序的，所以可以把sort和head命令放在一块使用</span><br><span class="line">[root@localhost ~]# sort -nr num.txt  | head -3</span><br><span class="line">10</span><br><span class="line">9</span><br><span class="line">3</span><br><span class="line"></span><br><span class="line">其实我们前面学习的这些命令都可以处理管道传输过来的数据。</span><br><span class="line">例如 cat和sort命令</span><br><span class="line">[root@localhost ~]# cat num.txt  | sort -nr</span><br><span class="line">10</span><br><span class="line">9</span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">1</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">##### Linux高级命令之日期相关</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">date命令默认获取系统当前时间</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# date</span><br><span class="line">Sun Mar 29 20:48:15 CST 2026</span><br><span class="line"></span><br><span class="line">date命令支持对时间进行格式化</span><br><span class="line">通过%Y，%m，%d这些参数可以对日期进行格式化</span><br><span class="line">date +&quot;%Y-%m-%d %H:%M:%S&quot;</span><br><span class="line">注意：date后面的这些参数中间如果没有空格，可以省略双引号。</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# date +&quot;%Y-%m-%d %H:%M:%S&quot;</span><br><span class="line">2026-03-29 21:06:45</span><br><span class="line"></span><br><span class="line">时间戳</span><br><span class="line">这里面的%s表示获取自1970-01-01 00:00:00以来的秒数</span><br><span class="line">[root@localhost ~]# date +%s</span><br><span class="line">1585487600</span><br><span class="line"></span><br><span class="line">虽然date命令没有直接支持获取毫秒数，但是从秒换算为毫秒也很简单啊，最直接粗暴的方式就是在秒数后面加3个0</span><br><span class="line">[root@localhost ~]# date +%s&quot;000&quot;</span><br><span class="line">1585487796000</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">获取指定时间的时间戳</span><br><span class="line">date命令 提供的有--date这个参数，可以指定时间</span><br><span class="line">date --date&#x3D;&quot;2026-01-01 00:00:00&quot;</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# date --date&#x3D;&quot;2026-01-01 00:00:00&quot;</span><br><span class="line">Wed Jan  1 00:00:00 CST 2026</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# date --date&#x3D;&quot;2026-01-01 00:00:00&quot; +%s </span><br><span class="line">1577808000</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">获取昨天的日期，这个需求也需要使用--date参数实现</span><br><span class="line">[root@localhost ~]# date --date&#x3D;&quot;1 days ago&quot;</span><br><span class="line">Sat Mar 28 21:36:37 CST 2026</span><br><span class="line"></span><br><span class="line">再对返回的结果进行格式化，只获取年月日</span><br><span class="line">date --date&#x3D;&quot;1 days ago&quot; +%Y-%m-%d</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# date --date&#x3D;&quot;1 days ago&quot; +%Y-%m-%d</span><br><span class="line">2026-03-28</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##### Linux高级命令之进程相关</span><br><span class="line"></span><br><span class="line">###### ps：显示进程信息</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">一个典型应用就是在后面跟e和f参数，显示系统内的所有进程</span><br><span class="line">[root@localhost ~]# ps -ef</span><br><span class="line">UID         PID   PPID  C STIME TTY          TIME CMD</span><br><span class="line">root          1      0  0 20:46 ?        00:00:01 &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;systemd --sw</span><br><span class="line">root          2      0  0 20:46 ?        00:00:00 [kthreadd]</span><br><span class="line">root          4      2  0 20:46 ?        00:00:00 [kworker&#x2F;0:0H]</span><br><span class="line">........</span><br><span class="line"></span><br><span class="line">grep命令以后，就可以把这两个命令组合到一块使用</span><br><span class="line">ps -ef | grep java</span><br><span class="line"></span><br><span class="line">这是一个比较常用的操作，过滤出系统内的java进程信息</span><br><span class="line">[root@localhost ~]# ps -ef | grep java</span><br><span class="line">root       2239   1973  0 22:19 pts&#x2F;0    00:00:00 grep --color&#x3D;auto java</span><br><span class="line">注意：这里面返回的grep --color&#x3D;auto这一行信息表示是grep这个命令本身</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# ps -ef | grep python</span><br><span class="line">root        736      1  0 20:46 ?        00:00:00 &#x2F;usr&#x2F;bin&#x2F;python2 -Es &#x2F;usr&#x2F;sbin&#x2F;firewalld --nofork --nopid</span><br><span class="line">root       1070      1  0 20:46 ?        00:00:00 &#x2F;usr&#x2F;bin&#x2F;python2 -Es &#x2F;usr&#x2F;sbin&#x2F;tuned -l -P</span><br><span class="line">root       2241   1973  0 22:19 pts&#x2F;0    00:00:00 grep --color&#x3D;auto python</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">###### netstat：显示端口信息</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;netstat也是显示进程相关信息的，只不过可以比ps命令额外显示端口相关的信息</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">但是这个命令默认是没有安装的，最方便的方式就是使用yum来在线安装</span><br><span class="line">yum install -y net-tools</span><br><span class="line">netstat的常见用法是</span><br><span class="line">netstat -anp</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# netstat -anp</span><br><span class="line">Active Internet connections (servers and established)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID&#x2F;Program name    </span><br><span class="line">tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      1312&#x2F;master         </span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1071&#x2F;sshd           </span><br><span class="line">tcp        0     52 192.168.182.132:22      192.168.182.1:51472     ESTABLISHED 1969&#x2F;sshd: root@pts </span><br><span class="line">tcp6       0      0 ::1:25                  :::*                    LISTEN      1312&#x2F;master         </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      1071&#x2F;sshd       </span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">这里会显示很多的进程和端口信息，netstat也需要和grep命令结合使用</span><br><span class="line">假设我们想看一下ssh服务的端口使用情况，ssh服务的端口是22，如果ssh服务开启了，那么22这个端口就会被监听。</span><br><span class="line">netstat -anp | grep 22</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# netstat -anp | grep 22</span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1071&#x2F;sshd           </span><br><span class="line">tcp        0     52 192.168.182.132:22      192.168.182.1:51472     ESTABLISHED 1969&#x2F;sshd: root@pts </span><br><span class="line">tcp6       0      0 :::22                   :::*                    LISTEN      1071&#x2F;sshd</span><br></pre></td></tr></table></figure>
+
+<h6 id="jps：显示Java进程信息"><a href="#jps：显示Java进程信息" class="headerlink" title="jps：显示Java进程信息"></a>jps：显示Java进程信息</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jps：类似ps命令，不同的是ps是用来显示所有进程信息的，而jps只显示Java进程</span><br><span class="line">准确的说jps是显示当前用户已启动的Java进程信息，信息包括进程号和简短的进程command</span><br><span class="line">注意：jps是Java提供的命令，只有在安装配置好Java环境之后才能使用</span><br></pre></td></tr></table></figure>
+
+<h6 id="top：动态监控进程信息"><a href="#top：动态监控进程信息" class="headerlink" title="top：动态监控进程信息"></a>top：动态监控进程信息</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  主要作用在于动态显示系统消耗资源最多的进程信息，包含进程ID、内存占用、CPU占用等</span><br><span class="line">和ps命令作用基本相同，唯一的区别是top命令能够动态显示进程信息</span><br><span class="line">  注意：这里的CPU使用情况是总体CPU的使用情况，如果是多核CPU，想查看具体每个CPU的使用情况的话可以在监控模式中按键盘上的1，就可以查看每一个CPU的情况了</span><br><span class="line">  按q可以退出此监控模式</span><br></pre></td></tr></table></figure>
+
+<h6 id="kill命令"><a href="#kill命令" class="headerlink" title="kill命令"></a>kill命令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">可以使用前面学习的ps命令，找到程序对应的PID，然后使用kill命令杀掉这个进程，进程被杀掉了，对应的程序也就停止了</span><br><span class="line"></span><br><span class="line">如果遇到有一些进程使用kill命令杀不掉，那就可以使用kill -9 PID ,这样可以实现强制杀进程。</span><br></pre></td></tr></table></figure>
+
+<h5 id="Linux三剑客"><a href="#Linux三剑客" class="headerlink" title="Linux三剑客"></a>Linux三剑客</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这三个命令合称Linux的三剑客，从三剑客这个名字上大家可想而知它们有多厉害，如果把它们的全部内容都讲完的话，至少讲三天三夜，最可怕的是讲了三天三夜，最后你会发现里面很多的知识点是我们搞大数据开发压根用不到的</span><br></pre></td></tr></table></figure>
+
+<h5 id="grep：查找"><a href="#grep：查找" class="headerlink" title="grep：查找"></a>grep：查找</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">常用于查找文件里符合条件的字符串</span><br><span class="line">[root@localhost ~]# cat hello.txt        </span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">abc</span><br><span class="line">[root@localhost ~]# grep abc hello.txt      </span><br><span class="line">abc</span><br><span class="line"></span><br><span class="line">grep后面跟的这个字符串是可以支持正则表达式的</span><br><span class="line">查询hello.txt中以字母a开头的内容，这样写也是可以的</span><br><span class="line">[root@localhost ~]# grep ^a hello.txt  </span><br><span class="line">abc</span><br><span class="line"></span><br><span class="line">忽略大小写功能</span><br><span class="line">[root@localhost ~]# grep ABC hello.txt   </span><br><span class="line">[root@localhost ~]# grep -i ABC hello.txt  </span><br><span class="line">abc</span><br><span class="line"></span><br><span class="line">查询出来对应字符串带行号</span><br><span class="line">[root@localhost ~]# grep -i ABC -n hello.txt </span><br><span class="line">7:abc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ps -ef | grep java</span><br><span class="line">root       2497   2247  0 22:34 pts&#x2F;1    00:00:00 grep --color&#x3D;auto java</span><br><span class="line"></span><br><span class="line">显示出这个信息其实说明没有找到java进程信息，下面返回的这一行表示是grep进程本身，这样容易给我们造成错觉，想把它去掉，怎么去掉呢？</span><br><span class="line"></span><br><span class="line">很简单，使用grep加上-v参数再做一次过滤即可，表示忽略包含指定字符串的数据。</span><br><span class="line">[root@localhost ~]# ps -ef | grep java | grep -v grep</span><br></pre></td></tr></table></figure>
+
+<h5 id="sed：编辑"><a href="#sed：编辑" class="headerlink" title="sed：编辑"></a>sed：编辑</h5><p><strong>增添数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">之前我们修改文件是使用vi命令，大家可以想象一个场景，如果让你同时去修改上千个文件里面的某一行内容，你再使用vi去操作，是不是有点手软，虽然这个上千个文件有点夸张，但是在实际工作中类似这样同时修改10几个文件的场景还是有的，大家不要想着，就10几个文件，我使用vi命令不到10分钟就搞完了，如果你这样想，那就完了，程序员一定要懒，这个懒是指能用程序去做的，千万不要动手。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cat hello.txt </span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">abc</span><br><span class="line">[root@localhost ~]# sed &#39;2a\haha&#39; hello.txt  （append）</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">haha</span><br><span class="line">abc</span><br><span class="line">注意了，sed 默认不会直接修改源文件数据，而是会将数据复制到缓冲区中，修改也仅限于缓冲区中的数据，最终把缓冲区内的数据输出到控制台</span><br><span class="line">sed &#39;1a\haha&#39; hello.txt 此操作会将数据添加到第一行下面(也就是第二行的位置)</span><br><span class="line">sed &#39;0a\haha&#39; hello.txt 此操作会报错，行号是从1开始的</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i的意思表示在指定行的前面插入一行，它的使用方式和参数a一样</span><br><span class="line">我们来演示一下</span><br><span class="line">[root@localhost ~]# sed &#39;1i\haha&#39; hello.txt   （insert)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">特殊参数 $ 它在这里表示是最后一行的意思</span><br><span class="line">[root@localhost ~]# sed &#39;$i\haha&#39; hello.txt</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# sed &#39;7d&#39; hello.txt  </span><br><span class="line">[root@localhost ~]# sed &#39;$d&#39; hello.txt   $参数，删除最后一行，更加便捷</span><br></pre></td></tr></table></figure>
+
+<p><strong>替换数据</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">~~~</span><br><span class="line">修改一下文件内容中的l这个字符</span><br><span class="line">sed &#39;s&#x2F;l&#x2F;a&#x2F;1&#39; hello.txt</span><br><span class="line">sed后面的参数格式为[address]s&#x2F;pattern&#x2F;replacement&#x2F;flags</span><br><span class="line"></span><br><span class="line">address 表示指定要操作的具体行，是一个可选项</span><br><span class="line">s 表示替换操作，pattern 指的是需要替换的内容，replacement 指的是要替换的新内容，flags有多种用法，我们挑两种说一下</span><br><span class="line">  第一种就是flags可以表示为1~512之间的任意一个数字，表示指定要替换的字符串在这一行中出现第几次时才进行替换</span><br><span class="line">  第二种就是flags可以直接表示为g，这样的意思就是对每一行数据中所有匹配到的内容全部进行替换</span><br><span class="line">  如果flags位置的值为空，则只会在第一次匹配成功时做替换操作</span><br><span class="line">  </span><br><span class="line">sed &#39;s&#x2F;l&#x2F;a&#x2F;1&#39; hello.txt </span><br><span class="line">sed &#39;s&#x2F;l&#x2F;a&#x2F;2&#39; hello.txt </span><br><span class="line">sed &#39;s&#x2F;l&#x2F;a&#x2F;3&#39; hello.txt</span><br><span class="line">sed &#39;s&#x2F;l&#x2F;a&#x2F;g&#39; hello.txt </span><br><span class="line">sed &#39;s&#x2F;l&#x2F;a&#x2F;&#39; hello.txt</span><br><span class="line">上述是每一行只要满足要求，都会替换</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">我们现在的替换操作都是会匹配文件中的所有行，如果我们只想替换指定行中的内容怎么办呢？只需要增加address 参数即可。</span><br><span class="line"> sed &#39;2s&#x2F;l&#x2F;a&#x2F;g&#39; hello.txt 对第二行进行这种操作</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">注意了，咱们前面所讲的sed命令的所有操作，在执行之后都不会修改源文件中的内容，这样只能作为测试，如果需要修改源文件的话，其实也很简单，只需要增加一个 -i 参数即可</span><br><span class="line">[root@localhost ~]# sed -i &#39;2s&#x2F;l&#x2F;a&#x2F;g&#39; hello.txt </span><br><span class="line">[root@localhost ~]# cat hello.txt </span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;注意：对空文件执行sed 插入没用</span><br></pre></td></tr></table></figure>
+
+<h5 id="awk：分析"><a href="#awk：分析" class="headerlink" title="awk：分析"></a>awk：分析</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">~~~</span><br><span class="line">awk的基本格式：awk [option] programe file</span><br><span class="line"></span><br><span class="line">这里的option是一个可选项，一般在这里来指定文件中数据的字段分隔符</span><br><span class="line">programe 是具体的处理逻辑</span><br><span class="line">file表示我们要操作的文件</span><br><span class="line"></span><br><span class="line">在具体使用awk之前我们还需要掌握awk的一个特性，就是awk在处理文本数据的时候，它会自动给每行中的每个字段分配一个变量</span><br><span class="line"></span><br><span class="line">变量从1开始，</span><br><span class="line">$1表示是文本中的第1个数据字段</span><br><span class="line">$2表示是文本中的第2个数据字段</span><br><span class="line">以此类推。</span><br><span class="line">还有一个特殊的 $0 它代表整个文本行的内容</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">[root@localhost ~]# cat hello.txt </span><br><span class="line">hello world!</span><br><span class="line">heaao worad!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">abc</span><br><span class="line">[root@localhost ~]# awk &#39;&#123;print $1&#125;&#39; hello.txt </span><br><span class="line">hello</span><br><span class="line">heaao</span><br><span class="line">hello</span><br><span class="line">hello</span><br><span class="line">hello</span><br><span class="line">hello</span><br><span class="line">abc</span><br><span class="line">[root@localhost ~]# awk &#39;&#123;print $2&#125;&#39; hello.txt  </span><br><span class="line">world!</span><br><span class="line">worad!</span><br><span class="line">world!</span><br><span class="line">world!</span><br><span class="line">world!</span><br><span class="line">world!</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# awk &#39;&#123;print $0&#125;&#39; hello.txt  </span><br><span class="line">hello world!</span><br><span class="line">heaao worad!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">abc</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">~~~</span><br><span class="line">linux中还有一个文件 &#x2F;etc&#x2F;passwd 里面存储的是用户信息</span><br><span class="line">但是这个文件中的字段之间是使用:分割的，这个时候想要操作某列字段的话就需要我们手工指定字段分隔符了。</span><br><span class="line">咱们前面说了，可以在option里面指定字段分隔符，通过-F 参数</span><br><span class="line">awk -F: &#39;&#123;print $1&#125;&#39; &#x2F;etc&#x2F;passwd</span><br><span class="line"></span><br><span class="line">我们在处理数据的时候还可以对数据进行一些过滤操作，只获取满足条件的数据</span><br><span class="line">在programe中可以使用正则表达式进行过滤，</span><br><span class="line">awk &#39;&#x2F;world&#x2F; &#123;print $1&#125;&#39; hello.txt 这种写法表示对每次读取到的那一行数据进行匹配,然后输出匹配的每行第一个字段</span><br><span class="line">~~~</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;如果我们只想对某一列数据进行匹配呢？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">awk &#39;($1 ~ &#x2F;world&#x2F;) &#123;print $1&#125;&#39; hello.txt 在这里面可以通过$来指定具体是哪一列，需要把具体的对比逻辑放到小括号里面</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# awk &#39;($1 ~ &#x2F;world&#x2F;) &#123;print $0&#125;&#39; hello.txt    </span><br><span class="line">[root@localhost ~]# awk &#39;($2 ~ &#x2F;world&#x2F;) &#123;print $0&#125;&#39; hello.txt  </span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# awk &#39;($2 ~ &#x2F;wor[a-z]d&#x2F;) &#123;print $1&#125;&#39; hello.txt  </span><br><span class="line">hello world!</span><br><span class="line">heaao worad!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">hello world!</span><br><span class="line">注意：这里如果是不匹配的意思的话需要使用 !~</span><br><span class="line"></span><br><span class="line">ok，针对awk的使用我们暂时先掌握这些就可以了</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="ubuntu"><a href="#ubuntu" class="headerlink" title="ubuntu"></a>ubuntu</h2><h3 id="异常-1"><a href="#异常-1" class="headerlink" title="异常"></a>异常</h3><h3 id="命令-1"><a href="#命令-1" class="headerlink" title="命令"></a>命令</h3><h2 id="不同VMware版本"><a href="#不同VMware版本" class="headerlink" title="不同VMware版本"></a>不同VMware版本</h2><h3 id="VMware-workstation-15-player"><a href="#VMware-workstation-15-player" class="headerlink" title="VMware workstation 15 player"></a>VMware workstation 15 player</h3><h4 id="VMware-workstation-15-player没有克隆虚拟机的功能，解决办法？"><a href="#VMware-workstation-15-player没有克隆虚拟机的功能，解决办法？" class="headerlink" title="VMware workstation 15 player没有克隆虚拟机的功能，解决办法？"></a>VMware workstation 15 player没有克隆虚拟机的功能，解决办法？</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VMware workstation有此功能</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://blog.csdn.net/weixin_44763047/article/details/111772941" target="_blank" rel="external nofollow noopener noreferrer">方法url1</a></p>
+<p><a href="https://blog.csdn.net/weixin_44324669/article/details/104740466" target="_blank" rel="external nofollow noopener noreferrer">方法url2</a></p>
+<h3 id="VMware-workstation"><a href="#VMware-workstation" class="headerlink" title="VMware workstation"></a>VMware workstation</h3><hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E5%92%8C%E5%BC%82%E5%B8%B8.html">linux相关命令和异常</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年05月24日 - 17:05</p>
+  <p><span>最后更新:</span>2022年01月17日 - 17:01</p>
+  <p><span>原始链接:</span><a href="/linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E5%92%8C%E5%BC%82%E5%B8%B8.html" title="linux相关命令和异常">http://tianyong.fun/linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E5%92%8C%E5%BC%82%E5%B8%B8.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/linux%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E5%92%8C%E5%BC%82%E5%B8%B8.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/IDM%E7%A0%B4%E8%A7%A3.html" rel="next" title="IDM破解">
+                <i class="fa fa-chevron-left"></i> IDM破解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/maven%E5%AE%89%E8%A3%85.html" rel="prev" title="maven安装">
+                maven安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">208</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">41</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#linux相关问题"><span class="nav-number">1.</span> <span class="nav-text">linux相关问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#不同的子目录不同的含义"><span class="nav-number">1.1.</span> <span class="nav-text">不同的子目录不同的含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#centOS"><span class="nav-number">1.2.</span> <span class="nav-text">centOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常"><span class="nav-number">1.2.1.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#XXXX-is-not-in-the-sudoers-file-This-incident-will-be-reported解决方法"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">XXXX is not in the sudoers file. This incident will be reported解决方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mandatory-arguments-to-long-options-are-mandatory-for-short-options-too"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">Mandatory arguments to long options are mandatory for short options too.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Found-a-swap-file-by-the-name-“-hello-txt-swp”"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">Found a swap file by the name “.hello.txt.swp”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#"><span class="nav-number">1.2.1.4.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令"><span class="nav-number">1.2.2.</span> <span class="nav-text">命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基础命令"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">基础命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#文件查看"><span class="nav-number">1.2.2.1.1.</span> <span class="nav-text">文件查看</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建，重命名文件-文件夹"><span class="nav-number">1.2.2.1.2.</span> <span class="nav-text">创建，重命名文件\文件夹</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#链接文件"><span class="nav-number">1.2.2.1.3.</span> <span class="nav-text">链接文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#切换目录"><span class="nav-number">1.2.2.1.4.</span> <span class="nav-text">切换目录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除-文件夹-目录"><span class="nav-number">1.2.2.1.5.</span> <span class="nav-text">删除\文件夹(目录)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#复制-粘贴-剪切"><span class="nav-number">1.2.2.1.6.</span> <span class="nav-text">复制\粘贴\剪切</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#远程复制"><span class="nav-number">1.2.2.1.7.</span> <span class="nav-text">远程复制</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#文件内容统计相关命令"><span class="nav-number">1.2.2.1.7.1.</span> <span class="nav-text">文件内容统计相关命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#jps：显示Java进程信息"><span class="nav-number">1.2.2.1.7.2.</span> <span class="nav-text">jps：显示Java进程信息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#top：动态监控进程信息"><span class="nav-number">1.2.2.1.7.3.</span> <span class="nav-text">top：动态监控进程信息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#kill命令"><span class="nav-number">1.2.2.1.7.4.</span> <span class="nav-text">kill命令</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux三剑客"><span class="nav-number">1.2.2.1.8.</span> <span class="nav-text">Linux三剑客</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#grep：查找"><span class="nav-number">1.2.2.1.9.</span> <span class="nav-text">grep：查找</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sed：编辑"><span class="nav-number">1.2.2.1.10.</span> <span class="nav-text">sed：编辑</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#awk：分析"><span class="nav-number">1.2.2.1.11.</span> <span class="nav-text">awk：分析</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ubuntu"><span class="nav-number">1.3.</span> <span class="nav-text">ubuntu</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命令-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不同VMware版本"><span class="nav-number">1.4.</span> <span class="nav-text">不同VMware版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VMware-workstation-15-player"><span class="nav-number">1.4.1.</span> <span class="nav-text">VMware workstation 15 player</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#VMware-workstation-15-player没有克隆虚拟机的功能，解决办法？"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">VMware workstation 15 player没有克隆虚拟机的功能，解决办法？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VMware-workstation"><span class="nav-number">1.4.2.</span> <span class="nav-text">VMware workstation</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">100.6k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
