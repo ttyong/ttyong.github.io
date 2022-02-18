@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第五周 第四章 精讲Shuffle执行过程及源码分析输入输出Shuffle过程详解12咱们前面简单说过，shuffer是一个网络拷贝的过程，是指通过网络把数据从map端拷贝到reduce端的过程，下面我们来详细分析一下这个过程   123接下来我们来根据这张图分析一下shuffle的一些细节信息，  首先看map阶段，最左边有一个inputsplit，最终会产生一个map任务，map任务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第五周 第四章 精讲Shuffle执行过程及源码分析输入输出Shuffle过程详解12咱们前面简单说过，shuffer是一个网络拷贝的过程，是指通过网络把数据从map端拷贝到reduce端的过程，下面我们来详细分析一下这个过程   123接下来我们来根据这张图分析一下shuffle的一些细节信息，  首先看map阶段，最左边有一个inputsplit，最终会产生一个map任务，map任务">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HwABhq.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HwA0Nn.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HwGZge.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HwGV3D.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HwhRpT.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HBnBCQ.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/12/HBnD3j.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/13/HD1cmd.md.png">
+<meta property="article:published_time" content="2022-02-09T10:56:36.000Z">
+<meta property="article:modified_time" content="2022-02-13T06:01:30.796Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s4.ax1x.com/2022/02/12/HwABhq.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第五周-第四章-精讲Shuffle执行过程及源码分析输入输出.html">
+
+
+
+
+
+  <title>大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-09T18:56:36+08:00">
+                2022-02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第五周-第四章-精讲Shuffle执行过程及源码分析输入输出"><a href="#第五周-第四章-精讲Shuffle执行过程及源码分析输入输出" class="headerlink" title="第五周 第四章 精讲Shuffle执行过程及源码分析输入输出"></a>第五周 第四章 精讲Shuffle执行过程及源码分析输入输出</h1><h2 id="Shuffle过程详解"><a href="#Shuffle过程详解" class="headerlink" title="Shuffle过程详解"></a>Shuffle过程详解</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">咱们前面简单说过，shuffer是一个网络拷贝的过程，是指通过网络把数据从map端拷贝到reduce端的过</span><br><span class="line">程，下面我们来详细分析一下这个过程</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HwABhq" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HwABhq.png" alt="HwABhq.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">接下来我们来根据这张图分析一下shuffle的一些细节信息，</span><br><span class="line">  首先看map阶段，最左边有一个inputsplit，最终会产生一个map任务，map任务在执行的时候会把k1,v1转化为k2,v2，这些数据会先临时存储到一个内存缓冲区中，这个内存缓冲区的大小默认是100M（io.sort.mb属性），当达到内存缓冲区大小的80%（io.sort.spill.percent）也就是80M的时候，会把内存中的数据溢写到本地磁盘中（mapred.local.dir），一直到map把所有的数据都计算完，最后会把内存缓冲区中的数据一次性全部刷新到本地磁盘文件中，在这个图里面表示产生了3个临时文件，每个临时文件中有3个分区，这是由于map阶段中对数据做了分区，所以数据在存储的时候，在每个临时文件中也划分为了3块，最后需要对这些临时文件进行合并，合并为一个大文件，因为一个map任务最终只会产生一个文件，这个合并之后的文件也是有3个分区的，这3个分区的数据会被shuffle线程分别拷贝到三个不同的reduce节点，图里面只显示了一个reduce节点，下面还有两个没有显示。不同map任务中的相同分区的数据会在同一个reduce节点进行合并，合并以后会执行reduce的功能，最终产生结果数据。</span><br><span class="line">  在这里shuffle其实是横跨map端和reduce端的，它主要是负责把map端产生的数据通过网络拷贝到reduce阶段进行统一聚合计算</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hadoop中序列化机制"><a href="#Hadoop中序列化机制" class="headerlink" title="Hadoop中序列化机制"></a>Hadoop中序列化机制</h2><p><a href="https://imgtu.com/i/HwA0Nn" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HwA0Nn.png" alt="HwA0Nn.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  我们的map阶段在读取数据的是需要从hdfs中读取的，这里面需要经过磁盘IO和网络IO，不过正常情况下map任务会执行本地计算，也就是map任务会被分发到数据所在的节点进行计算，这个时候，网络io几乎就没有了，就剩下了磁盘io，再往后面看，map阶段执行完了以后，数据会被写入到本地磁盘文件，这个时候也需要经过磁盘io，后面的shuffle拷贝数据其实也需要先经过磁盘io把数据从本地磁盘读出来再通过网络发送到reduce节点，再写入reduce节点的本地磁盘，然后reduce阶段在执行的时候会经过磁盘io读取本地文件中的数据，计算完成以后还会经过磁盘io和网络io把数据写入到hdfs中。</span><br><span class="line">  经过我们刚才的分析，其实在这里面占得比重最高的是磁盘io，所以说影响mapreduce任务执行效率的主要原因就是磁盘io，如果想要提高任务执行效率，就需要从这方面着手分析。</span><br><span class="line">当程序在向磁盘中写数据以及从磁盘中读取数据的时候会对数据进行序列化和反序列化，磁盘io这些步骤我们省略不了，但是我们可以从序列化和反序列化这一块来着手做一些优化，</span><br><span class="line">首先我们分析一下序列化和反序列化，看这个图，当我们想把内存中的数据写入到文件中的时候，会对数据序列化，然后再写入，这个序列化其实就是把内存中的对象信息转成二进制的形式，方便存储到文件中，默认java中的序列化会把对象及其父类、超类的整个继承体系信息都保存下来，这样存储的信息太大了，就会导致写入文件的信息过大，这样写入是会额外消耗性能的。</span><br><span class="line">反序列化也是一样，reduce端想把文件中的对象信息加载到内存中，如果文件很大，在加载的时候也会额外消耗很多性能，所以如果我们把对象存储的信息尽量精简，那么就可以提高数据写入和读取消耗的性能。</span><br><span class="line">  基于此，hadoop官方实现了自己的序列化和反序列化机制，没有使用java中的序列化机制，所以</span><br><span class="line">hadoop中的数据类型没有沿用java中的数据类型，而是自己单独设计了一些writable的实现了，例如、</span><br><span class="line">longwritable、text等</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">那我们来看一下Hadoop中提供的常用的基本数据类型的序列化类</span><br><span class="line"></span><br><span class="line">Java基本类型 		Writable 	序列化大小(字节)</span><br><span class="line">布尔型（boolean） 	BooleanWritable	 1</span><br><span class="line">字节型（byte） 		ByteWritable 		1</span><br><span class="line">整型（int） 		IntWritable 		4</span><br><span class="line">					VIntWritable 		1~5</span><br><span class="line">浮点型（float） 			FloatWritable 	4</span><br><span class="line">长整型（long） 			LongWritable 	8</span><br><span class="line">						VLongWritable 	1~9</span><br><span class="line">双精度浮点型（double） 		DoubleWritable 	8</span><br><span class="line"></span><br><span class="line">在这需要注意一下</span><br><span class="line">Text等价于java.lang.String的Writable，针对UTF-8序列</span><br><span class="line">NullWritable是单例，获取实例使用NullWritable.get()</span><br></pre></td></tr></table></figure>
+
+<h3 id="hadoop自己实现的序列化的特点"><a href="#hadoop自己实现的序列化的特点" class="headerlink" title="hadoop自己实现的序列化的特点"></a>hadoop自己实现的序列化的特点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 紧凑: 高效使用存储空间</span><br><span class="line">2. 快速: 读写数据的额外开销小</span><br><span class="line">3. 可扩展: 可透明地读取老格式的数据</span><br><span class="line">4. 互操作: 支持多语言的交互</span><br></pre></td></tr></table></figure>
+
+<h3 id="java中序列化的不足"><a href="#java中序列化的不足" class="headerlink" title="java中序列化的不足"></a>java中序列化的不足</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. 不精简，附加信息多，不太适合随机访问</span><br><span class="line">2. 存储空间大，递归地输出类的超类描述直到不再有超类</span><br></pre></td></tr></table></figure>
+
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">前面我们分析了Java中的序列化和Hadoop中的序列化，其实最主要的区别就是针对相同的数据，Java中的序列化会占用较大的存储空间，而Hadoop中的序列化可以节省很多存储空间，这样在海量数据计算的场景下，可以减少数据传输的大小，极大的提高计算效率</span><br></pre></td></tr></table></figure>
+
+<h4 id="java序列化对象"><a href="#java序列化对象" class="headerlink" title="java序列化对象"></a>java序列化对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.mc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * java中的序列化</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">javaSerialize</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">// 创建student对象，并设置id和name属性</span></span><br><span class="line">        StudentJava studentJava = <span class="keyword">new</span> StudentJava();</span><br><span class="line">        studentJava.setId(<span class="number">1L</span>);</span><br><span class="line">        studentJava.setName(<span class="string">"Hadoop"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将student当前状态写入本地文件中</span></span><br><span class="line">        FileOutputStream fos =<span class="keyword">new</span> FileOutputStream(<span class="string">"D:\\student_java.txt"</span>);</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(fos);</span><br><span class="line">        oos.writeObject(studentJava);</span><br><span class="line">        oos.close();</span><br><span class="line">        fos.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentJava</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123; <span class="comment">// 一个文件只能有一个主类</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> Id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123;</span><br><span class="line">        Id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="hadoop序列化对象"><a href="#hadoop序列化对象" class="headerlink" title="hadoop序列化对象"></a>hadoop序列化对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.mc;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Writable;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Hadoop序列化机制</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HadoopSerialize</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//创建student对象并设置name,id属性</span></span><br><span class="line">        StudentWritable studentWritable = <span class="keyword">new</span> StudentWritable();</span><br><span class="line">        studentWritable.setId(<span class="number">1L</span>);</span><br><span class="line">        studentWritable.setName(<span class="string">"Hadoop"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将student对象当前状态写入到本地文件中</span></span><br><span class="line">        FileOutputStream fos = <span class="keyword">new</span> FileOutputStream(<span class="string">"D:\\student_hadoop.txt"</span>);</span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(fos);</span><br><span class="line">        studentWritable.write(oos); <span class="comment">// 与java序列化不同的地方</span></span><br><span class="line">        oos.close();</span><br><span class="line">        fos.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StudentWritable</span> <span class="keyword">implements</span> <span class="title">Writable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> Id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123;</span><br><span class="line">        Id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span>  <span class="comment">// 多的部分</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(DataOutput out)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        out.writeLong(<span class="keyword">this</span>.Id);</span><br><span class="line">        out.writeUTF(<span class="keyword">this</span>.name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// 多的部分</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">readFields</span><span class="params">(DataInput in)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.Id=in.readLong();</span><br><span class="line">        <span class="keyword">this</span>.name=in.readUTF();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行这两个代码，最终会在D盘下产生两个文件，查看这两个文件的大小，最终发现Java序列化的文件大小是Hadoop序列化文件大小的10倍左右。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HwGZge" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HwGZge.png" alt="HwGZge.png"></a></p>
+<p><a href="https://imgtu.com/i/HwGV3D" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HwGV3D.png" alt="HwGV3D.png"></a></p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.IDEA快速编写属性对应的方法</span><br><span class="line">2.IDEA快速覆盖继承类的方法的方法</span><br></pre></td></tr></table></figure>
+
+<h2 id="InputFormat分析"><a href="#InputFormat分析" class="headerlink" title="InputFormat分析"></a>InputFormat分析</h2><p><a href="https://imgtu.com/i/HwhRpT" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HwhRpT.md.png" alt="HwhRpT.md.png"></a></p>
+<h3 id="InputFormat"><a href="#InputFormat" class="headerlink" title="InputFormat"></a>InputFormat</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Hadoop中有一个抽象类是InputFormat，InputFormat抽象类是MapReduce输入数据的顶层基类，这个抽象类中只定义了两个方法:</span><br><span class="line">  一个是getSplits方法</span><br><span class="line">  另一个是createRecordReader方法</span><br></pre></td></tr></table></figure>
+
+<h3 id="InputFormat的子类"><a href="#InputFormat的子类" class="headerlink" title="InputFormat的子类"></a>InputFormat的子类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">这个抽象类下面有三个子继承类，</span><br><span class="line">DBInputFormat是操作数据库的，</span><br><span class="line">FileInputFormat是操作文件类型数据的，</span><br><span class="line">DelegatingInputFormat是用在处理多个输入时使用的</span><br><span class="line">这里面比较常见的也就是FileInputFormat了，FileInputFormat是所有以文件作为数据源的基类，</span><br><span class="line">FileInputFormat保存job输入的所有文件，并实现了对输入文件计算splits的方法，至于获得文件中数据</span><br><span class="line">的方法是由子类实现的。</span><br></pre></td></tr></table></figure>
+
+<h4 id="FileInputFormat的子类"><a href="#FileInputFormat的子类" class="headerlink" title="FileInputFormat的子类"></a>FileInputFormat的子类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FileInputFormat下面还有一些子类：</span><br><span class="line">CombineFileInputFormat：处理小文件问题的，后面我们再详细分析</span><br><span class="line"> TextInputFormat：是默认的处理类，处理普通文本文件，他会把文件中每一行作为一个记录，将每一行的起始偏移量作为key，每一行的内容作为value，这里的key和value就是我们之前所说的k1,v1 它默认以换行符或回车键作为一行记录</span><br><span class="line">NLineInputFormat：可以动态指定一次读取多少行数据</span><br><span class="line">这 里 面 的 TextInputFormat 是 我 们 处 理 文 本 数 据 的 默 认 处 理 类 ， TextInputFormat 的 顶 层 基 类 是</span><br><span class="line">InputFormat，下面我们先来看一下这个抽象类的源码</span><br></pre></td></tr></table></figure>
+
+<h4 id="详细分析一下getSplits方法的具体实现代码"><a href="#详细分析一下getSplits方法的具体实现代码" class="headerlink" title="详细分析一下getSplits方法的具体实现代码"></a>详细分析一下getSplits方法的具体实现代码</h4><h5 id="下载源码-hadoop-3-2-2-src-tar-gz"><a href="#下载源码-hadoop-3-2-2-src-tar-gz" class="headerlink" title="下载源码 hadoop-3.2.2-src.tar.gz"></a>下载源码 hadoop-3.2.2-src.tar.gz</h5><h5 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将D:\code\IDEA\hadoop-3.2.2-src\hadoop-mapreduce-project\hadoop-mapreduce-client\hadoop-mapreduce-client-core作为IDEA的项目</span><br></pre></td></tr></table></figure>
+
+<h5 id="下载依赖"><a href="#下载依赖" class="headerlink" title="下载依赖"></a>下载依赖</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.将maven的配置文件里加上镜像，这样下载依赖会快些</span><br><span class="line">2.可以就用idea自动下载，但容易卡死，且过程可视性差；建议用cmd(打开路径D:\code\IDEA\hadoop-3.2.2-src\hadoop-mapreduce-project\hadoop-mapreduce-client\hadoop-mapreduce-client-core)</span><br><span class="line">3.执行mvn clean package&#x2F;compile -DskipTests</span><br><span class="line">4.由于用国内镜像下载依赖可能会漏下依赖(已遇到);改回maven的配置文件里的镜像设置</span><br><span class="line">5.可能会遇到IDEA Cannot Resolve Symbol 问题的解决方法汇总(博客里有解决方法)</span><br></pre></td></tr></table></figure>
+
+<h5 id="getsplits源码剖析"><a href="#getsplits源码剖析" class="headerlink" title="getsplits源码剖析"></a>getsplits源码剖析</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">需要将项目里的java文件夹设置为root source(选中后右键mark as),这样设置后查看源码ctrl 左键 才会快速关联</span><br><span class="line">1.找到项目里的InputFormat</span><br><span class="line">2.选中getsplits方法后 ctrl 左 ，选继承类FileInputFormat,再看方法的具体实现细节</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SPLIT_SLOP=<span class="number">1.1</span></span><br><span class="line">文件剩余字节大小/<span class="number">1134217728</span>[<span class="number">128</span>M] &gt; <span class="number">1.1</span></span><br><span class="line">意思就是当文件剩余大小bytesRemaining与splitSize的比值大于<span class="number">1.1</span>的时候，就继续切分</span><br><span class="line">否则，剩下的直接作为一个InputSplit</span><br><span class="line"></span><br><span class="line">敲黑板，划重点：只要bytesRemaining/splitSize&lt;=<span class="number">1.1</span>就会停止划分，将剩下的作为一个InputSplit</span><br><span class="line"></span><br><span class="line">也就是说当默认splitsize=<span class="number">128</span>M时，inputsplit可能：</span><br><span class="line">	&lt;<span class="number">128</span>M</span><br><span class="line">	=<span class="number">128</span>M</span><br><span class="line">	&gt;<span class="number">128</span>M</span><br></pre></td></tr></table></figure>
+
+<h6 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1. 一个1G的文件，会产生多少个map任务？ 8</span><br><span class="line">Block块默认是128M，所以1G的文件会产生8个Block块</span><br><span class="line">默认情况下InputSplit的大小和Block块的大小一致，每一个InputSplit会产生一个map任务</span><br><span class="line">所以：1024&#x2F;128&#x3D;8个map任务</span><br><span class="line">2. 1000个文件，每个文件100KB，会产生多少个map任务？</span><br><span class="line">一个文件，不管再小，都会占用一个block，所以这1000个小文件会产生1000个Block，那最终会产生1000个InputSplit，也就对应着会产生1000个map任务</span><br><span class="line">3. 一个140M的文件，会产生多少个map任务？</span><br><span class="line">根据前面的分析</span><br><span class="line">140M的文件会产生2个Block，那对应的就会产生2个InputSplit了？</span><br><span class="line">注意：这个有点特殊，140M&#x2F;128M&#x3D;1.09375&lt;1.1</span><br><span class="line">所以，这个文件只会产生一个InputSplit，也最终也就只会产生1个map 任务。</span><br><span class="line"></span><br><span class="line">这个文件其实再稍微大1M就可以产生2个map 任务了</span><br></pre></td></tr></table></figure>
+
+<h6 id="实战140-141"><a href="#实战140-141" class="headerlink" title="实战140 141"></a>实战140 141</h6><h6 id="生成140-141大小的文件"><a href="#生成140-141大小的文件" class="headerlink" title="生成140 141大小的文件"></a>生成140 141大小的文件</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.mc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.BufferedWriter;</span><br><span class="line"><span class="keyword">import</span> java.io.FileWriter;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GenerateDat</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        generate_140M();</span><br><span class="line">        generate_141M();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">generate_140M</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        String fileName = <span class="string">"D:\\s_name_140.dat"</span>;</span><br><span class="line">        System.out.println(<span class="string">"start: 开始生成140M文件-&gt;"</span> + fileName);</span><br><span class="line">        BufferedWriter bfw = <span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> FileWriter(fileName));</span><br><span class="line">        <span class="keyword">int</span> num = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (num &lt; <span class="number">8201592</span>) &#123;</span><br><span class="line">            bfw.write(<span class="string">"zhangsan beijing"</span>);</span><br><span class="line">            bfw.newLine();</span><br><span class="line">            num++;</span><br><span class="line">            <span class="keyword">if</span> (num % <span class="number">10000</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                bfw.flush();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"end: 140M文件已生成"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">generate_141M</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        String fileName = <span class="string">"D:\\s_name_141.dat"</span>;</span><br><span class="line">        System.out.println(<span class="string">"start: 开始生成141M文件-&gt;"</span> + fileName);</span><br><span class="line">        BufferedWriter bfw = <span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> FileWriter(fileName));</span><br><span class="line">        <span class="keyword">int</span> num = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (num &lt; <span class="number">8221592</span>) &#123;</span><br><span class="line">            bfw.write(<span class="string">"zhangsan beijing"</span>);</span><br><span class="line">            bfw.newLine();</span><br><span class="line">            num++;</span><br><span class="line">            <span class="keyword">if</span> (num % <span class="number">10000</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                bfw.flush();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="打jar包，上传数据到hdfs，提交任务到集群"><a href="#打jar包，上传数据到hdfs，提交任务到集群" class="headerlink" title="打jar包，上传数据到hdfs，提交任务到集群"></a>打jar包，上传数据到hdfs，提交任务到集群</h6><h6 id="结果查看"><a href="#结果查看" class="headerlink" title="结果查看"></a>结果查看</h6><p> <strong>141</strong></p>
+<p><a href="https://imgtu.com/i/HBnBCQ" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HBnBCQ.md.png" alt="HBnBCQ.md.png"></a></p>
+<p><strong>140</strong></p>
+<p><a href="https://imgtu.com/i/HBnD3j" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/12/HBnD3j.md.png" alt="HBnD3j.md.png"></a></p>
+<h5 id="createRecordReader方法"><a href="#createRecordReader方法" class="headerlink" title="createRecordReader方法"></a>createRecordReader方法</h5><h6 id="看TextInputFormat对这个方法的实现"><a href="#看TextInputFormat对这个方法的实现" class="headerlink" title="看TextInputFormat对这个方法的实现"></a>看TextInputFormat对这个方法的实现</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：如果这个InputSplit不是第一个InputSplit，我们将会丢掉读取出来的第一行</span><br><span class="line">因为我们总是通过next()方法多读取一行(会多读取下一个InputSplit的第一行)</span><br><span class="line">这就解释了这个问题：如果一行数据被拆分到了两个InputSplit中，会不会有问题？PPT中通过一个例子详细分析了这个问题</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a href="https://imgtu.com/i/HD1cmd" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/13/HD1cmd.md.png" alt="HD1cmd.md.png"></a></p>
+<h2 id="OutputFormat分析"><a href="#OutputFormat分析" class="headerlink" title="OutputFormat分析"></a>OutputFormat分析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">前 面 我 们 分 析 了 InputFormat ， 下 面 我 们 来 分 析 一 下 OutputFormat ， 顾 名 思 义 ， 这 个 是 控 制MapReduce输出的</span><br><span class="line"></span><br><span class="line">OutputFormat是输出数据的顶层基类</span><br><span class="line">FileOutputFormat：文件数据处理基类</span><br><span class="line">TextOutputFormat：默认文本文件处理类</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">这几个其实和InputFormat中的那几个文本处理类是对应着的，当然了针对输出数据还有其它类型的处理</span><br><span class="line">类，我们在这先分析最常见的文本文件处理类，其他类型的等我们遇到具体场景再具体分析。</span><br><span class="line">我们来看一下OutputFormat的源码，这个类主要由三个方法:</span><br><span class="line">getRecordWriter</span><br><span class="line">checkOutputSpecs <span class="comment">//检测输出路径是否存在</span></span><br><span class="line">getOutputCommitter</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html">大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月09日 - 18:02</p>
+  <p><span>最后更新:</span>2022年02月13日 - 14:02</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html" title="大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html" rel="next" title="大数据开发工程师-第五周 第三章 深入 MapReduce">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第五周 第三章 深入 MapReduce
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80.html" rel="prev" title="廖雪峰java教程笔记-java程序基础">
+                廖雪峰java教程笔记-java程序基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">241</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第五周-第四章-精讲Shuffle执行过程及源码分析输入输出"><span class="nav-number">1.</span> <span class="nav-text">第五周 第四章 精讲Shuffle执行过程及源码分析输入输出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Shuffle过程详解"><span class="nav-number">1.1.</span> <span class="nav-text">Shuffle过程详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hadoop中序列化机制"><span class="nav-number">1.2.</span> <span class="nav-text">Hadoop中序列化机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hadoop自己实现的序列化的特点"><span class="nav-number">1.2.1.</span> <span class="nav-text">hadoop自己实现的序列化的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java中序列化的不足"><span class="nav-number">1.2.2.</span> <span class="nav-text">java中序列化的不足</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实战"><span class="nav-number">1.2.3.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#java序列化对象"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">java序列化对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hadoop序列化对象"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">hadoop序列化对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InputFormat分析"><span class="nav-number">1.3.</span> <span class="nav-text">InputFormat分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InputFormat"><span class="nav-number">1.3.1.</span> <span class="nav-text">InputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InputFormat的子类"><span class="nav-number">1.3.2.</span> <span class="nav-text">InputFormat的子类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FileInputFormat的子类"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">FileInputFormat的子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#详细分析一下getSplits方法的具体实现代码"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">详细分析一下getSplits方法的具体实现代码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#下载源码-hadoop-3-2-2-src-tar-gz"><span class="nav-number">1.3.2.2.1.</span> <span class="nav-text">下载源码 hadoop-3.2.2-src.tar.gz</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解压"><span class="nav-number">1.3.2.2.2.</span> <span class="nav-text">解压</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#下载依赖"><span class="nav-number">1.3.2.2.3.</span> <span class="nav-text">下载依赖</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#getsplits源码剖析"><span class="nav-number">1.3.2.2.4.</span> <span class="nav-text">getsplits源码剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#小结-1"><span class="nav-number">1.3.2.2.4.1.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#面试题"><span class="nav-number">1.3.2.2.4.2.</span> <span class="nav-text">面试题</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#实战140-141"><span class="nav-number">1.3.2.2.4.3.</span> <span class="nav-text">实战140 141</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#生成140-141大小的文件"><span class="nav-number">1.3.2.2.4.4.</span> <span class="nav-text">生成140 141大小的文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#打jar包，上传数据到hdfs，提交任务到集群"><span class="nav-number">1.3.2.2.4.5.</span> <span class="nav-text">打jar包，上传数据到hdfs，提交任务到集群</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果查看"><span class="nav-number">1.3.2.2.4.6.</span> <span class="nav-text">结果查看</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#createRecordReader方法"><span class="nav-number">1.3.2.2.5.</span> <span class="nav-text">createRecordReader方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#看TextInputFormat对这个方法的实现"><span class="nav-number">1.3.2.2.5.1.</span> <span class="nav-text">看TextInputFormat对这个方法的实现</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OutputFormat分析"><span class="nav-number">1.4.</span> <span class="nav-text">OutputFormat分析</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">168.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

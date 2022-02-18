@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第六周 第一章 剖析小文件问题与企业级解决方案MapReduce性能优化12345现在大家已经掌握了MapReduce程序的开发步骤，注意了，针对MapReduce的案例我们并没有讲太多，主要是因为在实际工作中真正需要我们去写MapReduce代码的场景已经是凤毛麟角了，因为后面我们会学习一个大数据框架Hive，Hive支持SQL，这个Hive底层会把SQL转化为MapReduce执行，不需">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第六周 第一章 剖析小文件问题与企业级解决方案MapReduce性能优化12345现在大家已经掌握了MapReduce程序的开发步骤，注意了，针对MapReduce的案例我们并没有讲太多，主要是因为在实际工作中真正需要我们去写MapReduce代码的场景已经是凤毛麟角了，因为后面我们会学习一个大数据框架Hive，Hive支持SQL，这个Hive底层会把SQL转化为MapReduce执行，不需">
+<meta property="article:published_time" content="2022-02-13T06:04:48.000Z">
+<meta property="article:modified_time" content="2022-02-14T07:31:05.945Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第六周-第一章-剖析小文件问题与企业级解决方案.html">
+
+
+
+
+
+  <title>大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-13T14:04:48+08:00">
+                2022-02-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="第六周-第一章-剖析小文件问题与企业级解决方案"><a href="#第六周-第一章-剖析小文件问题与企业级解决方案" class="headerlink" title="第六周 第一章 剖析小文件问题与企业级解决方案"></a>第六周 第一章 剖析小文件问题与企业级解决方案</h1><h2 id="MapReduce性能优化"><a href="#MapReduce性能优化" class="headerlink" title="MapReduce性能优化"></a>MapReduce性能优化</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">现在大家已经掌握了MapReduce程序的开发步骤，注意了，针对MapReduce的案例我们并没有讲太多，主要是因为在实际工作中真正需要我们去写MapReduce代码的场景已经是凤毛麟角了，因为后面我们会学习一个大数据框架Hive，Hive支持SQL，这个Hive底层会把SQL转化为MapReduce执行，不需要我们写一行代码，所以说工作中的大部分需求我们都使用SQL去实现了，谁还苦巴巴的来写代码啊，一行SQL能抵你写的几十行代码，你还想去写MapReduce代码吗，肯定不想了。</span><br><span class="line">但是MapReduce代码的开发毕竟是基本功，所以前面我们也详细的讲解了它的开发流程。</span><br><span class="line">虽然现在MapReduce代码写的很少了，但是针对MapReduce程序的性能优化是少不了的，面试也是经常会问到的，所以下面我们就来分析一下MapReduce中典型的性能优化场景</span><br><span class="line">第一个场景是：小文件问题</span><br><span class="line">第二个场景是：数据倾斜问题</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="小文件问题"><a href="#小文件问题" class="headerlink" title="小文件问题"></a>小文件问题</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">先一个一个来，不要着急，我们先看小文件问题</span><br><span class="line">咱们前面分析过，Hadoop的HDFS和MapReduce都是针对大数据文件来设计的，在小文件的处理上不但效率低下，而且十分消耗内存资源</span><br><span class="line">针对HDFS而言，每一个小文件在namenode中都会占用150字节的内存空间，最终会导致集群中虽然存储了很多个文件，但是文件的体积并不大，这样就没有意义了。针对MapReduce而言，每一个小文件都是一个Block，都会产生一个InputSplit，最终每一个小文件都会产生一个map任务，这样会导致同时启动太多的Map任务，Map任务的启动是非常消耗性能的，但是启动了以后执行了很短时间就停止了，因为小文件的数据量太小了，这样就会造成任务执行消耗的时间还没有启动任务消耗的时间多，这样也会影响MapReduce执行的效率。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  针对这个问题,解决办法通常是选择一个容器，将这些小文件组织起来统一存储，HDFS提供了两种类型的容器，分别是SequenceFile 和 MapFile</span><br><span class="line">SequeceFile是Hadoop 提供的一种二进制文件，这种二进制文件直接将&lt;key, value&gt;对序列化到文件中。</span><br><span class="line">  一般对小文件可以使用这种文件合并，即将小文件的文件名作为key，文件内容作为value序列化到大文件中</span><br><span class="line">  但是这个文件有一个缺点，就是它需要一个合并文件的过程，最终合并的文件会比较大，并且合并后的文件查看起来不方便，必须通过遍历才能查看里面的每一个小文件</span><br><span class="line">  所以这个SequenceFile 其实可以理解为把很多小文件压缩成一个大的压缩包了。</span><br></pre></td></tr></table></figure>
+
+<h4 id="SequenceFile"><a href="#SequenceFile" class="headerlink" title="SequenceFile"></a>SequenceFile</h4><h4 id="创建SequenceFile"><a href="#创建SequenceFile" class="headerlink" title="创建SequenceFile"></a>创建SequenceFile</h4><h5 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">下面我们来具体看一下如何生成SequenceFile</span><br><span class="line">生成SequenceFile需要开发代码</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.imooc.mc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.io.FileUtils;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.FileSystem;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.Path;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.SequenceFile;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 小文件解决方案之SequenceFile</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SmallFileSeq</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span>  <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        write(<span class="string">"D:\\hadoopTestData\\"</span>, <span class="string">"/seqFile"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成SequenceFile文件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> inputDir 输入目录-windows目录</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> outputFile 输出文件-hdfs文件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(String inputDir, String outputFile)</span>  <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//创建一个配置对象</span></span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        <span class="comment">//指定HDFS的地址</span></span><br><span class="line">        conf.set(<span class="string">"fs.defaultFS"</span>,<span class="string">"hdfs://bigdata01:9000"</span>);</span><br><span class="line">        <span class="comment">//获取操作HDFS的对象</span></span><br><span class="line">        FileSystem fileSystem = FileSystem.get(conf);</span><br><span class="line">        <span class="comment">//删除输出文件</span></span><br><span class="line">        fileSystem.delete(<span class="keyword">new</span> Path(outputFile),<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//构造opts数组，有三个元素</span></span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">                第一个是输出路径</span></span><br><span class="line"><span class="comment">                第二个是key类型</span></span><br><span class="line"><span class="comment">                第三个是value类型</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        SequenceFile.Writer.Option[] opts = <span class="keyword">new</span> SequenceFile.Writer.Option[]&#123;</span><br><span class="line">            SequenceFile.Writer.file(<span class="keyword">new</span> Path(outputFile)),</span><br><span class="line">                SequenceFile.Writer.keyClass(Text<span class="class">.<span class="keyword">class</span>),</span></span><br><span class="line"><span class="class">                <span class="title">SequenceFile</span>.<span class="title">Writer</span>.<span class="title">valueClass</span>(<span class="title">Text</span>.<span class="title">class</span>)</span></span><br><span class="line"><span class="class">        &#125;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个writer实例</span></span><br><span class="line">        SequenceFile.Writer writer = SequenceFile.createWriter(conf, opts);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指定要压缩的文件的目录</span></span><br><span class="line">        File inputDirPath = <span class="keyword">new</span> File(inputDir);</span><br><span class="line">        <span class="keyword">if</span>(inputDirPath.isDirectory())&#123;</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            File[] files = inputDirPath.listFiles();</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="keyword">for</span>(File file: files)&#123;</span><br><span class="line">                <span class="comment">//获取文件全部内容</span></span><br><span class="line">                String content = FileUtils.readFileToString(file, <span class="string">"UTF-8"</span>);</span><br><span class="line">                <span class="comment">//</span></span><br><span class="line">                String fileName = file.getName();</span><br><span class="line">                <span class="comment">//文件名作为key</span></span><br><span class="line">                Text key = <span class="keyword">new</span> Text(fileName);</span><br><span class="line">                <span class="comment">//文件内容作为value</span></span><br><span class="line">                Text value = <span class="keyword">new</span> Text(content);</span><br><span class="line">                <span class="comment">//</span></span><br><span class="line">                writer.append(key,value);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        writer.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">(String inputFile)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        <span class="comment">//指定HDFS的地址</span></span><br><span class="line">        conf.set(<span class="string">"fs.defaultFS"</span>,<span class="string">"hdfs://bigdata01:9000"</span>);</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        SequenceFile.Reader reader = <span class="keyword">new</span> SequenceFile.Reader(conf, SequenceFile.Reader.file(<span class="keyword">new</span> Path(inputFile)) );</span><br><span class="line">        Text key = <span class="keyword">new</span> Text();</span><br><span class="line">        Text value = <span class="keyword">new</span> Text();</span><br><span class="line">        <span class="keyword">while</span>(reader.next(key, value))&#123;</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            System.out.println(<span class="string">"文件名："</span>+key.toString());</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            System.out.println(<span class="string">"文件内容："</span>+value.toString()+<span class="string">" "</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="读SquenceFile"><a href="#读SquenceFile" class="headerlink" title="读SquenceFile"></a>读SquenceFile</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">只能通过遍历的方法去读</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java.lang.NoClassDefFoundError: org&#x2F;apache&#x2F;hadoop&#x2F;conf&#x2F;Configuration</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 前往别加载错类，搞死个人</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[WARN] - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="MapFile"><a href="#MapFile" class="headerlink" title="MapFile"></a>MapFile</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">接下来我们来看一下MapFile</span><br><span class="line">MapFile是排序后的SequenceFile,MapFile由两部分组成，分别是index和data</span><br><span class="line">index作为文件的数据索引，主要记录了每个Record的key值，以及该Record在文件中的偏移位置。在MapFile被访问的时候,索引文件会被加载到内存，通过索引映射关系可迅速定位到指定Record所在文件位置，因此，相对SequenceFile而言，MapFile的检索效率是高效的，缺点是会消耗一部分内存来存储index数据。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.mc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.io.FileUtils;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.FileSystem;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.Path;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.MapFile;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.SequenceFile;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SmallFileMap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span>  <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        write(<span class="string">"D:\\hadoopTestData\\"</span>, <span class="string">"/mapFile"</span>);</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        read(<span class="string">"/mapFile"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成SequenceFile文件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> inputDir 输入目录-windows目录</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> outputDir 输出文件-hdfs文件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(String inputDir, String outputDir)</span>  <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//创建一个配置对象</span></span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        <span class="comment">//指定HDFS的地址</span></span><br><span class="line">        conf.set(<span class="string">"fs.defaultFS"</span>,<span class="string">"hdfs://bigdata01:9000"</span>);</span><br><span class="line">        <span class="comment">//获取操作HDFS的对象</span></span><br><span class="line">        FileSystem fileSystem = FileSystem.get(conf);</span><br><span class="line">        <span class="comment">//删除输出文件</span></span><br><span class="line">        fileSystem.delete(<span class="keyword">new</span> Path(outputDir),<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//构造opts数组，有三个元素</span></span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">                第一个是输出路径</span></span><br><span class="line"><span class="comment">                第二个是key类型</span></span><br><span class="line"><span class="comment">                第三个是value类型</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        SequenceFile.Writer.Option[] opts = <span class="keyword">new</span> SequenceFile.Writer.Option[]&#123;</span><br><span class="line">                MapFile.Writer.keyClass(Text<span class="class">.<span class="keyword">class</span>),</span></span><br><span class="line"><span class="class">                <span class="title">MapFile</span>.<span class="title">Writer</span>.<span class="title">valueClass</span>(<span class="title">Text</span>.<span class="title">class</span>)</span></span><br><span class="line"><span class="class">        &#125;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个writer实例</span></span><br><span class="line">        MapFile.Writer writer = <span class="keyword">new</span> MapFile.Writer(conf, <span class="keyword">new</span> Path(outputDir), opts);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指定要压缩的文件的目录</span></span><br><span class="line">        File inputDirPath = <span class="keyword">new</span> File(inputDir);</span><br><span class="line">        <span class="keyword">if</span>(inputDirPath.isDirectory())&#123;</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            File[] files = inputDirPath.listFiles();</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            <span class="keyword">for</span>(File file: files)&#123;</span><br><span class="line">                <span class="comment">//获取文件全部内容</span></span><br><span class="line">                String content = FileUtils.readFileToString(file, <span class="string">"UTF-8"</span>);</span><br><span class="line">                <span class="comment">//</span></span><br><span class="line">                String fileName = file.getName();</span><br><span class="line">                <span class="comment">//文件名作为key</span></span><br><span class="line">                Text key = <span class="keyword">new</span> Text(fileName);</span><br><span class="line">                <span class="comment">//文件内容作为value</span></span><br><span class="line">                Text value = <span class="keyword">new</span> Text(content);</span><br><span class="line">                <span class="comment">//</span></span><br><span class="line">                writer.append(key,value);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        writer.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">(String inputDir)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        <span class="comment">//指定HDFS的地址</span></span><br><span class="line">        conf.set(<span class="string">"fs.defaultFS"</span>,<span class="string">"hdfs://bigdata01:9000"</span>);</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        MapFile.Reader reader = <span class="keyword">new</span> MapFile.Reader(<span class="keyword">new</span> Path(inputDir), conf);</span><br><span class="line">        Text key = <span class="keyword">new</span> Text();</span><br><span class="line">        Text value = <span class="keyword">new</span> Text();</span><br><span class="line">        <span class="keyword">while</span>(reader.next(key, value))&#123;</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            System.out.println(<span class="string">"文件名："</span>+key.toString());</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            System.out.println(<span class="string">"文件内容："</span>+value.toString()+<span class="string">" "</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="通过MapReduce读取SequenceFile"><a href="#通过MapReduce读取SequenceFile" class="headerlink" title="通过MapReduce读取SequenceFile"></a>通过MapReduce读取SequenceFile</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">下面我们来看一个案例</span><br><span class="line">我们来使用SequenceFile实现小文件的存储和计算</span><br><span class="line">小文件的存储刚才我们已经通过代码实现了，接下来我们要实现如何通过MapReduce读取SequenceFile</span><br><span class="line">咱们之前的代码默认只能读取普通文本文件，针对SequenceFile是无法读取的</span><br><span class="line">那该如何设置才能让mapreduce可以读取SequenceFile呢？</span><br><span class="line">很简单，只需要在job中设置输入数据处理类就行了，默认情况下使用的是TextInputFormat</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.mc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.Path;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.LongWritable;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Job;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Mapper;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Reducer;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFilter;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.sound.midi.Sequence;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 需求：读取hdfs上的hello.txt文件，计算文件中各个单词出现次数</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 原始文件内容如下：</span></span><br><span class="line"><span class="comment"> * hello you</span></span><br><span class="line"><span class="comment"> * hello me</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 最终需要的结果形式：</span></span><br><span class="line"><span class="comment"> * hello 2</span></span><br><span class="line"><span class="comment"> * me 1</span></span><br><span class="line"><span class="comment"> * you 1</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordCountJobSeq</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 静态内部类</span></span><br><span class="line">    <span class="comment">// map阶段</span></span><br><span class="line">    <span class="comment">// 注意：myMapper和myReducer类可以提到外面去写，这里只是为了方便学习</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">myMapper</span> <span class="keyword">extends</span> <span class="title">Mapper</span>&lt;<span class="title">Text</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt;</span>&#123;</span><br><span class="line">        Logger logger = LoggerFactory.getLogger(myMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 需要实现map函数</span></span><br><span class="line"><span class="comment">         * 这个函数就是可以接受&lt;k1,v1&gt;, 产生&lt;k2,v2&gt;</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> k1</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> v1</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(Text k1, Text v1, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="comment">// k1代表每一行数据的行首偏移量，v1代表的是每一行的数据</span></span><br><span class="line">            <span class="comment">// 需要做的是：把每一行数据的单词切割出来</span></span><br><span class="line">            <span class="comment">//logger.info("&lt;k1, v1&gt;: &lt;"+k1.get()+", "+v1.toString()+"&gt;");</span></span><br><span class="line">            System.out.println(<span class="string">"&lt;k1, v1&gt;: &lt;"</span>+k1.toString()+<span class="string">", "</span>+v1.toString()+<span class="string">"&gt;"</span>);</span><br><span class="line">            String[] words = v1.toString().split(<span class="string">" "</span>);</span><br><span class="line">            <span class="keyword">for</span> (String word : words)&#123;</span><br><span class="line">                <span class="comment">// 把切割出来的单词，封装成&lt;k2, 1&gt;</span></span><br><span class="line">                Text k2 = <span class="keyword">new</span> Text(word);</span><br><span class="line">                LongWritable v2 = <span class="keyword">new</span> LongWritable(<span class="number">1L</span>);</span><br><span class="line">                context.write(k2,v2);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//super.map(key, value, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * reduce阶段</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">myReducer</span> <span class="keyword">extends</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt;</span>&#123;</span><br><span class="line">        Logger logger = LoggerFactory.getLogger(myReducer<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 对&lt;k2, &#123;v2...&#125;&gt;的数据进行累加求和，生成&lt;k3,v3&gt;</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> k2</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> v2s</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text k2, Iterable&lt;LongWritable&gt; v2s, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(LongWritable v2:v2s)&#123;</span><br><span class="line">                logger.info(<span class="string">"&lt;k2, v2&gt;: &lt;"</span>+k2.toString()+<span class="string">", "</span>+v2.get()+<span class="string">"&gt;"</span>);</span><br><span class="line">                <span class="comment">//System.out.println("&lt;k2, v2&gt;: &lt;"+k2.toString()+", "+v2.get()+"&gt;");</span></span><br><span class="line">                sum += v2.get();</span><br><span class="line">            &#125;</span><br><span class="line">            Text k3 = k2;</span><br><span class="line">            LongWritable v3 = <span class="keyword">new</span> LongWritable(sum);</span><br><span class="line">            logger.info(<span class="string">"&lt;k3, v3&gt;: &lt;"</span>+k3.toString()+<span class="string">", "</span>+v3.get()+<span class="string">"&gt;"</span>);</span><br><span class="line">            <span class="comment">//System.out.println("&lt;k3, v3&gt;: &lt;"+k3.toString()+", "+v3.get()+"&gt;");</span></span><br><span class="line">            context.write(k3, v3);</span><br><span class="line">            <span class="comment">// super.reduce(key, values, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 组装job=map+reduce</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(args.length!=<span class="number">2</span>)&#123;</span><br><span class="line">                System.exit(<span class="number">100</span>);</span><br><span class="line">                System.out.println(<span class="string">"缺少路径参数！！！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 指定Job需要的配置参数</span></span><br><span class="line">            Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">            <span class="comment">// 创建一个Job</span></span><br><span class="line">            Job job = Job.getInstance(conf);</span><br><span class="line">            <span class="comment">// 注意：这一行必须设置，否者在集群中执行时找不到WordCountJob这个类</span></span><br><span class="line">            job.setJarByClass(WordCountJobForHowManyMapTask<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 指定输入路径，可以是文件也可以是目录(目录里只有一个文件时可以); 注意FileInputFormat别选成hadoop1.x的了</span></span><br><span class="line">            FileInputFormat.setInputPaths(job, <span class="keyword">new</span> Path(args[<span class="number">0</span>]));</span><br><span class="line">            <span class="comment">// 指定输出路径(只能是hdfs上一个不存在的目录); 注意FileOutFormat别选成hadoop1.x的了</span></span><br><span class="line">            FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(args[<span class="number">1</span>]));</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            job.setInputFormatClass(SequenceFileInputFormat<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定map相关代码</span></span><br><span class="line">            job.setMapperClass(myMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定k2类型</span></span><br><span class="line">            job.setMapOutputKeyClass(Text<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定v2类型</span></span><br><span class="line">            job.setMapOutputValueClass(LongWritable<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//指定reduce相关代码</span></span><br><span class="line">            job.setReducerClass(myReducer<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定k3类型</span></span><br><span class="line">            job.setOutputKeyClass(Text<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定v3类型</span></span><br><span class="line">            job.setOutputValueClass(LongWritable<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 提交job</span></span><br><span class="line">            job.waitForCompletion(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="异常-1"><a href="#异常-1" class="headerlink" title="异常"></a>异常</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1.在hdfs上创建的seqFile和mapFile都看不见，但IDEA上read方法却正确执行</span><br><span class="line"></span><br><span class="line">conf.set(&quot;fs.defaultFS&quot;, &quot;hdfs:&#x2F;&#x2F;bigdata01:9000&quot;) &#x2F;&#x2F; FS写成了Fs</span><br><span class="line"></span><br><span class="line">2.org.apache.hadoop.security.AccessControlException: Permission denied: user&#x3D;***</span><br><span class="line"></span><br><span class="line">https:&#x2F;&#x2F;blog.csdn.net&#x2F;diqijiederizi&#x2F;article&#x2F;details&#x2F;82753573</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月13日 - 14:02</p>
+  <p><span>最后更新:</span>2022年02月14日 - 15:02</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" title="大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-java%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C.html" rel="next" title="廖雪峰java教程笔记-java数组操作">
+                <i class="fa fa-chevron-left"></i> 廖雪峰java教程笔记-java数组操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" rel="prev" title="大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案">
+                大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">241</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第六周-第一章-剖析小文件问题与企业级解决方案"><span class="nav-number">1.</span> <span class="nav-text">第六周 第一章 剖析小文件问题与企业级解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce性能优化"><span class="nav-number">1.1.</span> <span class="nav-text">MapReduce性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#小文件问题"><span class="nav-number">1.1.1.</span> <span class="nav-text">小文件问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SequenceFile"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">SequenceFile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建SequenceFile"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">创建SequenceFile</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#代码"><span class="nav-number">1.1.1.2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#读SquenceFile"><span class="nav-number">1.1.1.2.2.</span> <span class="nav-text">读SquenceFile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#异常"><span class="nav-number">1.1.1.2.3.</span> <span class="nav-text">异常</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MapFile"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">MapFile</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#通过MapReduce读取SequenceFile"><span class="nav-number">1.1.1.3.1.</span> <span class="nav-text">通过MapReduce读取SequenceFile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#异常-1"><span class="nav-number">1.1.1.3.2.</span> <span class="nav-text">异常</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">168.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

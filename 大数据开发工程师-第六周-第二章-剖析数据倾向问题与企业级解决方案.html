@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第六周 第二章 剖析数据倾向问题与企业级解决方案12345  在实际工作中，如果我们想提高MapReduce的执行效率，最直接的方法是什么呢？我们知道MapReduce是分为Map阶段和Reduce阶段，其实提高执行效率就是提高这两个阶段的执行效率默认情况下Map阶段中Map任务的个数是和数据的InputSplit相关的，InputSplit的个数一般是和Block块是有关联的，所以可以认为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第六周 第二章 剖析数据倾向问题与企业级解决方案12345  在实际工作中，如果我们想提高MapReduce的执行效率，最直接的方法是什么呢？我们知道MapReduce是分为Map阶段和Reduce阶段，其实提高执行效率就是提高这两个阶段的执行效率默认情况下Map阶段中Map任务的个数是和数据的InputSplit相关的，InputSplit的个数一般是和Block块是有关联的，所以可以认为">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/14/H660gK.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/14/H66w36.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/14/H6xkFA.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/14/H6x4kd.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HczLlt.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/14/Hcpypn.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HgCe78.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HgM8TH.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HgMJkd.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HgMYtA.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HWm7uT.png">
+<meta property="article:published_time" content="2022-02-13T06:05:27.000Z">
+<meta property="article:modified_time" content="2022-02-15T15:01:47.379Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s4.ax1x.com/2022/02/14/H660gK.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第六周-第二章-剖析数据倾向问题与企业级解决方案.html">
+
+
+
+
+
+  <title>大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-13T14:05:27+08:00">
+                2022-02-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="第六周-第二章-剖析数据倾向问题与企业级解决方案"><a href="#第六周-第二章-剖析数据倾向问题与企业级解决方案" class="headerlink" title="第六周 第二章 剖析数据倾向问题与企业级解决方案"></a>第六周 第二章 剖析数据倾向问题与企业级解决方案</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  在实际工作中，如果我们想提高MapReduce的执行效率，最直接的方法是什么呢？</span><br><span class="line">我们知道MapReduce是分为Map阶段和Reduce阶段，其实提高执行效率就是提高这两个阶段的执行效率默认情况下Map阶段中Map任务的个数是和数据的InputSplit相关的，InputSplit的个数一般是和Block块是有关联的，所以可以认为Map任务的个数和数据的block块个数有关系，针对Map任务的个数我们一般是不需要干预的，除非是前面我们说的海量小文件，那个时候可以考虑把小文件合并成大文件。其他情况是不需要调整的，那就剩下Reduce阶段了，咱们前面说过，默认情况下reduce的个数是<span class="number">1</span>个，所以现在MapReduce任务的压力就集中在Reduce阶段了，如果说数据量比较大的时候，一个reduce任务处理起来肯定是比较慢的，所以我们可以考虑增加reduce任务的个数，这样就可以实现数据分流了，提高计算效率了。</span><br><span class="line">但是注意了，如果增加Reduce的个数，那肯定是要对数据进行分区的，分区之后，每一个分区的数据会被一个reduce任务处理。</span><br><span class="line">那如何增加分区呢？</span><br><span class="line">我们来看一下代码，进入WordCountJob中，其实我们可以通过job.setPartitionerClass 来设置分区类，不过目前我们是没有设置的，那框架中是不是有默认值啊，是有的，我们可以通过 job.getPartitionerClass 方法看到默认情况下会使用 HashPartitioner 这个分区类</span><br></pre></td></tr></table></figure>
+
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">那我们来看一下HashPartitioner的实现是什么样子的</span><br><span class="line"></span><br><span class="line">&#x2F;** Partition keys by their &#123;@link Object#hashCode()&#125;. *&#x2F;</span><br><span class="line">@InterfaceAudience.Public</span><br><span class="line">@InterfaceStability.Stable</span><br><span class="line">public class HashPartitioner&lt;K, V&gt; extends Partitioner&lt;K, V&gt; &#123;</span><br><span class="line">&#x2F;** Use &#123;@link Object#hashCode()&#125; to partition. *&#x2F;</span><br><span class="line">public int getPartition(K key, V value,</span><br><span class="line">int numReduceTasks) &#123;</span><br><span class="line">return (key.hashCode() &amp; Integer.MAX_VALUE) % numReduceTasks;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">HashPartitioner继承了Partitioner，这里面其实就一个方法， getPartition ，其实map里面每一条数据都会进入这个方法来获取他们所在的分区信息，这里的key就是k2,value就是v2</span><br><span class="line">主要看里面的实现</span><br><span class="line"></span><br><span class="line">(key.hashCode() &amp; Integer.MAX_VALUE) % numReduceTasks</span><br><span class="line"></span><br><span class="line">  其实起决定性的因素就是 numReduceTasks 的值，这个值默认是1，通过 job.getNumReduceTasks() 可知。</span><br><span class="line">  所以最终任何值%1 都返回0，那也就意味着他们都在0号分区，也就只有这一个分区。</span><br><span class="line">  如果想要多个分区，很简单，只需要把 numReduceTasks 的数目调大即可(当为5时，取余后的值可能为0,1,2,3,4,也就是五个分区)，这个其实就reduce任务的数量，那也就意味着，只要redcue任务数量变大了，对应的分区数也就变多了，有多少个分区就会有多少个reduce任务，那我们就不需要单独增加分区的数量了，只需要控制好Redcue任务的数量即可。</span><br><span class="line">  增加redcue任务个数在一定场景下是可以提高效率的，但是在一些特殊场景下单纯增加reduce任务个数是无法达到质的提升的。</span><br></pre></td></tr></table></figure>
+
+<h2 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">下面我们来分析一个场景：</span><br><span class="line">  假设我们有一个文件，有1000W条数据，这里面的值主要都是数字，1,2,3,4,5,6,7,8,9,10，我们希望统计出来每个数字出现的次数</span><br><span class="line">  其实在私底下我们是知道这份数据的大致情况的，这里面这1000w条数据，值为5的数据有910w条左右，剩下的9个数字一共只有90w条，那也就意味着，这份数据中，值为5的数据比较集中，或者说值为5的数据属于倾斜的数据，在这一整份数据中，它占得比重比其他的数据多得多。</span><br><span class="line">  下面我们画图来具体分析一下：</span><br><span class="line">假设这1000W条数据的文件有3个block，会产生3个InputSplt，最终会产生3个Map任务，默认情况下只有一个reduce任务，所以所有的数据都会让这一个reduce任务处理，这样这个Reduce压力肯定很大，大量的时间都消耗在了这里</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/H660gK" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/14/H660gK.png" alt="H660gK.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">那根据我们前面的分析，我们可以增加reduce任务的数量，看下面这张图，我们把reduce任务的数量调</span><br><span class="line">整到10个，这个时候就会把1000w条数据让这10 个reduce任务并行处理了，这个时候效率肯定会有一定</span><br><span class="line">的提升，但是最后我们会发现，性能提升是有限的，并没有达到质的提升，那这是为什么呢？</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/H66w36" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/14/H66w36.png" alt="H66w36.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  我们来分析一下，刚才我们说了我们这份数据中，值为5的数据有910w条，这就占了整份数据的90%了，那这90%的数据会被一个reduce任务处理，在这里假设是让reduce5处理了，reduce5这个任务执行的是比较慢的，其他reduce任务都执行结束很长时间了，它还没执行结束，因为reduce5中处理的数据量和其他reduce中处理的数据量规模相差太大了，所以最终reduce5拖了后腿。咱们mapreduce任务执行消耗的时间是一直统计到最后一个执行结束的reduce任务，所以就算其他reduce任务早都执行结束了也没有用，整个mapreduce任务是没有执行结束的。</span><br><span class="line">那针对这种情况怎么办？</span><br><span class="line">  这个时候单纯的增加reduce任务的个数已经不起多大作用了，如果启动太多可能还会适得其反。</span><br><span class="line">其实这个时候最好的办法是把这个值为5的数据尽量打散，把这个倾斜的数据分配到其他reduce任务中去计算，这样才能从根本上解决问题。</span><br><span class="line">  这就是我们要分析的一个数据倾斜的问题</span><br><span class="line">MapReduce程序执行时，Reduce节点大部分执行完毕，但是有一个或者几个Reduce节点运行很慢，导致整个程序处理时间变得很长</span><br><span class="line">  具体表现为：Ruduce阶段一直卡着不动</span><br><span class="line">根据刚才的分析，有两种方案</span><br><span class="line">1. 增加reduce任务个数，这个属于治标不治本，针对倾斜不是太严重的数据是可以解决问题的，针对倾斜严重的数据，这样是解决不了根本问题的</span><br><span class="line">2. 把倾斜的数据打散这种可以根治倾斜严重的数据。</span><br></pre></td></tr></table></figure>
+
+<h2 id="案例实操"><a href="#案例实操" class="headerlink" title="案例实操"></a>案例实操</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">现在呢我们通过理论层面分析完了，那接下来我们来具体进入一个实际案例上手操作一下</span><br><span class="line">还使用我们刚才说的那一份数据，1000w条的，其中值为5的大致有910w条左右</span><br><span class="line">其他的加起来一共90万条左右。</span><br><span class="line">这个数据文件我已经生成好了，直接上传到linux服务器上就可以，上传到&#x2F;data&#x2F;soft目录下</span><br><span class="line"></span><br><span class="line">这个文件有点大，在windows本地无法打开，在这里我们去一条数据看一下数据格式，前面是一个数</span><br><span class="line">字，后面是一行日志，这个数据是我自己造的，我们主要是使用前面的这个数字，后面的内容主要是为了</span><br><span class="line">充数的，要不然文件太小，测试不出来效果。后面我们解析数据的时候只获取前面这个数字即可，前面这</span><br><span class="line">个数字是1-10之间的数字</span><br><span class="line">接下来把这个文件上传到hdfs上</span><br><span class="line">[root@bigdata01 soft]# ll</span><br><span class="line">total 2632200</span><br><span class="line">drwxr-xr-x. 9 1001 1002 244 Apr 26 20:34 hadoop-3.2.0</span><br><span class="line">-rw-r--r--. 1 root root 345625475 Jul 19 2019 hadoop-3.2.0.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root 1860100000 Apr 27 21:58 hello_10000000.dat</span><br><span class="line">drwxr-xr-x. 7 10 143 245 Dec 16 2018 jdk1.8</span><br><span class="line">-rw-r--r--. 1 root root 194042837 Apr 6 23:14 jdk-8u202-linux-x64.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root 147616384 Apr 27 16:22 s_name_140.dat</span><br><span class="line">-rw-r--r--. 1 root root 147976384 Apr 27 16:22 s_name_141.dat</span><br><span class="line">123456789</span><br><span class="line">[root@bigdata01 soft]# tail -1 hello_10000000.dat</span><br><span class="line">10 INFO main org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter: FileO</span><br><span class="line"></span><br><span class="line">接下来把这个文件上传到hdfs上</span><br></pre></td></tr></table></figure>
+
+<h3 id="编写代码"><a href="#编写代码" class="headerlink" title="编写代码"></a>编写代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">主要设置:</span><br><span class="line">1.map对k1的处理，</span><br><span class="line">2.reduce阶段模拟复杂数据处理，</span><br><span class="line">3.job.setNumReduceTasks(num);</span><br></pre></td></tr></table></figure>
+
+<h4 id="自己创建的测试数据"><a href="#自己创建的测试数据" class="headerlink" title="自己创建的测试数据"></a>自己创建的测试数据</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一共5000000行</span><br><span class="line">60% 5</span><br><span class="line">5% 1 2 3 4 6 7 8 9</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="map"><a href="#map" class="headerlink" title="map"></a>map</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(LongWritable k1, Text v1, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="comment">// k1代表每一行数据的行首偏移量，v1代表的是每一行的数据</span></span><br><span class="line">            <span class="comment">// 需要做的是：把每一行数据的单词切割出来</span></span><br><span class="line">            <span class="comment">//logger.info("&lt;k1, v1&gt;: &lt;"+k1.get()+", "+v1.toString()+"&gt;");</span></span><br><span class="line">            <span class="comment">//System.out.println("&lt;k1, v1&gt;: &lt;"+k1.get()+", "+v1.toString()+"&gt;");</span></span><br><span class="line">            String[] words = v1.toString().split(<span class="string">" "</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 把切割出来的单词，封装成&lt;k2, 1&gt;</span></span><br><span class="line">            Text k2 = <span class="keyword">new</span> Text(words[<span class="number">0</span>]);</span><br><span class="line">            LongWritable v2 = <span class="keyword">new</span> LongWritable(<span class="number">1L</span>);</span><br><span class="line">            context.write(k2,v2);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//super.map(key, value, context);</span></span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">myReducer</span> <span class="keyword">extends</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt;</span>&#123;</span><br><span class="line">        <span class="comment">//Logger logger = LoggerFactory.getLogger(myReducer.class);</span></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 对&lt;k2, &#123;v2...&#125;&gt;的数据进行累加求和，生成&lt;k3,v3&gt;</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> k2</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> v2s</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text k2, Iterable&lt;LongWritable&gt; v2s, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(LongWritable v2:v2s)&#123;</span><br><span class="line">                <span class="comment">//logger.info("&lt;k2, v2&gt;: &lt;"+k2.toString()+", "+v2.get()+"&gt;");</span></span><br><span class="line">                <span class="comment">//System.out.println("&lt;k2, v2&gt;: &lt;"+k2.toString()+", "+v2.get()+"&gt;");</span></span><br><span class="line">                sum += v2.get();</span><br><span class="line">                <span class="comment">//模拟Reduce的复杂计算消耗的时间</span></span><br><span class="line">                <span class="keyword">if</span>(sum%<span class="number">200</span>==<span class="number">0</span>)&#123;</span><br><span class="line">                    Thread.sleep((<span class="number">1</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            Text k3 = k2;</span><br><span class="line">            LongWritable v3 = <span class="keyword">new</span> LongWritable(sum);</span><br><span class="line">            <span class="comment">//logger.info("&lt;k3, v3&gt;: &lt;"+k3.toString()+", "+v3.get()+"&gt;");</span></span><br><span class="line">            <span class="comment">//System.out.println("&lt;k3, v3&gt;: &lt;"+k3.toString()+", "+v3.get()+"&gt;");</span></span><br><span class="line">            context.write(k3, v3);</span><br><span class="line">            <span class="comment">// super.reduce(key, values, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="main"><a href="#main" class="headerlink" title="main"></a>main</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(args.length!=<span class="number">3</span>)&#123;</span><br><span class="line">                System.exit(<span class="number">100</span>);</span><br><span class="line">                System.out.println(<span class="string">"缺少路径参数！！！"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 指定Job需要的配置参数</span></span><br><span class="line">            Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">            <span class="comment">// 创建一个Job</span></span><br><span class="line">            Job job = Job.getInstance(conf);</span><br><span class="line">            <span class="comment">// 注意：这一行必须设置，否者在集群中执行时找不到WordCountJob这个类</span></span><br><span class="line">            job.setJarByClass(WordCountJobSkew<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 指定输入路径，可以是文件也可以是目录(目录里只有一个文件时可以); 注意FileInputFormat别选成hadoop1.x的了</span></span><br><span class="line">            FileInputFormat.setInputPaths(job, <span class="keyword">new</span> Path(args[<span class="number">0</span>]));</span><br><span class="line">            <span class="comment">// 指定输出路径(只能是hdfs上一个不存在的目录); 注意FileOutFormat别选成hadoop1.x的了</span></span><br><span class="line">            FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(args[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 指定map相关代码</span></span><br><span class="line">            job.setMapperClass(myMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定k2类型</span></span><br><span class="line">            job.setMapOutputKeyClass(Text<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定v2类型</span></span><br><span class="line">            job.setMapOutputValueClass(LongWritable<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//指定reduce相关代码</span></span><br><span class="line">            job.setReducerClass(myReducer<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定k3类型</span></span><br><span class="line">            job.setOutputKeyClass(Text<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">// 指定v3类型</span></span><br><span class="line">            job.setOutputValueClass(LongWritable<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            <span class="comment">//</span></span><br><span class="line">            job.setNumReduceTasks(Integer.parseInt(args[<span class="number">2</span>]));</span><br><span class="line">            <span class="comment">// 提交job</span></span><br><span class="line">            job.waitForCompletion(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="结果查看"><a href="#结果查看" class="headerlink" title="结果查看"></a>结果查看</h3><p><a href="https://imgtu.com/i/H6xkFA" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/14/H6xkFA.md.png" alt="H6xkFA.md.png"></a></p>
+<h4 id="1个reduceTask"><a href="#1个reduceTask" class="headerlink" title="1个reduceTask"></a>1个reduceTask</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar bigdata_hadoop-1.0-SNAPSHOT-jar-with-dependencies.jar com.imooc.mc.WordCountJobSkew &#x2F;test&#x2F;shujuqingxie&#x2F;QingXieData.txt &#x2F;test&#x2F;shujuqingxie&#x2F;outcome1 1</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/H6x4kd" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/14/H6x4kd.md.png" alt="H6x4kd.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">具体分析页面打不开</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="9个reduceTask"><a href="#9个reduceTask" class="headerlink" title="9个reduceTask"></a>9个reduceTask</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar bigdata_hadoop-1.0-SNAPSHOT-jar-with-dependencies.jar com.imooc.mc.WordCountJobSkew &#x2F;test&#x2F;shujuqingxie&#x2F;QingXieData.txt &#x2F;test&#x2F;shujuqingxie&#x2F;outcome1 9</span><br></pre></td></tr></table></figure>
+
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p><a href="https://imgtu.com/i/HczLlt" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/15/HczLlt.md.png" alt="HczLlt.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">所以从这可以看出来，性能提升并不大</span><br><span class="line"></span><br><span class="line">具体分析Reduce任务的执行时间</span><br><span class="line">这里由于有10个reduce，所以一共有10行，在这我们截取了一部分，其中这里面有一个reduce任务消耗的时间比较长，其他reduce任务的执行时间都是4~5秒，这个reduce任务的执行时间是1分26秒，那就意味着值为5的那910w数据进入到这个reduce了，所以它执行的比较慢。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/Hcpypn" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/14/Hcpypn.md.png" alt="Hcpypn.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">map任务14个里面，kill 2个是因为“推测执行”，当map任务里某些maptask任务相比其它maptask明显慢很多时(会认为是有异常)，会自动产生新的maptask任务，两个一起执行，最后杀掉慢的 下面这是reduce阶段某个reducetask的推测执行</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HgCe78" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/15/HgCe78.md.png" alt="HgCe78.md.png"></a></p>
+<h3 id="把倾斜的数据打散-面试"><a href="#把倾斜的数据打散-面试" class="headerlink" title="把倾斜的数据打散(面试)"></a>把倾斜的数据打散(面试)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  那我们再把reduce任务的个数提高一下，会不会提高性能呢？不会了，刚才从1个reduce任务提高到10个reduce任务时间也就减少了三四秒钟，所以再增加reduce任务的个数就没有多大意义了。</span><br><span class="line">  那接下来就需要使用我们的绝招了，把倾斜的数据打散，在这里就是把5这个数字打散，</span><br><span class="line">怎么打散呢？其实就是给他加上一些有规律的随机数字就可以了</span><br><span class="line">  在这里我们这样处理，我把5这个数值的数据再分成10份，所以我就在这个数值5后面拼上一个0~9的随机数即可。</span><br></pre></td></tr></table></figure>
+
+<h4 id="map-1"><a href="#map-1" class="headerlink" title="map"></a>map</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">只需要在map中把k2的值修改一下就可以了，这样就可以把值为<span class="number">5</span>的数据打散了。</span><br><span class="line">编译打包，提交到集群</span><br><span class="line">String[] words = v1.toString().split(<span class="string">" "</span>);</span><br><span class="line">            String key = words[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">if</span>(<span class="string">"5"</span>.equals(key))&#123;</span><br><span class="line">                key = <span class="string">"5_"</span>+random.nextInt(<span class="number">10</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 把切割出来的单词，封装成&lt;k2, 1&gt;</span></span><br><span class="line">            Text k2 = <span class="keyword">new</span> Text(key);</span><br><span class="line">            LongWritable v2 = <span class="keyword">new</span> LongWritable(<span class="number">1L</span>);</span><br><span class="line">            context.write(k2,v2);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="reduce-1"><a href="#reduce-1" class="headerlink" title="reduce"></a>reduce</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">没变</span><br></pre></td></tr></table></figure>
+
+<h4 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">注意，这个时候获取到的并不是最终的结果，因为我们把值为5的数据随机分成多份了，最多分成10份</span><br><span class="line"></span><br><span class="line">任务总的执行消耗时间为： Elapsed: 1mins, 39sec</span><br><span class="line">这次任务执行时间节省了1分钟多的左右，在这就属于质的提升了，相当于节省了将近一半的时间了</span><br><span class="line"></span><br><span class="line">查看一下reduce任务执行情况，在这里就没有发现特别耗时的reduce任务了，消耗的时间几乎都差不多</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HgM8TH" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/15/HgM8TH.png" alt="HgM8TH.png"></a><br><a href="https://imgtu.com/i/HgMJkd" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/15/HgMJkd.md.png" alt="HgMJkd.md.png"></a><br><a href="https://imgtu.com/i/HgMYtA" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/15/HgMYtA.md.png" alt="HgMYtA.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> 但是这个时候我们获取到的最终结果是一个半成品，还需要进行一次加工，其实我们前面把这个倾斜的数据打散之后相当于做了一个局部聚合，现在还需要再开发一个mapreduce任务再做一次全局聚合，其实也很简单，获取到上一个map任务的输出，在map端读取到数据之后，对数据先使用空格分割，然后对第一列的数据再使用下划线分割，分割之后总是取第一列，这样就可以把值为5的数据还原出来了，这个时候数据一共就这么十几条，怎么处理都很快了，这个代码就给大家留成作业了，我们刚才已经把详细的过程都分析过了，大家下去之后自己写一下，如果遇到了问题，可以在咱们的问答区一块讨论，或者直接找我都是可以的。</span><br><span class="line">这就是针对数据倾斜问题的处理方法，面试的时候经常问到，大家一定要能够把这个思路说明白。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HWm7uT" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/15/HWm7uT.png" alt="HWm7uT.png"></a></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月13日 - 14:02</p>
+  <p><span>最后更新:</span>2022年02月15日 - 23:02</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" title="大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%89%96%E6%9E%90%E5%B0%8F%E6%96%87%E4%BB%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" rel="next" title="大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第六周 第一章 剖析小文件问题与企业级解决方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-YARN%E5%AE%9E%E6%88%98.html" rel="prev" title="大数据开发工程师-第六周 第三章 YARN实战">
+                大数据开发工程师-第六周 第三章 YARN实战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">241</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第六周-第二章-剖析数据倾向问题与企业级解决方案"><span class="nav-number">1.</span> <span class="nav-text">第六周 第二章 剖析数据倾向问题与企业级解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#源码解析"><span class="nav-number">1.1.</span> <span class="nav-text">源码解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例分析"><span class="nav-number">1.2.</span> <span class="nav-text">案例分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例实操"><span class="nav-number">1.3.</span> <span class="nav-text">案例实操</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写代码"><span class="nav-number">1.3.1.</span> <span class="nav-text">编写代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#自己创建的测试数据"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">自己创建的测试数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#map"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#main"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">main</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果查看"><span class="nav-number">1.3.2.</span> <span class="nav-text">结果查看</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1个reduceTask"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">1个reduceTask</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9个reduceTask"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">9个reduceTask</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#把倾斜的数据打散-面试"><span class="nav-number">1.3.3.</span> <span class="nav-text">把倾斜的数据打散(面试)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#map-1"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce-1"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析-1"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">分析</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">168.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

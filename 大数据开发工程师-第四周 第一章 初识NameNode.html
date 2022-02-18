@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="NameNode介绍1234567  首先是NameNode，NameNode是整个文件系统的管理节点它主要维护着整个文件系统的文件目录树，文件&#x2F;目录的信息 和 每个文件对应的数据块列表，并且还负责接收用户的操作请求  目录树：表示目录之间的层级关系，就是我们在hdfs上执行ls命令可以看到的那个目录结构信息。  文件&#x2F;目录的信息：表示文件&#x2F;目录的的一些基本信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第四周 第一章 初识NameNode">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%88%9D%E8%AF%86NameNode.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="NameNode介绍1234567  首先是NameNode，NameNode是整个文件系统的管理节点它主要维护着整个文件系统的文件目录树，文件&#x2F;目录的信息 和 每个文件对应的数据块列表，并且还负责接收用户的操作请求  目录树：表示目录之间的层级关系，就是我们在hdfs上执行ls命令可以看到的那个目录结构信息。  文件&#x2F;目录的信息：表示文件&#x2F;目录的的一些基本信息">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/07/HQPVwn.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/07/HQZeu8.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/07/HQ3eWF.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/07/HQ3Ky9.md.png">
+<meta property="article:published_time" content="2022-02-08T10:33:11.000Z">
+<meta property="article:modified_time" content="2022-02-08T10:48:55.435Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s4.ax1x.com/2022/02/07/HQPVwn.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第四周 第一章 初识NameNode.html">
+
+
+
+
+
+  <title>大数据开发工程师-第四周 第一章 初识NameNode | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%88%9D%E8%AF%86NameNode.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第四周 第一章 初识NameNode</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-08T18:33:11+08:00">
+                2022-02-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h4 id="NameNode介绍"><a href="#NameNode介绍" class="headerlink" title="NameNode介绍"></a>NameNode介绍</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  首先是NameNode，NameNode是整个文件系统的管理节点</span><br><span class="line">它主要维护着整个文件系统的文件目录树，文件&#x2F;目录的信息 和 每个文件对应的数据块列表，并且还负责接收用户的操作请求</span><br><span class="line"></span><br><span class="line">  目录树：表示目录之间的层级关系，就是我们在hdfs上执行ls命令可以看到的那个目录结构信息。</span><br><span class="line">  文件&#x2F;目录的信息：表示文件&#x2F;目录的的一些基本信息，所有者 属组 修改时间 文件大小等信息</span><br><span class="line">  每个文件对应的数据块列表：如果一个文件太大，那么在集群中存储的时候会对文件进行切割，这个时候就类似于会给文件分成一块一块的，存储到不同机器上面。所以HDFS还要记录一下一个文件到底被分了多少块，每一块都在什么地方存储着</span><br><span class="line">  接收用户的操作请求：其实我们在命令行使用hdfs操作的时候，是需要先和namenode通信 才能开始去操作数据的。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HQPVwn" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/07/HQPVwn.md.png" alt="HQPVwn.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">这些文件所在的路径是由hdfs-default.xml的dfs.namenode.name.dir属性控制的</span><br><span class="line">hdfs-default.xml文件在哪呢？</span><br><span class="line"></span><br><span class="line">它在hadoop-3.2.0\share\hadoop\hdfs\hadoop-hdfs-3.2.0.jar中，这个文件中包含了HDFS相关的所有默认参数，咱们在配置集群的时候会修改一个hdfs-site.xml文件，hdfs-site.xml文件属于hdfs-default.xml的一个扩展，它可以覆盖掉hdfs-default.xml中同名的参数。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">那我们来看一下这个文件中的dfs.namenode.name.dir属性</span><br><span class="line"></span><br><span class="line">&lt;property&gt;</span><br><span class="line">  &lt;name&gt;dfs.namenode.name.dir&lt;&#x2F;name&gt;</span><br><span class="line">  &lt;value&gt;file:&#x2F;&#x2F;$&#123;hadoop.tmp.dir&#125;&#x2F;dfs&#x2F;name&lt;&#x2F;value&gt;</span><br><span class="line">  &lt;description&gt;Determines where on the local filesystem the DFS name node</span><br><span class="line">      should store the name table(fsimage).  If this is a comma-delimited list</span><br><span class="line">      of directories then the name table is replicated in all of the</span><br><span class="line">      directories, for redundancy. &lt;&#x2F;description&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">这个属性的值是由hadoop.tmp.dir属性控制的，这个属性的值默认在core-default.xml文件中。大家还有没有印象，我们在修改core-site.xml的时候设置的有hadoop.tmp.dir属性的值，值是&#x2F;data&#x2F;hadoop_repo，所以说core-site.xml中的hadoop.tmp.dir属性会覆盖掉core-default.xml中的值</span><br><span class="line"></span><br><span class="line">最终dfs.namenode.name.dir属性的值就是：&#x2F;data&#x2F;hadoop_repo&#x2F;dfs&#x2F;name</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">进入到&#x2F;data&#x2F;hadoop_repo&#x2F;dfs&#x2F;name目录下</span><br><span class="line"></span><br><span class="line">发现这个下面会有一个current 目录，表示当前的意思，还有一个in_use.lock 这个只是一个普通文件，但是它其实有特殊的含义，你看他的文件名后缀值lock 表示是锁的意思，文件名是in_use 表示这个文件现在正在使用，不允许你再启动namenode。</span><br><span class="line"></span><br><span class="line">当我们启动namonde的时候 会判断这个目录下是否有in_use.lock 这个相当于一把锁，如果没有的话，才可以启动成功，启动成功之后就会加一把锁， 停止的时候会把这个锁去掉</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HQZeu8" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/07/HQZeu8.md.png" alt="HQZeu8.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">current里面有edits文件 和fsimage文件</span><br><span class="line"></span><br><span class="line">fsimage文件有两个文件名相同的，有一个后缀是md5 md5是一种加密算法，这个其实主要是为了做md5校验的，为了保证文件传输的过程中不出问题，相同内容的md5是一样的，所以后期如果我把这个fsimage和对应的fsimage.md5发给你 然后你根据md5对fsimage的内容进行加密，获取一个值 和fsimage.md5中的内容进行比较，如果一样，说明你接收到的文件就是完整的。</span><br><span class="line"></span><br><span class="line">我们在网站下载一些软件的时候 也会有一些md5文件，方便验证下载的文件是否完整。</span><br><span class="line"></span><br><span class="line">在这里可以把fsimage 拆开 fs 是文件系统 filesystem image是镜像</span><br><span class="line">说明是文件系统镜像，就是给文件照了一个像，把文件的当前信息记录下来</span><br><span class="line">我们可以看一下这个文件，这个文件需要使用特殊的命令进行查看</span><br></pre></td></tr></table></figure>
+
+<h5 id="fsimage文件"><a href="#fsimage文件" class="headerlink" title="fsimage文件"></a>fsimage文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-i 输入文件 -o 输出文件</span><br><span class="line"></span><br><span class="line">[root@bigdata01 current]# hdfs oiv -p XML -i fsimage_0000000000000000056 -o fsimage56.xml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">inode</span>&gt;</span><span class="tag">&lt;<span class="name">id</span>&gt;</span>16393<span class="tag">&lt;/<span class="name">id</span>&gt;</span><span class="tag">&lt;<span class="name">type</span>&gt;</span>FILE<span class="tag">&lt;/<span class="name">type</span>&gt;</span><span class="tag">&lt;<span class="name">name</span>&gt;</span>LICENSE.txt<span class="tag">&lt;/<span class="name">name</span>&gt;</span><span class="tag">&lt;<span class="name">replication</span>&gt;</span>2<span class="tag">&lt;/<span class="name">replication</span>&gt;</span><span class="tag">&lt;<span class="name">mtime</span>&gt;</span>1586332513657<span class="tag">&lt;/<span class="name">mtime</span>&gt;</span><span class="tag">&lt;<span class="name">atime</span>&gt;</span>1586332513485<span class="tag">&lt;/<span class="name">atime</span>&gt;</span><span class="tag">&lt;<span class="name">preferredBlockSize</span>&gt;</span>134217728<span class="tag">&lt;/<span class="name">preferredBlockSize</span>&gt;</span><span class="tag">&lt;<span class="name">permission</span>&gt;</span>root:supergroup:0644<span class="tag">&lt;/<span class="name">permission</span>&gt;</span><span class="tag">&lt;<span class="name">blocks</span>&gt;</span><span class="tag">&lt;<span class="name">block</span>&gt;</span><span class="tag">&lt;<span class="name">id</span>&gt;</span>1073741827<span class="tag">&lt;/<span class="name">id</span>&gt;</span><span class="tag">&lt;<span class="name">genstamp</span>&gt;</span>1003<span class="tag">&lt;/<span class="name">genstamp</span>&gt;</span><span class="tag">&lt;<span class="name">numBytes</span>&gt;</span>150569<span class="tag">&lt;/<span class="name">numBytes</span>&gt;</span><span class="tag">&lt;/<span class="name">block</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blocks</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">storagePolicyId</span>&gt;</span>0<span class="tag">&lt;/<span class="name">storagePolicyId</span>&gt;</span><span class="tag">&lt;/<span class="name">inode</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">inode</span>&gt;</span><span class="tag">&lt;<span class="name">id</span>&gt;</span>16394<span class="tag">&lt;/<span class="name">id</span>&gt;</span><span class="tag">&lt;<span class="name">type</span>&gt;</span>FILE<span class="tag">&lt;/<span class="name">type</span>&gt;</span><span class="tag">&lt;<span class="name">name</span>&gt;</span>NOTICE.txt<span class="tag">&lt;/<span class="name">name</span>&gt;</span><span class="tag">&lt;<span class="name">replication</span>&gt;</span>2<span class="tag">&lt;/<span class="name">replication</span>&gt;</span><span class="tag">&lt;<span class="name">mtime</span>&gt;</span>1586332522962<span class="tag">&lt;/<span class="name">mtime</span>&gt;</span><span class="tag">&lt;<span class="name">atime</span>&gt;</span>1586332522814<span class="tag">&lt;/<span class="name">atime</span>&gt;</span><span class="tag">&lt;<span class="name">preferredBlockSize</span>&gt;</span>134217728<span class="tag">&lt;/<span class="name">preferredBlockSize</span>&gt;</span><span class="tag">&lt;<span class="name">permission</span>&gt;</span>root:supergroup:0644<span class="tag">&lt;/<span class="name">permission</span>&gt;</span><span class="tag">&lt;<span class="name">blocks</span>&gt;</span><span class="tag">&lt;<span class="name">block</span>&gt;</span><span class="tag">&lt;<span class="name">id</span>&gt;</span>1073741828<span class="tag">&lt;/<span class="name">id</span>&gt;</span><span class="tag">&lt;<span class="name">genstamp</span>&gt;</span>1004<span class="tag">&lt;/<span class="name">genstamp</span>&gt;</span><span class="tag">&lt;<span class="name">numBytes</span>&gt;</span>22125<span class="tag">&lt;/<span class="name">numBytes</span>&gt;</span><span class="tag">&lt;/<span class="name">block</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blocks</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">storagePolicyId</span>&gt;</span>0<span class="tag">&lt;/<span class="name">storagePolicyId</span>&gt;</span><span class="tag">&lt;/<span class="name">inode</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">inode</span>&gt;</span><span class="tag">&lt;<span class="name">id</span>&gt;</span>16395<span class="tag">&lt;/<span class="name">id</span>&gt;</span><span class="tag">&lt;<span class="name">type</span>&gt;</span>FILE<span class="tag">&lt;/<span class="name">type</span>&gt;</span><span class="tag">&lt;<span class="name">name</span>&gt;</span>README.txt<span class="tag">&lt;/<span class="name">name</span>&gt;</span><span class="tag">&lt;<span class="name">replication</span>&gt;</span>2<span class="tag">&lt;/<span class="name">replication</span>&gt;</span><span class="tag">&lt;<span class="name">mtime</span>&gt;</span>1586332531932<span class="tag">&lt;/<span class="name">mtime</span>&gt;</span><span class="tag">&lt;<span class="name">atime</span>&gt;</span>1586332531689<span class="tag">&lt;/<span class="name">atime</span>&gt;</span><span class="tag">&lt;<span class="name">preferredBlockSize</span>&gt;</span>134217728<span class="tag">&lt;/<span class="name">preferredBlockSize</span>&gt;</span><span class="tag">&lt;<span class="name">permission</span>&gt;</span>root:supergroup:0644<span class="tag">&lt;/<span class="name">permission</span>&gt;</span><span class="tag">&lt;<span class="name">blocks</span>&gt;</span><span class="tag">&lt;<span class="name">block</span>&gt;</span><span class="tag">&lt;<span class="name">id</span>&gt;</span>1073741829<span class="tag">&lt;/<span class="name">id</span>&gt;</span><span class="tag">&lt;<span class="name">genstamp</span>&gt;</span>1005<span class="tag">&lt;/<span class="name">genstamp</span>&gt;</span><span class="tag">&lt;<span class="name">numBytes</span>&gt;</span>1361<span class="tag">&lt;/<span class="name">numBytes</span>&gt;</span><span class="tag">&lt;/<span class="name">block</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">blocks</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">storagePolicyId</span>&gt;</span>0<span class="tag">&lt;/<span class="name">storagePolicyId</span>&gt;</span><span class="tag">&lt;/<span class="name">inode</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">INodeSection</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">INodeReferenceSection</span>&gt;</span><span class="tag">&lt;/<span class="name">INodeReferenceSection</span>&gt;</span><span class="tag">&lt;<span class="name">SnapshotSection</span>&gt;</span><span class="tag">&lt;<span class="name">snapshotCounter</span>&gt;</span>0<span class="tag">&lt;/<span class="name">snapshotCounter</span>&gt;</span><span class="tag">&lt;<span class="name">numSnapshots</span>&gt;</span>0<span class="tag">&lt;/<span class="name">numSnapshots</span>&gt;</span><span class="tag">&lt;/<span class="name">SnapshotSection</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">INodeDirectorySection</span>&gt;</span><span class="tag">&lt;<span class="name">directory</span>&gt;</span><span class="tag">&lt;<span class="name">parent</span>&gt;</span>16385<span class="tag">&lt;/<span class="name">parent</span>&gt;</span><span class="tag">&lt;<span class="name">child</span>&gt;</span>16393<span class="tag">&lt;/<span class="name">child</span>&gt;</span><span class="tag">&lt;<span class="name">child</span>&gt;</span>16394<span class="tag">&lt;/<span class="name">child</span>&gt;</span><span class="tag">&lt;<span class="name">child</span>&gt;</span>16395<span class="tag">&lt;/<span class="name">child</span>&gt;</span><span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">INodeDirectorySection</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">FileUnderConstructionSection</span>&gt;</span><span class="tag">&lt;/<span class="name">FileUnderConstructionSection</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">SecretManagerSection</span>&gt;</span><span class="tag">&lt;<span class="name">currentId</span>&gt;</span>0<span class="tag">&lt;/<span class="name">currentId</span>&gt;</span><span class="tag">&lt;<span class="name">tokenSequenceNumber</span>&gt;</span>0<span class="tag">&lt;/<span class="name">tokenSequenceNumber</span>&gt;</span><span class="tag">&lt;<span class="name">numDelegationKeys</span>&gt;</span>0<span class="tag">&lt;/<span class="name">numDelegationKeys</span>&gt;</span><span class="tag">&lt;<span class="name">numTokens</span>&gt;</span>0<span class="tag">&lt;/<span class="name">numTokens</span>&gt;</span><span class="tag">&lt;/<span class="name">SecretManagerSection</span>&gt;</span><span class="tag">&lt;<span class="name">CacheManagerSection</span>&gt;</span><span class="tag">&lt;<span class="name">nextDirectiveId</span>&gt;</span>1<span class="tag">&lt;/<span class="name">nextDirectiveId</span>&gt;</span><span class="tag">&lt;<span class="name">numDirectives</span>&gt;</span>0<span class="tag">&lt;/<span class="name">numDirectives</span>&gt;</span><span class="tag">&lt;<span class="name">numPools</span>&gt;</span>0<span class="tag">&lt;/<span class="name">numPools</span>&gt;</span><span class="tag">&lt;/<span class="name">CacheManagerSection</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fsimage</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">里面最外层是一个fsimage标签，看里面的inode标签，</span><br><span class="line">这个inode表示是hdfs中的每一个目录或者文件信息</span><br><span class="line"></span><br><span class="line">id：唯一编号</span><br><span class="line">type：文件类型</span><br><span class="line">name：文件名称</span><br><span class="line">replication：文件的副本数量</span><br><span class="line">mtime：修改时间</span><br><span class="line">atime：访问时间</span><br><span class="line">preferredBlockSize：推荐每一个数据块的大小</span><br><span class="line">permission：权限信息</span><br><span class="line">blocks：包含多少数据块【文件被切成数据块】</span><br><span class="line">block：内部的id表示是块id，genstamp是一个唯一编号，numBytes表示当前数据块的实际大小，storagePolicyId表示是数据的存储策略</span><br><span class="line"></span><br><span class="line">这个文件中其实就维护了整个文件系统的文件目录树，文件&#x2F;目录的元信息和每个文件对应的数据块列表，所以说fsimage中存放了hdfs最核心的数据。</span><br></pre></td></tr></table></figure>
+
+<h5 id="edits文件"><a href="#edits文件" class="headerlink" title="edits文件"></a>edits文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">下面我们来看一下edits文件，这些文件在这称之为事务文件，为什么呢？</span><br><span class="line"></span><br><span class="line">hdfs oev -i  edits_0000000000000000057-0000000000000000065  -o edits.xml</span><br><span class="line"></span><br><span class="line">  当我们上传一个文件的时候，上传一个10G的文件，假设传到9G的时候上传失败了，这个时候就需要重新传，那hdfs怎么知道这个文件失败了呢？这个是在edits文件中记录的。</span><br><span class="line">  当我们上传大文件的时候，一个大文件会分为多个block，那么edits文件中就会记录这些block的上传状态，只有当全部block都上传成功了以后，这个时候edits中才会记录这个文件上传成功了，那么我们执行hdfs dfs -ls 的时候就能查到这个文件了，</span><br><span class="line">  所以当我们在hdfs中执行ls命令的时候，其实会查询fsimage和edits中的内容</span><br><span class="line">为什么会有这两个文件呢？</span><br><span class="line">  首先,我们固化的一些文件内容是存储在fsimage文件中，当前正在上传的文件信息是存储在edits文件中。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">这个edits.xml中可以大致看一下，里面有很多record。每一个record代表不同的操作，</span><br><span class="line"></span><br><span class="line">例如 OP_ADD,OP_CLOSE 等等，具体挑一个实例进行分析。</span><br><span class="line">OP_ADD：执行上传操作</span><br><span class="line">OP_ALLOCATE_BLOCK_ID：申请block块id</span><br><span class="line">OP_SET_GENSTAMP_V2：设置GENSTAMP</span><br><span class="line">OP_ADD_BLOCK：添加block块</span><br><span class="line">OP_CLOSE：关闭上传操作</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RECORD</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OPCODE</span>&gt;</span>OP_ADD<span class="tag">&lt;/<span class="name">OPCODE</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">DATA</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">TXID</span>&gt;</span>58<span class="tag">&lt;/<span class="name">TXID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">LENGTH</span>&gt;</span>0<span class="tag">&lt;/<span class="name">LENGTH</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">INODEID</span>&gt;</span>16396<span class="tag">&lt;/<span class="name">INODEID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PATH</span>&gt;</span>/user.txt<span class="tag">&lt;/<span class="name">PATH</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">REPLICATION</span>&gt;</span>3<span class="tag">&lt;/<span class="name">REPLICATION</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">MTIME</span>&gt;</span>1586349095694<span class="tag">&lt;/<span class="name">MTIME</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ATIME</span>&gt;</span>1586349095694<span class="tag">&lt;/<span class="name">ATIME</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">BLOCKSIZE</span>&gt;</span>134217728<span class="tag">&lt;/<span class="name">BLOCKSIZE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">CLIENT_NAME</span>&gt;</span>DFSClient_NONMAPREDUCE_-1768454371_1<span class="tag">&lt;/<span class="name">CLIENT_NAME</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">CLIENT_MACHINE</span>&gt;</span>192.168.182.1<span class="tag">&lt;/<span class="name">CLIENT_MACHINE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">OVERWRITE</span>&gt;</span>true<span class="tag">&lt;/<span class="name">OVERWRITE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PERMISSION_STATUS</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">USERNAME</span>&gt;</span>yehua<span class="tag">&lt;/<span class="name">USERNAME</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">GROUPNAME</span>&gt;</span>supergroup<span class="tag">&lt;/<span class="name">GROUPNAME</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">MODE</span>&gt;</span>420<span class="tag">&lt;/<span class="name">MODE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">PERMISSION_STATUS</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ERASURE_CODING_POLICY_ID</span>&gt;</span>0<span class="tag">&lt;/<span class="name">ERASURE_CODING_POLICY_ID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">RPC_CLIENTID</span>&gt;</span>1722b83a-2dc7-4c46-baa9-9fa956b755cd<span class="tag">&lt;/<span class="name">RPC_CLIENTID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">RPC_CALLID</span>&gt;</span>0<span class="tag">&lt;/<span class="name">RPC_CALLID</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">DATA</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">RECORD</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">RECORD</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OPCODE</span>&gt;</span>OP_ALLOCATE_BLOCK_ID<span class="tag">&lt;/<span class="name">OPCODE</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">DATA</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">TXID</span>&gt;</span>59<span class="tag">&lt;/<span class="name">TXID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">BLOCK_ID</span>&gt;</span>1073741830<span class="tag">&lt;/<span class="name">BLOCK_ID</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">DATA</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">RECORD</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">RECORD</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OPCODE</span>&gt;</span>OP_SET_GENSTAMP_V2<span class="tag">&lt;/<span class="name">OPCODE</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">DATA</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">TXID</span>&gt;</span>60<span class="tag">&lt;/<span class="name">TXID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">GENSTAMPV2</span>&gt;</span>1006<span class="tag">&lt;/<span class="name">GENSTAMPV2</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">DATA</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">RECORD</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">RECORD</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OPCODE</span>&gt;</span>OP_ADD_BLOCK<span class="tag">&lt;/<span class="name">OPCODE</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">DATA</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">TXID</span>&gt;</span>61<span class="tag">&lt;/<span class="name">TXID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PATH</span>&gt;</span>/user.txt<span class="tag">&lt;/<span class="name">PATH</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">BLOCK</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">BLOCK_ID</span>&gt;</span>1073741830<span class="tag">&lt;/<span class="name">BLOCK_ID</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">NUM_BYTES</span>&gt;</span>0<span class="tag">&lt;/<span class="name">NUM_BYTES</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">GENSTAMP</span>&gt;</span>1006<span class="tag">&lt;/<span class="name">GENSTAMP</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">BLOCK</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">RPC_CLIENTID</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">RPC_CALLID</span>&gt;</span>-2<span class="tag">&lt;/<span class="name">RPC_CALLID</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">DATA</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">RECORD</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">RECORD</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OPCODE</span>&gt;</span>OP_CLOSE<span class="tag">&lt;/<span class="name">OPCODE</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">DATA</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">TXID</span>&gt;</span>62<span class="tag">&lt;/<span class="name">TXID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">LENGTH</span>&gt;</span>0<span class="tag">&lt;/<span class="name">LENGTH</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">INODEID</span>&gt;</span>0<span class="tag">&lt;/<span class="name">INODEID</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PATH</span>&gt;</span>/user.txt<span class="tag">&lt;/<span class="name">PATH</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">REPLICATION</span>&gt;</span>3<span class="tag">&lt;/<span class="name">REPLICATION</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">MTIME</span>&gt;</span>1586349096480<span class="tag">&lt;/<span class="name">MTIME</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">ATIME</span>&gt;</span>1586349095694<span class="tag">&lt;/<span class="name">ATIME</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">BLOCKSIZE</span>&gt;</span>134217728<span class="tag">&lt;/<span class="name">BLOCKSIZE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">CLIENT_NAME</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">CLIENT_MACHINE</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">OVERWRITE</span>&gt;</span>false<span class="tag">&lt;/<span class="name">OVERWRITE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">BLOCK</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">BLOCK_ID</span>&gt;</span>1073741830<span class="tag">&lt;/<span class="name">BLOCK_ID</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">NUM_BYTES</span>&gt;</span>17<span class="tag">&lt;/<span class="name">NUM_BYTES</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">GENSTAMP</span>&gt;</span>1006<span class="tag">&lt;/<span class="name">GENSTAMP</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">BLOCK</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">PERMISSION_STATUS</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">USERNAME</span>&gt;</span>yehua<span class="tag">&lt;/<span class="name">USERNAME</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">GROUPNAME</span>&gt;</span>supergroup<span class="tag">&lt;/<span class="name">GROUPNAME</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">MODE</span>&gt;</span>420<span class="tag">&lt;/<span class="name">MODE</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">PERMISSION_STATUS</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">DATA</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">RECORD</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">这里面的每一个record都有一个事务id，txid，事务id是连续的，其实一个put操作会在edits文件中产生很多的record，对应的就是很多步骤，这些步骤对我们是屏蔽的。</span><br><span class="line">注意了，根据我们刚才的分析，我们所有对hdfs的增删改操作都会在edits文件中留下信息，那么fsimage文件中的内容是从哪来的？</span><br><span class="line">其实是这样的，edits文件会定期合并到fsimage文件中。</span><br><span class="line">有同学可能有疑问了，edits文件和fsimage文件中的内容是不一样的，这怎么能是合并出来的呢？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意，这个其实是框架去做的，在合并的时候会对edits中的内容进行转换，生成新的内容，其实edits中保存的内容是不是太细了，单单一个上传操作就分为了好几步，其实上传成功之后，我们只需要保存文件具体存储的block信息就行了把，所以在合并的时候其实是对edits中的内容进行了精简。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">他们具体合并的代码我们不用太过关注，但是我们要知道是那个进程去做的这个事情，</span><br><span class="line">其实就是我们之前提到的secondarynamenode</span><br><span class="line">这个进程就是负责定期的把edits中的内容合并到fsimage中。他只做一件事，这是一个单独的进程，在实际工作中部署的时候，也需要部署到一个单独的节点上面。</span><br></pre></td></tr></table></figure>
+
+<h5 id="seentxid文件"><a href="#seentxid文件" class="headerlink" title="seentxid文件"></a>seentxid文件</h5><p><a href="https://imgtu.com/i/HQ3eWF" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/07/HQ3eWF.md.png" alt="HQ3eWF.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">current目录中还有一个seentxid文件，HDFS format之后是0，它代表的是namenode里面的edits*文件的尾数,namenode重启的时候，会按照seen_txid的数字，顺序从头跑edits_0000001~到seen_txid的数字。如果根据对应的seen_txid无法加载到对应的文件，NameNode进程将不会完成启动以保护数据一致性。</span><br></pre></td></tr></table></figure>
+
+<h5 id="VERSION文件"><a href="#VERSION文件" class="headerlink" title="VERSION文件"></a>VERSION文件</h5><p><a href="https://imgtu.com/i/HQ3Ky9" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/07/HQ3Ky9.md.png" alt="HQ3Ky9.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">current目录中还有一个seentxid文件，HDFS format之后是0，它代表的是namenode里面的edits*文件的尾数,namenode重启的时候，会按照seen_txid的数字，顺序从头跑edits_0000001~到seen_txid的数字。如果根据对应的seen_txid无法加载到对应的文件，NameNode进程将不会完成启动以保护数据一致性。</span><br><span class="line"></span><br><span class="line">  之前我们说过 在使用hdfs的时候只格式化一次，不要格式化多次，为什么呢？</span><br><span class="line">一会在讲datanode的时候会详细解释、</span><br></pre></td></tr></table></figure>
+
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fsimage: 元数据镜像文件，存储某一时刻NameNode内存中的元数据信息，就类似是定时做了一个快照操作。【这里的元数据信息是指文件目录树、文件&#x2F;目录的信息、每个文件对应的数据块列表】</span><br><span class="line"></span><br><span class="line">edits: 操作日志文件【事务文件】，这里面会实时记录用户的所有操作</span><br><span class="line"></span><br><span class="line">seentxid: 是存放transactionId的文件，format之后是0，它代表的是namenode里面的edits*文件的尾数,namenode重启的时候，会按照seen_txid的数字，顺序从头跑edits_0000001~到seen_txid的数字。如果根据对应的seen_txid无法加载到对应的文件，NameNode进程将不会完成启动以保护数据一致性。</span><br><span class="line"></span><br><span class="line">VERSION:保存了集群的版本信息</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%88%9D%E8%AF%86NameNode.html">大数据开发工程师-第四周 第一章 初识NameNode</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月08日 - 18:02</p>
+  <p><span>最后更新:</span>2022年02月08日 - 18:02</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%88%9D%E8%AF%86NameNode.html" title="大数据开发工程师-第四周 第一章 初识NameNode">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%88%9D%E8%AF%86NameNode.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8%20%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E5%88%9D%E8%AF%86NameNode.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/github%E7%9B%B8%E5%85%B3.html" rel="next" title="github相关">
+                <i class="fa fa-chevron-left"></i> github相关
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%9B%9B%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0%20NameNode%E8%BF%9B%E9%98%B6.html" rel="prev" title="大数据开发工程师-第四周 第二章NameNode进阶 ">
+                大数据开发工程师-第四周 第二章NameNode进阶  <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">241</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#NameNode介绍"><span class="nav-number">1.</span> <span class="nav-text">NameNode介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#fsimage文件"><span class="nav-number">1.1.</span> <span class="nav-text">fsimage文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#edits文件"><span class="nav-number">1.2.</span> <span class="nav-text">edits文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#seentxid文件"><span class="nav-number">1.3.</span> <span class="nav-text">seentxid文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VERSION文件"><span class="nav-number">1.4.</span> <span class="nav-text">VERSION文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">168.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

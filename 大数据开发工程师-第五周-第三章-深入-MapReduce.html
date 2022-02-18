@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第五周 第三章 深入 MapReduceMapReduce任务日志查看12345如果想要查看mapreduce任务执行过程产生的日志信息怎么办呢？是不是在提交任务的时候直接在这个控制台上就能看到了？先不要着急，我们先在代码中增加一些日志信息，在实际工作中做调试的时候这个也是很有必要的在自定义mapper类的map函数中增加一个输出，将k1,v1的值打印出来在自定义reducer类中的redu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第五周 第三章 深入 MapReduce">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第五周 第三章 深入 MapReduceMapReduce任务日志查看12345如果想要查看mapreduce任务执行过程产生的日志信息怎么办呢？是不是在提交任务的时候直接在这个控制台上就能看到了？先不要着急，我们先在代码中增加一些日志信息，在实际工作中做调试的时候这个也是很有必要的在自定义mapper类的map函数中增加一个输出，将k1,v1的值打印出来在自定义reducer类中的redu">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdADit.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdA0II.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdeR10.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/Hde2pq.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdGYSe.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdlgVf.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdtUOJ.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdtNy4.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/11/HdttlF.png">
+<meta property="article:published_time" content="2022-02-09T10:55:32.000Z">
+<meta property="article:modified_time" content="2022-02-16T14:35:36.469Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s4.ax1x.com/2022/02/11/HdADit.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第五周-第三章-深入-MapReduce.html">
+
+
+
+
+
+  <title>大数据开发工程师-第五周 第三章 深入 MapReduce | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第五周 第三章 深入 MapReduce</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-09T18:55:32+08:00">
+                2022-02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="第五周-第三章-深入-MapReduce"><a href="#第五周-第三章-深入-MapReduce" class="headerlink" title="第五周 第三章 深入 MapReduce"></a>第五周 第三章 深入 MapReduce</h1><h2 id="MapReduce任务日志查看"><a href="#MapReduce任务日志查看" class="headerlink" title="MapReduce任务日志查看"></a>MapReduce任务日志查看</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">如果想要查看mapreduce任务执行过程产生的日志信息怎么办呢？</span><br><span class="line">是不是在提交任务的时候直接在这个控制台上就能看到了？先不要着急，我们先在代码中增加一些日志信息，在实际工作中做调试的时候这个也是很有必要的</span><br><span class="line">在自定义mapper类的map函数中增加一个输出，将k1,v1的值打印出来</span><br><span class="line"></span><br><span class="line">在自定义reducer类中的reduce方法中增加一个输出，将k2,v2和k3,v3的值打印出来</span><br></pre></td></tr></table></figure>
+
+<h3 id="开启yarn的日志聚合功能方式"><a href="#开启yarn的日志聚合功能方式" class="headerlink" title="开启yarn的日志聚合功能方式"></a>开启yarn的日志聚合功能方式</h3><h4 id="自定义日志"><a href="#自定义日志" class="headerlink" title="自定义日志"></a>自定义日志</h4><h5 id="map函数修改"><a href="#map函数修改" class="headerlink" title="map函数修改"></a>map函数修改</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(LongWritable k1, Text v1, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="comment">// k1代表每一行数据的行首偏移量，v1代表的是每一行的数据</span></span><br><span class="line">            <span class="comment">// 需要做的是：把每一行数据的单词切割出来</span></span><br><span class="line">            System.out.println("&lt;k1, v1&gt;: &lt;"+k1.get()+", "+v1.toString()+"&gt;"); # 增加处</span><br><span class="line">            String[] words = v1.toString().split(<span class="string">" "</span>);</span><br><span class="line">            <span class="keyword">for</span> (String word : words)&#123;</span><br><span class="line">                <span class="comment">// 把切割出来的单词，封装成&lt;k2, 1&gt;</span></span><br><span class="line">                Text k2 = <span class="keyword">new</span> Text(word);</span><br><span class="line">                LongWritable v2 = <span class="keyword">new</span> LongWritable(<span class="number">1L</span>);</span><br><span class="line">                context.write(k2,v2);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//super.map(key, value, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="reduce函数修改"><a href="#reduce函数修改" class="headerlink" title="reduce函数修改"></a>reduce函数修改</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text k2, Iterable&lt;LongWritable&gt; v2s, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(LongWritable v2:v2s)&#123;</span><br><span class="line">                System.out.println("&lt;k2, v2&gt;: &lt;"+k2.toString()+", "+v2.get()+"&gt;"); # 增加处</span><br><span class="line">                sum += v2.get();</span><br><span class="line">            &#125;</span><br><span class="line">            Text k3 = k2;</span><br><span class="line">            LongWritable v3 = <span class="keyword">new</span> LongWritable(sum);</span><br><span class="line">            System.out.println("&lt;k3, v3&gt;: &lt;"+k3.toString()+", "+v3.get()+"&gt;"); # 增加处</span><br><span class="line">            context.write(k3, v3);</span><br><span class="line">            <span class="comment">// super.reduce(key, values, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="打包，上传，提交任务到集群"><a href="#打包，上传，提交任务到集群" class="headerlink" title="打包，上传，提交任务到集群"></a>打包，上传，提交任务到集群</h5><h5 id="结果查看"><a href="#结果查看" class="headerlink" title="结果查看"></a>结果查看</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">等待任务执行结束，我们发现在控制台上是看不到任务中的日志信息的，为什么呢？因为我们在这相当于是通过一个客户端把任务提交到集群里面去执行了，所以日志是存在在集群里面的。想要查看需要需要到一个特殊的地方查看这些日志信息</span><br><span class="line">由于程序是提交到集群执行，所以在linux的终端上是看不到的</span><br><span class="line"></span><br><span class="line">先进入到yarn的web界面，访问<span class="number">8088</span>端口，点击对应任务的history链接(在此之前先把bigdata02,bigdata03与ip的映射在windows的hosts文件上配置好)</span><br><span class="line">http://bigdata01:<span class="number">8088</span>/</span><br><span class="line">        </span><br><span class="line">注意了，在这里我们发现这个链接是打不来的，</span><br><span class="line">这里有两个原因:</span><br><span class="line">  第一个原因是没有windows的hosts文件中没有配置bigdata02和bigdata03这两个主机名和ip的映射关系，先去把这两个主机名配置到hosts文件里面，之前的bigdata01已经配置进去了</span><br><span class="line">  第二个原因就是这里必须要启动historyserver进程才可以，并且还要开启日志聚合功能，才能在web界面上直接查看任务对应的日志信息，因为默认情况下任务的日志是散落在nodemanager节点上的，想要查看需要找到对应的nodemanager节点上去查看，这样就很不方便，通过日志聚合功能我们可以把之前本来散落在nodemanager节点上的日志统一收集到hdfs上的指定目录中，这样就可以在yarn的web界面中直接查看了</span><br></pre></td></tr></table></figure>
+
+<h6 id="打开日志聚合功能"><a href="#打开日志聚合功能" class="headerlink" title="打开日志聚合功能"></a>打开日志聚合功能</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">那我们就来开启日志聚合功能。开启日志聚合功能需要修改yarn-site.xml的配置，增加</span><br><span class="line">yarn.log-aggregation-enable和yarn.log.server.url这两个参数</span><br><span class="line"></span><br><span class="line">注意：修改这个配置想要生效需要重启集群，每个节点都要修改</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">添加部分</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.log-aggregation-enable&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;true&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">&lt;name&gt;yarn.log.server.url&lt;&#x2F;name&gt;</span><br><span class="line">&lt;value&gt;http:&#x2F;&#x2F;bigdata01:19888&#x2F;jobhistory&#x2F;logs&#x2F;&lt;&#x2F;value&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">启动historyserver进程，需要在集群的所有节点上都启动这个进程</span><br><span class="line"></span><br><span class="line">[root@bigdata01 hadoop-3.2.0]# bin&#x2F;mapred --daemon start historyserver</span><br><span class="line">[root@bigdata01 hadoop-3.2.0]# jps</span><br><span class="line">4232 SecondaryNameNode</span><br><span class="line">5192 JobHistoryServer</span><br><span class="line">4473 ResourceManager</span><br><span class="line">3966 NameNode</span><br><span class="line">5231 Jps</span><br><span class="line"></span><br><span class="line">其它节点也需执行</span><br><span class="line"></span><br><span class="line">重新再提交mapreduce任务</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  此时再进入yarn的8088界面，点击任务对应的history链接就可以打开了。</span><br><span class="line">  此时，点击对应map和reduce后面的链接就可以点进去查看日志信息了，点击map后面的数字1，可以</span><br><span class="line">  点击这个界面中的logs文字链接，可以查看详细的日志信息 </span><br><span class="line">  </span><br><span class="line">  最终可以在界面中看到很多日志信息，我们刚才使用sout输出的日志信息需要到Log Type: stdout这里来</span><br><span class="line">查看，在这里可以看到，k1和v1的值</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HdADit" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdADit.png" alt="HdADit.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  想要查看reduce输出的日志信息需要到reduce里面查看，操作流程是一样的，可以看到k2,v2和k3,v3的</span><br><span class="line">值</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HdA0II" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdA0II.png" alt="HdA0II.png"></a></p>
+<h4 id="使用logger"><a href="#使用logger" class="headerlink" title="使用logger"></a>使用logger</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">咱们刚才的输出是使用syout输出的，这个其实是不正规的，标准的日志写法是需要使用logger进行输出的</span><br></pre></td></tr></table></figure>
+
+<h5 id="修改map函数"><a href="#修改map函数" class="headerlink" title="修改map函数"></a>修改map函数</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">myMapper</span> <span class="keyword">extends</span> <span class="title">Mapper</span>&lt;<span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt;</span>&#123;</span><br><span class="line">        Logger logger = LoggerFactory.getLogger(myMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 需要实现map函数</span></span><br><span class="line"><span class="comment">         * 这个函数就是可以接受&lt;k1,v1&gt;, 产生&lt;k2,v2&gt;</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> k1</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> v1</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(LongWritable k1, Text v1, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="comment">// k1代表每一行数据的行首偏移量，v1代表的是每一行的数据</span></span><br><span class="line">            <span class="comment">// 需要做的是：把每一行数据的单词切割出来</span></span><br><span class="line">            logger.info(<span class="string">"&lt;k1, v1&gt;: &lt;"</span>+k1.get()+<span class="string">", "</span>+v1.toString()+<span class="string">"&gt;"</span>);</span><br><span class="line">            <span class="comment">//System.out.println("&lt;k1, v1&gt;: &lt;"+k1.get()+", "+v1.toString()+"&gt;");</span></span><br><span class="line">            String[] words = v1.toString().split(<span class="string">" "</span>);</span><br><span class="line">            <span class="keyword">for</span> (String word : words)&#123;</span><br><span class="line">                <span class="comment">// 把切割出来的单词，封装成&lt;k2, 1&gt;</span></span><br><span class="line">                Text k2 = <span class="keyword">new</span> Text(word);</span><br><span class="line">                LongWritable v2 = <span class="keyword">new</span> LongWritable(<span class="number">1L</span>);</span><br><span class="line">                context.write(k2,v2);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//super.map(key, value, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="修改reduce函数"><a href="#修改reduce函数" class="headerlink" title="修改reduce函数"></a>修改reduce函数</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">myReducer</span> <span class="keyword">extends</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt;</span>&#123;</span><br><span class="line">        Logger logger = LoggerFactory.getLogger(myReducer.class); #！！！</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 对&lt;k2, &#123;v2...&#125;&gt;的数据进行累加求和，生成&lt;k3,v3&gt;</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> k2</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> v2s</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text k2, Iterable&lt;LongWritable&gt; v2s, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="keyword">long</span> sum = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span>(LongWritable v2:v2s)&#123;</span><br><span class="line">                logger.info("&lt;k2, v2&gt;: &lt;"+k2.toString()+", "+v2.get()+"&gt;"); #！！！</span><br><span class="line">                <span class="comment">//System.out.println("&lt;k2, v2&gt;: &lt;"+k2.toString()+", "+v2.get()+"&gt;");</span></span><br><span class="line">                sum += v2.get();</span><br><span class="line">            &#125;</span><br><span class="line">            Text k3 = k2;</span><br><span class="line">            LongWritable v3 = <span class="keyword">new</span> LongWritable(sum);</span><br><span class="line">            logger.info("&lt;k3, v3&gt;: &lt;"+k3.toString()+", "+v3.get()+"&gt;"); #！！！</span><br><span class="line">            <span class="comment">//System.out.println("&lt;k3, v3&gt;: &lt;"+k3.toString()+", "+v3.get()+"&gt;");</span></span><br><span class="line">            context.write(k3, v3);</span><br><span class="line">            <span class="comment">// super.reduce(key, values, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="打包，上传，提交任务到集群-1"><a href="#打包，上传，提交任务到集群-1" class="headerlink" title="打包，上传，提交任务到集群"></a>打包，上传，提交任务到集群</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重新编译打包上传，重新提交最新的jar包，这个时候再查看日志就需要到Log Type: syslog中查看日志了。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HdeR10" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdeR10.md.png" alt="HdeR10.md.png"></a></p>
+<p><a href="https://imgtu.com/i/Hde2pq" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/Hde2pq.md.png" alt="Hde2pq.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是工作中比较常用的查看日志的方式，但是还有一种使用命令查看的方式，这种方式面试的时候一般喜欢问</span><br></pre></td></tr></table></figure>
+
+<h3 id="面试爱问的日志查看方式-面试"><a href="#面试爱问的日志查看方式-面试" class="headerlink" title="面试爱问的日志查看方式(面试)"></a>面试爱问的日志查看方式(面试)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> yarn logs -applicationId application_158771356 | grep k1,v1</span><br><span class="line">     </span><br><span class="line">注意:后面指定的是任务id，任务id可以到yarn的web界面上查看。</span><br><span class="line">执行这个命令可以看到很多的日志信息，我们通过grep筛选一下日志</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这种方式也需要大家能够记住并且掌握住，首先是面试的时候可能会问到，还有就是针对某一些艰难的场景下，无法使用yarn的web界面查看日志，就需要使用yarn logs命令了</span><br></pre></td></tr></table></figure>
+
+<h2 id="停止Hadoop集群中的任务"><a href="#停止Hadoop集群中的任务" class="headerlink" title="停止Hadoop集群中的任务"></a>停止Hadoop集群中的任务</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  如果一个mapreduce任务处理的数据量比较大的话，这个任务会执行很长时间，可能几十分钟或者几个小时都有可能，假设一个场景，任务执行了一半了我们发现我们的代码写的有问题，需要修改代码重新提交执行，这个时候之前的任务就没有必要再执行了，没有任何意义了，最终的结果肯定是错误的，所以我们就想把它停掉，要不然会额外浪费集群的资源，如何停止呢？</span><br><span class="line">我在提交任务的窗口中按ctrl+c是不是就可以停止？</span><br><span class="line">注意了，不是这样的，我们前面说过，这个任务是提交到集群执行的，你在提交任务的窗口中执行ctrl+c对已经提交到集群中的任务是没有任何影响的。</span><br><span class="line">  我们可以验证一下，执行ctrl+c之后你再到yarn的8088界面查看，会发现任务依然存在。</span><br><span class="line">所以需要使用hadoop集群的命令去停止正在运行的任务</span><br><span class="line">使用yarn application -kill命令，后面指定任务id即可</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 hadoop-3.2.0]# yarn application -kill application_15877135678</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HdGYSe" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdGYSe.md.png" alt="HdGYSe.md.png"></a></p>
+<p><a href="https://imgtu.com/i/HdlgVf" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdlgVf.md.png" alt="HdlgVf.md.png"></a></p>
+<h2 id="MapReduce程序扩展"><a href="#MapReduce程序扩展" class="headerlink" title="MapReduce程序扩展"></a>MapReduce程序扩展</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  咱们前面说过MapReduce任务是由map阶段和reduce阶段组成的但是我们也说过，reduce阶段不是必须的，那也就意味着MapReduce程序可以只包含map阶段。</span><br><span class="line">  什么场景下会只需要map阶段呢？</span><br><span class="line">当数据只需要进行普通的过滤、解析等操作，不需要进行聚合，这个时候就不需要使用reduce阶段了，在代码层面该如何设置呢？</span><br><span class="line">  很简单，在组装Job的时候设置reduce的task数目为0就可以了。并且Reduce代码也不需要写了。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="map阶段编写"><a href="#map阶段编写" class="headerlink" title="map阶段编写"></a>map阶段编写</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">myMapper</span> <span class="keyword">extends</span> <span class="title">Mapper</span>&lt;<span class="title">LongWritable</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">LongWritable</span>&gt;</span>&#123;</span><br><span class="line">        Logger logger = LoggerFactory.getLogger(myMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 需要实现map函数</span></span><br><span class="line"><span class="comment">         * 这个函数就是可以接受&lt;k1,v1&gt;, 产生&lt;k2,v2&gt;</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> k1</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> v1</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(LongWritable k1, Text v1, Context context)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;</span><br><span class="line">            <span class="comment">// k1代表每一行数据的行首偏移量，v1代表的是每一行的数据</span></span><br><span class="line">            <span class="comment">// 需要做的是：把每一行数据的单词切割出来</span></span><br><span class="line">            logger.info(<span class="string">"&lt;k1, v1&gt;: &lt;"</span>+k1.get()+<span class="string">", "</span>+v1.toString()+<span class="string">"&gt;"</span>);</span><br><span class="line">            <span class="comment">//System.out.println("&lt;k1, v1&gt;: &lt;"+k1.get()+", "+v1.toString()+"&gt;");</span></span><br><span class="line">            String[] words = v1.toString().split(<span class="string">" "</span>);</span><br><span class="line">            <span class="keyword">for</span> (String word : words)&#123;</span><br><span class="line">                <span class="comment">// 把切割出来的单词，封装成&lt;k2, 1&gt;</span></span><br><span class="line">                Text k2 = <span class="keyword">new</span> Text(word);</span><br><span class="line">                LongWritable v2 = <span class="keyword">new</span> LongWritable(<span class="number">1L</span>);</span><br><span class="line">                context.write(k2,v2);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//super.map(key, value, context);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="main编写"><a href="#main编写" class="headerlink" title="main编写"></a>main编写</h3> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="keyword">if</span>(args.length!=<span class="number">2</span>)&#123;</span><br><span class="line">               System.exit(<span class="number">100</span>);</span><br><span class="line">               System.out.println(<span class="string">"缺少路径参数！！！"</span>);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">// 指定Job需要的配置参数</span></span><br><span class="line">           Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">           <span class="comment">// 创建一个Job</span></span><br><span class="line">           Job job = Job.getInstance(conf);</span><br><span class="line">           <span class="comment">// 注意：这一行必须设置，否者在集群中执行时找不到WordCountJob这个类</span></span><br><span class="line">           job.setJarByClass(WordCountJobNoReduce<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"> </span><br><span class="line">           <span class="comment">// 指定输入路径，可以是文件也可以是目录(目录里只有一个文件时可以); 注意FileInputFormat别选成hadoop1.x的了</span></span><br><span class="line">           FileInputFormat.setInputPaths(job, <span class="keyword">new</span> Path(args[<span class="number">0</span>]));</span><br><span class="line">           <span class="comment">// 指定输出路径(只能是hdfs上一个不存在的目录); 注意FileOutFormat别选成hadoop1.x的了</span></span><br><span class="line">           FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(args[<span class="number">1</span>]));</span><br><span class="line"> </span><br><span class="line">           <span class="comment">// 指定map相关代码</span></span><br><span class="line">           job.setMapperClass(myMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">           <span class="comment">// 指定k2类型</span></span><br><span class="line">           job.setMapOutputKeyClass(Text<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">           <span class="comment">// 指定v2类型</span></span><br><span class="line">           job.setMapOutputValueClass(LongWritable<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"> </span><br><span class="line">           <span class="comment">// 禁用reduce</span></span><br><span class="line">           job.setNumReduceTasks(<span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">           <span class="comment">// 提交job</span></span><br><span class="line">           job.waitForCompletion(<span class="keyword">true</span>);</span><br><span class="line"> </span><br><span class="line">       &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;</span><br><span class="line"> </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="打包，上传，提交到集群，结果查看"><a href="#打包，上传，提交到集群，结果查看" class="headerlink" title="打包，上传，提交到集群，结果查看"></a>打包，上传，提交到集群，结果查看</h3><p><a href="https://imgtu.com/i/HdtUOJ" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdtUOJ.png" alt="HdtUOJ.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这里发现map执行到100%以后任务就执行成功了，reduce还是0%，因为就没有reduce阶段了。</span><br><span class="line">查看输出结果，注意，这里的文件名就是part-m-00000了</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/HdtNy4" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdtNy4.png" alt="HdtNy4.png"></a></p>
+<p><a href="https://imgtu.com/i/HdttlF" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/11/HdttlF.png" alt="HdttlF.png"></a></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html">大数据开发工程师-第五周 第三章 深入 MapReduce</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月09日 - 18:02</p>
+  <p><span>最后更新:</span>2022年02月16日 - 22:02</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html" title="大数据开发工程师-第五周 第三章 深入 MapReduce">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%B7%B1%E5%85%A5-MapReduce.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%AE%9E%E6%88%98-WordCount.html" rel="next" title="大数据开发工程师-第五周 第二章 实战 WordCount">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第五周 第二章 实战 WordCount
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%BA%94%E5%91%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E7%B2%BE%E8%AE%B2Shuffle%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA.html" rel="prev" title="大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出">
+                大数据开发工程师-第五周 第四章 精讲Shuffle执行过程及源码分析输入输出 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">241</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第五周-第三章-深入-MapReduce"><span class="nav-number">1.</span> <span class="nav-text">第五周 第三章 深入 MapReduce</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce任务日志查看"><span class="nav-number">1.1.</span> <span class="nav-text">MapReduce任务日志查看</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开启yarn的日志聚合功能方式"><span class="nav-number">1.1.1.</span> <span class="nav-text">开启yarn的日志聚合功能方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义日志"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">自定义日志</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#map函数修改"><span class="nav-number">1.1.1.1.1.</span> <span class="nav-text">map函数修改</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#reduce函数修改"><span class="nav-number">1.1.1.1.2.</span> <span class="nav-text">reduce函数修改</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#打包，上传，提交任务到集群"><span class="nav-number">1.1.1.1.3.</span> <span class="nav-text">打包，上传，提交任务到集群</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#结果查看"><span class="nav-number">1.1.1.1.4.</span> <span class="nav-text">结果查看</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打开日志聚合功能"><span class="nav-number">1.1.1.1.4.1.</span> <span class="nav-text">打开日志聚合功能</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用logger"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">使用logger</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#修改map函数"><span class="nav-number">1.1.1.2.1.</span> <span class="nav-text">修改map函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改reduce函数"><span class="nav-number">1.1.1.2.2.</span> <span class="nav-text">修改reduce函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#打包，上传，提交任务到集群-1"><span class="nav-number">1.1.1.2.3.</span> <span class="nav-text">打包，上传，提交任务到集群</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面试爱问的日志查看方式-面试"><span class="nav-number">1.1.2.</span> <span class="nav-text">面试爱问的日志查看方式(面试)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#停止Hadoop集群中的任务"><span class="nav-number">1.2.</span> <span class="nav-text">停止Hadoop集群中的任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce程序扩展"><span class="nav-number">1.3.</span> <span class="nav-text">MapReduce程序扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#map阶段编写"><span class="nav-number">1.3.1.</span> <span class="nav-text">map阶段编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main编写"><span class="nav-number">1.3.2.</span> <span class="nav-text">main编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包，上传，提交到集群，结果查看"><span class="nav-number">1.3.3.</span> <span class="nav-text">打包，上传，提交到集群，结果查看</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">168.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

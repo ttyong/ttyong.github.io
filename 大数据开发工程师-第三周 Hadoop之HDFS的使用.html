@@ -98,8 +98,9 @@
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/05/Hm1DTe.png">
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/05/Hm3i11.png">
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/05/Hm8WdS.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/07/HMxWSH.png">
 <meta property="article:published_time" content="2022-02-05T02:57:04.000Z">
-<meta property="article:modified_time" content="2022-02-06T04:29:38.779Z">
+<meta property="article:modified_time" content="2022-02-08T10:44:39.183Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s4.ax1x.com/2022/02/05/Hm1DTe.png">
@@ -399,7 +400,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2k
+                  2.1k
                 </span>
               
 
@@ -415,7 +416,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  8
                 </span>
               
             </div>
@@ -475,15 +476,14 @@
 
 <h2 id="第3章-java操作HDFS"><a href="#第3章-java操作HDFS" class="headerlink" title="第3章 java操作HDFS"></a>第3章 java操作HDFS</h2><h3 id="Java代码操作HDFS"><a href="#Java代码操作HDFS" class="headerlink" title="Java代码操作HDFS"></a>Java代码操作HDFS</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">前面我们学习了在shell命令行下操作hdfs，shell中操作hdfs是比较常见的操作，但是在工作中也会遇到一些需求是需要通过代码操作hdfs的，下面我们就来看一下如何使用java代码操作hdfs</span><br><span class="line">在具体操作之前需要先明确一下开发环境，代码编辑器使用idea，当然了eclipse也可以</span><br><span class="line">在创建项目的时候我们会创建maven项目，使用maven来管理依赖，是比较方便的。</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">package com.imooc.hdfs;</span><br><span class="line"></span><br><span class="line">import org.apache.hadoop.conf.Configuration;</span><br><span class="line">import org.apache.hadoop.fs.FSDataInputStream;</span><br><span class="line">import org.apache.hadoop.fs.FSDataOutputStream;</span><br><span class="line">import org.apache.hadoop.fs.FileSystem;</span><br><span class="line">import org.apache.hadoop.fs.Path;</span><br><span class="line">import org.apache.hadoop.io.IOUtils;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import java.io.FileInputStream;</span><br><span class="line">import java.io.FileOutputStream;</span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * Java代码操作HDFS</span><br><span class="line"> * 文件操作：上传文件、下载文件、删除文件</span><br><span class="line"> * Created by xuwei</span><br><span class="line"> *&#x2F;</span><br><span class="line">public class HdfsOp &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        System.setProperty(&quot;HADOOP_USER_NAME&quot;, &quot;root&quot;);</span><br><span class="line">        &#x2F;&#x2F;创建一个配置对象</span><br><span class="line">        Configuration conf &#x3D; new Configuration();</span><br><span class="line">        &#x2F;&#x2F;指定HDFS的地址</span><br><span class="line">        conf.set(&quot;fs.defaultFS&quot;,&quot;hdfs:&#x2F;&#x2F;bigdata01:9000&quot;);</span><br><span class="line">        &#x2F;&#x2F;获取操作HDFS的对象</span><br><span class="line">        FileSystem fileSystem &#x3D; FileSystem.get(conf);</span><br><span class="line">        &#x2F;&#x2F;上传文件</span><br><span class="line">        &#x2F;&#x2F;put(fileSystem);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;下载文件</span><br><span class="line">        &#x2F;&#x2F;get(fileSystem);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;删除操作</span><br><span class="line">        delete(fileSystem);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 文件和文件夹都可以删除，true代表递归删除多层文件夹</span><br><span class="line">     * @param fileSystem</span><br><span class="line">     * @throws IOException</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private static void delete(FileSystem fileSystem) throws IOException &#123;</span><br><span class="line">        boolean flag &#x3D; fileSystem.delete(new Path(&quot;&#x2F;user&quot;));</span><br><span class="line">        if(flag)&#123;</span><br><span class="line">            System.out.println(&quot;删除成功！&quot;);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            System.out.println(&quot;删除失败！&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void get(FileSystem fileSystem) throws IOException &#123;</span><br><span class="line">        &#x2F;&#x2F;HDFS输入流</span><br><span class="line">        FSDataInputStream fis &#x3D; fileSystem.open(new Path(&quot;&#x2F;user2.txt&quot;));</span><br><span class="line">        &#x2F;&#x2F;本地输出流</span><br><span class="line">        FileOutputStream fos &#x3D; new FileOutputStream(&quot;D:\\user3.txt&quot;);</span><br><span class="line">        &#x2F;&#x2F;下载文件</span><br><span class="line">        IOUtils.copyBytes(fis,fos,1024,true);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void put(FileSystem fileSystem) throws IOException &#123;</span><br><span class="line">        &#x2F;&#x2F;获取HDFS文件系统的输出流</span><br><span class="line">        FSDataOutputStream fos &#x3D; fileSystem.create(new Path(&quot;&#x2F;user2.txt&quot;));</span><br><span class="line">        &#x2F;&#x2F;获取本地文件的输入流</span><br><span class="line">        FileInputStream fis &#x3D; new FileInputStream(&quot;D:\\user.txt&quot;);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;上传文件：通过工具类把输入流拷贝到输出流里面，实现本地文件上传到HDFS</span><br><span class="line">        IOUtils.copyBytes(fis,fos,1024,true);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
 
 <h3 id="HDFS体系结构"><a href="#HDFS体系结构" class="headerlink" title="HDFS体系结构"></a>HDFS体系结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  前面我们掌握了HDFS的基本使用，下面我们来详细分析一下HDFS深层次的内容</span><br><span class="line">HDFS支持主从结构，主节点称为 NameNode ，是因为主节点上运行的NameNode进程，NameNode支持多个，目前我们的集群中只配置了一个</span><br><span class="line">  从节点称为 DataNode ，是因为从节点上面运行的有DataNode进程，DataNode支持多个，目前我们的集群中有两个</span><br><span class="line">  HDFS中还包含一个 SecondaryNameNode 进程，这个进程从字面意思上看像是第二个NameNode的意思，其实不是，一会我们会详细分析。</span><br></pre></td></tr></table></figure>
 
-<h4 id="NameNode介绍"><a href="#NameNode介绍" class="headerlink" title="NameNode介绍"></a>NameNode介绍</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  首先是NameNode，NameNode是整个文件系统的管理节点</span><br><span class="line">它主要维护着整个文件系统的文件目录树，文件&#x2F;目录的信息 和 每个文件对应的数据块列表，并且还负责接收用户的操作请求</span><br><span class="line"></span><br><span class="line">  目录树：表示目录之间的层级关系，就是我们在hdfs上执行ls命令可以看到的那个目录结构信息。</span><br><span class="line">  文件&#x2F;目录的信息：表示文件&#x2F;目录的的一些基本信息，所有者 属组 修改时间 文件大小等信息</span><br><span class="line"> 每个文件对应的数据块列表：如果一个文件太大，那么在集群中存储的时候会对文件进行切割，这个时候就类似于会给文件分成一块一块的，存储到不同机器上面。所以HDFS还要记录一下一个文件到底被分了多少块，每一块都在什么地方存储着</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="SecondaryNameNode介绍"><a href="#SecondaryNameNode介绍" class="headerlink" title="SecondaryNameNode介绍"></a>SecondaryNameNode介绍</h4><h4 id="DataNode介绍"><a href="#DataNode介绍" class="headerlink" title="DataNode介绍"></a>DataNode介绍</h4><h4 id="NameNode总结"><a href="#NameNode总结" class="headerlink" title="NameNode总结"></a>NameNode总结</h4><h3 id="HDFS的回收站"><a href="#HDFS的回收站" class="headerlink" title="HDFS的回收站"></a>HDFS的回收站</h3><h3 id="HDFS的安全模式"><a href="#HDFS的安全模式" class="headerlink" title="HDFS的安全模式"></a>HDFS的安全模式</h3><hr>
+<p><a href="https://imgtu.com/i/HMxWSH" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/07/HMxWSH.png" alt="HMxWSH.png"></a></p>
+<hr>
 <blockquote>
 </blockquote>
 
@@ -505,7 +505,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%89%E5%91%A8%20Hadoop%E4%B9%8BHDFS%E7%9A%84%E4%BD%BF%E7%94%A8.html">大数据开发工程师-第三周</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月05日 - 10:02</p>
-  <p><span>最后更新:</span>2022年02月06日 - 12:02</p>
+  <p><span>最后更新:</span>2022年02月08日 - 18:02</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%89%E5%91%A8%20Hadoop%E4%B9%8BHDFS%E7%9A%84%E4%BD%BF%E7%94%A8.html" title="大数据开发工程师-第三周">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%89%E5%91%A8%20Hadoop%E4%B9%8BHDFS%E7%9A%84%E4%BD%BF%E7%94%A8.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%89%E5%91%A8%20Hadoop%E4%B9%8BHDFS%E7%9A%84%E4%BD%BF%E7%94%A8.html" aria-label="复制成功！"></i></span>
   </p>
@@ -588,6 +588,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/github%E7%9B%B8%E5%85%B3.html" rel="prev" title="github相关">
+                github相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -661,7 +665,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">215</span>
+			  <span class="site-state-item-count">241</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -672,7 +676,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">42</span>
+			  <span class="site-state-item-count">45</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -777,7 +781,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大数据开发工程师-第三周"><span class="nav-number">1.</span> <span class="nav-text">大数据开发工程师-第三周</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第1章-HDFS介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第1章 HDFS介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS设计思想"><span class="nav-number">1.1.1.</span> <span class="nav-text">HDFS设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS-Hadoop-Distributed-File-System"><span class="nav-number">1.1.2.</span> <span class="nav-text">HDFS(Hadoop Distributed File System)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS的Shell介绍"><span class="nav-number">1.1.3.</span> <span class="nav-text">HDFS的Shell介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第2章-HDFS基础操作"><span class="nav-number">1.2.</span> <span class="nav-text">第2章 HDFS基础操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS的常见Shell操作"><span class="nav-number">1.2.1.</span> <span class="nav-text">HDFS的常见Shell操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#管理命令"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">管理命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#操作命令"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">操作命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS案例实操"><span class="nav-number">1.2.2.</span> <span class="nav-text">HDFS案例实操</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第3章-java操作HDFS"><span class="nav-number">1.3.</span> <span class="nav-text">第3章 java操作HDFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java代码操作HDFS"><span class="nav-number">1.3.1.</span> <span class="nav-text">Java代码操作HDFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS体系结构"><span class="nav-number">1.3.2.</span> <span class="nav-text">HDFS体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NameNode介绍"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">NameNode介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SecondaryNameNode介绍"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">SecondaryNameNode介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DataNode介绍"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">DataNode介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NameNode总结"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">NameNode总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS的回收站"><span class="nav-number">1.3.3.</span> <span class="nav-text">HDFS的回收站</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS的安全模式"><span class="nav-number">1.3.4.</span> <span class="nav-text">HDFS的安全模式</span></a></li></ol></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大数据开发工程师-第三周"><span class="nav-number">1.</span> <span class="nav-text">大数据开发工程师-第三周</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第1章-HDFS介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第1章 HDFS介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS设计思想"><span class="nav-number">1.1.1.</span> <span class="nav-text">HDFS设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS-Hadoop-Distributed-File-System"><span class="nav-number">1.1.2.</span> <span class="nav-text">HDFS(Hadoop Distributed File System)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS的Shell介绍"><span class="nav-number">1.1.3.</span> <span class="nav-text">HDFS的Shell介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第2章-HDFS基础操作"><span class="nav-number">1.2.</span> <span class="nav-text">第2章 HDFS基础操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS的常见Shell操作"><span class="nav-number">1.2.1.</span> <span class="nav-text">HDFS的常见Shell操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#管理命令"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">管理命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#操作命令"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">操作命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS案例实操"><span class="nav-number">1.2.2.</span> <span class="nav-text">HDFS案例实操</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第3章-java操作HDFS"><span class="nav-number">1.3.</span> <span class="nav-text">第3章 java操作HDFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java代码操作HDFS"><span class="nav-number">1.3.1.</span> <span class="nav-text">Java代码操作HDFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HDFS体系结构"><span class="nav-number">1.3.2.</span> <span class="nav-text">HDFS体系结构</span></a></li></ol></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -812,7 +816,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">116.9k</span>
+    <span title="Site words total count">168.1k</span>
   
 </div>
 
