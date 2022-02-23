@@ -89,12 +89,14 @@
 
 
 
+<meta name="description" content="第七周 第3章 Flume出神入化篇各种自定义组件12345678910111213141516171819202122232425咱们前面讲了很多组件，有核心组件和高级组件source、channel、sink以及Source Interceptors，Channel Selectors、Sink Processors针对这些组件，Flume都内置提供了组件的很多具体实现，在实际工作中，9">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大数据开发工程师-第七周 第3章 Flume出神入化篇">
 <meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Flume%E5%87%BA%E7%A5%9E%E5%85%A5%E5%8C%96%E7%AF%87.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第七周 第3章 Flume出神入化篇各种自定义组件12345678910111213141516171819202122232425咱们前面讲了很多组件，有核心组件和高级组件source、channel、sink以及Source Interceptors，Channel Selectors、Sink Processors针对这些组件，Flume都内置提供了组件的很多具体实现，在实际工作中，9">
 <meta property="article:published_time" content="2022-02-16T14:47:37.000Z">
-<meta property="article:modified_time" content="2022-02-18T04:46:17.747Z">
+<meta property="article:modified_time" content="2022-02-20T04:05:44.323Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
 
@@ -364,6 +366,17 @@
 
                 
                 
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
               
             </span>
           
@@ -393,7 +406,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  2.8k
                 </span>
               
 
@@ -409,7 +422,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  11
                 </span>
               
             </div>
@@ -433,7 +446,35 @@
         <hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
+<h1 id="第七周-第3章-Flume出神入化篇"><a href="#第七周-第3章-Flume出神入化篇" class="headerlink" title="第七周 第3章 Flume出神入化篇"></a>第七周 第3章 Flume出神入化篇</h1><h2 id="各种自定义组件"><a href="#各种自定义组件" class="headerlink" title="各种自定义组件"></a>各种自定义组件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">咱们前面讲了很多组件，有核心组件和高级组件</span><br><span class="line">source、channel、sink以及Source Interceptors，Channel Selectors、Sink Processors</span><br><span class="line">针对这些组件，Flume都内置提供了组件的很多具体实现，在实际工作中，95%以上的数据采集需求都是</span><br><span class="line">可以满足的，但是谁也不敢保证100%都能满足，因为什么奇葩的需求都会有，那针对系统内没有提供的</span><br><span class="line">一些组件怎么办呢？</span><br><span class="line">假设我们想把flume采集到的数据输出到mysql中，那这个时候就需要有针对mysql的sink组件了，但是</span><br><span class="line">Flume中并没有，因为这种需求不常见，往mysql中写的都是结构化数据，数据的格式是固定的，但是</span><br><span class="line">flume采集的一般都是日志数据，这种属于非结构化数据，不支持也是正常的，但是我们在这里就是需要</span><br><span class="line">使用Flume往mysql中写数据，那怎么办？</span><br><span class="line">要不我们考虑换一个采集工具把，当然这也是一种解决方案，如果有其他采集工具支持向mysql中写数据</span><br><span class="line">的话那可以考虑换一个采集工具，如果所有的采集工具都不支持向mysql中写数据呢，也就是说你这个需</span><br><span class="line">求就是前无古人后无来者的，怎么破？</span><br><span class="line">不用担心，天无绝人之路，其实咱们使用的Flume提供的那些内置组件也都是作者一行代码一行代码写出</span><br><span class="line">来的，那我们是不是也可以自己写一个自定义的组件呢？可以的，并且flume也很欢迎你这样去做，它把</span><br><span class="line">开发文档什么的东西都给你准备好了。</span><br><span class="line">注意了，就算没有文档，我们也要想办法去自定义，没有文档的话就需要去抠Flume的源码了。</span><br><span class="line">在这里Flume针对自定义组件提供了详细的文档说明，我们来看一下</span><br><span class="line">通过Flume User Guide可以看到，针对source、channle、sink、Source Interceptors，Channel</span><br><span class="line">Selectors、都是可以的，这里面都显示了针对自定义的组件如何配置使用</span><br><span class="line">Sink Processors目前暂时不支持自定义。</span><br><span class="line">那这些支持自定义的组件具体开发步骤是什么样的呢？代码该写成什么样的呢？</span><br><span class="line">大家还记得Flume有两个文档链接吗？</span><br><span class="line">Flume Developer Guide</span><br><span class="line">只不过开发者文档里面目前还不算太完善，但是基本source、sink组件的自定义过程在这里都是有的</span><br><span class="line">索</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">自定义channel的内容目前还没完善，如果你确实想自定义这个组件，就需要到Flume源码中找到目前支持的那些channel的代码，参考着实现我们自定义的channel组件。</span><br><span class="line">大家在这里知道可以自定义，并且知道自定义组件的文档在哪里就可以了，目前来说，需要我们自定义组件的场景实在是太少了，几乎和买彩票中奖的概率差不多。</span><br><span class="line">前面我们掌握了Flume的基本使用和高级使用场景，下面我们来看一下针对Flume的一些企业级优化和监控手段</span><br></pre></td></tr></table></figure>
+
+<h2 id="Flume优化"><a href="#Flume优化" class="headerlink" title="Flume优化"></a>Flume优化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 调整Flume进程的内存大小，建议设置1G~2G，太小的话会导致频繁GC</span><br><span class="line">因为Flume进程也是基于Java的，所以就涉及到进程的内存设置，一般建议启动的单个Flume进程(或者说单个Agent)内存设置为1G~2G，内存太小的话会频繁GC，影响Agent的执行效率。</span><br><span class="line">那具体设置多少合适呢？</span><br><span class="line">这个需求需要根据Agent读取的数据量的大小和速度有关系，所以需要具体情况具体分析，当Flume的Agent启动之后，对应就会启动一个进程，我们可以通过jstat -gcutil PID 1000来看看这个进程GC的信息，每一秒钟刷新一次，如果GC次数增长过快，说明内存不够用。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">使用jps查看目前启动flume进程</span><br><span class="line"></span><br><span class="line">[root@bigdata04 ~]# jps</span><br><span class="line">2957 Jps</span><br><span class="line">2799 Application</span><br><span class="line"></span><br><span class="line">执行 jstat -gcutil PID 1000</span><br><span class="line">[root@bigdata04 ~]# jstat -gcutil 2799 1000</span><br><span class="line">S0 S1 E O M CCS YGC YGCT FGC FGCT GCT</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br><span class="line">100.00 0.00 17.54 42.80 96.46 92.38 8 0.029 0 0.000 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在这里主要看YGC YGCT FGC FGCT GCT</span><br><span class="line">YGC：表示新生代堆内存GC的次数，如果每隔几十秒产生一次，也还可以接受，如果每秒都会发生一次YGC，那说明需要增加内存了</span><br><span class="line">YGCT：表示新生代堆内存GC消耗的总时间</span><br><span class="line">FGC：FULL GC发生的次数，注意，如果发生FUCC GC，则Flume进程会进入暂停状态，FUCC GC执行完以后</span><br><span class="line">Flume才会继续工作，所以FUCC GC是非常影响效率的，这个指标的值越低越好，没有更好。</span><br><span class="line">GCT：所有类型的GC消耗的总时间</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改Flume进程内存"><a href="#修改Flume进程内存" class="headerlink" title="修改Flume进程内存"></a>修改Flume进程内存</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如果需要调整Flume进程内存的话，需要调整 flume-env.s h脚本中的 JAVA_OPTS 参数</span><br><span class="line">把 export JAVA_OPTS 参数前面的#号去掉才会生效。</span><br><span class="line"></span><br><span class="line">export JAVA_OPTS&#x3D;&quot;-Xms1024m -Xmx1024m -Dcom.sun.management.jmxremote&quot;</span><br><span class="line"></span><br><span class="line">建议这里的 Xms 和 Xmx 设置为一样大，避免进行内存交换，内存交换也比较消耗性能。</span><br></pre></td></tr></table></figure>
+
+<h3 id="一台机器多个agent时"><a href="#一台机器多个agent时" class="headerlink" title="一台机器多个agent时"></a>一台机器多个agent时</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在一台服务器启动多个agent的时候，建议修改配置区分日志文件</span><br><span class="line">因为在conf目录下有log4j.properties，在这里面指定了日志文件的名称和位置，所有使用conf目录下面</span><br><span class="line">配置启动的Agent产生的日志都会记录到同一个日志文件中，如果我们在一台机器上启动了10几个Agent，后期发现某一个Agent挂了，想要查看日志分析问题，这个时候就疯了，因为所有Agent产生的日志都混到一块了，压根都没法分析日志了。</span><br><span class="line">所以建议拷贝多个conf目录，然后修改对应conf目录中log4j.properties日志的文件名称(可以保证多个agent的日志分别存储)，并且把日志级别调整为warn(减少垃圾日志的产生)，默认info级别会记录很多日志信息。</span><br><span class="line">这样在启动Agent的时候分别通过–conf参数指定不同的conf目录，后期分析日志就方便了，每一个Agent都有一个单独的日志文件。</span><br></pre></td></tr></table></figure>
+
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">以bigdata04机器为例：</span><br><span class="line">复制conf-failover目录，以后启动sink的failover任务的时候使用这个目录</span><br><span class="line">修改 log4j.properties中的日志记录级别和日志文件名称，日志文件目录可以不用修改，统一使用logs目录即可。</span><br><span class="line"></span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cp -r conf&#x2F; conf-failover</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd conf-failover&#x2F;</span><br><span class="line">[root@bigdata04 conf-failover]# vi log4j.properties</span><br><span class="line">.....</span><br><span class="line">flume.root.logger&#x3D;WARN,LOGFILE</span><br><span class="line">flume.log.dir&#x3D;.&#x2F;logs</span><br><span class="line">flume.log.file&#x3D;flume-failover.log</span><br></pre></td></tr></table></figure></code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# nohup bin&#x2F;flume-ng agent --name a1 --conf conf-failover --conf-file xxxx</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">这样就会在flume的logs目录中产生 flume-failover.log 文件，并且文件中只记录WARN和ERROR级别</span><br><span class="line">的日志，这样后期排查日志就很清晰了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd logs&#x2F;</span><br><span class="line">[root@bigdata04 logs]# ll</span><br><span class="line">total 4</span><br><span class="line">-rw-r--r--. 1 root root 478 May 3 16:25 flume-failover.log</span><br></pre></td></tr></table></figure>
+
+<h2 id="Flume进程监控"><a href="#Flume进程监控" class="headerlink" title="Flume进程监控"></a>Flume进程监控</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Flume的Agent服务是一个独立的进程，假设我们使用source-&gt;channel-&gt;sink实现了一个数据采集落盘</span><br><span class="line">的功能，如果这个采集进程被误操作干掉了，这个时候我们是发现不了的，什么时候会发现呢？</span><br><span class="line">可能第二天，产品经理找到你了，说昨天的这个指标值有点偏低啊，你来看下怎么回事，然后你就一顿操</span><br><span class="line">作猛如虎，结果发现原始数据少了一半多，那是因为Flume的采集程序在昨天下午的时候被误操作干掉</span><br><span class="line">了。</span><br><span class="line">找到问题之后，你就苦巴巴的手工去补数据，重跑计算程序，最后再找产品经理确认数据的准确性。</span><br><span class="line">类似的问题会有很多，这说明你现在是无法掌控你手下的这些程序，他们都是不受控的状态，说不定哪天</span><br><span class="line">哪个程序不高兴，他就自杀了，不干活了，过了好几天，需要用到这个数据的时候你才发现，发现的早的</span><br><span class="line">话还能补数据，发现晚的话数据可能都补不回来了，这样对公司来说就是属于比较严重的数据故障问题，</span><br><span class="line">这样你年终奖想拿18薪就不太现实了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">所以针对这些存在单点故障的进程，我们都需要添加监控告警机制，最起码出问题能及时知道，再好一点的呢，可以尝试自动修复重启。</span><br><span class="line">那针对Flume中的Agent我们就来实现一个监控功能，并且尝试自动重启</span><br><span class="line">大致思路是这样的，</span><br><span class="line">1. 首先需要有一个配置文件，配置文件中指定你现在需要监控哪些Agent</span><br><span class="line">2. 有一个脚本负责读取配置文件中的内容，定时挨个检查Agent对应的进程还在不在，如果发现对应的进程不在，则记录错误信息，然后告警(发短信或者发邮件) 并尝试重启</span><br></pre></td></tr></table></figure>
+
+<h3 id="编写监控相关程序"><a href="#编写监控相关程序" class="headerlink" title="编写监控相关程序"></a>编写监控相关程序</h3><h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 myconfFile]# vim monlist.conf </span><br><span class="line">load-failover.conf&#x3D;startExample.sh # 等号处空格不能要，monlist.sh要出错</span><br></pre></td></tr></table></figure>
+
+<h4 id="进程启动脚本"><a href="#进程启动脚本" class="headerlink" title="进程启动脚本"></a>进程启动脚本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 myconfFile]# vim startExample.sh </span><br><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line">flume_path&#x3D;&#x2F;data&#x2F;soft&#x2F;apache-flume-1.9.0-bin # 等号处空格不能要</span><br><span class="line">nohup $&#123;flume_path&#125;&#x2F;bin&#x2F;flume-ng --name a1 --conf $&#123;flume_path&#125;&#x2F;conf --conf-file $&#123;flume_path&#125;&#x2F;conf&#x2F;myconfFile&#x2F;load-failover.conf &amp;</span><br></pre></td></tr></table></figure>
+
+<h4 id="监控脚本"><a href="#监控脚本" class="headerlink" title="监控脚本"></a>监控脚本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 myconfFile]# vim monlist.sh </span><br><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line">monlist&#x3D;&#96;cat monlist.conf&#96; #等号那里不能有空格</span><br><span class="line">echo &quot;start check&quot;</span><br><span class="line">for item in $&#123;monlist&#125;</span><br><span class="line">do</span><br><span class="line">    # 设置字段分隔符</span><br><span class="line">    OLD_IFS&#x3D;$IFS</span><br><span class="line">    IFS&#x3D;&quot;&#x3D;&quot;</span><br><span class="line">    # 把一行内容转成多列[数组] </span><br><span class="line">    arr&#x3D;($item) </span><br><span class="line">    # 获取等号左边的内容</span><br><span class="line">    name&#x3D;$&#123;arr[0]&#125;</span><br><span class="line">    # 获取等号右边的内容</span><br><span class="line">    script&#x3D;$&#123;arr[1]&#125;</span><br><span class="line">    echo &quot;time is:&quot;&#96;date +&quot;%Y-%m-%d %H:%M:%S&quot;&#96;&quot; check &quot;$name</span><br><span class="line">    if [ &#96;jps -m|grep $name | wc -l&#96; -eq 0 ]</span><br><span class="line">    then</span><br><span class="line">    # 发短信或者邮件告警</span><br><span class="line">    echo &#96;date +&quot;%Y-%m-%d %H:%M:%S&quot;&#96;$name &quot;is none&quot;</span><br><span class="line">    sh -x .&#x2F;$&#123;script&#125;</span><br><span class="line">    fi</span><br><span class="line">    done</span><br></pre></td></tr></table></figure>
+
+<h4 id="设置定时检查"><a href="#设置定时检查" class="headerlink" title="设置定时检查"></a>设置定时检查</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：这个需要定时执行，所以可以使用crontab定时调度</span><br><span class="line"></span><br><span class="line">* * * * * root &#x2F;bin&#x2F;bash &#x2F;data&#x2F;soft&#x2F;monlist.sh</span><br></pre></td></tr></table></figure>
 
 
 
@@ -471,7 +512,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Flume%E5%87%BA%E7%A5%9E%E5%85%A5%E5%8C%96%E7%AF%87.html">大数据开发工程师-第七周 第3章 Flume出神入化篇</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月16日 - 22:02</p>
-  <p><span>最后更新:</span>2022年02月18日 - 12:02</p>
+  <p><span>最后更新:</span>2022年02月20日 - 12:02</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Flume%E5%87%BA%E7%A5%9E%E5%85%A5%E5%8C%96%E7%AF%87.html" title="大数据开发工程师-第七周 第3章 Flume出神入化篇">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Flume%E5%87%BA%E7%A5%9E%E5%85%A5%E5%8C%96%E7%AF%87.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Flume%E5%87%BA%E7%A5%9E%E5%85%A5%E5%8C%96%E7%AF%87.html" aria-label="复制成功！"></i></span>
   </p>
@@ -607,9 +648,18 @@
       
       
         
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
       
 
-	<section class="site-overview sidebar-panel sidebar-panel-active">
+	<section class="site-overview sidebar-panel">
 	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
 		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
 		<p class="site-author-name" itemprop="name">TTYONG</p>
@@ -622,7 +672,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">241</span>
+			  <span class="site-state-item-count">252</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -633,7 +683,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-count">47</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -644,7 +694,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-count">119</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -729,6 +779,22 @@
 	</section>
 	
 	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第七周-第3章-Flume出神入化篇"><span class="nav-number">1.</span> <span class="nav-text">第七周 第3章 Flume出神入化篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#各种自定义组件"><span class="nav-number">1.1.</span> <span class="nav-text">各种自定义组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flume优化"><span class="nav-number">1.2.</span> <span class="nav-text">Flume优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#修改Flume进程内存"><span class="nav-number">1.2.1.</span> <span class="nav-text">修改Flume进程内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一台机器多个agent时"><span class="nav-number">1.2.2.</span> <span class="nav-text">一台机器多个agent时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flume进程监控"><span class="nav-number">1.3.</span> <span class="nav-text">Flume进程监控</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写监控相关程序"><span class="nav-number">1.3.1.</span> <span class="nav-text">编写监控相关程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程启动脚本"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">进程启动脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#监控脚本"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">监控脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置定时检查"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">设置定时检查</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
 	
 
 	
@@ -757,7 +823,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">168.1k</span>
+    <span title="Site words total count">193.2k</span>
   
 </div>
 
