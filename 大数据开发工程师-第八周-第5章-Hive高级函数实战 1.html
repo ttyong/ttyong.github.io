@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hive,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第八周 第5章 Hive高级函数实战函数的基本操作123和mysql一样的，hive也是一个主要做统计的工具，所以为了满足各种各样的统计需要，他也内置了相当多的函数，我们可以通过 show functions; 来查看hive中的内置函数hive (default)&gt; show functions;  123查看指定函数的描述信息我们可以使用： desc function functi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第八周 第5章 Hive高级函数实战">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第八周 第5章 Hive高级函数实战函数的基本操作123和mysql一样的，hive也是一个主要做统计的工具，所以为了满足各种各样的统计需要，他也内置了相当多的函数，我们可以通过 show functions; 来查看hive中的内置函数hive (default)&gt; show functions;  123查看指定函数的描述信息我们可以使用： desc function functi">
+<meta property="article:published_time" content="2022-02-20T04:02:11.000Z">
+<meta property="article:modified_time" content="2022-02-28T03:09:50.010Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="Hive">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第八周-第5章-Hive高级函数实战 1.html">
+
+
+
+
+
+  <title>大数据开发工程师-第八周 第5章 Hive高级函数实战 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第八周 第5章 Hive高级函数实战</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-20T12:02:11+08:00">
+                2022-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="第八周-第5章-Hive高级函数实战"><a href="#第八周-第5章-Hive高级函数实战" class="headerlink" title="第八周 第5章 Hive高级函数实战"></a>第八周 第5章 Hive高级函数实战</h1><h2 id="函数的基本操作"><a href="#函数的基本操作" class="headerlink" title="函数的基本操作"></a>函数的基本操作</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">和mysql一样的，hive也是一个主要做统计的工具，所以为了满足各种各样的统计需要，他也内置了相当</span><br><span class="line">多的函数，我们可以通过 show functions; 来查看hive中的内置函数</span><br><span class="line">hive (default)&gt; show functions;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">查看指定函数的描述信息我们可以使用： desc function functionName;</span><br><span class="line"></span><br><span class="line">hive (default)&gt; desc function year;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">显示函数的扩展内容</span><br><span class="line">hive (default)&gt; desc function extended year;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hive高级函数应用"><a href="#Hive高级函数应用" class="headerlink" title="Hive高级函数应用"></a>Hive高级函数应用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">普通的就不说了，mysql中支持的函数这里面大部分都支持，并且hive支持的函数比mysql还要多，在这里我们主要挑几个典型的说一下</span><br></pre></td></tr></table></figure>
+
+<h3 id="分组排序取TopN"><a href="#分组排序取TopN" class="headerlink" title="分组排序取TopN"></a>分组排序取TopN</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">一个典型的应用场景，分组排序取TopN操作</span><br><span class="line">主要需要使用到ROW_NUMBER() 和 OVER()函数</span><br><span class="line">row_number和over函数通常搭配在一起使用</span><br><span class="line">row_number会对数据编号，编号从1开始</span><br><span class="line">over可以理解为把数据划分到一个窗口内，里面可以加上partition by，表示按照字段对数据进行分组，</span><br><span class="line">还可以加上order by 表示对每个分组内的数据按照某个字段进行排序</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">我们的需求是这样，有一份学生的考试分数信息，语文、数学、英语这三门，需要计算出班级中单科排名前三名学生的姓名</span><br><span class="line">基础数据是这样的</span><br><span class="line">[root@bigdata04 hivedata]# more student_score.data</span><br><span class="line">1 zs1 chinese 80</span><br><span class="line">2 zs1 math 90</span><br><span class="line">3 zs1 english 89</span><br><span class="line">4 zs2 chinese 60</span><br><span class="line">5 zs2 math 75</span><br><span class="line">6 zs2 english 80</span><br><span class="line">7 zs3 chinese 79</span><br><span class="line">8 zs3 math 83</span><br><span class="line">9 zs3 english 72</span><br><span class="line">10 zs4 chinese 90</span><br><span class="line">11 zs4 math 76</span><br><span class="line">12 zs4 english 80</span><br><span class="line">13 zs5 chinese 98</span><br><span class="line">14 zs5 math 80</span><br><span class="line">15 zs5 english 70</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">建表</span><br><span class="line">create external table student_score(</span><br><span class="line">id int,</span><br><span class="line">name string,</span><br><span class="line">sub string,</span><br><span class="line">score int</span><br><span class="line">)row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;student_score&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">加载数据</span><br><span class="line">[root@bigdata04 hivedata]# hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;student_score.dat</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们先使用row_number对数据编号，看一下是什么样子，row_number不能单独使用，在这里需要加上over</span><br><span class="line"></span><br><span class="line">select *,row_number() over() from student_score;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">结果如下：在这里相当于给表里面的所有数据编了一个号，从1开始</span><br><span class="line">15 zs5 english 70 1</span><br><span class="line">14 zs5 math 80 2</span><br><span class="line">13 zs5 chinese 98 3</span><br><span class="line">12 zs4 english 80 4</span><br><span class="line">11 zs4 math 76 5</span><br><span class="line">10 zs4 chinese 90 6</span><br><span class="line">9 zs3 english 72 7</span><br><span class="line">8 zs3 math 83 8</span><br><span class="line">7 zs3 chinese 79 9</span><br><span class="line">6 zs2 english 80 10</span><br><span class="line">5 zs2 math 75 11</span><br><span class="line">4 zs2 chinese 60 12</span><br><span class="line">3 zs1 english 89 13</span><br><span class="line">2 zs1 math 90 14</span><br><span class="line">1 zs1 chinese 80 15</span><br><span class="line"></span><br><span class="line">但是我们是希望对这些数据，先分组，再对组内数据进行排序，再编号</span><br><span class="line">所以就需要在over函数内部添加partiton by进行分组，添加order by 进行排序，最终给生成的编号起了</span><br><span class="line">换一个别名num</span><br></pre></td></tr></table></figure>
+
+<h3 id="row-number"><a href="#row-number" class="headerlink" title="row_number()"></a>row_number()</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">执行sql</span><br><span class="line">select *, row_number() over (partition by sub order by score desc) as num from student_score</span><br><span class="line"></span><br><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">7 zs3 chinese 79 4</span><br><span class="line">4 zs2 chinese 60 5</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 3</span><br><span class="line">9 zs3 english 72 4</span><br><span class="line">15 zs5 english 70 5</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br><span class="line">11 zs4 math 76 4</span><br><span class="line">5 zs2 math 75 5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">接着就可以获取前三名了，</span><br><span class="line">执行sql</span><br><span class="line"></span><br><span class="line">select * from (</span><br><span class="line">select *, row_number() over (partition by sub order by score desc) as num</span><br><span class="line">from student_score</span><br><span class="line">) s where s.num&lt;&#x3D;3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 3</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="rank"><a href="#rank" class="headerlink" title="rank()"></a>rank()</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">前面SQL中的 row_number() 可以替换为 rank() 或者 dense_rank()</span><br><span class="line">其中： rank() 表示上下两条记录的score相等时，记录的行号是一样的，但下一个score值的行号递增N</span><br><span class="line">（N是重复的次数），比如：有两条并列第一，下一个是第三，没有第二</span><br><span class="line"></span><br><span class="line">执行sql</span><br><span class="line">select *, rank() over (partition by sub order by score desc) as num from student_score</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">7 zs3 chinese 79 4</span><br><span class="line">4 zs2 chinese 60 5</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 2</span><br><span class="line">9 zs3 english 72 4</span><br><span class="line">15 zs5 english 70 5</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br><span class="line">11 zs4 math 76 4</span><br><span class="line">5 zs2 math 75 5</span><br></pre></td></tr></table></figure>
+
+<h3 id="dense-rank"><a href="#dense-rank" class="headerlink" title="dense_rank()"></a>dense_rank()</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dense_rank() 表示上下两条记录的score相等时，下一个score值的行号递增1，比如：有两条并列第一，下一个是第二</span><br><span class="line">执行sql</span><br><span class="line">select *, dense_rank() over (partition by sub order by score desc) as num from student_score;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">7 zs3 chinese 79 4</span><br><span class="line">4 zs2 chinese 60 5</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 2</span><br><span class="line">9 zs3 english 72 3</span><br><span class="line">15 zs5 english 70 4</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br><span class="line">11 zs4 math 76 4</span><br><span class="line">5 zs2 math 75 5</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">row_number() over() 是正常排序</span><br><span class="line">rank() over() 是跳跃排序，有两个第一名时接下来就是第三名（在各个分组内）</span><br><span class="line">dense_rank() over() 是连续排序，有两个第一名时仍然跟着第二名（在各个分组内）</span><br></pre></td></tr></table></figure>
+
+<h3 id="行转列"><a href="#行转列" class="headerlink" title="行转列"></a>行转列</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">行转列就是把多行数据转为一列数据</span><br><span class="line">针对行转列这种需求主要需要使用到 CONCAT_WS()、COLLECT_SET() 、COLLECT_LIST() 函数</span><br><span class="line">先看一下这几个函数的描述信息，注意，有的函数在帮助文档里面没有描述信息</span><br></pre></td></tr></table></figure>
+
+<h4 id="CONCAT-WS"><a href="#CONCAT-WS" class="headerlink" title="CONCAT_WS()"></a>CONCAT_WS()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; desc function CONCAT_WS;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">CONCAT_WS(separator, [string | array(string)]+) - returns the concatenation of</span><br><span class="line">Time taken: 0.019 seconds, Fetched: 1 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CONCAT_WS() 函数可以实现根据指定的分隔符拼接多个字段的值，最终转化为一个带有分隔符的字符串</span><br><span class="line">它可以接收多个参数，第一个参数是分隔符，后面的参数可以是字符串或者字符串数组，最终就是使用分隔符把后面的所有字符串拼接到一块</span><br></pre></td></tr></table></figure>
+
+<h4 id="COLLECT-LIST"><a href="#COLLECT-LIST" class="headerlink" title="COLLECT_LIST()"></a>COLLECT_LIST()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; desc function COLLECT_LIST;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">COLLECT_LIST(x) - Returns a list of objects with duplicates</span><br><span class="line">Time taken: 0.014 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">这个函数可以返回一个list集合，集合中的元素会重复，一般和group by 结合在一起使用，一会再演示</span><br></pre></td></tr></table></figure>
+
+<h4 id="COLLECT-SET"><a href="#COLLECT-SET" class="headerlink" title="COLLECT_SET()"></a>COLLECT_SET()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; desc function COLLECT_SET;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">COLLECT_SET(x) - Returns a set of objects with duplicate elements eliminated</span><br><span class="line">Time taken: 0.014 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">这个函数可以返回一个set集合，集合汇中的元素不重复，一般和group by 结合在一起使用，一会再演示</span><br><span class="line">根据前面的分析，使用这几个函数我们就可以实现行转列这个需求了</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 hivedata]# more student_favors.data</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">zs codeing</span><br><span class="line">zs swing</span><br><span class="line"></span><br><span class="line">期望的结果是这样的</span><br><span class="line">zs swing,footbal,sing,codeing,swing</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">分析一下：</span><br><span class="line">在这其实就是对数据进行了分组，分组之后可以把相同人的爱好保存到一个数组中，再把数组中的数据转成使用逗号分割的字符串</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">开始对原始数据建表</span><br><span class="line">create external table student_favors(</span><br><span class="line">name string,</span><br><span class="line">favor string</span><br><span class="line">)row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;student_favors&#39;;</span><br><span class="line"></span><br><span class="line">上传数据</span><br><span class="line">[root@bigdata04 hivedata]# hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;student_favors.data &#x2F;data&#x2F;student_favors</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">查看数据</span><br><span class="line">hive (default)&gt; select * from student_favors;</span><br><span class="line">OK</span><br><span class="line">student_favors.name student_favors.favor</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">zs codeing</span><br><span class="line">zs swing</span><br><span class="line">Time taken: 0.175 seconds, Fetched: 5 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">先对name字段进行分组，把favor转成一个数组</span><br><span class="line">select name,collect_list(favor) as favor_list from student_favors group by name;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">结果如下</span><br><span class="line"> zs [&quot;swing&quot;,&quot;footbal&quot;,&quot;sing&quot;,&quot;codeing&quot;,&quot;swing&quot;]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">然后再使用 concat_ws 把数组中的元素按照指定分隔符转成字符串</span><br><span class="line">这样就实现了多行数据转为一列数据了</span><br><span class="line">执行行转列操作</span><br><span class="line">select name,concat_ws(&#39;,&#39;,collect_list(favor)) as favor_list from student_favors group by name;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">结果如下</span><br><span class="line">zs swing,footbal,sing,codeing,swing</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们发现这里面有一些爱好是重复的，如果不希望出现重复的话可以使用COLLECT_SET()</span><br><span class="line">执行sql</span><br><span class="line">select name,concat_ws(&#39;,&#39;,collect_set(favor)) as favor_list from student_favors group by name;</span><br></pre></td></tr></table></figure>
+
+<h3 id="列转行"><a href="#列转行" class="headerlink" title="列转行"></a>列转行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">列转行是和刚才的行转列反着来的，列转行可以把一列数据转成多行</span><br><span class="line">主要使用到 SPLIT()、EXPLODE()和LATERAL VIEW</span><br><span class="line">看一下这几个函数</span><br></pre></td></tr></table></figure>
+
+<h4 id="SPLIT"><a href="#SPLIT" class="headerlink" title="SPLIT()"></a>SPLIT()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; desc function SPLIT;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">SPLIT(str, regex) - Splits str around occurances that match regex</span><br><span class="line">Time taken: 0.011 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">split函数，接受一个字串符和切割规则，就类似于java中的split函数，使用切割规则对字符串中的数据进行切割，最终返回一个array数组</span><br></pre></td></tr></table></figure>
+
+<h4 id="EXPLODE"><a href="#EXPLODE" class="headerlink" title="EXPLODE()"></a>EXPLODE()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; desc function EXPLODE;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">EXPLODE(a) - separates the elements of array a into multiple rows, or the ele</span><br><span class="line">Time taken: 0.013 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">explode函数可以接受array或者map</span><br><span class="line">explode(ARRAY)：表示把数组中的每个元素转成一行</span><br><span class="line">explode(MAP) ：表示把map中每个key-value对，转成一行，key为一列，value为一列</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="LATERAL-VIEW"><a href="#LATERAL-VIEW" class="headerlink" title="LATERAL VIEW"></a>LATERAL VIEW</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Lateral view 通常和split， explode等函数一起使用。</span><br><span class="line">split可以对表中的某一列进行切割，返回一个数组类型的字段，explode可以对这个数组中的每一个元素</span><br><span class="line">转为一行，lateral view可以对这份数据产生一个支持别名的虚拟表</span><br><span class="line">原始数据如下</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 hivedata]# more student_favors_2.data</span><br><span class="line">zs swing,footbal,sing</span><br><span class="line">ls codeing,swing</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">希望的结果是这样的</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">ls codeing</span><br><span class="line">ls swing</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">接着建表</span><br><span class="line">create external table student_favors_2(</span><br><span class="line">name string,</span><br><span class="line">favorlist string</span><br><span class="line">)row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;student_favors_2&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">上传数据</span><br><span class="line">[root@bigdata04 hivedata]# hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;student_favors_2</span><br><span class="line"></span><br><span class="line">查看数据</span><br><span class="line">hive (default)&gt; select * from student_favors_2;</span><br><span class="line">OK</span><br><span class="line">student_favors_2.name student_favors_2.favorlist</span><br><span class="line">zs swing,footbal,sing</span><br><span class="line">ls codeing,swing</span><br><span class="line">Time taken: 0.131 seconds, Fetched: 2 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">先使用split对favorlist字段进行切割</span><br><span class="line">hive (default)&gt; select split(favorlist,&#39;,&#39;) from student_favors_2;</span><br><span class="line"></span><br><span class="line">OK</span><br><span class="line">_c1</span><br><span class="line">[&quot;swing&quot;,&quot;footbal&quot;,&quot;sing&quot;]</span><br><span class="line">[&quot;codeing&quot;,&quot;swing&quot;]</span><br><span class="line">Time taken: 0.224 seconds, Fetched: 2 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">再使用explode对数据进行操作</span><br><span class="line"></span><br><span class="line">hive (default)&gt; select explode(split(favorlist,&#39;,&#39;)) from student_favors_2;</span><br><span class="line">OK</span><br><span class="line">col</span><br><span class="line">swing</span><br><span class="line">footbal</span><br><span class="line">sing</span><br><span class="line">codeing</span><br><span class="line">swing</span><br><span class="line">Time taken: 0.185 seconds, Fetched: 5 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">其实到这里已经实现了列转行了，但是还需要把name字段拼接上，这时候就需要使用later view了，否则直接查询name字段会报错</span><br><span class="line">laterview相当于把explode返回的数据作为一个虚拟表来使用了，起名字为table1，然后给这个表里面的那一列数据起一个名字叫favor_new，如果有多个字段，可以再后面指定多个。这样在select后面就可以使用这个名字了，有点类似join操作了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name,favor_new from student_favors_2 lateral view explode(split(favorlist,&#39;,&#39;)) table1 as favor_new;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">结果如下：</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">ls codeing</span><br><span class="line">ls swing</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hive排序相关函数"><a href="#Hive排序相关函数" class="headerlink" title="Hive排序相关函数"></a>Hive排序相关函数</h2><h3 id="ORDER-BY"><a href="#ORDER-BY" class="headerlink" title="ORDER BY"></a>ORDER BY</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hive中的order by跟传统的sql语言中的order by作用是一样的，会对查询的结果做一次全局排序，使用这个语句的时候生成的reduce任务只有一个</span><br></pre></td></tr></table></figure>
+
+<h3 id="SORT-BY"><a href="#SORT-BY" class="headerlink" title="SORT BY"></a>SORT BY</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Hive中指定了sort by，如果有多个reduce，那么在每个reducer端都会做排序，也就是说保证了局部有序（每个reducer出来的数据是有序的，但是不能保证所有的数据是全局有序的，除非只有一个reducer）</span><br><span class="line">使用前面的t2_bak表，表中的数据如下：</span><br><span class="line">hive (default)&gt; select * from t2_bak;</span><br><span class="line">OK</span><br><span class="line">t2_bak.id t2_bak.name</span><br><span class="line">1 NULL</span><br><span class="line">2 NULL</span><br><span class="line">3 NULL</span><br><span class="line">4 NULL</span><br><span class="line">5 NULL</span><br><span class="line">1 NULL</span><br><span class="line">2 NULL</span><br><span class="line">3 NULL</span><br><span class="line">4 NULL</span><br><span class="line">5 NULL</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">执行排序SQL</span><br><span class="line">hive (default)&gt; select id from t2_bak sort by id;</span><br><span class="line">......</span><br><span class="line">Hadoop job information for Stage-1: number of mappers: 1; number of reducers:</span><br><span class="line">......</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">1 </span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">2 </span><br><span class="line">3</span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">4 </span><br><span class="line">5 </span><br><span class="line">5</span><br><span class="line">Time taken: 24.562 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">刚才我们说sort by是局部有序，为什么最终的结果还是全局有序呢？</span><br><span class="line">看里面的日志，现在只有一个reduce任务，所以最终结果还是有序的</span><br><span class="line">动态设置reduce任务数量为2，然后再执行排序的SQL</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak sort by id;</span><br><span class="line">.......</span><br><span class="line">Hadoop job information for Stage-1: number of mappers: 1; number of reducers:</span><br><span class="line">......</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">1 3 3 4 5 5 1 2 2 4</span><br><span class="line">Time taken: 27.943 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">此时会发现数据就没有全局排序了，因为有多个reduce了。</span><br><span class="line">不过针对ORDER BY来说，你动态设置再多的reduce数量都没有用，最后还是只产生1个reduce。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="DISTRIBUTE-BY"><a href="#DISTRIBUTE-BY" class="headerlink" title="DISTRIBUTE BY"></a>DISTRIBUTE BY</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ditribute by是控制map的输出到reducer是如何划分的</span><br><span class="line"></span><br><span class="line">ditribute by：只会根据指定的key对数据进行分区，但是不会排序。</span><br><span class="line">一般情况下可以和sort by 结合使用，先对数据分区，再进行排序</span><br><span class="line">两者结合使用的时候distribute by必须要写在sort by之前</span><br><span class="line">先来看一下单独ditribute by的使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak distribute by id;</span><br><span class="line">.......</span><br><span class="line">Number of reduce tasks not specified. Defaulting to jobconf value of: 2</span><br><span class="line">.......</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">4 </span><br><span class="line">2 </span><br><span class="line">4 </span><br><span class="line">2 </span><br><span class="line">5 </span><br><span class="line">3 </span><br><span class="line">1 </span><br><span class="line">5 </span><br><span class="line">3 </span><br><span class="line">1</span><br><span class="line">Time taken: 25.395 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">可以结合sort by实现分区内的排序，默认是升序，可以通过desc来设置倒序</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak distribute by id sort by id;</span><br><span class="line">.......</span><br><span class="line">Number of reduce tasks not specified. Defaulting to jobconf value of: 2</span><br><span class="line">.......</span><br><span class="line">id</span><br><span class="line">2 2 4 4 1 1 3 3 5 5</span><br><span class="line">Time taken: 24.468 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; select id from t2_bak distribute by id sort by id desc;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="CLUSTER-BY"><a href="#CLUSTER-BY" class="headerlink" title="CLUSTER BY"></a>CLUSTER BY</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">cluster by的功能就是distribute by和sort by的简写形式</span><br><span class="line">也就是 cluster by id 等于 distribute by id sort by id</span><br><span class="line">注意被cluster by指定的列只能是升序，不能指定asc和desc</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak cluster by id;</span><br><span class="line">.....</span><br><span class="line">Number of reduce tasks not specified. Defaulting to jobconf value of: 2</span><br><span class="line"></span><br><span class="line">.....</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">2 </span><br><span class="line">2 </span><br><span class="line">4 </span><br><span class="line">4 </span><br><span class="line">1 </span><br><span class="line">1 </span><br><span class="line">3 </span><br><span class="line">3 </span><br><span class="line">5 </span><br><span class="line">5</span><br><span class="line">Time taken: 25.495 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hive-的分组和去重函数"><a href="#Hive-的分组和去重函数" class="headerlink" title="Hive 的分组和去重函数"></a>Hive 的分组和去重函数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GROUP BY ：对数据按照指定字段进行分组</span><br><span class="line">DISTINCT：对数据中指定字段的重复值进行去重</span><br><span class="line"></span><br><span class="line">第一种：select count(distinct name) from order</span><br><span class="line">第二种：select count(tmp.name) from (select name from order group by name) tmp</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">第一种：使用distinct会将所有的name都shuffle到一个reducer里面，性能较低</span><br><span class="line">第二种：先对name分组，因为分组的同时其实就是去重，此时是可以并行计算的，然后再计算count</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html">大数据开发工程师-第八周 第5章 Hive高级函数实战</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月20日 - 12:02</p>
+  <p><span>最后更新:</span>2022年02月28日 - 11:02</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html" title="大数据开发工程师-第八周 第5章 Hive高级函数实战">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hive/" rel="tag"><i class="fa fa-tag"></i> Hive</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%204.html" rel="next" title="大数据开发工程师-第八周 第4章 Hive核心实战2">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第八周 第4章 Hive核心实战2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%202.html" rel="prev" title="大数据开发工程师-第八周 第5章 Hive高级函数实战">
+                大数据开发工程师-第八周 第5章 Hive高级函数实战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">259</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">47</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第八周-第5章-Hive高级函数实战"><span class="nav-number">1.</span> <span class="nav-text">第八周 第5章 Hive高级函数实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#函数的基本操作"><span class="nav-number">1.1.</span> <span class="nav-text">函数的基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hive高级函数应用"><span class="nav-number">1.2.</span> <span class="nav-text">Hive高级函数应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分组排序取TopN"><span class="nav-number">1.2.1.</span> <span class="nav-text">分组排序取TopN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#row-number"><span class="nav-number">1.2.2.</span> <span class="nav-text">row_number()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rank"><span class="nav-number">1.2.3.</span> <span class="nav-text">rank()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dense-rank"><span class="nav-number">1.2.4.</span> <span class="nav-text">dense_rank()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#行转列"><span class="nav-number">1.2.6.</span> <span class="nav-text">行转列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CONCAT-WS"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">CONCAT_WS()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#COLLECT-LIST"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">COLLECT_LIST()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#COLLECT-SET"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">COLLECT_SET()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现"><span class="nav-number">1.2.6.4.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列转行"><span class="nav-number">1.2.7.</span> <span class="nav-text">列转行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SPLIT"><span class="nav-number">1.2.7.1.</span> <span class="nav-text">SPLIT()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#EXPLODE"><span class="nav-number">1.2.7.2.</span> <span class="nav-text">EXPLODE()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LATERAL-VIEW"><span class="nav-number">1.2.7.3.</span> <span class="nav-text">LATERAL VIEW</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现-1"><span class="nav-number">1.2.7.4.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hive排序相关函数"><span class="nav-number">1.3.</span> <span class="nav-text">Hive排序相关函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ORDER-BY"><span class="nav-number">1.3.1.</span> <span class="nav-text">ORDER BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SORT-BY"><span class="nav-number">1.3.2.</span> <span class="nav-text">SORT BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DISTRIBUTE-BY"><span class="nav-number">1.3.3.</span> <span class="nav-text">DISTRIBUTE BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLUSTER-BY"><span class="nav-number">1.3.4.</span> <span class="nav-text">CLUSTER BY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hive-的分组和去重函数"><span class="nav-number">1.4.</span> <span class="nav-text">Hive 的分组和去重函数</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">210.9k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

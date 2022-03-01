@@ -1,6 +1,489 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>大数据开发工程师-第九周 第4章 Scala函数式编程</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B9%9D%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Scala%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第九周-第4章-Scala函数式编程"><a href="#第九周-第4章-Scala函数式编程" class="headerlink" title="第九周 第4章 Scala函数式编程"></a>第九周 第4章 Scala函数式编程</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面我们来学习一下scala中最重要的内容，函数式编程，其实我们学习Scala这门语言就是因为它的这一个特性，咱们在最开始的时候给大家演示了，使用java代码实现函数式编程是很复杂的，而使用scala代码实现函数式编程就很轻松，很简单了。</span><br><span class="line">这块内容我们在后续工作中会经常使用，需要大家重点掌握。</span><br></pre></td></tr></table></figure>
+
+<h2 id="什么是函数式编程"><a href="#什么是函数式编程" class="headerlink" title="什么是函数式编程"></a>什么是函数式编程</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala是一门既面向对象，又面向过程的语言。</span><br><span class="line">因此在Scala中有非常好的面向对象的特性，可以使用Scala来基于面向对象的思想开发大型复杂的系统和工程；</span><br><span class="line">而且Scala也面向过程，因此Scala中有函数的概念。</span><br><span class="line">在Scala中，函数与类、对象一样，都是一等公民，所以说scala的面向过程其实就重在针对函数的编程了，所以称之为函数式编程</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数赋值给变量"><a href="#函数赋值给变量" class="headerlink" title="函数赋值给变量"></a>函数赋值给变量</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中的函数是一等公民，可以独立定义，独立存在，而且可以直接将函数作为值赋值给变量</span><br><span class="line">Scala的语法规定，将函数赋值给变量时，必须在函数后面加上空格和下划线</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="function"><span class="keyword">def</span> <span class="title">sayHello</span></span>(name: <span class="type">String</span>) &#123; println(<span class="string">"Hello, "</span> + name) &#125;</span><br><span class="line">sayHello: (name: <span class="type">String</span>)<span class="type">Unit</span></span><br><span class="line">scala&gt; <span class="keyword">val</span> sayHelloFunc = sayHello _</span><br><span class="line">sayHelloFunc: <span class="type">String</span> =&gt; <span class="type">Unit</span> = &lt;function1&gt;</span><br><span class="line">scala&gt; sayHelloFunc(<span class="string">"scala"</span>)</span><br><span class="line"><span class="type">Hello</span>, scala</span><br></pre></td></tr></table></figure>
+
+<h2 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中的函数也可以不需要命名，这种函数称为匿名函数</span><br><span class="line">匿名函数的语法格式：(参数名: 参数类型) &#x3D;&gt; 函数体</span><br><span class="line">(参数名: 参数类型) ：是函数的参数列表</span><br><span class="line"></span><br><span class="line">可以将匿名函数直接赋值给某个变量</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> sayHelloFunc = (name: <span class="type">String</span>) =&gt; println(<span class="string">"Hello, "</span> + name)</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">val</span> sayHelloFunc = (name: <span class="type">String</span>) =&gt; &#123;println(<span class="string">"Hello, "</span> + name)&#125;</span><br><span class="line"></span><br><span class="line">注意：如果函数体有多行代码，则需要添加&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">由于函数是一等公民，所以说我们可以直接将某个函数作为参数传入其它函数</span><br><span class="line">这个功能是极其强大的，也是Java这种面向对象的编程语言所不具备的</span><br><span class="line">这个功能在实际工作中是经常需要用到的</span><br><span class="line">接收其它函数作为当前函数的参数，当前这个函数也被称作高阶函数 (higher-order function)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">看一个例子：</span><br><span class="line">先定义一个匿名函数，赋值给变量sayHelloFunc</span><br><span class="line"><span class="keyword">val</span> sayHelloFunc = (name: <span class="type">String</span>) =&gt; println(<span class="string">"Hello, "</span> + name)</span><br><span class="line"></span><br><span class="line">再定义一个高阶函数，这个高阶函数的参数会接收一个函数</span><br><span class="line">参数： (<span class="type">String</span>) =&gt; <span class="type">Unit</span> 表示这个函数接收一个字符串，没有返回值</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">greeting</span></span>(func: (<span class="type">String</span>) =&gt; <span class="type">Unit</span>, name: <span class="type">String</span>) &#123; func(name) &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; greeting(sayHelloFunc, <span class="string">"scala"</span>)</span><br><span class="line"><span class="type">Hello</span>, scala</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">或者还可以这样用，直接把匿名函数的定义传过来也是可以</span><br><span class="line">scala&gt; greeting((name: <span class="type">String</span>) =&gt; println(<span class="string">"Hello, "</span> + name),<span class="string">"scala"</span>)</span><br><span class="line"><span class="type">Hello</span>, scala</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">高阶函数可以自动推断出它里面函数的参数类型，对于只有一个参数的函数，还可以省去小括号</span><br><span class="line"># 先定义一个高阶函数</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">greeting</span></span>(func: (<span class="type">String</span>) =&gt; <span class="type">Unit</span>, name: <span class="type">String</span>) &#123; func(name) &#125;</span><br><span class="line"># 使用高阶函数：完整写法</span><br><span class="line">greeting((name: <span class="type">String</span>) =&gt; println(<span class="string">"Hello, "</span> + name), <span class="string">"scala"</span>)</span><br><span class="line"># 使用高阶函数：高阶函数可以自动推断出参数类型，而不需要写明类型</span><br><span class="line">greeting((name) =&gt; println(<span class="string">"Hello, "</span> + name), <span class="string">"scala"</span>)</span><br><span class="line"># 使用高阶函数：对于只有一个参数的函数，还可以省去其小括号</span><br><span class="line">greeting(name =&gt; println(<span class="string">"Hello, "</span> + name), <span class="string">"scala"</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用高阶函数"><a href="#常用高阶函数" class="headerlink" title="常用高阶函数"></a>常用高阶函数</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">刚才是我们自己实现的高阶函数，其实我们在工作中自己定义高阶函数的场景不多，大部分场景都是去使</span><br><span class="line">用已有的高阶函数</span><br><span class="line">下面我们来看几个常见的高阶函数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">map：对传入的每个元素都进行处理，返回一个元素</span><br><span class="line">flatMap：对传入的每个元素都进行处理，返回一个或者多个元素</span><br><span class="line">foreach：对传入的每个元素都进行处理，但是没有返回值</span><br><span class="line">filter：对传入的每个元素都进行条件判断，如果返回true，则保留该元素，否则过滤掉该元素</span><br><span class="line">reduceLeft：从左侧元素开始，进行reduce操作</span><br></pre></td></tr></table></figure>
+
+<h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="type">Array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>).map(num=&gt;&#123;num * <span class="number">2</span>&#125;)</span><br><span class="line">res38: <span class="type">Array</span>[<span class="type">Int</span>] = <span class="type">Array</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">可以简写为</span><br><span class="line">scala&gt; <span class="type">Array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>).map(_ * <span class="number">2</span>)</span><br><span class="line">res40: <span class="type">Array</span>[<span class="type">Int</span>] = <span class="type">Array</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="type">Array</span>(<span class="string">"hello you"</span>,<span class="string">"hello me"</span>).flatMap(line=&gt;line.split(<span class="string">" "</span>))</span><br><span class="line">res53: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(hello, you, hello, me)</span><br><span class="line"></span><br><span class="line">可以简写为</span><br><span class="line">scala&gt; <span class="type">Array</span>(<span class="string">"hello you"</span>,<span class="string">"hello me"</span>).flatMap(_.split(<span class="string">" "</span>))</span><br><span class="line">res54: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(hello, you, hello, me)</span><br></pre></td></tr></table></figure>
+
+<h3 id="foreach"><a href="#foreach" class="headerlink" title="foreach"></a>foreach</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="type">Array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>).map(_ * <span class="number">2</span>).foreach(num=&gt;println(num))</span><br><span class="line"><span class="number">2</span> <span class="number">4</span> <span class="number">6</span> <span class="number">8</span></span><br><span class="line"><span class="number">10</span></span><br><span class="line"></span><br><span class="line">scala&gt; <span class="type">Array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>).map(_ * <span class="number">2</span>).foreach(println(_))</span><br><span class="line"><span class="number">2</span> <span class="number">4</span> <span class="number">6</span> <span class="number">8</span></span><br><span class="line"><span class="number">10</span></span><br><span class="line"></span><br><span class="line">scala&gt; <span class="type">Array</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>).map(_ * <span class="number">2</span>).foreach(println _)</span><br><span class="line"><span class="number">2</span> <span class="number">4</span> <span class="number">6</span> <span class="number">8</span></span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; Array(1, 2, 3, 4, 5).filter(num&#x3D;&gt;num % 2 &#x3D;&#x3D; 0)</span><br><span class="line">res46: Array[Int] &#x3D; Array(2, 4)</span><br><span class="line"></span><br><span class="line">scala&gt; Array(1, 2, 3, 4, 5).filter(_ % 2 &#x3D;&#x3D; 0)</span><br><span class="line">res47: Array[Int] &#x3D; Array(2, 4)</span><br></pre></td></tr></table></figure>
+
+<h3 id="reduceLeft"><a href="#reduceLeft" class="headerlink" title="reduceLeft"></a>reduceLeft</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">reduceLeft的使用</span><br><span class="line">表示先对元素1和元素2进行处理，然后将结果与元素3处理，再将结果与元素4处理，依次类推spark中有一个reduce函数，和这个函数的效果一致</span><br><span class="line"></span><br><span class="line">scala&gt; Array(1, 2, 3, 4, 5).reduceLeft((t1,t2)&#x3D;&gt;t1+t2)</span><br><span class="line">res50: Int &#x3D; 15</span><br><span class="line"></span><br><span class="line">scala&gt; Array(1, 2, 3, 4, 5).reduceLeft( _ + _)</span><br><span class="line">res49: Int &#x3D; 15</span><br><span class="line"></span><br><span class="line">注意：这里的两个_代表是两个元素</span><br></pre></td></tr></table></figure>
+
+<h2 id="案例：函数式编程"><a href="#案例：函数式编程" class="headerlink" title="案例：函数式编程"></a>案例：函数式编程</h2> <figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">统计多个文本内的单词总数</span><br><span class="line">使用scala的io包读取文本文件内的数据</span><br><span class="line"></span><br><span class="line">使用<span class="type">List</span>的伴生对象，将多个文件内的内容创建为一个<span class="type">List</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> lines01 = scala.io.<span class="type">Source</span>.fromFile(<span class="string">"D://a.txt"</span>).mkString</span><br><span class="line"><span class="keyword">val</span> lines02 = scala.io.<span class="type">Source</span>.fromFile(<span class="string">"D://b.txt"</span>).mkString</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> lines = <span class="type">List</span>(lines01, lines02)</span><br><span class="line"></span><br><span class="line">注意：下面这一行是核心代码，使用了链式调用的函数式编程</span><br><span class="line">lines.flatMap(_.split( <span class="string">" "</span>)).map((_, <span class="number">1</span>)).map(_._2).reduceLeft(_ + _)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lines.flatMap(_.split( <span class="string">" "</span>)) ：表示对每一行数据使用空格进行切割，返回每一个单词</span><br><span class="line">.map((_, <span class="number">1</span>)) ：针对每一个单词，都转成tuple类型，tuple中的第<span class="number">1</span>个元素是这个单词，第<span class="number">2</span>个元素表示单词出现的次数<span class="number">1</span></span><br><span class="line">.map(_._2) ：迭代每一个tuple，获取tuple中的第<span class="number">2</span>个元素</span><br><span class="line">.reduceLeft(_ + _) ：对前面获取到的元素进行累加求和</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<blockquote>
+</blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据开发工程师-第九周 第5章 Scala高级特性</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B9%9D%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Scala%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第九周-第5章-Scala高级特性"><a href="#第九周-第5章-Scala高级特性" class="headerlink" title="第九周 第5章 Scala高级特性"></a>第九周 第5章 Scala高级特性</h1><h2 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h2><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">先看一下模式匹配</span><br><span class="line">模式匹配是<span class="type">Scala</span>中非常有特色，非常强大的一种功能。</span><br><span class="line">模式匹配，其实类似于<span class="type">Java</span>中的 switch <span class="keyword">case</span> 语法，即对一个值进行条件判断，然后针对不同的条件，进</span><br><span class="line">行不同的处理</span><br><span class="line">不过<span class="type">Scala</span>没有<span class="type">Java</span>中的 switch <span class="keyword">case</span> 语法，但是，<span class="type">Scala</span>提供了更加强大的 <span class="keyword">match</span> <span class="keyword">case</span> 语法，就是这个</span><br><span class="line">模式匹配</span><br><span class="line"><span class="type">Java</span>的 switch <span class="keyword">case</span> 仅能匹配变量的值，而<span class="type">Scala</span>的 <span class="keyword">match</span> <span class="keyword">case</span> 可以匹配各种情况，比如：变量的类型、</span><br><span class="line">集合的元素，有值没值</span><br></pre></td></tr></table></figure>
+
+<h3 id="对变量的值进行模式匹配"><a href="#对变量的值进行模式匹配" class="headerlink" title="对变量的值进行模式匹配"></a>对变量的值进行模式匹配</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">match case语法格式：变量 match &#123; case 值 &#x3D;&gt; 代码 &#125;</span><br><span class="line">如果值为下划线，则代表了不满足以上所有情况下的默认处理</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo1</span></span>(day: <span class="type">Int</span>) &#123;</span><br><span class="line">day <span class="keyword">match</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">1</span> =&gt; println(<span class="string">"Monday"</span>)</span><br><span class="line"><span class="keyword">case</span> <span class="number">2</span> =&gt; println(<span class="string">"Tuesday"</span>)</span><br><span class="line"><span class="keyword">case</span> <span class="number">3</span> =&gt; println(<span class="string">"Wednesday"</span>)</span><br><span class="line"><span class="keyword">case</span> _ =&gt; println(<span class="string">"none"</span>)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">scala&gt; demo1(<span class="number">1</span>)</span><br><span class="line"><span class="type">Monday</span></span><br><span class="line">scala&gt; demo1(<span class="number">4</span>)</span><br><span class="line">none</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">注意：match case中，只要一个case分支满足并处理了，就不会继续判断下一个case分支了，这一点与Java不同，java的switch case需要用break停止向下执行</span><br></pre></td></tr></table></figure>
+
+<h3 id="变量类型的模式匹配"><a href="#变量类型的模式匹配" class="headerlink" title="变量类型的模式匹配"></a>变量类型的模式匹配</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="type">Scala</span>的模式匹配一个强大之处就在于，可以直接匹配类型，而不是值！！！这点是java的switch <span class="keyword">case</span>绝对做不到的</span><br><span class="line">语法格式：变量 <span class="keyword">match</span> &#123; <span class="keyword">case</span> 变量: 类型 =&gt; 代码 &#125;</span><br><span class="line">典型的一个应用场景就是针对异常的处理</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io._</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">processException</span></span>(e: <span class="type">Exception</span>) &#123;</span><br><span class="line">e <span class="keyword">match</span> &#123;</span><br><span class="line"><span class="keyword">case</span> e1: <span class="type">IllegalArgumentException</span> =&gt; println(<span class="string">"IllegalArgumentException "</span></span><br><span class="line"><span class="keyword">case</span> e2: <span class="type">FileNotFoundException</span> =&gt; println(<span class="string">"FileNotFoundException "</span> + e2)</span><br><span class="line"><span class="keyword">case</span> e3: <span class="type">IOException</span> =&gt; println(<span class="string">"IOException "</span> + e3)</span><br><span class="line"><span class="keyword">case</span> _: <span class="type">Exception</span> =&gt; println(<span class="string">"Exception "</span> )</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; processException(<span class="keyword">new</span> <span class="type">Exception</span>())</span><br><span class="line"><span class="type">Exception</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">在<span class="keyword">try</span>-<span class="keyword">catch</span>异常中的应用</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line"><span class="keyword">val</span> lines02 = scala.io.<span class="type">Source</span>.fromFile(<span class="string">"D://test02.txt"</span>).mkString</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123;</span><br><span class="line"><span class="keyword">case</span> ex: <span class="type">FileNotFoundException</span> =&gt; println(<span class="string">"no file"</span>)</span><br><span class="line"><span class="keyword">case</span> ex: <span class="type">IOException</span> =&gt; println(<span class="string">"io exception"</span>)</span><br><span class="line"><span class="keyword">case</span> ex: <span class="type">Exception</span> =&gt; println(<span class="string">"exception"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="case-class与模式匹配"><a href="#case-class与模式匹配" class="headerlink" title="case class与模式匹配"></a>case class与模式匹配</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="type">Scala</span>中提供了一种特殊的类，用 <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">进行声明，中文可以称为样例类</span></span></span><br><span class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">其实有点类似于Java中的JavaBean的概念</span></span></span><br><span class="line"><span class="class"><span class="title">即只定义field，会由Scala在编译时自动提供get和set方法，但是没有其它的method</span></span></span><br><span class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">的主构造函数接收的参数通常不需要使用var或val修饰，Scala自动就会使用val修饰（但是如果你自己使用var修饰，那么还是会按照var来，在这用哪个区别都不大）</span></span></span><br><span class="line"><span class="class"><span class="title">Scala自动为</span> <span class="title">case</span> <span class="title">class</span> <span class="title">定义了伴生对象，也就是object，并且定义了apply</span>(<span class="params"></span>)<span class="title">方法，该方法接收主构造函数中相同的参数，并返回</span> <span class="title">case</span> <span class="title">class</span> <span class="title">对象</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">Teacher</span>(<span class="params">name: <span class="type">String</span>, sub: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">Student</span>(<span class="params">name: <span class="type">String</span>, cla: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">def</span> <span class="title">check</span>(<span class="params">p: <span class="type">Person</span></span>) </span>&#123;</span><br><span class="line">p <span class="keyword">match</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="type">Teacher</span>(name, sub) =&gt; println(<span class="string">"Teacher, name is "</span> + name + <span class="string">", sub is "</span> + sub)</span><br><span class="line"><span class="keyword">case</span> <span class="type">Student</span>(name, cla) =&gt; println(<span class="string">"Student, name is "</span> + name + <span class="string">", cla is "</span> + cla)</span><br><span class="line"><span class="keyword">case</span> _ =&gt; println(<span class="string">"none"</span>)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">执行</span><br><span class="line">scala&gt; check(<span class="keyword">new</span> <span class="type">Student</span>(<span class="string">"tom"</span>,<span class="string">"class1"</span>))</span><br><span class="line"><span class="type">Student</span>, name is tom, cla is class1</span><br><span class="line">scala&gt; check(<span class="keyword">new</span> <span class="type">Person</span>())</span><br><span class="line">none</span><br></pre></td></tr></table></figure>
+
+<h3 id="Option与模式匹配"><a href="#Option与模式匹配" class="headerlink" title="Option与模式匹配"></a>Option与模式匹配</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala有一种特殊的数据类型，叫做Option。</span><br><span class="line">Option有两种值，一种是Some，表示有值，一种是None，表示没有值</span><br><span class="line">Option通常会用于模式匹配中，用于判断某个变量是有值还是没有值，这比null来的更加简洁明了</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/b1Mnh9" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/03/01/b1Mnh9.md.png" alt="b1Mnh9.md.png"></a></p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> ages = <span class="type">Map</span>(<span class="string">"jack"</span> -&gt; <span class="number">18</span>, <span class="string">"tom"</span> -&gt; <span class="number">30</span>, <span class="string">"jessic"</span> -&gt; <span class="number">27</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getAge</span></span>(name: <span class="type">String</span>) &#123;</span><br><span class="line"><span class="keyword">val</span> age = ages.get(name)</span><br><span class="line">age <span class="keyword">match</span> &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="type">Some</span>(age) =&gt; println(<span class="string">"your age is "</span> + age)</span><br><span class="line"><span class="keyword">case</span> <span class="type">None</span> =&gt; println(<span class="string">"none"</span>)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; getAge(<span class="string">"jack"</span>)</span><br><span class="line">your age is <span class="number">18</span></span><br><span class="line">scala&gt; getAge(<span class="string">"hehe"</span>)</span><br><span class="line">none</span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala的隐式转换，允许手动指定将某种类型的对象转换成其它类型的对象</span><br><span class="line">Scala的隐式转换，最核心的就是定义隐式转换函数，即implicit conversion function</span><br><span class="line">隐式转换函数与普通函数唯一的语法区别是要以implicit开头而且最好要定义函数返回类型</span><br><span class="line">隐式转换非常强大的一个功能，就是可以在不知不觉中加强现有类型的功能。也就是说，我们可以为某个普通类定义一个加强类，并定义对应的隐式转换函数，这样我们在使用加强类里面的方法的时候，Scala会自动进行隐式转换，把普通类转换为加强类，然后再调用加强类中的方法</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala默认会自动使用两种隐式转换</span><br><span class="line">1：源类型，或者目标类型的伴生对象里面的隐式转换函数</span><br><span class="line">2：当前程序作用域内可以用唯一标识符表示的隐式转换函数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果隐式转换函数不在上述两种情况下的话，那么就必须手动使用import引入对应的隐式转换函数</span><br><span class="line">通常建议，仅仅在需要进行隐式转换的地方，比如某个函数内，用import导入隐式转换函数，这样可以缩小隐式转换函数的作用域，避免不需要的隐式转换</span><br></pre></td></tr></table></figure>
+
+<h2 id="案例：狗也能抓老鼠"><a href="#案例：狗也能抓老鼠" class="headerlink" title="案例：狗也能抓老鼠"></a>案例：狗也能抓老鼠</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">通过隐式转换实现，狗也具备猫抓老鼠的功能</span><br><span class="line"></span><br><span class="line">class cat(val name: String)&#123;</span><br><span class="line">def catchMouse()&#123;println(name+&quot; catch mouse&quot;)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class dog(val name: String)</span><br><span class="line"></span><br><span class="line">implicit def object2Cat (obj: Object): cat &#x3D; &#123;</span><br><span class="line">if (obj.getClass &#x3D;&#x3D; classOf[dog]) &#123;</span><br><span class="line">val dog &#x3D; obj.asInstanceOf[dog]</span><br><span class="line">new cat(dog.name)</span><br><span class="line">&#125;</span><br><span class="line">else Nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> d = <span class="keyword">new</span> dog(<span class="string">"d1"</span>)</span><br><span class="line">d: dog = dog@<span class="number">7</span>f0e0db3</span><br><span class="line">scala&gt; d.catchMouse()</span><br><span class="line">d1 <span class="keyword">catch</span> mouse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们后续在工作中一般很少需要我们自己去定义隐式转换函数，大部分的场景是我们只需要使用<span class="keyword">import</span></span><br><span class="line">导入对应的隐式转换函数就可以了，在这个案例中我们是自己手工实现了一个隐私转换函数，因为他们都在一个作用域内，所以就不需要<span class="keyword">import</span>了</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<blockquote>
+</blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据开发工程师-第九周 第3章 Scala面向对象</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B9%9D%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Scala%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第九周-第3章-Scala面向对象"><a href="#第九周-第3章-Scala面向对象" class="headerlink" title="第九周 第3章 Scala面向对象"></a>第九周 第3章 Scala面向对象</h1><h2 id="Scala面向对象编程"><a href="#Scala面向对象编程" class="headerlink" title="Scala面向对象编程"></a>Scala面向对象编程</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这里我们主要学习Scala中的类、对象和接口</span><br><span class="line">注意：</span><br><span class="line">Scala中类和java中的类基本是类似的</span><br><span class="line">Scala中的对象时需要定义的，而java中的对象是通过class new出来的</span><br><span class="line">Scala中的接口是trait，java中的接口是interface</span><br></pre></td></tr></table></figure>
+
+<h3 id="类-class"><a href="#类-class" class="headerlink" title="类-class"></a>类-class</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">首先看一下类</span><br><span class="line">Scala中定义类和Java一样，都是使用 class 关键字</span><br><span class="line">和Java一样，使用new关键字创建对象</span><br><span class="line">那下面来看一个具体案例</span><br><span class="line">定义Person类，创建对象并调用其方法</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person&#123;</span><br><span class="line">var name &#x3D; &quot;scala&quot;</span><br><span class="line">def sayHello()&#123;</span><br><span class="line">println(&quot;Hello,&quot;+name)</span><br><span class="line">&#125;</span><br><span class="line">def getName&#x3D; name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">注意：如果在定义方法的时候指定了()，那么在调用的时候()可写可不写，如果在定义方法的时候</span><br><span class="line">没指定()，则调用方法时肯定不能带()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val p &#x3D; new Person()</span><br><span class="line">p: Person &#x3D; Person@23b8d9f3</span><br><span class="line">scala&gt; p.sayHello()</span><br><span class="line">Hello,scala</span><br><span class="line">scala&gt; p.sayHello</span><br><span class="line">Hello,scala</span><br><span class="line">scala&gt; println(p.getName)</span><br><span class="line">scala</span><br><span class="line">scala&gt; println(p.getName())</span><br><span class="line">&lt;console&gt;:10: error: not enough arguments for method apply: (index: Int)Char</span><br></pre></td></tr></table></figure>
+
+<h4 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">类创建好了，下面我们来看一下类中的构造函数，</span><br><span class="line">Scala类中的构造函数可以分为主构造函数和辅助构造函数</span><br><span class="line">这两种构造函数有什么区别呢？</span><br><span class="line">主constructor：类似Java的默认构造函数 this()</span><br><span class="line">辅助constructor：类似Java的重载构造函数 this(name,age)</span><br></pre></td></tr></table></figure>
+
+<h5 id="主constructor"><a href="#主constructor" class="headerlink" title="主constructor"></a>主constructor</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">那先来看一下主构造函数</span><br><span class="line">Scala的主constructor是与类名放在一起的，与Java不同，Java中的构造函数是写在类内部的</span><br><span class="line"></span><br><span class="line">注意：在类中，没有定义在任何方法或者是代码块之中的代码就是主constructor的代码</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>(<span class="params">val name:<span class="type">String</span>,val age:<span class="type">Int</span></span>)</span>&#123;</span><br><span class="line">println(<span class="string">"your name is "</span> + name + <span class="string">", your age is "</span> + age)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">new</span> <span class="type">Student</span>(<span class="string">"zs"</span>,<span class="number">19</span>)</span><br><span class="line">your name is zs, your age is <span class="number">19</span></span><br><span class="line">res8: <span class="type">Student</span> = <span class="type">Student</span>@<span class="number">3134153</span>d</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">在创建对象的时候，类中的println语句执行了，说明这个语句属于主构造函数中的代码</span><br><span class="line">主constructor中还可以通过使用默认参数，来给参数设置默认值</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>(<span class="params">val name:<span class="type">String</span> = "jack",val age:<span class="type">Int</span> = 20</span>)</span>&#123;</span><br><span class="line">println(<span class="string">"your name is "</span> + name + <span class="string">", your age is "</span> + age)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">new</span> <span class="type">Student</span>()</span><br><span class="line">your name is jack, your age is <span class="number">20</span></span><br><span class="line">res10: <span class="type">Student</span> = <span class="type">Student</span>@<span class="number">7</span>ddd84b5</span><br><span class="line">scala&gt; <span class="keyword">new</span> <span class="type">Student</span>(<span class="string">"tom"</span>,<span class="number">18</span>)</span><br><span class="line">your name is tom, your age is <span class="number">18</span></span><br><span class="line">res11: <span class="type">Student</span> = <span class="type">Student</span><span class="meta">@a</span>09303</span><br></pre></td></tr></table></figure>
+
+<h5 id="辅构造函数"><a href="#辅构造函数" class="headerlink" title="辅构造函数"></a>辅构造函数</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中，可以给类定义多个辅助constructor，类似于java中的构造函数重载</span><br><span class="line">辅助constructor之间可以互相调用，但是第一行必须调用主constructor</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line"><span class="keyword">var</span> name = <span class="string">"jack"</span></span><br><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">this</span></span>(name: <span class="type">String</span>) &#123;</span><br><span class="line"><span class="keyword">this</span>()</span><br><span class="line"><span class="keyword">this</span>.name = name</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">this</span></span>(name: <span class="type">String</span>, age: <span class="type">Int</span>) &#123;</span><br><span class="line"><span class="keyword">this</span>(name)</span><br><span class="line"><span class="keyword">this</span>.age = age</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">val</span> s = <span class="keyword">new</span> <span class="type">Student</span>(<span class="string">"tom"</span>)</span><br><span class="line">s: <span class="type">Student</span> = <span class="type">Student</span>@<span class="number">1</span>a538ed8</span><br><span class="line">scala&gt; <span class="keyword">val</span> s = <span class="keyword">new</span> <span class="type">Student</span>(<span class="string">"mick"</span>,<span class="number">30</span>)</span><br><span class="line">s: <span class="type">Student</span> = <span class="type">Student</span>@<span class="number">319642</span>db</span><br></pre></td></tr></table></figure>
+
+<h3 id="对象-object"><a href="#对象-object" class="headerlink" title="对象-object"></a>对象-object</h3><figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">前面我们学习的scala中的<span class="class"><span class="keyword">class</span><span class="title">和java中的class是类似的，下面来看一个java中没有的内容，叫Object</span></span></span><br><span class="line"><span class="class"><span class="title">那大家可能有疑问了，Java中也有object，通过class就可以创建object</span></span></span><br><span class="line"><span class="class"><span class="title">但是注意了，在scala中，我们可以直接定义一个object，就像定义class一样。</span></span></span><br><span class="line"><span class="class"><span class="title">object：相当于class的单个实例，通常在里面放一些静态的field或者method</span></span></span><br><span class="line"><span class="class"><span class="title">object不能定义带参数的constructor，只有空参的constructor</span></span></span><br><span class="line"><span class="class"><span class="title">第一次调用object的方法时，会执行object的constructor，也就是执行object内部不在任何方法中的代码，因为它只有空参的构造函数</span></span></span><br><span class="line"><span class="class"><span class="title">但是注意，object的constructor的代码只会在他第一次被调用时执行一次，以后再次调用就不会再执行了</span></span></span><br><span class="line"><span class="class"><span class="title">object通常用于作为单例模式的实现，或者放class的一些静态成员，比如工具方法</span></span></span><br><span class="line"><span class="class"><span class="title">object可以直接使用，不能new</span></span></span><br><span class="line"><span class="class"><span class="title">创建一个object，使用object关键字</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"><span class="keyword">var</span> age = <span class="number">1</span></span><br><span class="line">println(<span class="string">"this Person object!"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getAge</span> </span>= age</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">执行，直接通过<span class="type">Object</span>的名称调用属性或者方法即可，类似于<span class="type">Java</span>中的静态类</span><br><span class="line">res18: <span class="type">Person</span><span class="class">.<span class="keyword">type</span> </span>= <span class="type">Person</span>$@<span class="number">73e776</span>b7</span><br><span class="line">scala&gt; <span class="type">Person</span>.age</span><br><span class="line">res19: <span class="type">Int</span> = <span class="number">1</span></span><br><span class="line">scala&gt; <span class="type">Person</span>.getAge</span><br><span class="line">res20: <span class="type">Int</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="伴生对象"><a href="#伴生对象" class="headerlink" title="伴生对象"></a>伴生对象</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">前面学习了class和object，那下面再来看一个特殊的概念，伴生对象</span><br><span class="line">如果有一个class，还有一个与class同名的object，那么就称这个object是class的 伴生对象 ，class是object的 伴生类</span><br><span class="line">注意：伴生类和伴生对象必须存放在一个.scala文件之中</span><br><span class="line">伴生类和伴生对象最大特点在于可以互相访问private field</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> fdNum= <span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getFdNum</span> </span>= fdNum</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">val name: <span class="type">String</span>, val age: <span class="type">Int</span></span>) </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span> </span>= println(<span class="string">"Hi, "</span> + name + <span class="string">",you are "</span> + age + <span class="string">" years old!"</span> +</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">scala&gt; <span class="keyword">new</span> <span class="type">Person</span>(<span class="string">"tom"</span>,<span class="number">20</span>).sayHello</span><br><span class="line"><span class="type">Hi</span>, tom,you are <span class="number">20</span> years old!, and you have <span class="number">1</span> friend.</span><br><span class="line">scala&gt; <span class="type">Person</span>.fdNum</span><br><span class="line">&lt;console&gt;:<span class="number">9</span>: error: value fdNum is not a member of <span class="class"><span class="keyword">object</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"><span class="title">Person</span>.<span class="title">fdNum</span></span></span><br><span class="line"><span class="class"><span class="title">^</span></span></span><br><span class="line"><span class="class"><span class="title">scala&gt;</span> <span class="title">Person</span>.<span class="title">getFdNum</span></span></span><br><span class="line"><span class="class"><span class="title">res26</span></span>: <span class="type">Int</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="apply"><a href="#apply" class="headerlink" title="apply"></a>apply</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apply是object中非常重要的一个特殊方法，通常在伴生对象中实现apply方法，并在其中实现构造伴生类</span><br><span class="line">对象的功能</span><br><span class="line">在创建对象的时候，就不需要使用new Class的方式，而是使用Class()的方式，隐式调用伴生对象的apply方法，这样会让对象创建更加简洁</span><br><span class="line">例如：Array的伴生对象的apply方法就实现了接收可变数量的参数，以及会创建一个Array对象</span><br><span class="line">val a &#x3D; Array(1, 2, 3, 4, 5)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">从Array object的源码中可以看出来，它里面就是在apply方法内部使用new Array创建的对象</span><br><span class="line">下面我们来自己定义一个伴生类和伴生对象</span><br><span class="line">class Person(val name: String)&#123;</span><br><span class="line">println(&quot;my name is,&quot;+name)</span><br><span class="line">&#125;</span><br><span class="line">object Person &#123;</span><br><span class="line">def apply(name: String) &#x3D; &#123;</span><br><span class="line">println(&quot;apply exec...&quot;)</span><br><span class="line">new Person(name)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; new Person(&quot;tom&quot;)</span><br><span class="line">my name is,tom</span><br><span class="line">res29: Person &#x3D; Person@63917fe1</span><br><span class="line">scala&gt; Person(&quot;tom&quot;)</span><br><span class="line">apply exec...</span><br><span class="line">my name is,tom</span><br><span class="line">res30: Person &#x3D; Person@35e74e08</span><br><span class="line"></span><br><span class="line">注意：在这里new Person(“zhang”) 等于 Person(“zhang”)，都是获取Person的对象</span><br><span class="line">只不过Person(“zhang”)是用的object中apply方法</span><br><span class="line">而new Person(“zhang”)是直接基于class创建的</span><br></pre></td></tr></table></figure>
+
+<h3 id="main方法"><a href="#main方法" class="headerlink" title="main方法"></a>main方法</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接下来看一下scala中的main方法</span><br><span class="line">和Java一样，在Scala中如果要运行一个应用程序，必须有一个main方法，作为入口</span><br><span class="line">Scala中的main方法必须定义在object中，格式为 def main(args: Array[String])</span><br><span class="line">这就需要在编辑器中操作了，我们可以使用eclipse或者idea，但是eclipse对scala的支持不太好，所以建议使用idea</span><br><span class="line">首先确认一下idea中是否集成了scala语言插件</span><br><span class="line">打开idea，点击 configure--&gt;plugins</span><br><span class="line"></span><br><span class="line">确认scala的插件是否已经安装</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接着创建maven项目</span><br><span class="line"></span><br><span class="line">到这还没完，因为此时我们是无法创建scala代码的，这个项目中也没有集成scala的sdk，只有java的</span><br><span class="line">接下来就需要给这个项目添加scala的sdk了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">以后再创建想要创建scala的maven项目，只需要进入到这个界面确认项目中是否有scala的依赖，没有的话直接点击右边的加号按钮添加即可</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">好，idea的scala开发环境配置好了，但是我一般还是喜欢再增加一些配置</span><br><span class="line">目前项目的src目录下有一个java目录，这个目录表示是放java代码的，当然了你在里面写scala代码肯定</span><br><span class="line">是没有问题的。</span><br><span class="line">只是针对我这种稍微有点强迫症的用起来就有点别扭了</span><br><span class="line">在实际工作中可能我们一个项目既需要使用到java代码，也需要使用到scala代码，所以最好还是建议把</span><br><span class="line">java代码和scala代码分开存放，这样比较清晰</span><br><span class="line">所以我们需要在这里比葫芦画瓢，增加一个scala目录</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">但是注意了，这样创建的scala目录是有问题的，你有没有发现这个目录的颜色和java目录的颜色都不一样</span><br><span class="line">因为你在这直接创建的scala目录是一个普通的目录，而java那个目录是一个source根目录</span><br><span class="line">所以我们也需要把scala目录变为source根目录</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="接口-trait"><a href="#接口-trait" class="headerlink" title="接口-trait"></a>接口-trait</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接下来看一个scala中的接口，这个接口也是比较特殊的</span><br><span class="line">Scala中的接口称为trait，trait类似于Java中的interface</span><br><span class="line">在triat中可以定义抽象方法</span><br><span class="line">类可以使用 extends 关键字继承trait，无论继承类还是trait统一都是使用 extends 这个关键字</span><br><span class="line">类继承trait后，必须实现trait中的抽象方法，实现时不需要使用 override 关键字</span><br><span class="line">scala不支持对类进行多继承，但是支持对trait进行多重继承，使用 with 关键字即可</span><br><span class="line">下面我们就来看一个接口多继承的案例</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Created by xuwei</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">PersonDemo</span> </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line"><span class="keyword">val</span> p1 = <span class="keyword">new</span> <span class="type">Person</span>(<span class="string">"tom"</span>)</span><br><span class="line"><span class="keyword">val</span> p2 = <span class="keyword">new</span> <span class="type">Person</span>(<span class="string">"jack"</span>)</span><br><span class="line">p1.sayHello(p2.name)</span><br><span class="line">p1.makeFriends(p2)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">HelloTrait</span> </span>&#123; <span class="function"><span class="keyword">def</span> <span class="title">sayHello</span></span>(name: <span class="type">String</span>)&#125;</span><br><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">MakeFriendsTrait</span> </span>&#123; <span class="function"><span class="keyword">def</span> <span class="title">makeFriends</span></span>(p: <span class="type">Person</span>)&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">val name: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">HelloTrait</span> <span class="keyword">with</span> <span class="title">MakeFriendsTrait</span> </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span></span>(name: <span class="type">String</span>) = println(<span class="string">"Hello, "</span> + name)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeFriends</span></span>(p: <span class="type">Person</span>) = println(<span class="string">"Hello, my name is "</span> + name + <span class="string">", your name is"</span>+p.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+</blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据开发工程师-第九周 第2章 Scala基础语法</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B9%9D%E5%91%A8-%E7%AC%AC2%E7%AB%A0-Scala%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第九周-第2章-Scala基础语法"><a href="#第九周-第2章-Scala基础语法" class="headerlink" title="第九周 第2章 Scala基础语法"></a>第九周 第2章 Scala基础语法</h1><h2 id="Scala的基本使用"><a href="#Scala的基本使用" class="headerlink" title="Scala的基本使用"></a>Scala的基本使用</h2><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cala中的变量分为两种：可变 var 和 不可变 val</span><br><span class="line">可变var：可以随时修改var声明的变量的值</span><br><span class="line">不可变val：val声明的变量，值不能被修改，否则会报错： error: reassignment to val</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; var a &#x3D; 1</span><br><span class="line">a: Int &#x3D; 1</span><br><span class="line">scala&gt; a &#x3D; 2</span><br><span class="line">a: Int &#x3D; 2</span><br><span class="line">scala&gt; val b &#x3D; 1</span><br><span class="line">b: Int &#x3D; 1</span><br><span class="line">scala&gt; b &#x3D; 2</span><br><span class="line">&lt;console&gt;:8: error: reassignment to val</span><br><span class="line">b &#x3D; 2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">注意：在实际工作中，针对一些不需要改变值的变量，通常建议使用val，这样可以不用担心值被错误的修改(等于java中的final类型)。这样可以提高系统的稳定性和健壮性！</span><br><span class="line"></span><br><span class="line">无论声明val变量，还是声明var变量，都可以手动指定变量的类型</span><br><span class="line">如果不指定，Scala会自动根据值，进行类型推断</span><br><span class="line">val c &#x3D; 1 等价于 val c: Int &#x3D; 1</span><br><span class="line"></span><br><span class="line">scala&gt; val c &#x3D; 1</span><br><span class="line">c: Int &#x3D; 1</span><br><span class="line">scala&gt; val c: Int &#x3D; 1</span><br><span class="line">c: Int &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中的数据类型可以分为两种，基本数据类型和增强版数据类型</span><br><span class="line">基本数据类型有： Byte、Char、Short、Int、Long、Float、Double、Boolean</span><br><span class="line">增强版数据类型有： StringOps、RichInt、RichDouble、RichChar 等</span><br><span class="line">scala使用这些增强版数据类给基本数据类型增加了上百种增强的功能</span><br><span class="line">例如：RichInt提供的有一个to函数， 1.to(10) ，此处Int会先隐式转换为RichInt，然后再调用其to函数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; 1.to(10)</span><br><span class="line">res2: scala.collection.immutable.Range.Inclusive &#x3D; Range(1, 2, 3, 4, 5, 6, 7,</span><br><span class="line"></span><br><span class="line">注意，to函数还可以这样写</span><br><span class="line">scala&gt; 1 to 10</span><br><span class="line">res3: scala.collection.immutable.Range.Inclusive &#x3D; Range(1, 2, 3, 4, 5, 6, 7,</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用基本数据类型，直接就可以调用RichInt中对应的函数</span><br><span class="line">scala&gt; 1.toString() &#x2F;&#x2F;空号也可以不用</span><br><span class="line">res4: String &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala的算术操作符与Java的算术操作符没有什么区别</span><br><span class="line">比如 +、-、*、&#x2F;、% 等，以及 &amp;、|、^、&gt;&gt;、&lt;&lt; 等</span><br><span class="line">注意：Scala中没有提供++、–操作符</span><br><span class="line">我们只能使用+和-，比如count &#x3D; 1，count++是错误的，必须写做count +&#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="if-表达式"><a href="#if-表达式" class="headerlink" title="if 表达式"></a>if 表达式</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在Scala中，if表达式是有返回值的，就是if或者else中最后一行语句返回的值，这一点和java中的if是不一样的，java中的if表达式是没有返回值的</span><br><span class="line"></span><br><span class="line">scala&gt; val age &#x3D; 20</span><br><span class="line">age: Int &#x3D; 20</span><br><span class="line">scala&gt; if(age &gt; 18) 1 else 0</span><br><span class="line">res9: Int &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这因为if表达式是有返回值的，所以可以将if表达式赋予一个变量</span><br><span class="line"></span><br><span class="line">scala&gt; val res &#x3D; if(age &gt; 18) 1 else 0</span><br><span class="line">res: Int &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">由于if表达式是有值的，而if和else子句的值的类型可能还不一样，此时if表达式的值是什么类型呢？</span><br><span class="line">注意：Scala会自动进行推断，取两个类型的公共父类型</span><br><span class="line"></span><br><span class="line">例如，if(age &gt; 18) 1 else 0，表达式的类型是Int，因为1和0都是Int</span><br><span class="line">例如，if(age &gt; 18) “old” else 0，此时if和else的值分别是String和Int，则表达式的值是Any类型，Any是</span><br><span class="line">String和Int的公共父类型</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; if(age &gt; 18) 1 else 0</span><br><span class="line">res12: Int &#x3D; 1</span><br><span class="line">scala&gt; if(age &gt; 18) &quot;old&quot; else 0</span><br><span class="line">res13: Any &#x3D; old</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果if后面没有跟else，则默认else的值是Unit，也可以用()表示，类似于java中的void或者null</span><br><span class="line">例如，val age &#x3D; 12; if(age &gt; 18) “old”。此时就相当于if(age &gt; 18) “old” else ()。</span><br><span class="line">此时表达式的值是Any</span><br><span class="line"></span><br><span class="line">scala&gt; if(age &gt; 18) &quot;old&quot; else ()</span><br><span class="line">res17: Any &#x3D; ()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果想在scala REPL中执行多行代码，该如何操作？</span><br><span class="line">使用 :paste 和 ctrl+D 的方式</span><br><span class="line">:paste 表示代码块的开始</span><br><span class="line">ctrl+D 表示代码块的结束</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">val age &#x3D; 20</span><br><span class="line">if(age &gt; 18)</span><br><span class="line">1</span><br><span class="line">else</span><br><span class="line">0</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">age: Int &#x3D; 20</span><br><span class="line">res18: Int &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="语句终结符"><a href="#语句终结符" class="headerlink" title="语句终结符"></a>语句终结符</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala默认不需要语句终结符，它将每一行作为一个语句</span><br><span class="line">如果一行要放多条语句，则前面的语句必须使用语句终结符</span><br><span class="line">语句终结符和Java中的一样，就是我们平时使用的分号</span><br><span class="line"></span><br><span class="line">scala&gt; val age &#x3D; 20; if(age &gt; 18) 1 else 0</span><br><span class="line">age: Int &#x3D; 20</span><br><span class="line">res0: Int &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><h4 id="print和println"><a href="#print和println" class="headerlink" title="print和println"></a>print和println</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在讲循环之前，先来看一下打印命令print和println</span><br><span class="line">print打印时不会加换行符，而println打印时会加一个换行符，这个特性和Java中的打印语句的特性是一样的</span><br></pre></td></tr></table></figure>
+
+<h4 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">for循环本身的特性就没什么好说的了，直接上案例，主要注意一下scala中的for和java中的for在语法层面的区别</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">val n &#x3D; 10</span><br><span class="line">for(i &lt;- 1 to n) &#x2F;&#x2F;1.to(n) 一样的</span><br><span class="line">println(i)</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">5 </span><br><span class="line">6 </span><br><span class="line">7 </span><br><span class="line">8 </span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">n: Int &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这里面的to可以换成until</span><br><span class="line"></span><br><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">val n &#x3D; 10</span><br><span class="line">for(i &lt;- 1 until 10)</span><br><span class="line">println(i)</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">5 </span><br><span class="line">6 </span><br><span class="line">7 </span><br><span class="line">8 </span><br><span class="line">9</span><br><span class="line">n: Int &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">对比两次执行的结果发现</span><br><span class="line">1 to 10 可以获取1~10之间的所有数字</span><br><span class="line">1 until 10可以获取1~9之间的所有数字</span><br><span class="line"></span><br><span class="line">所以在这需要注意了，to 和 until 其实都是函数，一个是闭区间，一个是开区间</span><br><span class="line">具体用哪个就要看你的需求了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">for循环针对字符串还可以用</span><br><span class="line">scala&gt; for(c &lt;- &quot;hello scala&quot;) println(c)</span><br><span class="line">h </span><br><span class="line">e </span><br><span class="line">l </span><br><span class="line">l </span><br><span class="line">o </span><br><span class="line">s </span><br><span class="line">c </span><br><span class="line">a </span><br><span class="line">l</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">注意：在这里我在for循环后面没有使用花括号，都省略了，主要是因为for循环的循环体代码就只有一行，如果有多行，就需要使用花括号了，否则，最终执行的结果就不是我们想要的</span><br><span class="line"></span><br><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">for(i &lt;- 1 to 5)</span><br><span class="line">println(i)</span><br><span class="line">println(&quot;hehe&quot;)</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">5</span><br><span class="line">hehe</span><br></pre></td></tr></table></figure>
+
+<h4 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">while循环，它的用法和java中的while也是很像的，主要看一下语法层面的区别</span><br><span class="line"></span><br><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">var n &#x3D; 10</span><br><span class="line">while(n&gt;0)&#123;</span><br><span class="line">println(n)</span><br><span class="line">n -&#x3D; 1</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">10</span><br><span class="line">9 </span><br><span class="line">8 </span><br><span class="line">7 </span><br><span class="line">6 </span><br><span class="line">5 </span><br><span class="line">4 </span><br><span class="line">3 </span><br><span class="line">2 </span><br><span class="line">1</span><br><span class="line">n: Int &#x3D; 0</span><br></pre></td></tr></table></figure>
+
+<h4 id="高级for循环"><a href="#高级for循环" class="headerlink" title="高级for循环"></a>高级for循环</h4><h5 id="if守卫模式"><a href="#if守卫模式" class="headerlink" title="if守卫模式"></a>if守卫模式</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">最后来看一下高级for循环的用法</span><br><span class="line">if守卫</span><br><span class="line">if守卫模式，假设我们想要获取1~10之间的所有偶数，使用普通的for循环，需要把每一个数字都循环出来，然后判断是否是偶数</span><br><span class="line">如果在for循环里面使用if守卫，可以在循环的时候就执行一定的逻辑，判断数值是否是偶数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; for(i &lt;- 1 to 10 if i % 2 &#x3D;&#x3D; 0) println(i)</span><br><span class="line">2 </span><br><span class="line">4 </span><br><span class="line">6 </span><br><span class="line">8</span><br><span class="line">10</span><br></pre></td></tr></table></figure>
+
+<h5 id="for推导式"><a href="#for推导式" class="headerlink" title="for推导式"></a>for推导式</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">for推导式，一个典型例子是构造集合</span><br><span class="line"></span><br><span class="line">我们在使用for循环迭代数字的时候，可以使用yield指定一个规则，对迭代出来的数字进行处理，并且创建一个新的集合</span><br><span class="line"></span><br><span class="line">scala&gt; for(i &lt;- 1 to 10) yield i *2</span><br><span class="line">res16: scala.collection.immutable.IndexedSeq[Int] &#x3D; Vector(2, 4, 6, 8, 10, 12</span><br></pre></td></tr></table></figure>
+
+<h3 id="Scala的集合体系"><a href="#Scala的集合体系" class="headerlink" title="Scala的集合体系"></a>Scala的集合体系</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接下来整体学习一下Scala中的集合体系，集合在工作中属于经常使用的数据结构</span><br></pre></td></tr></table></figure>
+
+<h4 id="集合体系"><a href="#集合体系" class="headerlink" title="集合体系"></a>集合体系</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">首先看一下整个集合体系结构，这个结构与Java的集合体系非常相似</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bKJxIg" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/28/bKJxIg.md.png" alt="bKJxIg.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">集合的顶层接口是Iterable，Iterable接口下面还有一些子接口， Set、Seq、Map</span><br><span class="line">这几个子接口下面有具体的实现类</span><br><span class="line">set下面有HashSet、LinkedHashSet、SortedSet等等</span><br><span class="line">seq下面有List、Buffer、Range等等</span><br><span class="line">Map下面有HashMap、SortedMap、LinkedHashMap等等</span><br><span class="line">其中Buffer下面还有两个常用的，ArrayBuffer、ListBuffer</span><br><span class="line">这是集合中一些常见的实现类</span><br><span class="line">在讲这个集合体系的时候，还会关联讲到 Array和Tuple 这两个数据结构</span><br></pre></td></tr></table></figure>
+
+<h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中的集合是分成可变和不可变两类集合的</span><br><span class="line">其中可变集合就是说，集合的元素可以动态修改</span><br><span class="line">而不可变集合就是说，集合的元素在初始化之后，就无法修改了</span><br><span class="line">可变集合：在 scala.collection.mutable 这个包下面</span><br><span class="line">不可变集合：在 scala.collection.immutable 这个包下面</span><br><span class="line">我们在创建集合的时候，如果不指定具体的包名，默认会使用不可变集合</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">先来看一下Set，Set代表一个没有重复元素的集合</span><br><span class="line">这个集合的特性和Java中Set集合的特性基本一样</span><br><span class="line">Set集合分为可变的和不可变的集合，默认情况下使用的是不可变集合</span><br><span class="line">Set可以直接使用，并且不需要使用new关键字，来看一下</span><br><span class="line"></span><br><span class="line">scala&gt; val s &#x3D; Set(1,2,3)</span><br><span class="line">s: scala.collection.immutable.Set[Int] &#x3D; Set(1, 2, 3)</span><br></pre></td></tr></table></figure>
+
+<h5 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h5><h6 id="不可变set"><a href="#不可变set" class="headerlink" title="不可变set"></a>不可变set</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这是不是很奇怪，本来Set是一个接口，但是却可以创建对象，更神奇的是竟然还不需要使用new关键</span><br><span class="line">字，这就有点颠覆我们的认知了</span><br><span class="line">注意了，大家在学习Scala的时候，可以拿Java来进行对比，加深理解，但是不要全部拿Java里面的知识点来硬套，因为它们两个有些地方还是不一样的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">来看一下Scala的文档，你会发现这个Set不仅仅是一个接口，它还是一个Object，具体这个Object类型我</span><br><span class="line">们在后面会详细分析，在这大家先知道这个东西就行了。</span><br><span class="line"></span><br><span class="line">注意：本来是应该看对应版本2.12.11的文档的，但是2.12.11文档的格式看起来不是很清晰，所以在这我们就是要2.11.12这个版本了，主要的是没有什么变化的，不影响我们使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这大家可以这样理解，只要前面带有object的，可以直接创建对象，并且不需要使用new关键字</span><br><span class="line">所以set可以直接使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">注意：默认情况下直接创建的set集合是一个不可变集合，在这可以看到是在immutable包里面的，不可变集合中的元素一经初始化，就不能改变了，所以初始化后再向里面添加元素就报错了</span><br><span class="line"></span><br><span class="line">scala&gt; val s &#x3D; Set(1,2,3)</span><br><span class="line">s: scala.collection.immutable.Set[Int] &#x3D; Set(1, 2, 3)</span><br><span class="line">scala&gt; s +&#x3D; 4</span><br><span class="line">&lt;console&gt;:9: error: value +&#x3D; is not a member of scala.collection.immutable.Set</span><br><span class="line">s +&#x3D; 4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">但是注意，我使用s + 4 这种操作是可以的</span><br><span class="line">scala&gt; val s &#x3D; Set(1,2,3)</span><br><span class="line">s: scala.collection.immutable.Set[Int] &#x3D; Set(1, 2, 3)</span><br><span class="line">scala&gt; s + 4</span><br><span class="line">res33: scala.collection.immutable.Set[Int] &#x3D; Set(1, 2, 3, 4)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这样是不是和我们刚才说的自相矛盾？</span><br><span class="line">不是的，因为 s + 4 返回的是一个新的集合了，相当于在之前的集合的基础上，创建一个新的集合，新的集合包含之前集合的元素和我们新增的4这个元素</span><br><span class="line">这个大家需要能够区分开</span><br></pre></td></tr></table></figure>
+
+<h6 id="可变set"><a href="#可变set" class="headerlink" title="可变set"></a>可变set</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果想要创建一个可变的set集合，可以使用mutable包下面的set集合，显式指定包名</span><br><span class="line"></span><br><span class="line">scala&gt; val s &#x3D; scala.collection.mutable.Set(1,2,3)</span><br><span class="line">s: scala.collection.mutable.Set[Int] &#x3D; Set(1, 2, 3)</span><br><span class="line">scala&gt; s +&#x3D; 4</span><br><span class="line">res34: s.type &#x3D; Set(1, 2, 3, 4)</span><br><span class="line"> 12345</span><br></pre></td></tr></table></figure>
+
+<h6 id="子类HashSet"><a href="#子类HashSet" class="headerlink" title="子类HashSet"></a>子类HashSet</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">HashSet：这个集合的特点是：集合中的元素不重复、无序</span><br><span class="line"></span><br><span class="line">HashSet集合分为可变和不可变之分， immutable 包下面的是不可变的，后期无法新增元素</span><br><span class="line">在这里可以使用new关键字，也可以不使用，因为HashSet既是class，又是object，但是包名需要指定，否则无法识别</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val s &#x3D; new scala.collection.mutable.HashSet[Int]()</span><br><span class="line">s: scala.collection.mutable.HashSet[Int] &#x3D; Set()</span><br><span class="line">scala&gt; s +&#x3D;1</span><br><span class="line">res35: s.type &#x3D; Set(1)</span><br><span class="line">scala&gt; s +&#x3D;2</span><br><span class="line">res36: s.type &#x3D; Set(1, 2)</span><br><span class="line">scala&gt; s +&#x3D;5 &#x2F;&#x2F;＋&#x3D;是一个方法，s.+&#x3D;(5)一样</span><br><span class="line">res38: s.type &#x3D; Set(1, 5, 2)</span><br><span class="line"></span><br><span class="line">如果在创建集合的时候就初始化了元素，则可以省略泛型的定义，集合会自动识别元素的类型</span><br></pre></td></tr></table></figure>
+
+<h6 id="子类LinkedHashSet"><a href="#子类LinkedHashSet" class="headerlink" title="子类LinkedHashSet"></a>子类LinkedHashSet</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LinkedHashSet：这个集合的特点是：集合中的元素不重复、有序，它会用一个链表维护插入顺序，可以保证集合中元素是有序的</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LinkedHashSet只有可变的，没有不可变的</span><br><span class="line"></span><br><span class="line">scala&gt; val s &#x3D; new scala.collection.mutable.LinkedHashSet[Int]()</span><br><span class="line">s: scala.collection.mutable.LinkedHashSet[Int] &#x3D; Set()</span><br><span class="line">scala&gt; s +&#x3D;1</span><br><span class="line">res42: s.type &#x3D; Set(1)</span><br><span class="line">scala&gt; s +&#x3D;2</span><br><span class="line">res43: s.type &#x3D; Set(1, 2)</span><br><span class="line">scala&gt; s +&#x3D;5</span><br><span class="line">res44: s.type &#x3D; Set(1, 2, 5)</span><br></pre></td></tr></table></figure>
+
+<h6 id="子类SortedSet"><a href="#子类SortedSet" class="headerlink" title="子类SortedSet"></a>子类SortedSet</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SortedSet：这个集合的特点是：集合中的元素不重复、有序，它会自动根据元素来进行排序</span><br><span class="line"></span><br><span class="line">SortedSet分为可变集合和不可变集合</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bKDyTI" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/28/bKDyTI.md.png" alt="bKDyTI.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面的那两个SortedSet是上面collection.SortedSet接口的子接口，一般会使用下面那两个。</span><br><span class="line"></span><br><span class="line">scala&gt; val s &#x3D; scala.collection.mutable.SortedSet[String]()</span><br><span class="line">s: scala.collection.mutable.SortedSet[String] &#x3D; TreeSet()</span><br><span class="line">scala&gt; s +&#x3D;(&quot;c&quot;)</span><br><span class="line">res45: s.type &#x3D; TreeSet(c)</span><br><span class="line">scala&gt; s +&#x3D;(&quot;a&quot;)</span><br><span class="line">res46: s.type &#x3D; TreeSet(a, c)</span><br><span class="line">scala&gt; s +&#x3D;(&quot;b&quot;)</span><br><span class="line">res47: s.type &#x3D; TreeSet(a, b, c)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">从这可以看出来SortedSet集合中的元素是按照元素的字典顺序排序的</span><br><span class="line">针对里面这些Set集合，如果想要迭代他们里面的元素，可以使用for循环直接迭代</span><br><span class="line">以SortedSet为例，其它的 Set、HashSet、LinkedHashSet 都是一样的</span><br><span class="line"></span><br><span class="line">scala&gt; for(i &lt;- s ) println(i)</span><br><span class="line">a b c</span><br></pre></td></tr></table></figure>
+
+<h5 id="List"><a href="#List" class="headerlink" title="List"></a>List</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接下来看一下List，List属于Seq接口的子接口</span><br><span class="line">List代表一个不可变的列表</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">创建一个list</span><br><span class="line">scala&gt; val l &#x3D; List(1, 2, 3, 4)</span><br><span class="line">l: List[Int] &#x3D; List(1, 2, 3, 4)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">注意：为什么有的地方需要写类的全路径，而有的不需要呢？</span><br><span class="line">由于immutable包是默认导入的，所以不需要导包，但是也会有个别虽然在immutable包下面的，但是不写全路径还是报错，原谅它把，反正你都带全路径肯定是没有问题的，后期我们会使用idea来开发，也不需要考虑包名的问题，不过在这为了演示起来更加清晰，就使用scala的命令行了</span><br></pre></td></tr></table></figure>
+
+<h6 id="head和tail"><a href="#head和tail" class="headerlink" title="head和tail"></a>head和tail</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">针对List有 head 、 tail 以及 :: 这几个操作</span><br><span class="line">先演示一下 head、tail 操作</span><br><span class="line"></span><br><span class="line">scala&gt; l.head</span><br><span class="line">res49: Int &#x3D; 1</span><br><span class="line">scala&gt; l.tail</span><br><span class="line">res51: List[Int] &#x3D; List(2, 3, 4)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">head：表示获取List中的第一个元素</span><br><span class="line">tail：表示获取List中第一个元素之后的所有元素</span><br><span class="line">那其实head和tail就可以获取list中的所有元素了</span><br></pre></td></tr></table></figure>
+
+<h6 id><a href="#" class="headerlink" title=": :"></a>: :</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">通过 :: 操作符，可以将head和tail的结果合并成一个List</span><br><span class="line"></span><br><span class="line">scala&gt; l.head :: l.tail</span><br><span class="line">res52: List[Int] &#x3D; List(1, 2, 3, 4)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">:: 这种操作符要清楚，在spark源码中是有体现的，一定要能够看懂</span><br><span class="line"></span><br><span class="line">针对List中的元素进行迭代和前面讲的Set集合的迭代是一样的</span><br></pre></td></tr></table></figure>
+
+<h5 id="ListBuffer"><a href="#ListBuffer" class="headerlink" title="ListBuffer"></a>ListBuffer</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这里List是不可变的列表，在实际工作中使用的时候会很不方便，因为我们很多场景下都是需要向列表中动态添加元素，这个时候该怎么办呢？</span><br><span class="line">Scala还提供的有一个ListBuffer</span><br><span class="line">ListBuffer：可以支持动态增加或者移除元素</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val lb &#x3D; scala.collection.mutable.ListBuffer[Int]()</span><br><span class="line">lb: scala.collection.mutable.ListBuffer[Int] &#x3D; ListBuffer()</span><br><span class="line">scala&gt; lb +&#x3D;1</span><br><span class="line">res56: lb.type &#x3D; ListBuffer(1)</span><br><span class="line">scala&gt; lb +&#x3D;2</span><br><span class="line">res57: lb.type &#x3D; ListBuffer(1, 2)</span><br><span class="line">scala&gt; lb +&#x3D;5</span><br><span class="line">res58: lb.type &#x3D; ListBuffer(1, 2, 5)</span><br><span class="line">scala&gt; lb -&#x3D;5</span><br><span class="line">res59: lb.type &#x3D; ListBuffer(1, 2)</span><br><span class="line"></span><br><span class="line">ListBuffer也可以直接使用for循环迭代</span><br></pre></td></tr></table></figure>
+
+<h5 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Map是一种可迭代的键值对（key&#x2F;value）结构</span><br><span class="line">Map分为可变和不可变，默认情况下使用的是不可变Map</span><br></pre></td></tr></table></figure>
+
+<h6 id="不可变Map"><a href="#不可变Map" class="headerlink" title="不可变Map"></a>不可变Map</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">创建一个不可变的Map</span><br><span class="line">创建一个可变的Map</span><br><span class="line">还有一种创建Map的简易方式，这种方式创建的是不可变Map</span><br><span class="line">查询操作</span><br><span class="line">获取指定key对应的value，如果key不存在，会报错</span><br><span class="line">所以在实际工作中这样直接获取不太好，如果遇到了不存在的key程序会报错，导致程序异常退出。</span><br><span class="line">那是不是可以考虑在获取key的值之前，先判断key是否存在</span><br><span class="line">可以使用contains函数检查key是否存在、</span><br><span class="line">使用if-else语句，如果指定的key不存在，则返回一个默认值</span><br><span class="line">这样是没问题的，就是写起来有点麻烦了，有没有方便一点的用法呢？</span><br><span class="line">map中还有一个getOrElse函数</span><br><span class="line">scala&gt; val ages &#x3D; Map(&quot;jack&quot;-&gt;30,&quot;tom&quot;-&gt;25,&quot;jessic&quot;-&gt;23)</span><br><span class="line">ages: scala.collection.immutable.Map[String,Int] &#x3D; Map(jack -&gt; 30, tom -&gt; 25,</span><br><span class="line">scala&gt; ages(&quot;jack&quot;)</span><br><span class="line">res100: Int &#x3D; 30</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="可变Map"><a href="#可变Map" class="headerlink" title="可变Map"></a>可变Map</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val ages &#x3D; scala.collection.mutable.Map(&quot;jack&quot;-&gt;30,&quot;tom&quot;-&gt;25,&quot;jessic&quot;-</span><br><span class="line">ages: scala.collection.mutable.Map[String,Int] &#x3D; Map(jessic -&gt; 23, jack -&gt; 30</span><br><span class="line">scala&gt; ages(&quot;jack&quot;)</span><br><span class="line">res101: Int &#x3D; 30</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">还有一种创建Map的简易方式，这种方式创建的是不可变Map</span><br><span class="line"></span><br><span class="line">scala&gt; val ages &#x3D; Map((&quot;jack&quot;,30),(&quot;tom&quot;,25),(&quot;jessic&quot;-&gt;23))</span><br><span class="line">ages: scala.collection.immutable.Map[String,Int] &#x3D; Map(jack -&gt; 30, tom -&gt; 25,</span><br></pre></td></tr></table></figure>
+
+<h6 id="查询操作"><a href="#查询操作" class="headerlink" title="查询操作"></a>查询操作</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.获取指定key对应的value，如果key不存在，会报错</span><br><span class="line"></span><br><span class="line">scala&gt; val ages &#x3D; scala.collection.mutable.Map((&quot;jack&quot;,30),(&quot;tom&quot;,25),(&quot;jessi</span><br><span class="line">ages: scala.collection.mutable.Map[String,Int] &#x3D; Map(jessic -&gt; 23, jack -&gt; 30</span><br><span class="line">scala&gt; val age &#x3D; ages(&quot;jack&quot;)</span><br><span class="line">age: Int &#x3D; 30</span><br><span class="line">scala&gt; val age &#x3D; ages(&quot;jack1&quot;)</span><br><span class="line">java.util.NoSuchElementException: key not found: jack</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">所以在实际工作中这样直接获取不太好，如果遇到了不存在的key程序会报错，导致程序异常退出。</span><br><span class="line">那是不是可以考虑在获取key的值之前，先判断key是否存在</span><br><span class="line">可以使用contains函数检查key是否存在、</span><br><span class="line">使用if-else语句，如果指定的key不存在，则返回一个默认值</span><br><span class="line"></span><br><span class="line">2.</span><br><span class="line">scala&gt; val age &#x3D; if (ages.contains(&quot;jack1&quot;)) ages(&quot;jack1&quot;) else 0</span><br><span class="line">age: Int &#x3D; 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这样是没问题的，就是写起来有点麻烦了，有没有方便一点的用法呢？</span><br><span class="line">map中还有一个getOrElse函数</span><br><span class="line">3.</span><br><span class="line">scala&gt; val age &#x3D; ages.getOrElse(&quot;jack1&quot;, 0)</span><br><span class="line">age: Int &#x3D; 0</span><br><span class="line"></span><br><span class="line">建议后期从map中获取数据都使用这个 getOrElse 函数</span><br></pre></td></tr></table></figure>
+
+<h6 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.更新map中的元素(首先确保创建时使用的是mutable)</span><br><span class="line">scala&gt; ages(&quot;jack&quot;) &#x3D; 31</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2.增加多个元素</span><br><span class="line">scala&gt; ages +&#x3D; (&quot;hehe&quot; -&gt; 35, &quot;haha&quot; -&gt; 40)</span><br><span class="line">res105: ages.type &#x3D; Map(hehe -&gt; 35, jessic -&gt; 23, jack -&gt; 31, tom -&gt; 25, haha</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">3.移除元素</span><br><span class="line">scala&gt; ages -&#x3D; &quot;hehe&quot;</span><br><span class="line">res106: ages.type &#x3D; Map(jessic -&gt; 23, jack -&gt; 31, tom -&gt; 25, haha -&gt; 40)</span><br></pre></td></tr></table></figure>
+
+<h6 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.遍历map的entrySet</span><br><span class="line">scala&gt; for ((key, value) &lt;- ages) println(key + &quot; &quot; + value)</span><br><span class="line">jessic 23</span><br><span class="line">jack 31</span><br><span class="line">tom 25</span><br><span class="line">haha 40</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2.遍历map的key</span><br><span class="line">scala&gt; for (key &lt;- ages.keySet) println(key)</span><br><span class="line">jessic</span><br><span class="line">jack</span><br><span class="line">tom</span><br><span class="line">haha</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">3.遍历map的value</span><br><span class="line">scala&gt; for (value &lt;- ages.values) println(value)</span><br><span class="line">23</span><br><span class="line">31</span><br><span class="line">25</span><br><span class="line">40</span><br></pre></td></tr></table></figure>
+
+<h6 id="子类HashMap"><a href="#子类HashMap" class="headerlink" title="子类HashMap"></a>子类HashMap</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">HashMap：是一个按照key的hash值进行排列存储的map</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="子类SortedMap"><a href="#子类SortedMap" class="headerlink" title="子类SortedMap"></a>子类SortedMap</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SortedMap：可以自动对Map中的key进行排序【有序的map】</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">HashMap分为可变和不可变的，没有什么特殊之处</span><br><span class="line">在这主要演示一下SortedMap和LinkedHashMap</span><br><span class="line">SortedMap是不可变的</span><br><span class="line"></span><br><span class="line">scala&gt; val ages &#x3D; scala.collection.immutable.SortedMap(&quot;b&quot; -&gt; 30, &quot;a&quot; -&gt; 15,</span><br><span class="line">ages: scala.collection.immutable.SortedMap[String,Int] &#x3D; Map(a -&gt; 15, b -&gt; 30</span><br></pre></td></tr></table></figure>
+
+<h6 id="子类LinkedHashMap"><a href="#子类LinkedHashMap" class="headerlink" title="子类LinkedHashMap"></a>子类LinkedHashMap</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LinkedHashMap：可以记住插入的key-value的顺序</span><br><span class="line"></span><br><span class="line">LinkedHashMap是可变的</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val ages &#x3D; new scala.collection.mutable.LinkedHashMap[String, Int]()</span><br><span class="line">ages: scala.collection.mutable.LinkedHashMap[String,Int] &#x3D; Map()</span><br><span class="line">scala&gt; ages(&quot;b&quot;)&#x3D;30</span><br><span class="line">scala&gt; ages(&quot;a&quot;)&#x3D;15</span><br><span class="line">scala&gt; ages(&quot;c&quot;)&#x3D;25</span><br><span class="line">scala&gt; ages</span><br><span class="line">res116: scala.collection.mutable.LinkedHashMap[String,Int] &#x3D; Map(b -&gt; 30, a</span><br></pre></td></tr></table></figure>
+
+<h5 id="Array"><a href="#Array" class="headerlink" title="Array"></a>Array</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中Array的含义与Java中的数组类似，长度不可变</span><br><span class="line">由于Scala和Java都是运行在JVM中，双方可以互相调用，因此Scala数组的底层实际上就是Java数组</span><br><span class="line">数组初始化后，长度就固定下来了，而且元素全部根据其类型进行初始化</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val a &#x3D; new Array[Int](10)</span><br><span class="line">a: Array[Int] &#x3D; Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)</span><br><span class="line">scala&gt; a(0)</span><br><span class="line">res65: Int &#x3D; 0</span><br><span class="line">scala&gt; a(0)&#x3D;1</span><br><span class="line">scala&gt; a(0)</span><br><span class="line">res67: Int &#x3D; 1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">也可以直接使用Array()创建数组，元素类型自动推断</span><br><span class="line">scala&gt; val a &#x3D; Array(&quot;hello&quot;, &quot;world&quot;)</span><br><span class="line">a: Array[String] &#x3D; Array(hello, world)</span><br><span class="line"></span><br><span class="line">scala&gt; a(0)</span><br><span class="line">res68: String &#x3D; hello</span><br><span class="line">scala&gt; val a1 &#x3D; Array(&quot;hello&quot;, 30)</span><br><span class="line">a1: Array[Any] &#x3D; Array(hello, 30)</span><br></pre></td></tr></table></figure>
+
+<h5 id="ArrayBuffer"><a href="#ArrayBuffer" class="headerlink" title="ArrayBuffer"></a>ArrayBuffer</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala中ArrayBuffer与Java中的ArrayList类似，长度可变</span><br><span class="line">ArrayBuffer：添加元素、移除元素</span><br><span class="line">如果不想每次都使用全限定名，则可以预先导入ArrayBuffer类</span><br><span class="line"></span><br><span class="line">scala&gt; import scala.collection.mutable.ArrayBuffer</span><br><span class="line">import scala.collection.mutable.ArrayBuffer</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用ArrayBuffer()的方式可以创建一个空的ArrayBuffer</span><br><span class="line">注意：也支持直接创建并且初始化ArrayBuffer(1,2,3,4)</span><br><span class="line"></span><br><span class="line">scala&gt; val b &#x3D; new ArrayBuffer[Int]()</span><br></pre></td></tr></table></figure>
+
+<h6 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.使用+&#x3D;操作符，可以添加一个元素，或者多个元素</span><br><span class="line">b +&#x3D; 1 或者 b +&#x3D; (2, 3, 4, 5)</span><br><span class="line"></span><br><span class="line">2.使用insert()函数可以在指定位置插入元素，但是这种操作效率很低，因为需要移动指定位置后的所有元素 向3号角标的位置添加一个元素 30</span><br><span class="line">scala&gt; b.insert(3,30)</span><br></pre></td></tr></table></figure>
+
+<h6 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用 remove() 函数可以移除指定位置的元素</span><br><span class="line">移除1号角标的元素</span><br><span class="line">scala&gt; b.remove(1)</span><br><span class="line">res73: Int &#x3D; 2</span><br></pre></td></tr></table></figure>
+
+<h6 id="Array和ArrayBuffer转化"><a href="#Array和ArrayBuffer转化" class="headerlink" title="Array和ArrayBuffer转化"></a>Array和ArrayBuffer转化</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">b.toArray：ArrayBuffer转Array</span><br><span class="line">a.toBuffer：Array转ArrayBuffer</span><br></pre></td></tr></table></figure>
+
+<h5 id="数组常见操作"><a href="#数组常见操作" class="headerlink" title="数组常见操作"></a>数组常见操作</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面看一下针对数据的常见操作</span><br><span class="line">遍历Array和ArrayBuffer的两种方式</span><br><span class="line">由于Array和ArrayBuffer都是有角标的，所以在迭代数组中元素的时候除了可以使用前面迭代集合的方式还可以使用角标迭代</span><br></pre></td></tr></table></figure>
+
+<h6 id="遍历-1"><a href="#遍历-1" class="headerlink" title="遍历"></a>遍历</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.scala&gt; for(i &lt;- b) println(i)</span><br><span class="line">1 2 3 4 5</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2.scala&gt; for(i &lt;- 0 until b.length ) println(b(i))</span><br><span class="line">1 2 3 4 5</span><br></pre></td></tr></table></figure>
+
+<h6 id="求和，最大值"><a href="#求和，最大值" class="headerlink" title="求和，最大值"></a>求和，最大值</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val sum &#x3D; a.sum</span><br><span class="line">sum: Int &#x3D; 15</span><br><span class="line">scala&gt; val max &#x3D; a.max</span><br><span class="line">max: Int &#x3D; 5</span><br></pre></td></tr></table></figure>
+
+<h6 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h6><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; scala.util.Sorting.quickSort(a)</span><br></pre></td></tr></table></figure>
+
+<h5 id="Tuple"><a href="#Tuple" class="headerlink" title="Tuple"></a>Tuple</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Tuple：称之为元组，它与Array类似，都是不可变的，但与数组不同的是元组可以包含不同类型的元素</span><br><span class="line">Tuple中的元素角标从 1 开始</span><br><span class="line"></span><br><span class="line">注意：目前 Scala 支持的元组最大长度为 22 ，对于更大长度可以使用集合或数组</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; val t &#x3D; (1, 3.14, &quot;hehe&quot;)</span><br><span class="line">t: (Int, Double, String) &#x3D; (1,3.14,hehe)</span><br><span class="line">scala&gt; t._1</span><br><span class="line">res117: Int &#x3D; 1</span><br><span class="line">scala&gt; t._3</span><br><span class="line">res118: String &#x3D; hehe</span><br></pre></td></tr></table></figure>
+
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">前面讲了很多集合体系中的数据结构，有的是可变的，有的是不可变的，有的是既是可变的又是不可变的，听起来有点乱，在这里我们总结一下</span><br><span class="line">可变集合： LinkedHashSet、ListBuffer、ArrayBuffer、LinkedHashMap</span><br><span class="line">不可变集合： List、SortedMap</span><br><span class="line">可变+不可变集合： Set、HashSet、SortedSet、Map、HashMap</span><br><span class="line">还有两个编外人员：</span><br><span class="line">Array、Tuple</span><br><span class="line">Array：长度不可变，里面的元素可变</span><br><span class="line">Tuple：长度不可变，里面的元素也不可变</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Scala中函数的使用"><a href="#Scala中函数的使用" class="headerlink" title="Scala中函数的使用"></a>Scala中函数的使用</h3><h4 id="函数的定义"><a href="#函数的定义" class="headerlink" title="函数的定义"></a>函数的定义</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">先来看一下函数的定义</span><br><span class="line">在Scala中定义函数需要使用 def 关键字，函数包括函数名、参数、函数体</span><br><span class="line">Scala要求必须给出函数所有参数的类型，但是函数返回值的类型不是必须的，因为Scala可以自己根据函数体中的表达式推断出返回值类型。</span><br><span class="line">函数中最后一行代码的返回值就是整个函数的返回值，不需要使用return，这一点与Java不同，java中函数的返回值是必须要使用return的</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">单行函数</span><br><span class="line">scala&gt; def sayHello(name: String) &#x3D; print(&quot;Hello, &quot; + name)</span><br><span class="line">sayHello: (name: String)Unit</span><br><span class="line">scala&gt; sayHello(&quot;Scala&quot;)</span><br><span class="line">Hello, Scala</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">多行函数</span><br><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">def sayHello(name: String, age: Int) &#x3D; &#123;</span><br><span class="line">println(&quot;My name is &quot;+name+&quot;,age is &quot;+age)</span><br><span class="line">age</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">sayHello: (name: String, age: Int)Int</span><br><span class="line">scala&gt; sayHello(&quot;Scala&quot;,18)</span><br><span class="line">My name is Scala,age is 18</span><br><span class="line">res120: Int &#x3D; 18</span><br></pre></td></tr></table></figure>
+
+<h4 id="函数的参数"><a href="#函数的参数" class="headerlink" title="函数的参数"></a>函数的参数</h4><h5 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在Scala中，有时候我们调用某些函数时，不希望给出参数的具体值，而是希望使用参数自身默认的值，此时就需要在定义函数时使用默认参数。</span><br><span class="line">如果给出的参数不够，则会从左往右依次应用参数。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; def sayHello(fName: String, mName: String &#x3D; &quot;mid&quot;, lName: String &#x3D; &quot;la</span><br><span class="line">sayHello: (fName: String, mName: String, lName: String)String</span><br><span class="line">scala&gt; sayHello(&quot;zhang&quot;,&quot;san&quot;)</span><br><span class="line">res122: String &#x3D; zhang san last</span><br></pre></td></tr></table></figure>
+
+<h5 id="带名参数"><a href="#带名参数" class="headerlink" title="带名参数"></a>带名参数</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在调用函数时，也可以不按照函数定义的参数顺序来传递参数，而是使用带名参数的方式来传递。</span><br><span class="line">scala&gt; def sayHello(fName: String, mName: String &#x3D; &quot;mid&quot;, lName: String &#x3D; &quot;la</span><br><span class="line">sayHello: (fName: String, mName: String, lName: String)String</span><br><span class="line">scala&gt; sayHello(fName &#x3D; &quot;Mick&quot;, lName &#x3D; &quot;Tom&quot;, mName &#x3D; &quot;Jack&quot;)</span><br><span class="line">res127: String &#x3D; Mick Jack Tom</span><br></pre></td></tr></table></figure>
+
+<h5 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在Scala中，有时我们需要将函数定义为参数个数可变的形式，则此时可以使用变长参数来定义函数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; :paste</span><br><span class="line">&#x2F;&#x2F; Entering paste mode (ctrl-D to finish)</span><br><span class="line">def sum(nums: Int*) &#x3D; &#123;  &#x2F;&#x2F;Int的I要大写</span><br><span class="line">var res &#x3D; 0</span><br><span class="line">for (num &lt;- nums) res +&#x3D; num</span><br><span class="line">res</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; Exiting paste mode, now interpreting.</span><br><span class="line">sum: (nums: Int*)Int</span><br><span class="line">scala&gt; sum(1,2,3,4,5)</span><br><span class="line">res129: Int &#x3D; 15</span><br></pre></td></tr></table></figure>
+
+<h4 id="特殊的函数-过程"><a href="#特殊的函数-过程" class="headerlink" title="特殊的函数-过程"></a>特殊的函数-过程</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在Scala中，定义函数时，如果函数体直接在花括号里面而没有使用&#x3D;连接，则函数的返回值类型就是Unit，这样的函数称之为过程</span><br><span class="line">过程通常用于不需要返回值的函数</span><br><span class="line">过程还有一种写法，就是将函数的返回值类型显式定义为Unit</span><br><span class="line">比较一下这四种写法的区别</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">有返回值</span><br><span class="line">def sayHello(name: String) &#x3D; &quot;Hello, &quot; + name</span><br><span class="line">def sayHello(name: String): String &#x3D; &quot;Hello, &quot; + name</span><br><span class="line"></span><br><span class="line">无返回值</span><br><span class="line">def sayHello(name: String) &#123; &quot;Hello, &quot; + name &#125;</span><br><span class="line">def sayHello(name: String): Unit &#x3D; &quot;Hello, &quot; + name</span><br><span class="line"></span><br><span class="line">前面两种写法的效果是一样的，都是函数</span><br><span class="line">后面两种写法的效果是一样的，都是过程</span><br></pre></td></tr></table></figure>
+
+<h4 id="lazy"><a href="#lazy" class="headerlink" title="lazy"></a>lazy</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala提供了lazy特性，如果将一个变量声明为lazy，则只有在第一次使用该变量时，变量对应的表达式才会发生计算</span><br><span class="line">什么场景下需要使用lazy特性呢？</span><br><span class="line">这种特性对于特别耗时的操作特别有用，比如打开文件这个操作。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala&gt; import scala.io.Source._</span><br><span class="line">import scala.io.Source._</span><br><span class="line">scala&gt; lazy val lines &#x3D; fromFile(&quot;D:&#x2F;&#x2F;test.txt&quot;).mkString</span><br><span class="line">lines: String &#x3D; &lt;lazy&gt;</span><br><span class="line"></span><br><span class="line">即使D:&#x2F;&#x2F;test.txt文件不存在，代码也不会报错，只有变量使用时才会报错，这就是lazy这个特性</span><br><span class="line">scala&gt; lines</span><br><span class="line">java.io.FileNotFoundException: D:\test.txt (系统找不到指定的文件。)</span><br><span class="line">.......</span><br></pre></td></tr></table></figure>
+
+<h4 id="用法积累"><a href="#用法积累" class="headerlink" title="用法积累"></a>用法积累</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.字符串不能用单引号代替双引号</span><br><span class="line">2.过程不用等号那种形式时，语句只能放在花括号里</span><br><span class="line">3.数据类型Int的I只能大写</span><br><span class="line">4.只能lazy val xxx；不能lazy var</span><br><span class="line">5</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据开发工程师-第九周 第1章 Scala极速入门</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B9%9D%E5%91%A8-%E7%AC%AC1%E7%AB%A0-Scala%E6%9E%81%E9%80%9F%E5%85%A5%E9%97%A8.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第九周-第1章-Scala极速入门"><a href="#第九周-第1章-Scala极速入门" class="headerlink" title="第九周 第1章 Scala极速入门"></a>第九周 第1章 Scala极速入门</h1><h2 id="为什么要学习Scala语言"><a href="#为什么要学习Scala语言" class="headerlink" title="为什么要学习Scala语言"></a>为什么要学习Scala语言</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">首先我们来分析一下为什么要学习Scala语言</span><br><span class="line">最直接的一点就是因为我们后面要学的Spark框架需要用到Scala这门语言</span><br><span class="line">但是Spark其实是同时支持Scala语言和Java语言的，为什么非要学Scala呢，使用java它难道不香吗？</span><br><span class="line">这就要说第二点了：看下面的代码，使用Spark统计文件内单词出现的次数这个需求，使用java代码和scala代码的区别是有多么的明显，在代码量上来说，scala是完胜java的，所以在实际工作中开发spark代码，我们都是需要使用scala的，使用java实现函数式编程太别扭了，代码量太大，这个就是我们学习</span><br><span class="line">scala的最直接的原因</span><br></pre></td></tr></table></figure>
+
+<h2 id="什么是Scala"><a href="#什么是Scala" class="headerlink" title="什么是Scala"></a>什么是Scala</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Scala是一门多范式的编程语言，它是一种类似Java的编程语言，它设计的初衷是为了实现可伸缩的语言、并集成面向对象编程和函数式编程的各种特性</span><br><span class="line">Scala基于Java虚拟机，也就是基于JVM的一门编程语言。所有Scala代码，都需要编译为字节码，然后交由Java虚拟机来运行</span><br><span class="line">Scala和Java可以无缝相互操作，Scala可以任意调用Java代码，这个特性是非常好的</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何快速掌握Scala语言"><a href="#如何快速掌握Scala语言" class="headerlink" title="如何快速掌握Scala语言"></a>如何快速掌握Scala语言</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这先给大家打个预防针，虽然前面我们说了使用scala实现spark代码会很简洁，但是scala语言本身是</span><br><span class="line">很反人类的，特别是你熟悉了例如java之类的编程语言之后再来学scala，会感觉到既爱又恨</span><br><span class="line">那我们如何快速掌握Scala语言的使用呢？</span><br><span class="line">首先大家在学习的过程中需要对比分析Java和Scala在使用上的区别，这样可以加深我们的理解</span><br><span class="line">然后没事的时候可以尝试着用Scala代码改写你之前的Java代码</span><br><span class="line">最后的最后，交给大家一个绝招，一个终极方案，那就是多练！多练！多练。</span><br><span class="line">因为针对编程语言，其实就是需要掌握它的一些基本语法，大家都是有其它语言编程基础的，在这学习Scala语言，其实主要就是掌握这门语言和其它语言的一些不同之处，只要把这些东西捋顺了，那上手也是很容易的。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Scala环境安装配置"><a href="#Scala环境安装配置" class="headerlink" title="Scala环境安装配置"></a>Scala环境安装配置</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面我们就来具体学习使用一下Scala这门神奇的语言。</span><br><span class="line">在具体使用之前需要先安装scala的开发环境，就类似安装java环境一样</span><br><span class="line"></span><br><span class="line">注意：由于Scala是基于Java虚拟机的，所以使用 Scala 之前必须先安装 Java，Java我们已经安装过了。</span><br><span class="line">那在这里我们先到官网下载Scala安装包</span><br><span class="line">Scala现在有三个主要在使用的版本， 2.11，2.12，2.13</span><br><span class="line">目前的话2.12使用的比较多，所以我们就使用这个版本</span><br></pre></td></tr></table></figure>
+
+<h2 id="Scala命令行"><a href="#Scala命令行" class="headerlink" title="Scala命令行"></a>Scala命令行</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">咱们刚才进入的就是Scala命令行</span><br><span class="line">Scala命令行也称为Scala解释器(REPL)，它会快速编译Scala代码为字节码，然后交给JVM来执行</span><br><span class="line">这里的REPL表示：Read（取值）-&gt; Evaluation（求值）-&gt; Print（打印）-&gt; Loop（循环）</span><br><span class="line">在Scala命令行内，输入Scala代码，解释器会直接返回结果</span><br><span class="line">如果你没有指定变量来存放计算的值，那么值默认的名称会显示为res开头的变量，而且会显示结果的数据类型</span><br><span class="line">scala&gt; 1+1</span><br><span class="line">res0: Int &#x3D; 2</span><br><span class="line">在后面可以继续使用res0这个变量，以及它里面存放的值</span><br><span class="line">scala&gt; 5 * res0</span><br><span class="line">res1: Int &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scala的命令行也有自动补全功能，使用起来还是比较方便的</span><br><span class="line">输入res，按键盘上的tab键，下面就会列出目前以res开头的变量名称</span><br><span class="line">scala&gt; res</span><br><span class="line">res0 res1</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Scala</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>maven相关</title>
     <url>/maven%E7%9B%B8%E5%85%B3.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
@@ -102,15 +585,163 @@
   </entry>
   <entry>
     <title>大数据开发工程师-第八周 第5章 Hive高级函数实战</title>
-    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98.html</url>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%202.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
+<h1 id="第八周-第5章-Hive高级函数实战"><a href="#第八周-第5章-Hive高级函数实战" class="headerlink" title="第八周 第5章 Hive高级函数实战"></a>第八周 第5章 Hive高级函数实战</h1><h2 id="一个SQL语句分析"><a href="#一个SQL语句分析" class="headerlink" title="一个SQL语句分析"></a>一个SQL语句分析</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT a.Key</span><br><span class="line">, SUM(a.Cnt) AS Cnt</span><br><span class="line">FROM (</span><br><span class="line">	SELECT Key, COUNT(*) AS Cnt</span><br><span class="line">	FROM TableName</span><br><span class="line">	GROUP BY Key,</span><br><span class="line">		CASE</span><br><span class="line">			WHEN Key &#x3D; &#39;KEY001&#39; THEN Hash(Random()) % 50</span><br><span class="line">			ELSE 0</span><br><span class="line">		END</span><br><span class="line">) a</span><br><span class="line">GROUP BY a.Key;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">解释：这个SQL其实是一个解决数据倾斜的SQL</span><br><span class="line">先看里面的select语句，里面的select语句其实是根据key进行分组，但是这个key对应的数据存在数据倾</span><br><span class="line">斜，key&#x3D;KEY001的数据占了整份数据的90%，所以直接针对key进行分组肯定会出现数据倾斜，应该计</span><br><span class="line">算效率，所以在这里就实现了曲线救国，先把key&#x3D;KEY001的数据打散，分成50份，进行局部聚合</span><br><span class="line">最后再通过外面的select进行全局的聚合，这样就可以显著提高计算效率</span><br></pre></td></tr></table></figure>
+
+<h2 id="hue"><a href="#hue" class="headerlink" title="hue"></a>hue</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CHD的hue界面的使用</span><br></pre></td></tr></table></figure>
+
+<h2 id="【扩展内容】Hive数据倾斜的解决方案"><a href="#【扩展内容】Hive数据倾斜的解决方案" class="headerlink" title="【扩展内容】Hive数据倾斜的解决方案"></a>【扩展内容】Hive数据倾斜的解决方案</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">可能会触发Hive数据倾斜的几种情况</span><br><span class="line"></span><br><span class="line">关键字 		情形 		后果</span><br><span class="line">join 其中一个表较小，但是key集中 分发到某一个或几个Reduce</span><br><span class="line">			大表与小表，但是分桶的判断字段0值或空值过多 这些空值都由一个reduce处</span><br><span class="line">group by group by维度过小，处理的数量过多 处理某值的reduce非常</span><br><span class="line">count distinct 某特殊值过多 处理此特殊值的reduc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原因：</span><br><span class="line">1)、key分布不均匀</span><br><span class="line">2)、业务数据本身的特性</span><br><span class="line">3)、建表时考虑不周</span><br><span class="line">4)、某些SQL语句本身就有数据倾斜</span><br><span class="line">表现：</span><br><span class="line">任务进度长时间维持在99%（或100</span><br><span class="line">务未完成。因为其处理的数据量和其</span><br><span class="line">单一reduce的记录数与平均记录数差</span><br><span class="line">数据倾斜的解决方案</span><br><span class="line">参数调节：</span><br><span class="line">hive.map.aggr&#x3D;true</span><br><span class="line">Map 端部分聚合，相当于Combiner</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive.groupby.skewindata&#x3D;true</span><br><span class="line">有数据倾斜的时候进行负载均衡，当选项设定为 true，生成的查询计划会有两个 MR Job。第一个 MR</span><br><span class="line">Job 中，Map 的输出结果集合会随机分布到 Reduce 中，每个 Reduce 做部分聚合操作，并输出结果，这</span><br><span class="line">样处理的结果是相同的 Group By Key 有可能被分发到不同的 Reduce 中，从而达到负载均衡的目的；第</span><br><span class="line">二个 MR Job 再根据预处理的数据结果按照 Group By Key 分布到 Reduce 中（这个过程可以保证相同的</span><br><span class="line">Group By Key 被分布到同一个 Reduce 中），最后完成最终的聚合操作。</span><br><span class="line">SQL语句调节：</span><br><span class="line">大小表Join：</span><br><span class="line">使用map join让小的维度表（1000条以下的记录条数） 先进内存。在map端完成reduce.</span><br><span class="line">大表Join大表：</span><br><span class="line">把空值的key变成一个字符串加上随机数，把倾斜的数据分到不同的reduce上，由于null值关联不上，处理后并不影响最终结果。</span><br><span class="line">count distinct大量相同特殊值</span><br><span class="line">count distinct时，将值为空的情况单独处理，如果是计算count distinct，可以不用处理，直接过滤，在最后结果中加1。如果还有其他计算，需要进行group by，可以先将值为空的记录单独处理，再和其他计算结果进行union。</span><br><span class="line">针对去重求和的需求还可以这样做：</span><br><span class="line">采用sum() group by的方式来替换count(distinct)完成计算。</span><br><span class="line">特殊情况特殊处理：</span><br><span class="line">在业务逻辑优化效果的不大情况下，有些时候是可以将倾斜的数据单独拿出来处理。最后union回去。</span><br></pre></td></tr></table></figure>
 
 
 
 
 
+<hr>
+<blockquote>
+</blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Hive</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据开发工程师-第八周 第5章 Hive高级函数实战</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC5%E7%AB%A0-Hive%E9%AB%98%E7%BA%A7%E5%87%BD%E6%95%B0%E5%AE%9E%E6%88%98%201.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="第八周-第5章-Hive高级函数实战"><a href="#第八周-第5章-Hive高级函数实战" class="headerlink" title="第八周 第5章 Hive高级函数实战"></a>第八周 第5章 Hive高级函数实战</h1><h2 id="函数的基本操作"><a href="#函数的基本操作" class="headerlink" title="函数的基本操作"></a>函数的基本操作</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">和mysql一样的，hive也是一个主要做统计的工具，所以为了满足各种各样的统计需要，他也内置了相当</span><br><span class="line">多的函数，我们可以通过 show functions; 来查看hive中的内置函数</span><br><span class="line">hive (default)&gt; show functions;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">查看指定函数的描述信息我们可以使用： desc function functionName;</span><br><span class="line"></span><br><span class="line">hive (default)&gt; desc function year;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">显示函数的扩展内容</span><br><span class="line">hive (default)&gt; desc function extended year;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hive高级函数应用"><a href="#Hive高级函数应用" class="headerlink" title="Hive高级函数应用"></a>Hive高级函数应用</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">普通的就不说了，mysql中支持的函数这里面大部分都支持，并且hive支持的函数比mysql还要多，在这里我们主要挑几个典型的说一下</span><br></pre></td></tr></table></figure>
+
+<h3 id="分组排序取TopN"><a href="#分组排序取TopN" class="headerlink" title="分组排序取TopN"></a>分组排序取TopN</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">一个典型的应用场景，分组排序取TopN操作</span><br><span class="line">主要需要使用到ROW_NUMBER() 和 OVER()函数</span><br><span class="line">row_number和over函数通常搭配在一起使用</span><br><span class="line">row_number会对数据编号，编号从1开始</span><br><span class="line">over可以理解为把数据划分到一个窗口内，里面可以加上partition by，表示按照字段对数据进行分组，</span><br><span class="line">还可以加上order by 表示对每个分组内的数据按照某个字段进行排序</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">我们的需求是这样，有一份学生的考试分数信息，语文、数学、英语这三门，需要计算出班级中单科排名前三名学生的姓名</span><br><span class="line">基础数据是这样的</span><br><span class="line">[root@bigdata04 hivedata]# more student_score.data</span><br><span class="line">1 zs1 chinese 80</span><br><span class="line">2 zs1 math 90</span><br><span class="line">3 zs1 english 89</span><br><span class="line">4 zs2 chinese 60</span><br><span class="line">5 zs2 math 75</span><br><span class="line">6 zs2 english 80</span><br><span class="line">7 zs3 chinese 79</span><br><span class="line">8 zs3 math 83</span><br><span class="line">9 zs3 english 72</span><br><span class="line">10 zs4 chinese 90</span><br><span class="line">11 zs4 math 76</span><br><span class="line">12 zs4 english 80</span><br><span class="line">13 zs5 chinese 98</span><br><span class="line">14 zs5 math 80</span><br><span class="line">15 zs5 english 70</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">建表</span><br><span class="line">create external table student_score(</span><br><span class="line">id int,</span><br><span class="line">name string,</span><br><span class="line">sub string,</span><br><span class="line">score int</span><br><span class="line">)row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;student_score&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">加载数据</span><br><span class="line">[root@bigdata04 hivedata]# hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;student_score.dat</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">我们先使用row_number对数据编号，看一下是什么样子，row_number不能单独使用，在这里需要加上over</span><br><span class="line"></span><br><span class="line">select *,row_number() over() from student_score;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">结果如下：在这里相当于给表里面的所有数据编了一个号，从1开始</span><br><span class="line">15 zs5 english 70 1</span><br><span class="line">14 zs5 math 80 2</span><br><span class="line">13 zs5 chinese 98 3</span><br><span class="line">12 zs4 english 80 4</span><br><span class="line">11 zs4 math 76 5</span><br><span class="line">10 zs4 chinese 90 6</span><br><span class="line">9 zs3 english 72 7</span><br><span class="line">8 zs3 math 83 8</span><br><span class="line">7 zs3 chinese 79 9</span><br><span class="line">6 zs2 english 80 10</span><br><span class="line">5 zs2 math 75 11</span><br><span class="line">4 zs2 chinese 60 12</span><br><span class="line">3 zs1 english 89 13</span><br><span class="line">2 zs1 math 90 14</span><br><span class="line">1 zs1 chinese 80 15</span><br><span class="line"></span><br><span class="line">但是我们是希望对这些数据，先分组，再对组内数据进行排序，再编号</span><br><span class="line">所以就需要在over函数内部添加partiton by进行分组，添加order by 进行排序，最终给生成的编号起了</span><br><span class="line">换一个别名num</span><br></pre></td></tr></table></figure>
+
+<h3 id="row-number"><a href="#row-number" class="headerlink" title="row_number()"></a>row_number()</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">执行sql</span><br><span class="line">select *, row_number() over (partition by sub order by score desc) as num from student_score</span><br><span class="line"></span><br><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">7 zs3 chinese 79 4</span><br><span class="line">4 zs2 chinese 60 5</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 3</span><br><span class="line">9 zs3 english 72 4</span><br><span class="line">15 zs5 english 70 5</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br><span class="line">11 zs4 math 76 4</span><br><span class="line">5 zs2 math 75 5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接着就可以获取前三名了，</span><br><span class="line">执行sql</span><br><span class="line"></span><br><span class="line">select * from (</span><br><span class="line">select *, row_number() over (partition by sub order by score desc) as num</span><br><span class="line">from student_score</span><br><span class="line">) s where s.num&lt;&#x3D;3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 3</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="rank"><a href="#rank" class="headerlink" title="rank()"></a>rank()</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">前面SQL中的 row_number() 可以替换为 rank() 或者 dense_rank()</span><br><span class="line">其中： rank() 表示上下两条记录的score相等时，记录的行号是一样的，但下一个score值的行号递增N</span><br><span class="line">（N是重复的次数），比如：有两条并列第一，下一个是第三，没有第二</span><br><span class="line"></span><br><span class="line">执行sql</span><br><span class="line">select *, rank() over (partition by sub order by score desc) as num from student_score</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">7 zs3 chinese 79 4</span><br><span class="line">4 zs2 chinese 60 5</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 2</span><br><span class="line">9 zs3 english 72 4</span><br><span class="line">15 zs5 english 70 5</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br><span class="line">11 zs4 math 76 4</span><br><span class="line">5 zs2 math 75 5</span><br></pre></td></tr></table></figure>
+
+<h3 id="dense-rank"><a href="#dense-rank" class="headerlink" title="dense_rank()"></a>dense_rank()</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dense_rank() 表示上下两条记录的score相等时，下一个score值的行号递增1，比如：有两条并列第一，下一个是第二</span><br><span class="line">执行sql</span><br><span class="line">select *, dense_rank() over (partition by sub order by score desc) as num from student_score;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">13 zs5 chinese 98 1</span><br><span class="line">10 zs4 chinese 90 2</span><br><span class="line">1 zs1 chinese 80 3</span><br><span class="line">7 zs3 chinese 79 4</span><br><span class="line">4 zs2 chinese 60 5</span><br><span class="line">3 zs1 english 89 1</span><br><span class="line">6 zs2 english 80 2</span><br><span class="line">12 zs4 english 80 2</span><br><span class="line">9 zs3 english 72 3</span><br><span class="line">15 zs5 english 70 4</span><br><span class="line">2 zs1 math 90 1</span><br><span class="line">8 zs3 math 83 2</span><br><span class="line">14 zs5 math 80 3</span><br><span class="line">11 zs4 math 76 4</span><br><span class="line">5 zs2 math 75 5</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">row_number() over() 是正常排序</span><br><span class="line">rank() over() 是跳跃排序，有两个第一名时接下来就是第三名（在各个分组内）</span><br><span class="line">dense_rank() over() 是连续排序，有两个第一名时仍然跟着第二名（在各个分组内）</span><br></pre></td></tr></table></figure>
+
+<h3 id="行转列"><a href="#行转列" class="headerlink" title="行转列"></a>行转列</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">行转列就是把多行数据转为一列数据</span><br><span class="line">针对行转列这种需求主要需要使用到 CONCAT_WS()、COLLECT_SET() 、COLLECT_LIST() 函数</span><br><span class="line">先看一下这几个函数的描述信息，注意，有的函数在帮助文档里面没有描述信息</span><br></pre></td></tr></table></figure>
+
+<h4 id="CONCAT-WS"><a href="#CONCAT-WS" class="headerlink" title="CONCAT_WS()"></a>CONCAT_WS()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; desc function CONCAT_WS;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">CONCAT_WS(separator, [string | array(string)]+) - returns the concatenation of</span><br><span class="line">Time taken: 0.019 seconds, Fetched: 1 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CONCAT_WS() 函数可以实现根据指定的分隔符拼接多个字段的值，最终转化为一个带有分隔符的字符串</span><br><span class="line">它可以接收多个参数，第一个参数是分隔符，后面的参数可以是字符串或者字符串数组，最终就是使用分隔符把后面的所有字符串拼接到一块</span><br></pre></td></tr></table></figure>
+
+<h4 id="COLLECT-LIST"><a href="#COLLECT-LIST" class="headerlink" title="COLLECT_LIST()"></a>COLLECT_LIST()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; desc function COLLECT_LIST;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">COLLECT_LIST(x) - Returns a list of objects with duplicates</span><br><span class="line">Time taken: 0.014 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">这个函数可以返回一个list集合，集合中的元素会重复，一般和group by 结合在一起使用，一会再演示</span><br></pre></td></tr></table></figure>
+
+<h4 id="COLLECT-SET"><a href="#COLLECT-SET" class="headerlink" title="COLLECT_SET()"></a>COLLECT_SET()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; desc function COLLECT_SET;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">COLLECT_SET(x) - Returns a set of objects with duplicate elements eliminated</span><br><span class="line">Time taken: 0.014 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">这个函数可以返回一个set集合，集合汇中的元素不重复，一般和group by 结合在一起使用，一会再演示</span><br><span class="line">根据前面的分析，使用这几个函数我们就可以实现行转列这个需求了</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@bigdata04 hivedata]# more student_favors.data</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">zs codeing</span><br><span class="line">zs swing</span><br><span class="line"></span><br><span class="line">期望的结果是这样的</span><br><span class="line">zs swing,footbal,sing,codeing,swing</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">分析一下：</span><br><span class="line">在这其实就是对数据进行了分组，分组之后可以把相同人的爱好保存到一个数组中，再把数组中的数据转成使用逗号分割的字符串</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开始对原始数据建表</span><br><span class="line">create external table student_favors(</span><br><span class="line">name string,</span><br><span class="line">favor string</span><br><span class="line">)row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;student_favors&#39;;</span><br><span class="line"></span><br><span class="line">上传数据</span><br><span class="line">[root@bigdata04 hivedata]# hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;student_favors.data &#x2F;data&#x2F;student_favors</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">查看数据</span><br><span class="line">hive (default)&gt; select * from student_favors;</span><br><span class="line">OK</span><br><span class="line">student_favors.name student_favors.favor</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">zs codeing</span><br><span class="line">zs swing</span><br><span class="line">Time taken: 0.175 seconds, Fetched: 5 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">先对name字段进行分组，把favor转成一个数组</span><br><span class="line">select name,collect_list(favor) as favor_list from student_favors group by name;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">结果如下</span><br><span class="line"> zs [&quot;swing&quot;,&quot;footbal&quot;,&quot;sing&quot;,&quot;codeing&quot;,&quot;swing&quot;]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">然后再使用 concat_ws 把数组中的元素按照指定分隔符转成字符串</span><br><span class="line">这样就实现了多行数据转为一列数据了</span><br><span class="line">执行行转列操作</span><br><span class="line">select name,concat_ws(&#39;,&#39;,collect_list(favor)) as favor_list from student_favors group by name;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">结果如下</span><br><span class="line">zs swing,footbal,sing,codeing,swing</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">我们发现这里面有一些爱好是重复的，如果不希望出现重复的话可以使用COLLECT_SET()</span><br><span class="line">执行sql</span><br><span class="line">select name,concat_ws(&#39;,&#39;,collect_set(favor)) as favor_list from student_favors group by name;</span><br></pre></td></tr></table></figure>
+
+<h3 id="列转行"><a href="#列转行" class="headerlink" title="列转行"></a>列转行</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">列转行是和刚才的行转列反着来的，列转行可以把一列数据转成多行</span><br><span class="line">主要使用到 SPLIT()、EXPLODE()和LATERAL VIEW</span><br><span class="line">看一下这几个函数</span><br></pre></td></tr></table></figure>
+
+<h4 id="SPLIT"><a href="#SPLIT" class="headerlink" title="SPLIT()"></a>SPLIT()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; desc function SPLIT;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">SPLIT(str, regex) - Splits str around occurances that match regex</span><br><span class="line">Time taken: 0.011 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">split函数，接受一个字串符和切割规则，就类似于java中的split函数，使用切割规则对字符串中的数据进行切割，最终返回一个array数组</span><br></pre></td></tr></table></figure>
+
+<h4 id="EXPLODE"><a href="#EXPLODE" class="headerlink" title="EXPLODE()"></a>EXPLODE()</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; desc function EXPLODE;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">EXPLODE(a) - separates the elements of array a into multiple rows, or the ele</span><br><span class="line">Time taken: 0.013 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">explode函数可以接受array或者map</span><br><span class="line">explode(ARRAY)：表示把数组中的每个元素转成一行</span><br><span class="line">explode(MAP) ：表示把map中每个key-value对，转成一行，key为一列，value为一列</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="LATERAL-VIEW"><a href="#LATERAL-VIEW" class="headerlink" title="LATERAL VIEW"></a>LATERAL VIEW</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Lateral view 通常和split， explode等函数一起使用。</span><br><span class="line">split可以对表中的某一列进行切割，返回一个数组类型的字段，explode可以对这个数组中的每一个元素</span><br><span class="line">转为一行，lateral view可以对这份数据产生一个支持别名的虚拟表</span><br><span class="line">原始数据如下</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@bigdata04 hivedata]# more student_favors_2.data</span><br><span class="line">zs swing,footbal,sing</span><br><span class="line">ls codeing,swing</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">希望的结果是这样的</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">ls codeing</span><br><span class="line">ls swing</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接着建表</span><br><span class="line">create external table student_favors_2(</span><br><span class="line">name string,</span><br><span class="line">favorlist string</span><br><span class="line">)row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;student_favors_2&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">上传数据</span><br><span class="line">[root@bigdata04 hivedata]# hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;student_favors_2</span><br><span class="line"></span><br><span class="line">查看数据</span><br><span class="line">hive (default)&gt; select * from student_favors_2;</span><br><span class="line">OK</span><br><span class="line">student_favors_2.name student_favors_2.favorlist</span><br><span class="line">zs swing,footbal,sing</span><br><span class="line">ls codeing,swing</span><br><span class="line">Time taken: 0.131 seconds, Fetched: 2 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">先使用split对favorlist字段进行切割</span><br><span class="line">hive (default)&gt; select split(favorlist,&#39;,&#39;) from student_favors_2;</span><br><span class="line"></span><br><span class="line">OK</span><br><span class="line">_c1</span><br><span class="line">[&quot;swing&quot;,&quot;footbal&quot;,&quot;sing&quot;]</span><br><span class="line">[&quot;codeing&quot;,&quot;swing&quot;]</span><br><span class="line">Time taken: 0.224 seconds, Fetched: 2 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">再使用explode对数据进行操作</span><br><span class="line"></span><br><span class="line">hive (default)&gt; select explode(split(favorlist,&#39;,&#39;)) from student_favors_2;</span><br><span class="line">OK</span><br><span class="line">col</span><br><span class="line">swing</span><br><span class="line">footbal</span><br><span class="line">sing</span><br><span class="line">codeing</span><br><span class="line">swing</span><br><span class="line">Time taken: 0.185 seconds, Fetched: 5 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">其实到这里已经实现了列转行了，但是还需要把name字段拼接上，这时候就需要使用later view了，否则直接查询name字段会报错</span><br><span class="line">laterview相当于把explode返回的数据作为一个虚拟表来使用了，起名字为table1，然后给这个表里面的那一列数据起一个名字叫favor_new，如果有多个字段，可以再后面指定多个。这样在select后面就可以使用这个名字了，有点类似join操作了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select name,favor_new from student_favors_2 lateral view explode(split(favorlist,&#39;,&#39;)) table1 as favor_new;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">结果如下：</span><br><span class="line">zs swing</span><br><span class="line">zs footbal</span><br><span class="line">zs sing</span><br><span class="line">ls codeing</span><br><span class="line">ls swing</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hive排序相关函数"><a href="#Hive排序相关函数" class="headerlink" title="Hive排序相关函数"></a>Hive排序相关函数</h2><h3 id="ORDER-BY"><a href="#ORDER-BY" class="headerlink" title="ORDER BY"></a>ORDER BY</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hive中的order by跟传统的sql语言中的order by作用是一样的，会对查询的结果做一次全局排序，使用这个语句的时候生成的reduce任务只有一个</span><br></pre></td></tr></table></figure>
+
+<h3 id="SORT-BY"><a href="#SORT-BY" class="headerlink" title="SORT BY"></a>SORT BY</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hive中指定了sort by，如果有多个reduce，那么在每个reducer端都会做排序，也就是说保证了局部有序（每个reducer出来的数据是有序的，但是不能保证所有的数据是全局有序的，除非只有一个reducer）</span><br><span class="line">使用前面的t2_bak表，表中的数据如下：</span><br><span class="line">hive (default)&gt; select * from t2_bak;</span><br><span class="line">OK</span><br><span class="line">t2_bak.id t2_bak.name</span><br><span class="line">1 NULL</span><br><span class="line">2 NULL</span><br><span class="line">3 NULL</span><br><span class="line">4 NULL</span><br><span class="line">5 NULL</span><br><span class="line">1 NULL</span><br><span class="line">2 NULL</span><br><span class="line">3 NULL</span><br><span class="line">4 NULL</span><br><span class="line">5 NULL</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">执行排序SQL</span><br><span class="line">hive (default)&gt; select id from t2_bak sort by id;</span><br><span class="line">......</span><br><span class="line">Hadoop job information for Stage-1: number of mappers: 1; number of reducers:</span><br><span class="line">......</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">1 </span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">2 </span><br><span class="line">3</span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">4 </span><br><span class="line">5 </span><br><span class="line">5</span><br><span class="line">Time taken: 24.562 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">刚才我们说sort by是局部有序，为什么最终的结果还是全局有序呢？</span><br><span class="line">看里面的日志，现在只有一个reduce任务，所以最终结果还是有序的</span><br><span class="line">动态设置reduce任务数量为2，然后再执行排序的SQL</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak sort by id;</span><br><span class="line">.......</span><br><span class="line">Hadoop job information for Stage-1: number of mappers: 1; number of reducers:</span><br><span class="line">......</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">1 3 3 4 5 5 1 2 2 4</span><br><span class="line">Time taken: 27.943 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">此时会发现数据就没有全局排序了，因为有多个reduce了。</span><br><span class="line">不过针对ORDER BY来说，你动态设置再多的reduce数量都没有用，最后还是只产生1个reduce。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="DISTRIBUTE-BY"><a href="#DISTRIBUTE-BY" class="headerlink" title="DISTRIBUTE BY"></a>DISTRIBUTE BY</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ditribute by是控制map的输出到reducer是如何划分的</span><br><span class="line"></span><br><span class="line">ditribute by：只会根据指定的key对数据进行分区，但是不会排序。</span><br><span class="line">一般情况下可以和sort by 结合使用，先对数据分区，再进行排序</span><br><span class="line">两者结合使用的时候distribute by必须要写在sort by之前</span><br><span class="line">先来看一下单独ditribute by的使用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak distribute by id;</span><br><span class="line">.......</span><br><span class="line">Number of reduce tasks not specified. Defaulting to jobconf value of: 2</span><br><span class="line">.......</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">4 </span><br><span class="line">2 </span><br><span class="line">4 </span><br><span class="line">2 </span><br><span class="line">5 </span><br><span class="line">3 </span><br><span class="line">1 </span><br><span class="line">5 </span><br><span class="line">3 </span><br><span class="line">1</span><br><span class="line">Time taken: 25.395 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">可以结合sort by实现分区内的排序，默认是升序，可以通过desc来设置倒序</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak distribute by id sort by id;</span><br><span class="line">.......</span><br><span class="line">Number of reduce tasks not specified. Defaulting to jobconf value of: 2</span><br><span class="line">.......</span><br><span class="line">id</span><br><span class="line">2 2 4 4 1 1 3 3 5 5</span><br><span class="line">Time taken: 24.468 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; select id from t2_bak distribute by id sort by id desc;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="CLUSTER-BY"><a href="#CLUSTER-BY" class="headerlink" title="CLUSTER BY"></a>CLUSTER BY</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cluster by的功能就是distribute by和sort by的简写形式</span><br><span class="line">也就是 cluster by id 等于 distribute by id sort by id</span><br><span class="line">注意被cluster by指定的列只能是升序，不能指定asc和desc</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set mapreduce.job.reduces &#x3D; 2;</span><br><span class="line">hive (default)&gt; select id from t2_bak cluster by id;</span><br><span class="line">.....</span><br><span class="line">Number of reduce tasks not specified. Defaulting to jobconf value of: 2</span><br><span class="line"></span><br><span class="line">.....</span><br><span class="line">OK</span><br><span class="line">id</span><br><span class="line">2 </span><br><span class="line">2 </span><br><span class="line">4 </span><br><span class="line">4 </span><br><span class="line">1 </span><br><span class="line">1 </span><br><span class="line">3 </span><br><span class="line">3 </span><br><span class="line">5 </span><br><span class="line">5</span><br><span class="line">Time taken: 25.495 seconds, Fetched: 10 row(s)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hive-的分组和去重函数"><a href="#Hive-的分组和去重函数" class="headerlink" title="Hive 的分组和去重函数"></a>Hive 的分组和去重函数</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GROUP BY ：对数据按照指定字段进行分组</span><br><span class="line">DISTINCT：对数据中指定字段的重复值进行去重</span><br><span class="line"></span><br><span class="line">第一种：select count(distinct name) from order</span><br><span class="line">第二种：select count(tmp.name) from (select name from order group by name) tmp</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">第一种：使用distinct会将所有的name都shuffle到一个reducer里面，性能较低</span><br><span class="line">第二种：先对name分组，因为分组的同时其实就是去重，此时是可以并行计算的，然后再计算count</span><br></pre></td></tr></table></figure>
 
 
 
@@ -125,6 +756,31 @@
 <hr>
 <blockquote>
 </blockquote>
+]]></content>
+      <categories>
+        <category>大数据开发工程师</category>
+        <category>大数据</category>
+      </categories>
+      <tags>
+        <tag>Hive</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据开发工程师-第八周 第4章 Hive核心实战2</title>
+    <url>/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%204.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+
+
+<h1 id="第八周-第4章-Hive核心实战"><a href="#第八周-第4章-Hive核心实战" class="headerlink" title="第八周 第4章 Hive核心实战"></a>第八周 第4章 Hive核心实战</h1>
+
+<a href="/hadoop%E5%AE%9E%E9%AA%8C%E8%AF%BE-hive.html" title="hadoop实验课-hive">hadoop实验课-hive</a>
+
+<h2 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接下来我们来看一个综合案例，主要使用外部分区表和视图实现</span><br><span class="line">需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标</span><br><span class="line">分析一下：</span><br><span class="line">Flume按天把日志数据保存到HDFS中的对应目录中</span><br><span class="line">针对Flume的source可以使用execsource、channel可以使用基于文件的或者内存的，sink使用hdfssink，在hdfssink的path路径中需要使用%Y%m%d获取日期，将每天的日志数据采集到指定的hdfs目录中</span><br><span class="line">这个是我们在前面学习Flume的时候已经讲过的了，这个倒不难</span><br><span class="line">后面就是需要对按天采集的日志数据建表，由于这份数据可能会被多种计算引擎使用，所以建议使用外部表，这样就算我们不小心把表删了，数据也还是在的，不影响其他人使用，还有就是这份数据是按天分目录存储的，在实际工作中，离线计算的需求大部分都是按天计算的，所以在这里最好在表中增加日期这个</span><br><span class="line">分区字段，所以最终决定使用外部分区表。</span><br><span class="line">前面FLume采集数据的流程我们就不再演示了，在这我就直接使用之前我们使用hdfs落盘的数据了。</span><br><span class="line">我们之前有一个案例是分类型，分目录，把多种类型的数据存储到不同的目录下</span><br><span class="line">目录结构是这样的，首先是按天，然后是按照类型</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>大数据开发工程师</category>
@@ -433,7 +1089,19 @@
 
 
 
-<h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><h2 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h2>]]></content>
+<h3 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hive中，也有视图的概念，那我们都知道视图实际上是一张虚拟的表，是对数据的逻辑表示，它的主要作用是为了降低查询的复杂度。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">那我们在Hive中如何来创建一个视图呢？</span><br><span class="line">需要使用create view命令，</span><br><span class="line">下面我们来创建一个视图</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建视图"><a href="#创建视图" class="headerlink" title="创建视图"></a>创建视图</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hive (default)&gt; create view v1 as select t3_new.id,t3_new.stu_name from t3_new;</span><br><span class="line"></span><br><span class="line">此时通过 show tables 也可以查看到这个视图</span><br><span class="line">hive (default)&gt; show tables;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">b_source</span><br><span class="line">bucket_tb</span><br><span class="line">ex_par</span><br><span class="line">partition_1</span><br><span class="line">partition_2</span><br><span class="line">stu</span><br><span class="line">stu2</span><br><span class="line">stu3</span><br><span class="line">student</span><br><span class="line">t1</span><br><span class="line">t2</span><br><span class="line">t2_bak</span><br><span class="line">t3</span><br><span class="line">t3_new</span><br><span class="line">v1</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询视图"><a href="#查询视图" class="headerlink" title="查询视图"></a>查询视图</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">查看视图的结构，显示的内容和表显示的内容是没有区别的</span><br><span class="line"></span><br><span class="line">hive (default)&gt; desc v1;</span><br><span class="line">OK</span><br><span class="line">col_name data_type comment</span><br><span class="line">id int</span><br><span class="line">stu_name string</span><br><span class="line">Time taken: 0.041 seconds, Fetched: 2 row(s)</span><br><span class="line"></span><br><span class="line">通过视图查询数据</span><br><span class="line">hive (default)&gt; select * from v1;</span><br><span class="line">OK</span><br><span class="line">v1.id v1.stu_name</span><br><span class="line">1 张三</span><br><span class="line">2 李四</span><br><span class="line">3 王五</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">注意：视图在&#x2F;user&#x2F;hive&#x2F;warehouse中是不存在的。因为它只是一个虚拟的表</span><br><span class="line"></span><br><span class="line">在元数据metastore中的体现</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/biY1Tf" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/24/biY1Tf.md.png" alt="biY1Tf.md.png"></a></p>
+<h4 id="删除视图"><a href="#删除视图" class="headerlink" title="删除视图"></a>删除视图</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">drop view v1;</span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
         <category>大数据开发工程师</category>
         <category>大数据</category>
@@ -783,6 +1451,9 @@
         <category>大数据开发工程师</category>
         <category>大数据</category>
       </categories>
+      <tags>
+        <tag>Flume</tag>
+      </tags>
   </entry>
   <entry>
     <title>大数据开发工程师-第七周 第2章 极速上手Flume使用 采集文件内容到HDFS</title>
@@ -882,6 +1553,9 @@
         <category>大数据开发工程师</category>
         <category>大数据</category>
       </categories>
+      <tags>
+        <tag>Flume</tag>
+      </tags>
   </entry>
   <entry>
     <title>大数据开发工程师-第七周 第3章 Flume出神入化篇</title>
@@ -941,6 +1615,9 @@
         <category>大数据开发工程师</category>
         <category>大数据</category>
       </categories>
+      <tags>
+        <tag>Flume</tag>
+      </tags>
   </entry>
   <entry>
     <title>大数据开发工程师-第七周 第3章 精讲Flume高级组件</title>
@@ -1074,6 +1751,9 @@
         <category>大数据开发工程师</category>
         <category>大数据</category>
       </categories>
+      <tags>
+        <tag>Flume</tag>
+      </tags>
   </entry>
   <entry>
     <title>大数据开发工程师-第七周 第2章 极速上手Flume使用</title>
@@ -1162,6 +1842,9 @@
         <category>大数据开发工程师</category>
         <category>大数据</category>
       </categories>
+      <tags>
+        <tag>Flume</tag>
+      </tags>
   </entry>
   <entry>
     <title>大数据开发工程师-第七周 第1章 极速入门Flume</title>
@@ -1169,36 +1852,36 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
-<h1 id="第七周-第1章-极速入门"><a href="#第七周-第1章-极速入门" class="headerlink" title="第七周 第1章 极速入门"></a>第七周 第1章 极速入门</h1><h2 id="什么是Flume"><a href="#什么是Flume" class="headerlink" title="什么是Flume"></a>什么是Flume</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">先来看一下官方解释</span><br><span class="line">Flume是一个高可用，高可靠，分布式的海量日志采集、聚合和传输的系统，能够有效的收集、聚合、移</span><br><span class="line">动大量的日志数据。</span><br><span class="line">其实通俗一点来说就是Flume是一个很靠谱，很方便、很强的日志采集工具。</span><br><span class="line">他是目前大数据领域数据采集最常用的一个框架</span><br><span class="line">为什么它这么香呢？</span><br><span class="line">主要是因为使用Flume采集数据不需要写一行代码，注意是一行代码都不需要，只需要在配置文件中随便</span><br><span class="line">写几行配置Flume就会死心塌地的给你干活了，是不是很香？</span><br><span class="line">看这个图，这个属于Flume的一个非常典型的应用场景，使用Flume采集数据，最终存储到HDFS上。</span><br></pre></td></tr></table></figure>
+<h1 id="第七周-第1章-极速入门"><a href="#第七周-第1章-极速入门" class="headerlink" title="第七周 第1章 极速入门"></a>第七周 第1章 极速入门</h1><h2 id="什么是Flume"><a href="#什么是Flume" class="headerlink" title="什么是Flume"></a>什么是Flume</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">先来看一下官方解释</span><br><span class="line">Flume是一个高可用，高可靠，分布式的海量日志采集、聚合和传输的系统，能够有效的收集、聚合、移动大量的日志数据。</span><br><span class="line">其实通俗一点来说就是Flume是一个很靠谱，很方便、很强的日志采集工具。</span><br><span class="line">他是目前大数据领域数据采集最常用的一个框架</span><br><span class="line">为什么它这么香呢？</span><br><span class="line">主要是因为使用Flume采集数据不需要写一行代码，注意是一行代码都不需要，只需要在配置文件中随便写几行配置Flume就会死心塌地的给你干活了，是不是很香？</span><br><span class="line">看这个图，这个属于Flume的一个非常典型的应用场景，使用Flume采集数据，最终存储到HDFS上。</span><br></pre></td></tr></table></figure>
 
 <p><a href="https://imgtu.com/i/H4pUiV" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/16/H4pUiV.png" alt="H4pUiV.png"></a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">左边的web server表示是一个web项目，web项目会产生日志数据，通过中间的Agent把日志数据采集到</span><br><span class="line">HDFS中。</span><br><span class="line">其中这个Agent就是我们使用Flume启动的一个代理，它是一个持续传输数据的服务，数据在Agent内部</span><br><span class="line">的这些组件之间传输的基本单位是Event</span><br><span class="line">从图中可以看到，Agent是由Source、Channel、Sink这三大组件组成的，这就是Flume中的三大核心组</span><br><span class="line">件，</span><br><span class="line">其中source是数据源，负责读取数据</span><br><span class="line">channel是临时存储数据的，source会把读取到的数据临时存储到channel中</span><br><span class="line">sink是负责从channel中读取数据的，最终将数据写出去，写到指定的目的地中</span><br><span class="line">后面我们会详细分析这三大组件。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">左边的web server表示是一个web项目，web项目会产生日志数据，通过中间的Agent把日志数据采集到HDFS中。</span><br><span class="line">其中这个Agent就是我们使用Flume启动的一个代理，它是一个持续传输数据的服务，数据在Agent内部的这些组件之间传输的基本单位是Event</span><br><span class="line">从图中可以看到，Agent是由Source、Channel、Sink这三大组件组成的，这就是Flume中的三大核心组件，</span><br><span class="line">其中source是数据源，负责读取数据</span><br><span class="line">channel是临时存储数据的，source会把读取到的数据临时存储到channel中</span><br><span class="line">sink是负责从channel中读取数据的，最终将数据写出去，写到指定的目的地中</span><br><span class="line">后面我们会详细分析这三大组件。</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="Flume的特性"><a href="#Flume的特性" class="headerlink" title="Flume的特性"></a>Flume的特性</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 它有一个简单、灵活的基于流的数据流结构，这个其实就是刚才说的Agent内部有三大组件，数据通</span><br><span class="line">过这三大组件流动的</span><br><span class="line">2. 具有负载均衡机制和故障转移机制，这个后面我们会详细分析</span><br><span class="line">3. 一个简单可扩展的数据模型(Source、Channel、Sink)，这几个组件是可灵活组合的</span><br></pre></td></tr></table></figure>
+<h2 id="Flume的特性"><a href="#Flume的特性" class="headerlink" title="Flume的特性"></a>Flume的特性</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 它有一个简单、灵活的基于流的数据流结构，这个其实就是刚才说的Agent内部有三大组件，数据通过这三大组件流动的</span><br><span class="line">2. 具有负载均衡机制和故障转移机制，这个后面我们会详细分析</span><br><span class="line">3. 一个简单可扩展的数据模型(Source、Channel、Sink)，这几个组件是可灵活组合的</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="Flume高级应用场景"><a href="#Flume高级应用场景" class="headerlink" title="Flume高级应用场景"></a>Flume高级应用场景</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">前面我们分析了Flume的典型常见应用场景，下面来看一下Flume的高级应用场景</span><br><span class="line">看这个图，这个图里面主要演示了Flume的多路输出，就是可以将采集到的一份数据输出到多个目的地</span><br><span class="line">中，不同目的地的数据对应不同的业务场景。</span><br></pre></td></tr></table></figure>
+<h2 id="Flume高级应用场景"><a href="#Flume高级应用场景" class="headerlink" title="Flume高级应用场景"></a>Flume高级应用场景</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">前面我们分析了Flume的典型常见应用场景，下面来看一下Flume的高级应用场景</span><br><span class="line">看这个图，这个图里面主要演示了Flume的多路输出，就是可以将采集到的一份数据输出到多个目的地中，不同目的地的数据对应不同的业务场景。</span><br></pre></td></tr></table></figure>
 
 <h3 id="一对多的输出"><a href="#一对多的输出" class="headerlink" title="一对多的输出"></a>一对多的输出</h3><p><a href="https://imgtu.com/i/H49eOJ" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/16/H49eOJ.png" alt="H49eOJ.png"></a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面来详细分析一下</span><br><span class="line">这个图里面一共有两个Agent，表示我们启动了2个Flume的代理，或者可以理解为了启动了2个flume的</span><br><span class="line">进程。</span><br><span class="line">首先看左边这个agent，给他起个名字叫 foo</span><br><span class="line">这里面有一个source，source后面接了3个channel，表示source读取到的数据会重复发送给每个</span><br><span class="line">channel，每个channel中的数据都是一样的</span><br><span class="line">针对每个channel都接了一个sink，这三个sink负责读取对应channel中的数据，并且把数据输出到不同</span><br><span class="line">的目的地，</span><br><span class="line">sink1负责把数据写到hdfs中</span><br><span class="line">sink2负责把数据写到一个Java消息服务数据队列中</span><br><span class="line">sink3负责把数据写给另一个Agent</span><br><span class="line">注意了，Flume中多个Agent之间是可以连通的，只需要让前面Agent的sink组件把数据写到下一</span><br><span class="line">个Agent的source组件中即可。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面来详细分析一下</span><br><span class="line">这个图里面一共有两个Agent，表示我们启动了2个Flume的代理，或者可以理解为了启动了2个flume的进程。</span><br><span class="line">首先看左边这个agent，给他起个名字叫 foo</span><br><span class="line">这里面有一个source，source后面接了3个channel，表示source读取到的数据会重复发送给每个channel，每个channel中的数据都是一样的</span><br><span class="line">针对每个channel都接了一个sink，这三个sink负责读取对应channel中的数据，并且把数据输出到不同的目的地，</span><br><span class="line">sink1负责把数据写到hdfs中</span><br><span class="line">sink2负责把数据写到一个Java消息服务数据队列中</span><br><span class="line">sink3负责把数据写给另一个Agent</span><br><span class="line">注意了，Flume中多个Agent之间是可以连通的，只需要让前面Agent的sink组件把数据写到下一个Agent的source组件中即可。</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">所以sink3就把数据输出到了Agent bar中</span><br><span class="line">在Agent bar中同样有三个组件，source组件其实就获取到了sink3发送过来的数据，然后把数据临时存</span><br><span class="line">储到自己的channel4中，最终再通过sink组件把数据写到其他地方。</span><br><span class="line">这就是这个场景的应用，把采集到的一份数据重复输出到不同的目的地中</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">所以sink3就把数据输出到了Agent bar中</span><br><span class="line">在Agent bar中同样有三个组件，source组件其实就获取到了sink3发送过来的数据，然后把数据临时存储到自己的channel4中，最终再通过sink组件把数据写到其他地方。</span><br><span class="line">这就是这个场景的应用，把采集到的一份数据重复输出到不同的目的地中</span><br></pre></td></tr></table></figure>
 
-<h3 id="flume的汇聚功能"><a href="#flume的汇聚功能" class="headerlink" title="flume的汇聚功能"></a>flume的汇聚功能</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接着再看下面这张图，这张图主要表示了flume的汇聚功能，就是多个Agent采集到的数据统一汇聚到一</span><br><span class="line">个Agent</span><br></pre></td></tr></table></figure>
+<h3 id="flume的汇聚功能"><a href="#flume的汇聚功能" class="headerlink" title="flume的汇聚功能"></a>flume的汇聚功能</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">接着再看下面这张图，这张图主要表示了flume的汇聚功能，就是多个Agent采集到的数据统一汇聚到一个Agent</span><br></pre></td></tr></table></figure>
 
 <p><a href="https://imgtu.com/i/H4ifAA" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/16/H4ifAA.png" alt="H4ifAA.png"></a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面来详细分析一下，</span><br><span class="line">这个图里面一共启动了四个agent，左边的三个agent都是负责采集对应web服务器中的日志数据，数据</span><br><span class="line">采集过来之后统一发送给agent4，最后agent4进行统一汇总，最终写入hdfs。</span><br><span class="line">这种架构的好处是后期如果要修改最终数据的输出目的地，只需要修改agent4中的sink即可，不需要修</span><br><span class="line">改agent1、2、3。</span><br><span class="line">但是这种架构也有弊端，</span><br><span class="line">1. 如果有很多个agent同时向agent4写数据，那么agent4会出现性能瓶颈，导致数据处理过慢</span><br><span class="line">2. 这种架构还存在单点故障问题，如果agent4挂了，那么所有的数据都断了。</span><br><span class="line">不过这些问题可以通过flume中的负载均衡和故障转移机制解决，后面我们会详细分析</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">下面来详细分析一下，</span><br><span class="line">这个图里面一共启动了四个agent，左边的三个agent都是负责采集对应web服务器中的日志数据，数据采集过来之后统一发送给agent4，最后agent4进行统一汇总，最终写入hdfs。</span><br><span class="line">这种架构的好处是后期如果要修改最终数据的输出目的地，只需要修改agent4中的sink即可，不需要修改agent1、2、3。</span><br><span class="line">但是这种架构也有弊端，</span><br><span class="line">1. 如果有很多个agent同时向agent4写数据，那么agent4会出现性能瓶颈，导致数据处理过慢</span><br><span class="line">2. 这种架构还存在单点故障问题，如果agent4挂了，那么所有的数据都断了。</span><br><span class="line">不过这些问题可以通过flume中的负载均衡和故障转移机制解决，后面我们会详细分析</span><br></pre></td></tr></table></figure>
 
 
 
 <h2 id="Flume的三大核心组件"><a href="#Flume的三大核心组件" class="headerlink" title="Flume的三大核心组件"></a>Flume的三大核心组件</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Flume的三大核心组件：</span><br><span class="line">Source：数据源</span><br><span class="line">Channel：临时存储数据的管道</span><br><span class="line">Sink：目的地</span><br><span class="line">接下来具体看一下这三大核心组件都是干什么的</span><br></pre></td></tr></table></figure>
 
-<h3 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Source：数据源：通过source组件可以指定让Flume读取哪里的数据，然后将数据传递给后面的</span><br><span class="line">channel</span><br><span class="line">Flume内置支持读取很多种数据源，基于文件、基于目录、基于TCP\UDP端口、基于HTTP、Kafka的</span><br><span class="line">等等、当然了，如果这里面没有你喜欢的，他也是支持自定义的</span><br></pre></td></tr></table></figure>
+<h3 id="Source"><a href="#Source" class="headerlink" title="Source"></a>Source</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Source：数据源：通过source组件可以指定让Flume读取哪里的数据，然后将数据传递给后面的channel</span><br><span class="line">Flume内置支持读取很多种数据源，基于文件、基于目录、基于TCP\UDP端口、基于HTTP、Kafka的等等、当然了，如果这里面没有你喜欢的，他也是支持自定义的</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这我们挑几个常用的看一下：</span><br><span class="line">Exec Source：实现文件监控，可以实时监控文件中的新增内容，类似于linux中的tail -f 效果。</span><br><span class="line">在这需要注意 tail -F 和 tail -f 的区别</span><br><span class="line">tail -F</span><br><span class="line">等同于–follow&#x3D;name --retry，根据文件名进行追踪，并保持重试，即该文件被删除或改名后，如果</span><br><span class="line">再次创建相同的文件名，会继续追踪</span><br><span class="line">tail -f</span><br><span class="line">等同于–follow&#x3D;descriptor，根据文件描述符进行追踪，当文件改名或被删除，追踪停止</span><br><span class="line">在实际工作中我们的日志数据一般都会通过log4j记录，log4j产生的日志文件名称是固定的，每天定</span><br><span class="line">时给文件重命名</span><br><span class="line">假设默认log4j会向access.log文件中写日志，每当凌晨0点的时候，log4j都会对文件进行重命名，在</span><br><span class="line">access后面添加昨天的日期，然后再创建新的access.log记录当天的新增日志数据。</span><br><span class="line">这个时候如果想要一直监控access.log文件中的新增日志数据的话，就需要使用tail -F</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">在这我们挑几个常用的看一下：</span><br><span class="line">Exec Source：实现文件监控，可以实时监控文件中的新增内容，类似于linux中的tail -f 效果。</span><br><span class="line">在这需要注意 tail -F 和 tail -f 的区别</span><br><span class="line">tail -F</span><br><span class="line">等同于–follow&#x3D;name --retry，根据文件名进行追踪，并保持重试，即该文件被删除或改名后，如果再次创建相同的文件名，会继续追踪</span><br><span class="line">tail -f</span><br><span class="line">等同于–follow&#x3D;descriptor，根据文件描述符进行追踪，当文件改名或被删除，追踪停止</span><br><span class="line">在实际工作中我们的日志数据一般都会通过log4j记录，log4j产生的日志文件名称是固定的，每天定时给文件重命名</span><br><span class="line">假设默认log4j会向access.log文件中写日志，每当凌晨0点的时候，log4j都会对文件进行重命名，在access后面添加昨天的日期，然后再创建新的access.log记录当天的新增日志数据。</span><br><span class="line">这个时候如果想要一直监控access.log文件中的新增日志数据的话，就需要使用tail -F</span><br></pre></td></tr></table></figure>
 
 <h4 id="Exec-Source"><a href="#Exec-Source" class="headerlink" title="Exec Source"></a>Exec Source</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">NetCat TCP&#x2F;UDP Source： 采集指定端口(tcp、udp)的数据，可以读取流经端口的每一行数据</span><br><span class="line">Spooling Directory Source：采集文件夹里新增的文件</span><br><span class="line">Kafka Source：从Kafka消息队列中采集数据</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">注意了，前面我们分析的这几个source组件，其中execsource 和 kafkasource在实际工作中是最</span><br><span class="line">常见的，可以满足大部分的数据采集需求。</span><br></pre></td></tr></table></figure>
 
@@ -1228,9 +1911,9 @@
 
 
 
-<h3 id="sink"><a href="#sink" class="headerlink" title="sink"></a>sink</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Sink：从Channel中读取数据并存储到指定目的地</span><br><span class="line">Sink的表现形式有很多：打印到控制台、HDFS、Kafka等，</span><br><span class="line">注意：Channel中的数据直到进入目的地才会被删除，当Sink写入目的地失败后，可以自动重写，</span><br><span class="line">不会造成数据丢失，这块是有一个事务保证的。</span><br></pre></td></tr></table></figure>
+<h3 id="sink"><a href="#sink" class="headerlink" title="sink"></a>sink</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Sink：从Channel中读取数据并存储到指定目的地</span><br><span class="line">Sink的表现形式有很多：打印到控制台、HDFS、Kafka等，</span><br><span class="line">注意：Channel中的数据直到进入目的地才会被删除，当Sink写入目的地失败后，可以自动重写，不会造成数据丢失，这块是有一个事务保证的。</span><br></pre></td></tr></table></figure>
 
-<h4 id="常用的sink组件有"><a href="#常用的sink组件有" class="headerlink" title="常用的sink组件有"></a>常用的sink组件有</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Logger Sink：将数据作为日志处理，可以选择打印到控制台或者写到文件中，这个主要在测试的时</span><br><span class="line">候使用</span><br><span class="line">HDFS Sink：将数据传输到HDFS中，这个是比较常见的，主要针对离线计算的场景</span><br><span class="line">Kafka Sink：将数据发送到kafka消息队列中，这个也是比较常见的，主要针对实时计算场景，数据</span><br><span class="line">不落盘，实时传输，最后使用实时计算框架直接处理。</span><br></pre></td></tr></table></figure>
+<h4 id="常用的sink组件有"><a href="#常用的sink组件有" class="headerlink" title="常用的sink组件有"></a>常用的sink组件有</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Logger Sink：将数据作为日志处理，可以选择打印到控制台或者写到文件中，这个主要在测试的时</span><br><span class="line">候使用</span><br><span class="line">HDFS Sink：将数据传输到HDFS中，这个是比较常见的，主要针对离线计算的场景</span><br><span class="line">Kafka Sink：将数据发送到kafka消息队列中，这个也是比较常见的，主要针对实时计算场景，数据不落盘，实时传输，最后使用实时计算框架直接处理。</span><br></pre></td></tr></table></figure>
 
 <h2 id="Flume安装部署"><a href="#Flume安装部署" class="headerlink" title="Flume安装部署"></a>Flume安装部署</h2><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><h3 id="Flume安装部署-1"><a href="#Flume安装部署-1" class="headerlink" title="Flume安装部署"></a>Flume安装部署</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">想要使用Flume采集数据，那肯定要先安装Flume</span><br><span class="line">在这里我重新克隆了一台Linux机器，主机名设置为bigdata04，ip设置为192.168.206.132</span><br><span class="line">屏蔽防火墙，安装jdk并配置环境变量，因为Flume是java开发，所以需要依赖jdk环境</span><br><span class="line"></span><br><span class="line">直接克隆的bigdata01虚拟机的当前状态：ip和hostname需要改，防火墙和java环境已经配置好了，ip映射需要添加</span><br><span class="line">这些工作已经提前做好了，继续往下面分析</span><br></pre></td></tr></table></figure>
 
@@ -1246,6 +1929,9 @@
         <category>大数据开发工程师</category>
         <category>大数据</category>
       </categories>
+      <tags>
+        <tag>Flume</tag>
+      </tags>
   </entry>
   <entry>
     <title>java使用技巧积累</title>
@@ -10662,8 +11348,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>hexo</tag>
         <tag>seo</tag>
+        <tag>hexo</tag>
         <tag>压缩文件</tag>
       </tags>
   </entry>
@@ -10719,8 +11405,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>hexo</tag>
         <tag>seo</tag>
+        <tag>hexo</tag>
         <tag>优化</tag>
       </tags>
   </entry>
@@ -10831,8 +11517,8 @@
         <category>Hexo</category>
       </categories>
       <tags>
-        <tag>nofollw</tag>
         <tag>seo优化</tag>
+        <tag>nofollw</tag>
       </tags>
   </entry>
   <entry>
@@ -11414,9 +12100,9 @@ img:hover {
         <category>Hadoop大数据技术</category>
       </categories>
       <tags>
+        <tag>Hadoop</tag>
         <tag>命令</tag>
         <tag>HDFS</tag>
-        <tag>Hadoop</tag>
       </tags>
   </entry>
   <entry>
@@ -11463,8 +12149,8 @@ img:hover {
         <category>Hadoop大数据技术</category>
       </categories>
       <tags>
-        <tag>HDFS</tag>
         <tag>Hadoop</tag>
+        <tag>HDFS</tag>
         <tag>异常</tag>
       </tags>
   </entry>
@@ -11529,9 +12215,9 @@ img:hover {
         <category>Hadoop大数据技术</category>
       </categories>
       <tags>
+        <tag>Hadoop</tag>
         <tag>命令</tag>
         <tag>HDFS</tag>
-        <tag>Hadoop</tag>
       </tags>
   </entry>
   <entry>
