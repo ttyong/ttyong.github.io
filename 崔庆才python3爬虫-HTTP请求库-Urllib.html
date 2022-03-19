@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="python爬虫,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="使用urrlibUrllib官方文档 是python的内置的HTTP请求库 python3不存在urllib2的说法，统一为urllib* 包括如下四个模块： request  它是最基本的HTTP请求模块，可以用来模拟发送请求。就像在浏览器里输入网址然后回车一样，只需要给库方法传入U R L 以及额外的参数，就可以模拟实现这个过程了  error  异常处理模块，如果出现请求错误，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python的HTTP请求库-Urllib">
+<meta property="og:url" content="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-HTTP%E8%AF%B7%E6%B1%82%E5%BA%93-Urllib.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="使用urrlibUrllib官方文档 是python的内置的HTTP请求库 python3不存在urllib2的说法，统一为urllib* 包括如下四个模块： request  它是最基本的HTTP请求模块，可以用来模拟发送请求。就像在浏览器里输入网址然后回车一样，只需要给库方法传入U R L 以及额外的参数，就可以模拟实现这个过程了  error  异常处理模块，如果出现请求错误，">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/04/G0g65F.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/04/05/GDPj7n.png">
+<meta property="article:published_time" content="2020-04-04T07:03:06.000Z">
+<meta property="article:modified_time" content="2022-03-06T10:05:08.553Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="python爬虫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/04/04/G0g65F.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/崔庆才python3爬虫-HTTP请求库-Urllib.html">
+
+
+
+
+
+  <title>python的HTTP请求库-Urllib | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-HTTP%E8%AF%B7%E6%B1%82%E5%BA%93-Urllib.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">python的HTTP请求库-Urllib</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-04T15:03:06+08:00">
+                2020-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+
+
+<h1 id="使用urrlib"><a href="#使用urrlib" class="headerlink" title="使用urrlib"></a>使用urrlib</h1><p><strong><a href="https://docs.python.Org/3/library/urllib.html" target="_blank" rel="external nofollow noopener noreferrer">Urllib官方文档</a></strong></p>
+<p><em>是python的内置的HTTP请求库</em></p>
+<p>python3不存在urllib2的说法，统一为urllib*</p>
+<h2 id="包括如下四个模块："><a href="#包括如下四个模块：" class="headerlink" title="包括如下四个模块："></a>包括如下四个模块：</h2><ul>
+<li>request</li>
+</ul>
+<p><em>它是最基本的HTTP请求模块，可以用来模拟发送请求。就像在浏览器里输入网址<br>然后回车一样，只需要给库方法传入U R L 以及额外的参数，就可以模拟实现这个过程了</em></p>
+<ul>
+<li>error</li>
+</ul>
+<p><em>异常处理模块，如果出现请求错误，我们可以捕获这些异常，然后进行重试或其他操<br>作以保证程序不会意外终止</em></p>
+<ul>
+<li>parse</li>
+</ul>
+<p><em>一个工具模块，提供了许多URL处理方法，比如拆分、解析 、合并等</em></p>
+<ul>
+<li>robotparser</li>
+</ul>
+<p><em>主要是用来识别网站的robots.txt文件，然后判断哪些网站可以爬，哪些网站不<br>可以爬，它其实用得比较少。</em></p>
+<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p><em>使 用 urllib的 request模块，我们可以方便地实现请求的发送并得到响应</em></p>
+<h3 id="urlopen"><a href="#urlopen" class="headerlink" title="urlopen()"></a>urlopen()</h3><p><strong><a href="https://docs.python.Org/3/library/urllib.request.htmlo" target="_blank" rel="external nofollow noopener noreferrer">urlopen()官方文档</a></strong></p>
+<p><strong>urllib .request</strong>模 块 提 供 了 最 基 本 的 构 造HTTP请 求 的 方 法 ，利用它可以模拟浏览器的一个请求发 起 过 程 ，同 时 它 还 带 有 处 理<strong>授 权 验 证 (authenticaton )</strong>、<strong>重 定 向 (redirection)、 浏 览 器 Cookies</strong>以及其他内容 。</p>
+<h4 id="请求方法urllib-request"><a href="#请求方法urllib-request" class="headerlink" title="请求方法urllib.request"></a>请求方法urllib.request</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line">response = urllib.request.urlopen(url)</span><br><span class="line">print(type(response)) <span class="comment"># &lt;class 'http.client.HTTPResponse'&gt;</span></span><br><span class="line">print(response.read().decode(<span class="string">'utf-8'</span>))</span><br></pre></td></tr></table></figure>
+
+<h5 id="响应response常用方法"><a href="#响应response常用方法" class="headerlink" title="响应response常用方法"></a>响应response常用方法</h5><p><em>response是一个 HTTPResposne 类 型 的 对 象 ，主要包含 read(), readinto(), getheader(name),getheaders(), fileno ()等 方 法 ，以及 msg、 version, status, reason, debuglevel, closed 等 属 性 。</em>  </p>
+<ul>
+<li>read()</li>
+</ul>
+<p><em>获取响应体</em></p>
+<ul>
+<li>status</li>
+</ul>
+<p><em>响应状态码</em></p>
+<ul>
+<li>getheaders()</li>
+</ul>
+<p><em>获取响应头</em></p>
+<ul>
+<li>getheaders(‘server’)</li>
+</ul>
+<p><em>输入参数server，返回服务器类型</em></p>
+<h5 id="链接传参"><a href="#链接传参" class="headerlink" title="链接传参"></a>链接传参</h5><p>urllib.request.urlopen(url, data=None, [timeout, ]*, cafile=None, capath=None, cadefault=False, context=None)  </p>
+<ul>
+<li>data</li>
+</ul>
+<p><em>data参数是可选的。如果要添加该参数，并且<strong>如果它是字节流编码格式的内容，即 bytes类型，则需要通过bytes()方法转化</strong>。另外，如果传递了这个参数，则它的请求方式就不再是GET方式，而是 POST方式</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line"></span><br><span class="line">data = bytes(urllib.parse.urlencode(&#123;<span class="string">'word'</span>: <span class="string">'hello'</span>&#125;), encoding=<span class="string">'utf-8'</span>) <span class="comment"># urlencode()将字典转换为字符串；bytes()将字符串转换为字节流</span></span><br><span class="line">response = urllib.request.urlopen(url, data=data)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong><a href="http://httpbin.org" target="_blank" rel="external nofollow noopener noreferrer">http://httpbin.org</a></strong>提供HTTP测试</p>
+<p><strong><a href="http://httpbin.org/post" target="_blank" rel="external nofollow noopener noreferrer">http://httpbin.org/post</a></strong>提供POST测试</p>
+<ul>
+<li>timeout</li>
+</ul>
+<p><em>timeout参数用于设置超时时间，单位为秒，意思就是如果请求超出了设置的这个时间，还没有得到响应，就会抛出异常。如果不指定该参数，就会使用全局默认时间。</em>  </p>
+<p><strong>超时报urllib.error.URLError</strong></p>
+<p>使用try except:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line"><span class="keyword">import</span> urllib.error</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    response = urllib.request.urlopen(url, timeout=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">except</span> urllib.error.URLError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">if</span> isinstance(e.reason, socket.timeout):</span><br><span class="line">        print(<span class="string">"Time Out"</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>其它参数</li>
+</ul>
+<p><strong>context</strong></p>
+<p><em>它必须是ssl.SSLContext类型，用来指定SSL设置</em></p>
+<p><strong>cafile和capath</strong></p>
+<p><em>这两个参数分别指定C A 证书和它的路径，这个在请求HTTPS链接时会<br>有用</em></p>
+<h3 id="Request"><a href="#Request" class="headerlink" title="Request"></a>Request</h3><p><em>urlopen只能用于简单的请求</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line"></span><br><span class="line">request = urllib.request.Request(url)</span><br><span class="line">response = urllib.request.urlopen(request)</span><br><span class="line">print(response.read().decode(<span class="string">'utf-8'</span>))</span><br></pre></td></tr></table></figure>
+
+<p><em>可以发现，我们依然是用urlopen()方法来发送这个请求，只不过这次该方法的参数不再是URL,而是一个Request类型的对象。通过构造这个数据结构，一方面我们可以将请求独立成一个对象，另一方面可更加丰富和灵活地配置参数。</em></p>
+<h4 id="构造请求"><a href="#构造请求" class="headerlink" title="构造请求"></a>构造请求</h4><p>  *<em>urllib.request.Request(url, data=None, headers={},origin_req_host=None, unverifiable=False, method=None)  *</em></p>
+<ul>
+<li>data</li>
+</ul>
+<p><em>data 如果要传，必须传bytes (字节流 )类型的 。如果它是字典，可以先用<br>urllib.parse 模块里的 urlencode()编码</em></p>
+<ul>
+<li>headers</li>
+</ul>
+<p><em>headers是一个字典，它就是请求头，我们可以在构造请求时通过headers参数直接构造，也可以通过调用请求实例的add_header()方法添加。</em>  </p>
+<p><em>添加请求头最常用的用法就是通过修改User-Agent来伪装浏览器，默 认 的 User-Agent是Python-urllib,我们可以通过修改它来伪装浏览器。比如要伪装火狐浏览器，你可以把它设置为：</em><br><strong>Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11</strong>  </p>
+<ul>
+<li>origin_req_host</li>
+</ul>
+<p><em>origin_req_host指的是请求方的host名称或者IP 地址</em></p>
+<ul>
+<li>unverifiable</li>
+</ul>
+<p><em>unverifiable表示这个请求是否是无法验证的，默认是F a ls e ,意思就是说用户没有足够权限来选择接收这个请求的结果。例如，我们请求一个HTML文档中的图片，但是我们没有自动抓取图像的权限，这 时 u nverifiable的值就是True。</em>  </p>
+<ul>
+<li>method</li>
+</ul>
+<p><em>method是一个字符串，用来指示请求使用的方法，比如GET、 POST和 PUT等。</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.request</span><br><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line">dict = &#123;<span class="string">"a"</span>: <span class="string">"b"</span>&#125;</span><br><span class="line">data = bytes(urllib.parse.urlencode(dict), encoding=<span class="string">'utf-8'</span>)</span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'User-Agent'</span>: <span class="string">'.....'</span></span><br><span class="line">    <span class="string">'Host'</span>: <span class="string">'httpbin.org'</span></span><br><span class="line">&#125;</span><br><span class="line">request = urllib.request.Request(url, data=data, headers=headers, method=<span class="string">'POST'</span>)</span><br><span class="line"><span class="comment"># request.add_header('user-agent')也可以</span></span><br><span class="line">response = urllib.request.urlopen(request)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="高级用法"><a href="#高级用法" class="headerlink" title="高级用法"></a>高级用法</h4><h5 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h5><p>[handler官方文档](<a href="https://docs.python" target="_blank" rel="external nofollow noopener noreferrer">https://docs.python</a>.<br>org/3/library/urllib.request.html#urllib.request.BaseHandlero  )</p>
+<p><em>上面无法处理代理，cookies的情况</em></p>
+<p><em>简而言之，我们可以把它理解为各种处理器， 有专门处理登录验证的，有处理 Cookies的，有处理代理设置的。利用它们，我们几乎可以做到HTTP请求中所有的事情。</em>  </p>
+<p><em>首先，介绍一下urllib.request模块里的BaseHandler类 ，它是所有其他Handler的父类， 它提供了最基本的方法，例如 default_open(). protocol_request()等。</em></p>
+<p><strong>有各种Handler子类继承这个BaseHandler类，举例如下 ：</strong></p>
+<p>□ HTTPDefaultErrorHandler： 用于处理HTTP响应错误，错误都会抛岀HTTPError类型的异常。<br>□ HTTPRedirectHandler: 用于处理重定向。<br>□ HTTPCookieProcessor: 用于处理 Cookies<br>□ ProxyHandler： 用于设置代理，默认代理为空。<br>□ HTTPPasswordMgr： 用于管理密码，它维护了用户名和密码的表。<br>□ HTTPBasicAuthHandler： 用于管理认证，如果一个链接打开时需要认证，那么可以用它来解决认证问题。  </p>
+<h6 id="OpenerDirector"><a href="#OpenerDirector" class="headerlink" title="OpenerDirector"></a>OpenerDirector</h6><p><em>那么，为什么要引入Opener呢？因为需要实现更高级的功能。之前使用的Request和 urlopen()相当于类库为你封装好了极其常用的请求方法，利用它们可以完成基本的请求，但是现在不一样了，我们需要实现更高级的功能，所以需要深入一层进行配置，使用更底层的实例来完成操作，所以这里就用到了 0pener</em></p>
+<p><strong>当打开网页弹出提示框要求输入密码，账号时：</strong></p>
+<p><a href="https://imgchr.com/i/G0g65F" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/G0g65F.png" alt="G0g65F.png" border="0"></a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.request <span class="keyword">import</span> HTTPPasswordMgrWithDefaultRealm, HTTPBasicAuthHandler, build_opener</span><br><span class="line"><span class="keyword">from</span> urllib.error <span class="keyword">import</span> URLError</span><br><span class="line">username = <span class="string">'username'</span></span><br><span class="line">password = <span class="string">'password'</span></span><br><span class="line">url = <span class="string">'http://localhost:5000/'</span></span><br><span class="line">p = HTTPPasswordMgrWithDefaultRealm()</span><br><span class="line">p.add_password(<span class="literal">None</span>, url, username, password)</span><br><span class="line">auth_handler = HTTPBasicAuthHandler(p)</span><br><span class="line">opener = build_opener(auth_handler)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	result = opener.open(url)</span><br><span class="line">	html = result.read().decode(<span class="string">'utf-8'</span>)</span><br><span class="line">	print(html)</span><br><span class="line"><span class="keyword">except</span> URLError <span class="keyword">as</span> e:</span><br><span class="line">	print(e.reason)</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.error <span class="keyword">import</span> URLError</span><br><span class="line"><span class="keyword">from</span> urllib.request <span class="keyword">import</span> ProxyHandler, build_opener</span><br><span class="line">proxy_handler = ProxyHandler(&#123;</span><br><span class="line"><span class="string">'http'</span>: <span class="string">'http://127.0.0.1:9743'</span>,</span><br><span class="line"><span class="string">'https'</span>: <span class="string">'https://127.0.0.1:9743'</span></span><br><span class="line">&#125;)</span><br><span class="line">opener = build_opener(proxy_handler)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	response = opener.open(<span class="string">'https://www.baidu.com'</span>)</span><br><span class="line">	print(response.read().decode(<span class="string">'utf-8'</span>))</span><br><span class="line"><span class="keyword">except</span> URLError <span class="keyword">as</span> e:</span><br><span class="line">	print(e.reason)</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="Cookies"><a href="#Cookies" class="headerlink" title="Cookies"></a>Cookies</h6><p><em>Cookies的处理就需要相关的Handler 了</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> http.cookiejar, urllib.request</span><br><span class="line">cookie = http.cookiejar.CookieJar()</span><br><span class="line">handler = urllib.request.HTTPCookieProcessor(cookie)</span><br><span class="line">opener = urllib.request.build_opener(handler)</span><br><span class="line">response = opener.open(<span class="string">'http://www.baidu.com'</span>)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> cookie:</span><br><span class="line">	print(item.name+<span class="string">"="</span>+item.value)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="处理异常"><a href="#处理异常" class="headerlink" title="处理异常"></a>处理异常</h2><h3 id="URLError"><a href="#URLError" class="headerlink" title="URLError"></a>URLError</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> request, error</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    response = request.urlopen(url)</span><br><span class="line"><span class="keyword">except</span> error.URLError <span class="keyword">as</span> e:</span><br><span class="line">    print(e.reason)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="HTTPError"><a href="#HTTPError" class="headerlink" title="HTTPError"></a>HTTPError</h3><p><em>它是URLError的子类，专门用来处理HTTP请求错误</em></p>
+<p> 有如下三个属性：</p>
+<ul>
+<li>code</li>
+</ul>
+<p><em>返 回 HTTP状态码，比如404表示网页不存在， 500表示服务器内部错误等。</em></p>
+<ul>
+<li>reason</li>
+</ul>
+<p><em>同父类一样，用于返回错误的原因。</em></p>
+<ul>
+<li>headers</li>
+</ul>
+<p><em>返回请求头。</em></p>
+<h2 id="解析链接"><a href="#解析链接" class="headerlink" title="解析链接"></a>解析链接</h2><p><em>前面说过， urllib库里还提供了 parse模 块 ，它定义了处理URL的标准接口，例如实现URL各部分的抽取、合并以及链接转换。它支持如下协议的URL处 理 ： file, ftp、 gophers hdl、 http、 https、 imap、<br>mailto、 mms、 news、 nntp、 prosper。、 rsync、 rtsp、 rtspu、 sftp、 sip、 sips、 snews、 svn、 svn+ssh. telnet和 wais</em></p>
+<h3 id="urlparse"><a href="#urlparse" class="headerlink" title="urlparse()"></a>urlparse()</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse</span><br><span class="line"> result=urlparse(<span class="string">'http://www.baidu.com/index.html;user?id=5#comment'</span>)</span><br><span class="line"> print(type(result), result)   </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>&lt;<span class="class"><span class="keyword">class</span> '<span class="title">urllib</span>.<span class="title">parse</span>.<span class="title">ParseResult</span>'&gt;</span></span><br><span class="line"><span class="class">&gt;&gt;&gt; <span class="title">ParseResult</span><span class="params">(scheme=<span class="string">'http'</span>, netloc=<span class="string">'www.baidu.com'</span>, path=<span class="string">'/index.htmT, params='</span>use<span class="string">r', query='</span>id=<span class="number">5</span><span class="string">',</span></span></span></span><br><span class="line"><span class="class"><span class="params"><span class="string">fragment='</span>comment<span class="string">')</span></span></span></span><br></pre></td></tr></table></figure>
+
+<p><em>可以看到，返回结果是一个ParseResult类型的对象，它 包 含 6 个部分，分另U是 scheme, netloc.path、 param， squery， fragment</em></p>
+<p><em>result可以用元组的概念，也可以用属性来获取各部分</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(result[<span class="number">0</span>], result.params)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="urlparse-API"><a href="#urlparse-API" class="headerlink" title="urlparse API"></a>urlparse API</h4><p>urllib.parse.urlparse(urlstring, scheme=’ ‘,  allow_fragments=True)</p>
+<ul>
+<li>urlstring </li>
+</ul>
+<ul>
+<li>scheme</li>
+</ul>
+<p><em>当传入的url没有协议时，可以指定scheme参数为http/https</em></p>
+<p><em>当本身就有协议，有传参为不同的协议，则会输出本身的协议</em></p>
+<ul>
+<li>allow_fragments</li>
+</ul>
+<p><em>设置为false时，结果就不会有fragments这一部分</em></p>
+<p><em>当参数为false且链接中没有params和query时，fragment便会解析为path内容的一部分</em></p>
+<h3 id="urlunparse"><a href="#urlunparse" class="headerlink" title="urlunparse()"></a>urlunparse()</h3><p><em>与urlparse()相反</em></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlunparse</span><br><span class="line">data = [<span class="string">'http'</span>, <span class="string">'www.baidu.com'</span>, <span class="string">'index.html'</span>, <span class="string">'user'</span>, <span class="string">'a=6'</span>, <span class="string">'comment'</span>]</span><br><span class="line">print(urlunparse(data))</span><br><span class="line">&gt;&gt;&gt; http://www.baidu.com/index.html;user?a=6#comment</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="urlsplit"><a href="#urlsplit" class="headerlink" title="urlsplit()"></a>urlsplit()</h3><p><em>这个方法和urlparse()方法非常相似，只不过它不再单独解析params这一部分，只返回5 个结果。上面例子中的params会合 并 到 path中。</em></p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlsplit</span><br><span class="line">result = urlsplit(<span class="string">'http://www.baidu.com/index.html;user?id=5#comment'</span>)</span><br><span class="line">print(result)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>SplitResult(scheme=<span class="string">'http'</span>, netloc=<span class="string">'www.baidu.com'</span>, path=<span class="string">'/index.html;user'</span>, query*<span class="string">'id=5*,</span></span><br><span class="line"><span class="string">fragment』 comment'</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="urlunsplit"><a href="#urlunsplit" class="headerlink" title="urlunsplit()"></a>urlunsplit()</h3><p><em>与 urlunparse()类似，它也是将链接各个部分组合成完整链接的方法，传入的参数也是一个可迭代对象，例如列表、元组等，唯一的区别是长度必须为5。</em>  </p>
+<h3 id="urljoin"><a href="#urljoin" class="headerlink" title="urljoin()"></a>urljoin()</h3><p><em>有了 urlunparse()和 urlunsplit()方 法 ，我们可以完成链接的合并，不过前提必须要有特定长度的对象，链接的每一部分都要清晰分开。</em>  </p>
+<p><em>生成链接还有另一个方法，那 就 是 urljoin()方法。我们可以提供一个base_url (基础链接)作为第一个参数，将新的链接作为第二个参数，该方法会分析base_url的 scheme, netloc和 path这 3个内容并对<strong>新链接缺失</strong>的部分进行补充</em> </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urljoin</span><br><span class="line">print(urljoin(<span class="string">'http://www.baidu.com'</span>, <span class="string">'FAQ.html'</span>))</span><br><span class="line">print(urljoin(<span class="string">'http://www.baidu.com'</span>, <span class="string">'https://cuiqingcai.com/FAO.html'</span>))</span><br><span class="line">print(urljoin(<span class="string">'http://www.baidu.com/about.html'</span>, <span class="string">'https://cuiqingcai.com/FAO.html'</span>))</span><br><span class="line">print(u:rljoin(<span class="string">'http://www.baidu.com/about.html'</span>, <span class="string">'https://cuiqingcai.com/FAO.html?question=2'</span>))</span><br><span class="line">print(urljoin(<span class="string">'http://www.baidu.com?wd=abc'</span>, <span class="string">'https://cuiqingcai.com/index.php'</span>))</span><br><span class="line">print(urljoin('http://www.baidu.com，, '?category=2#comment'))</span><br><span class="line">print(urljoin(<span class="string">'www.baidu.com'</span>, <span class="string">'?category=2#comment'</span>))</span><br><span class="line">print(urljoin(<span class="string">'www.baidu.com#comment'</span>, <span class="string">'?category=2J)</span></span><br><span class="line"><span class="string">              </span></span><br><span class="line"><span class="string">&gt;&gt;&gt;</span></span><br><span class="line"><span class="string">http://www.baidu.com/FAO.html</span></span><br><span class="line"><span class="string">https://cuiqingcai.com/FAO.html</span></span><br><span class="line"><span class="string">https://cuiqingcai.com/FAO.html</span></span><br><span class="line"><span class="string">https://cuiqingcai.com/FAO.html?question=2</span></span><br><span class="line"><span class="string">https://cuiqingcai.com/index.php</span></span><br><span class="line"><span class="string">http://www. baidu. com?ca tego:ry=2#comme nt</span></span><br><span class="line"><span class="string">www.baidu.com?category=2#comment</span></span><br><span class="line"><span class="string">www.baidu.com?category=2</span></span><br></pre></td></tr></table></figure>
+
+<p><em>可以发现， base_url提供了三项内容scheme, netloc和 path。 如果这3 项在新的链接里不存在，就予以补充；如果新的链接存在，就使用新的链接的部分。而 base_url中的 params、 query和 fragment<br>是不起作用的。</em>  </p>
+<h3 id="urlencode"><a href="#urlencode" class="headerlink" title="urlencode()"></a>urlencode()</h3><p><em>它 在 构 造 GET请求参数的时候非常有用</em></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlencode</span><br><span class="line">params = &#123;</span><br><span class="line"><span class="string">'name'</span>: <span class="string">'germey'</span>,</span><br><span class="line"><span class="string">'age'</span>: <span class="number">22</span></span><br><span class="line">&#125;</span><br><span class="line">base_url = <span class="string">'http://www.baidu.com?'</span></span><br><span class="line">url = base_url + urlencode(params)</span><br><span class="line">print(url)</span><br><span class="line">&gt;&gt;&gt; http://www.baidu.com?name=germey&amp;age=22</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="parse-qs"><a href="#parse-qs" class="headerlink" title="parse_qs()"></a>parse_qs()</h3><p><em>有了序列化，必然就有反序列化。如果我们有一串GET请求参数，利 用 parse_qs()方 法 ， 就可以将它转回字典，示例如下</em></p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> parse_qs</span><br><span class="line">query = <span class="string">'name=germey&amp;age=22'</span></span><br><span class="line">print(parse_qs(query))</span><br><span class="line">运行结果如下：</span><br><span class="line">&#123; <span class="string">'name'</span>: [<span class="string">'germey'</span>], <span class="string">'age'</span>: [<span class="string">'22'</span>]&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="parse-qsl"><a href="#parse-qsl" class="headerlink" title="parse_qsl()"></a>parse_qsl()</h3><p><em>另外，还 有 一 个 parse_qsl()方 法 ，它用于将参数转化为元组组成的列表</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> parse_qsl</span><br><span class="line">query = <span class="string">'name=germey&amp;age=22'</span></span><br><span class="line">print(parse_qsl(query))</span><br><span class="line">&gt;&gt;&gt;[(<span class="string">'name'</span>, <span class="string">'germey'</span>), (<span class="string">'age'</span>, <span class="string">'22'</span>)]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="quote"><a href="#quote" class="headerlink" title="quote()"></a>quote()</h3><p><em>该方法可以将内容转化为U RL编码的格式。 U R L 中带有中文参数时，有时可能会导致乱码的问题 ，此时用这个方法可以将中文字符转化为URL编码</em>  </p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line">keyword = <span class="string">'壁纸'</span></span><br><span class="line">url = <span class="string">'https://www.baidu.com/s?wd='</span> + quote(keyword)</span><br><span class="line">prin t(url)</span><br><span class="line">&gt;&gt;&gt; https://www. baidu. com/s?wd=%E 5%A3%81%E7%BA%B8</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="unquote"><a href="#unquote" class="headerlink" title="unquote()"></a>unquote()</h3><p><em>有了 quote。 方法，当然还有unquote()方法，它可以进行URL解 码</em></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> unquote</span><br><span class="line">url = <span class="string">'https://www.baidu.com/s7wdn%E5%A3%81%E7%BA%B8'</span></span><br><span class="line">print(unquote(url))</span><br><span class="line">这是上面得到的URL编码后的结果，这里 利 用 unquote()方法还原，结果如下：</span><br><span class="line">https://www.baidu. com/s?wd=壁纸</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="分析Robots协议"><a href="#分析Robots协议" class="headerlink" title="分析Robots协议"></a>分析Robots协议</h2><h3 id="Robots协议"><a href="#Robots协议" class="headerlink" title="Robots协议"></a>Robots协议</h3><p><em>Robots协议也称作爬虫协议、机器人协议，它的全名叫作网络爬虫排除标准( Robots Exclusion Protocol) , 用来告诉爬虫和搜索引擎哪些页面可以抓取，哪些不可以抓取。它通常是一个叫作robots.txt<br>的文本文件，一般放在网站的根目录下</em>  </p>
+<p><em>robots.txt文件可以为空</em></p>
+<p><em>一个爬虫爬取一个网站时，首先会看是否存在robots.txt,然后在按内容爬取；如果不存在则直接爬取</em></p>
+<p><em>Allow 一 般 和 Disallow 一 起 使 用 ，一般不会单独使用</em></p>
+<ul>
+<li>禁止所有爬虫爬取任何目录</li>
+</ul>
+<p>User-agent: *<br>Disallow: /  </p>
+<ul>
+<li>允许所有爬虫爬取任意目录</li>
+</ul>
+<p>User-agent: *<br>Disallow:  </p>
+<ul>
+<li>禁止所有爬虫爬取某些目录</li>
+</ul>
+<p>User-agent: *<br>Disallow: /private/<br>Disallow: /tmp/  </p>
+<ul>
+<li>只允许某一个爬虫爬取爬取</li>
+</ul>
+<p>User-agent: Webcrawler<br>Disallow:<br>User-agent: *<br>Disallow: /  </p>
+<h3 id="爬虫名称"><a href="#爬虫名称" class="headerlink" title="爬虫名称"></a>爬虫名称</h3><p><em>大家可能会疑惑，爬虫名是哪儿来的？为什么就叫这个名？其实它是有固定名字的了，比如百度的就叫作BaiduSpider</em></p>
+  <img src="https://s1.ax1x.com/2020/04/05/GDPj7n.png" alt="GDPj7n.png" border="0">
+
+
+
+<h3 id="robotparser"><a href="#robotparser" class="headerlink" title="robotparser"></a>robotparser</h3><p>*了 解 Robots协议之后， 我们就可以使用robotparser模块来解析robots.txt 了。该模块提供了一个类 R obotFileParser,它可以根据某网站的robots.txt文件来判断一个爬取爬虫是否有权限来爬取这个</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">urllib.robotparser.RobotFileParser(url)</span><br><span class="line"><span class="comment"># 等同于</span></span><br><span class="line">rp = urllib.robotparser.RobotFileParser()</span><br><span class="line">rp.set_url(url)</span><br></pre></td></tr></table></figure>
+
+<p>这个类常用方法：</p>
+<ul>
+<li><p>set_url</p>
+<p><em>实例化这个类时传入了url，就不需要这个方法了</em></p>
+</li>
+<li><p>read()</p>
+<p><em>读 取 robots.txt文件并进行分析。注意，这个方法执行一个读取和分析操作，如果不调用这个方法，接下来的 判 断 都 会 为F a ls e ,所以一定记得调用这个方法。这个方法不会返回任何内容，但是执行了读取操作。</em>  </p>
+<p><strong>直接传入url和set_url()需要执行read(), 使用parse()不需要使用</strong></p>
+</li>
+<li><p>parse()</p>
+</li>
+</ul>
+<p><em>用来解析robots.txt文件，传入的参数是robots.txt某些行的内容，它会按照robots.txt的语法规则来分析这些内容。</em>  </p>
+<p><strong>传入的可以是数组，元组</strong></p>
+<ul>
+<li><p>can_fetch()</p>
+<p><em>该方法传入两个参数，第一个是U ser-agent,第二个是要抓取的URL。 返回的内容是该搜索引擎是否可以抓取这个U R L ,返回结果是True或 False。</em>  </p>
+</li>
+<li><p>mtime()</p>
+<p><em>该方法传入两个参数，第一个是U ser-agent,第二个是要抓取的URL。 返回的内容是该搜索引擎是否可以抓取这个U R L ,返回结果是True或 False。</em>  </p>
+</li>
+<li><p>modified()</p>
+<p><em>它同样对长时间分析和抓取的搜索爬虫很有帮助，将当前时间设置为上次抓取和分析robots.txt的时间。</em>  </p>
+</li>
+</ul>
+<p><em>使用can_fetch()</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.robotparser <span class="keyword">import</span> RobotFileParser</span><br><span class="line"></span><br><span class="line">rp = RobotFileParser(<span class="string">'url/robots.txt'</span>)</span><br><span class="line">rp.read()</span><br><span class="line">print(rp.can_fetch(<span class="string">'*'</span>, <span class="string">'某个url'</span>))</span><br></pre></td></tr></table></figure>
+
+<p><em>使用parse()</em></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> urllib.robotparser <span class="keyword">import</span> RobotParser</span><br><span class="line"><span class="keyword">from</span> urllib.request <span class="keyword">import</span> urlopen</span><br><span class="line"></span><br><span class="line">rp = RobotFileParser()</span><br><span class="line">rp.parse(urlopen(<span class="string">'url/robots.txt'</span>).read().decode(<span class="string">'utf-8'</span>).split(<span class="string">'\n'</span>))</span><br><span class="line">print(rp.can_fetch(<span class="string">'*'</span>, url))</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<hr>
+<blockquote>
+<p>问候不一定要郑重其事，但一定要真诚感人。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-HTTP%E8%AF%B7%E6%B1%82%E5%BA%93-Urllib.html">python的HTTP请求库-Urllib</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年04月04日 - 15:04</p>
+  <p><span>最后更新:</span>2022年03月06日 - 18:03</p>
+  <p><span>原始链接:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-HTTP%E8%AF%B7%E6%B1%82%E5%BA%93-Urllib.html" title="python的HTTP请求库-Urllib">http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-HTTP%E8%AF%B7%E6%B1%82%E5%BA%93-Urllib.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-HTTP%E8%AF%B7%E6%B1%82%E5%BA%93-Urllib.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python%E7%88%AC%E8%99%AB/" rel="tag"><i class="fa fa-tag"></i> python爬虫</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/hexo%E6%96%87%E7%AB%A0%E5%86%85%E5%BC%95%E7%94%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E6%96%87%E7%AB%A0.html" rel="next" title="hexo文章内引用自己的文章">
+                <i class="fa fa-chevron-left"></i> hexo文章内引用自己的文章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/python%E7%88%AC%E8%99%AB-%E6%8F%90%E9%AB%98%E7%88%AC%E8%99%AB%E6%95%88%E7%8E%87.html" rel="prev" title="python爬虫-提高爬虫效率">
+                python爬虫-提高爬虫效率 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">276</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">42</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">109</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用urrlib"><span class="nav-number">1.</span> <span class="nav-text">使用urrlib</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#包括如下四个模块："><span class="nav-number">1.1.</span> <span class="nav-text">包括如下四个模块：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发送请求"><span class="nav-number">1.2.</span> <span class="nav-text">发送请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#urlopen"><span class="nav-number">1.2.1.</span> <span class="nav-text">urlopen()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求方法urllib-request"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">请求方法urllib.request</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#响应response常用方法"><span class="nav-number">1.2.1.1.1.</span> <span class="nav-text">响应response常用方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#链接传参"><span class="nav-number">1.2.1.1.2.</span> <span class="nav-text">链接传参</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Request"><span class="nav-number">1.2.2.</span> <span class="nav-text">Request</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构造请求"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">构造请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高级用法"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">高级用法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Handler"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">Handler</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#OpenerDirector"><span class="nav-number">1.2.2.2.1.1.</span> <span class="nav-text">OpenerDirector</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#代理"><span class="nav-number">1.2.2.2.1.2.</span> <span class="nav-text">代理</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Cookies"><span class="nav-number">1.2.2.2.1.3.</span> <span class="nav-text">Cookies</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理异常"><span class="nav-number">1.3.</span> <span class="nav-text">处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#URLError"><span class="nav-number">1.3.1.</span> <span class="nav-text">URLError</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPError"><span class="nav-number">1.3.2.</span> <span class="nav-text">HTTPError</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析链接"><span class="nav-number">1.4.</span> <span class="nav-text">解析链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#urlparse"><span class="nav-number">1.4.1.</span> <span class="nav-text">urlparse()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#urlparse-API"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">urlparse API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#urlunparse"><span class="nav-number">1.4.2.</span> <span class="nav-text">urlunparse()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#urlsplit"><span class="nav-number">1.4.3.</span> <span class="nav-text">urlsplit()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#urlunsplit"><span class="nav-number">1.4.4.</span> <span class="nav-text">urlunsplit()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#urljoin"><span class="nav-number">1.4.5.</span> <span class="nav-text">urljoin()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#urlencode"><span class="nav-number">1.4.6.</span> <span class="nav-text">urlencode()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parse-qs"><span class="nav-number">1.4.7.</span> <span class="nav-text">parse_qs()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parse-qsl"><span class="nav-number">1.4.8.</span> <span class="nav-text">parse_qsl()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#quote"><span class="nav-number">1.4.9.</span> <span class="nav-text">quote()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unquote"><span class="nav-number">1.4.10.</span> <span class="nav-text">unquote()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析Robots协议"><span class="nav-number">1.5.</span> <span class="nav-text">分析Robots协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Robots协议"><span class="nav-number">1.5.1.</span> <span class="nav-text">Robots协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#爬虫名称"><span class="nav-number">1.5.2.</span> <span class="nav-text">爬虫名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#robotparser"><span class="nav-number">1.5.3.</span> <span class="nav-text">robotparser</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">243.6k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

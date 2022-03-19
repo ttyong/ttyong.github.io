@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="TianYong&#39;s Blog">
 <meta property="og:description" content="写linux的shell脚本方法积累案例112345678910111213#!&#x2F;bin&#x2F;bash# 循环向文件中生成数据# 下面括号里没空格会报错while [ &quot;1&quot;&#x3D;&quot;1&quot; ]do        # 获取当前时间戳        curr_time&#x3D;&#96;date +%s&#96;        # 获">
 <meta property="article:published_time" content="2022-02-18T06:58:58.000Z">
-<meta property="article:modified_time" content="2022-02-20T03:00:27.913Z">
+<meta property="article:modified_time" content="2022-03-03T08:51:44.373Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
 
@@ -395,7 +395,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  316
+                  371
                 </span>
               
 
@@ -435,13 +435,17 @@
         <hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
-<h1 id="写linux的shell脚本方法积累"><a href="#写linux的shell脚本方法积累" class="headerlink" title="写linux的shell脚本方法积累"></a>写linux的shell脚本方法积累</h1><h1 id="案例1"><a href="#案例1" class="headerlink" title="案例1"></a>案例1</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line"># 循环向文件中生成数据</span><br><span class="line"># 下面括号里没空格会报错</span><br><span class="line">while [ &quot;1&quot;&#x3D;&quot;1&quot; ]</span><br><span class="line">do</span><br><span class="line">        # 获取当前时间戳</span><br><span class="line">        curr_time&#x3D;&#96;date +%s&#96;</span><br><span class="line">        # 获取当前主机名</span><br><span class="line">        name&#x3D;&#96;hostname&#96;</span><br><span class="line">        echo $&#123;name&#125;_$&#123;curr_time&#125; &gt;&gt; &#x2F;data&#x2F;log&#x2F;networkLogUploadToHdfsExample&#x2F;access.l</span><br><span class="line">og</span><br><span class="line">        sleep 1</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h1 id="写linux的shell脚本方法积累"><a href="#写linux的shell脚本方法积累" class="headerlink" title="写linux的shell脚本方法积累"></a>写linux的shell脚本方法积累</h1><h2 id="案例1"><a href="#案例1" class="headerlink" title="案例1"></a>案例1</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line"># 循环向文件中生成数据</span><br><span class="line"># 下面括号里没空格会报错</span><br><span class="line">while [ &quot;1&quot;&#x3D;&quot;1&quot; ]</span><br><span class="line">do</span><br><span class="line">        # 获取当前时间戳</span><br><span class="line">        curr_time&#x3D;&#96;date +%s&#96;</span><br><span class="line">        # 获取当前主机名</span><br><span class="line">        name&#x3D;&#96;hostname&#96;</span><br><span class="line">        echo $&#123;name&#125;_$&#123;curr_time&#125; &gt;&gt; &#x2F;data&#x2F;log&#x2F;networkLogUploadToHdfsExample&#x2F;access.l</span><br><span class="line">og</span><br><span class="line">        sleep 1</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 
 <h2 id="案例二-写Flume进程的监控脚本"><a href="#案例二-写Flume进程的监控脚本" class="headerlink" title="案例二 写Flume进程的监控脚本"></a>案例二 写Flume进程的监控脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line">monlist &#x3D; &#96;cat monlist.conf&#96;</span><br><span class="line">echo &quot;start check&quot;</span><br><span class="line">for item in $&#123;monlist&#125;</span><br><span class="line">do</span><br><span class="line">    # 设置字段分隔符</span><br><span class="line">    OLD_IFS&#x3D;$IFS</span><br><span class="line">    IFS&#x3D;&quot;&#x3D;&quot;</span><br><span class="line">    # 把一行内容转成多列[数组] </span><br><span class="line">    arr&#x3D;($item) </span><br><span class="line">    # 获取等号左边的内容</span><br><span class="line">    name&#x3D;$&#123;arr[0]&#125;</span><br><span class="line">    # 获取等号右边的内容</span><br><span class="line">    script&#x3D;$&#123;arr[1]&#125;</span><br><span class="line">    echo &quot;time is:&quot;&#96;date +&quot;%Y-%m-%d %H:%M:%S&quot;&#96;&quot; check &quot;$name</span><br><span class="line">    if [ &#96;jps -m|grep $name | wc -l&#96; -eq 0 ]</span><br><span class="line">    then</span><br><span class="line">    # 发短信或者邮件告警</span><br><span class="line">    echo &#96;date +&quot;%Y-%m-%d %H:%M:%S&quot;&#96;$name &quot;is none&quot;</span><br><span class="line">    sh -x .&#x2F;$&#123;script&#125;</span><br><span class="line">    fi</span><br><span class="line">    done</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 myconfFile]# vim monlist.conf </span><br><span class="line">load-failover.conf &#x3D; startExample.sh</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 myconfFile]# vim startExample.sh</span><br><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line">flume_path &#x3D; &#x2F;data&#x2F;soft&#x2F;apache-flume-1.9.0-bin</span><br><span class="line">nohup $&#123;flume_path&#125;&#x2F;bin&#x2F;flume-ng --name a1 --conf $&#123;flume_path&#125;&#x2F;conf --conf-file $&#123;flume_</span><br><span class="line">path&#125;&#x2F;conf&#x2F;myconfFile&#x2F;load-failover.conf &amp;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3"><a href="#3" class="headerlink" title="3"></a>3</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 sparkjars]# vi wordCountJob.sh</span><br><span class="line">spark-submit \</span><br><span class="line">--class com.imooc.scala.WordCountScala \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode client \</span><br><span class="line">--executor-memory 1G \</span><br><span class="line">--num-executors 1 \</span><br><span class="line">db_spark-1.0-SNAPSHOT-jar-with-dependencies.jar \</span><br><span class="line">hdfs:&#x2F;&#x2F;bigdata01:9000&#x2F;test&#x2F;hello.txt</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">想写成多行时，在上一行+空格+\</span><br></pre></td></tr></table></figure>
 
 
 
@@ -481,7 +485,7 @@
   <p><span>本文标题:</span><a href="/%E5%86%99linux%E7%9A%84shell%E8%84%9A%E6%9C%AC%E6%96%B9%E6%B3%95%E7%A7%AF%E7%B4%AF.html">写linux的shell脚本方法积累</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月18日 - 14:02</p>
-  <p><span>最后更新:</span>2022年02月20日 - 11:02</p>
+  <p><span>最后更新:</span>2022年03月03日 - 16:03</p>
   <p><span>原始链接:</span><a href="/%E5%86%99linux%E7%9A%84shell%E8%84%9A%E6%9C%AC%E6%96%B9%E6%B3%95%E7%A7%AF%E7%B4%AF.html" title="写linux的shell脚本方法积累">http://tianyong.fun/%E5%86%99linux%E7%9A%84shell%E8%84%9A%E6%9C%AC%E6%96%B9%E6%B3%95%E7%A7%AF%E7%B4%AF.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%86%99linux%E7%9A%84shell%E8%84%9A%E6%9C%AC%E6%96%B9%E6%B3%95%E7%A7%AF%E7%B4%AF.html" aria-label="复制成功！"></i></span>
   </p>
@@ -641,7 +645,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">259</span>
+			  <span class="site-state-item-count">276</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -652,7 +656,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">47</span>
+			  <span class="site-state-item-count">42</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -663,7 +667,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-count">109</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -757,7 +761,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#写linux的shell脚本方法积累"><span class="nav-number">1.</span> <span class="nav-text">写linux的shell脚本方法积累</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#案例1"><span class="nav-number">2.</span> <span class="nav-text">案例1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#案例二-写Flume进程的监控脚本"><span class="nav-number">2.1.</span> <span class="nav-text">案例二 写Flume进程的监控脚本</span></a></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#写linux的shell脚本方法积累"><span class="nav-number">1.</span> <span class="nav-text">写linux的shell脚本方法积累</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#案例1"><span class="nav-number">1.1.</span> <span class="nav-text">案例1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例二-写Flume进程的监控脚本"><span class="nav-number">1.2.</span> <span class="nav-text">案例二 写Flume进程的监控脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3"><span class="nav-number">1.3.</span> <span class="nav-text">3</span></a></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -792,7 +796,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">210.9k</span>
+    <span title="Site words total count">243.6k</span>
   
 </div>
 

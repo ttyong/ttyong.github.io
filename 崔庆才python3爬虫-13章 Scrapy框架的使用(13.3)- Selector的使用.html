@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="python爬虫,Scrapy框架,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用1我们之前介绍了利用Beautiful Soup, pyquery以及正则表达式来提取网页数据，这确实非常方便,而 Scrapy还提供了自己的数据提取方法，即 Selector ( 选择器)。 Selector是基于lxml来构建的，支持XPath选择器、CSS选择器以及正则表达式，功能全面，解析速度和准确度非常">
+<meta property="og:type" content="article">
+<meta property="og:title" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用">
+<meta property="og:url" content="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用1我们之前介绍了利用Beautiful Soup, pyquery以及正则表达式来提取网页数据，这确实非常方便,而 Scrapy还提供了自己的数据提取方法，即 Selector ( 选择器)。 Selector是基于lxml来构建的，支持XPath选择器、CSS选择器以及正则表达式，功能全面，解析速度和准确度非常">
+<meta property="article:published_time" content="2020-03-22T09:26:28.000Z">
+<meta property="article:modified_time" content="2022-03-19T13:08:12.822Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="python爬虫">
+<meta property="article:tag" content="Scrapy框架">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/崔庆才python3爬虫-13章 Scrapy框架的使用(13.3)- Selector的使用.html">
+
+
+
+
+
+  <title>崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-22T17:26:28+08:00">
+                2020-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="崔庆才python3爬虫-13章-Scrapy框架的使用-Selector的使用"><a href="#崔庆才python3爬虫-13章-Scrapy框架的使用-Selector的使用" class="headerlink" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用"></a>崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们之前介绍了利用Beautiful Soup, pyquery以及正则表达式来提取网页数据，这确实非常方便,而 Scrapy还提供了自己的数据提取方法，即 Selector ( 选择器)。 Selector是基于lxml来构建的，支持XPath选择器、CSS选择器以及正则表达式，功能全面，解析速度和准确度非常高</span><br></pre></td></tr></table></figure>
+
+<h2 id="直接使用"><a href="#直接使用" class="headerlink" title="直接使用"></a>直接使用</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Selector个可以独立使用的模块。我们可以直接利用S elector这个类来构建一个选择器对象,然后调用它的相关方法如xpath()、css()等来提取数据。</span><br><span class="line">例如，针对一段HTML代码，我们可以用如下方式构建S elector对象来提取数据：</span><br><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Selector</span><br><span class="line">body = <span class="string">'&lt;htm lxheacl&gt;&lt;title&gt;Hello World&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;/bodyx/html&gt;'</span></span><br><span class="line">selector = Selector(text=body)</span><br><span class="line">title = selector.xpath(<span class="string">'//title/text()).extract_first()</span></span><br><span class="line"><span class="string">print(title )</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">运行结果如下所示：</span><br><span class="line">Hello World</span><br><span class="line">我们在这里没有在Scrapy框架中运行，而是把 Scrapy中的 Selector单独拿出来使用了，构建的时候传入t e x t 参数，就生成了一个S electo r选择器对象，然后就可以像前面我们所用的Scrapy中的解析方式一样，调用xpath()、css()等方法来提取了。</span><br><span class="line">在这里我们查找的是源代码中的title中的文本，在XPath选择器最后加text() 方法就可以实现文本的提取了。</span><br><span class="line">以上内容就是Selector的直接使用方式。同 Beautiful Soup等库类似， Selector其实也是强大的网页解析库。如果方便的话，我们也可以在其他项目中直接使用Selector来提取数据。</span><br><span class="line">接下来，我们用实例来详细讲解Selector的用法。</span><br></pre></td></tr></table></figure>
+
+<h2 id="scrapy-shell"><a href="#scrapy-shell" class="headerlink" title="scrapy shell"></a>scrapy shell</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">由于Selector主要是与Scrapy结合使用，如 Scrapy的回调函数中的参数response直接调用xpath()或者css()方法来提取数据，所以在这里我们借助Scrapy shell来模拟Scrapy请求的过程，来讲解相关的提取方法</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">我们用官方文档的一个样例页面来做演不:http://doc.scrapy.org/en/latest/_static/selectors-sample1.html0</span><br><span class="line">        </span><br><span class="line">开启Scrapy shell, 在命令行输入如下命令：</span><br><span class="line">scrapy shell http://doc.scrapy.org/en/latest/_static/selectors-samplel.html</span><br><span class="line">    </span><br><span class="line">我们就进入到Scrapy shell模式。这个过程其实是， Scmpy发起了一次请求，请求的URL就是刚才</span><br><span class="line">命令行下输入的U R L ,然后把一些可操作的变量传递给我们，如 request. response等</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们可以在命令行模式下输入命令调用对象的一些操作方法，回车之后实时显示结果。这与</span><br><span class="line">Python的命令行交互模式是类似的。</span><br><span class="line">接下来，演示的实例都将页面的源码作为分析目标，页面源码如下所示：</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">（因为很多网站都有反爬机制,其实使用 scrapy shell 的时候就是以 scrapy 爬虫的标志进行访问的，所以网站回拒绝爬虫的服务，返回 <span class="number">403</span>）</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>(只治标，不治本)在使用scrapy 的时候在最后加上 -s USER-AGENT=<span class="string">"Mozills/5.0"</span></span><br><span class="line"></span><br><span class="line">scrapy shell <span class="string">"https://movie.douban.com"</span> -s USER_AGENT=<span class="string">'Mozills/5.0’</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2.</span>(半治标半治本)</span><br><span class="line">修改scrapy 中 setting.py 文件的 USER-AGENT</span><br><span class="line">　　　　修改前：</span><br><span class="line"><span class="comment">#USER_AGENT = 'yi (+http://www.yourdomain.com)'</span></span><br><span class="line">　　    修改后：</span><br><span class="line">USER_AGENT = <span class="string">'Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0'</span></span><br><span class="line">　　</span><br><span class="line">注意：</span><br><span class="line">　　这里的 scrapy 只能在 scrapy 中使用，直接在cmd 中使用不生效，这就是作者说的半指标半治本</span><br><span class="line">scrapy shell https://movie.douban.com/top250</span><br><span class="line">我们可以看见返回成功的信息：</span><br><span class="line">response   &lt;<span class="number">200</span> https://movie.douban.com/top250&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3.</span>(治愈)</span><br><span class="line">　直接修改 python 的defult_setting.py 文件里默认的 USER-AGENT值</span><br><span class="line">（那么之后不管实在项目中还是再cmd中使用 scrapy shell ，都是以浏览器的标识阱行访问网站的）、</span><br><span class="line">　那么 找到 defult_setting.py 文件的位置；</span><br><span class="line">　一般在你安装 python 的目录下的 /lib/site-package/scrapy/deting.py中 找到 user-agent进行修改：</span><br><span class="line">　　　　修改前：</span><br><span class="line">USER_AGENT = <span class="string">'Scrapy/%s (+http://scrapy.org)'</span> % import_module(<span class="string">'scrapy'</span>).__version__</span><br><span class="line">　　　　修改后：</span><br><span class="line">USER_AGENT = <span class="string">'Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0'</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="XPath选择器"><a href="#XPath选择器" class="headerlink" title="XPath选择器"></a>XPath选择器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">进入Scrapy shell之后，我们将主要操作response这个变量来进行解析。因为我们解析的是HTML代码 ， Selector将自动使用HTML语法来分析。</span><br><span class="line">response有一个属性selector ,我们调用response.selector返回的内容就相当于用response的</span><br><span class="line">body构造了一个Selector对象。通过 这 个Selector对象我们可以调用解析方法如xpath()、css()等 ，</span><br><span class="line">通过向方法传入XPath或 CSS选择器参数就可以实现信息的提取。</span><br><span class="line">我们用一个实例感受一下，如下所示：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我们用一个实例感受一下，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result = response.selector.xpath(<span class="string">'//a'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result</span><br><span class="line">[&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="imagel.html"&gt;Name: My image 1 &lt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="image2.html"&gt;Name: My image 2 &lt;*&gt;,</span></span><br><span class="line"><span class="string">&lt;Selector xpath='</span>//a<span class="string">' data='</span>&lt;a href=<span class="string">"image3.html"</span>&gt;Name: My image <span class="number">3</span> &lt;*&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="image4.html"&gt;Name: My image 4 &lt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="images.html"&gt;Name: My image 5 &lt;*&gt;]</span></span><br><span class="line"><span class="string">&gt;&gt;&gt; type(result)</span></span><br><span class="line"><span class="string">scrapy.selector.unified.SelectorList</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">打印结果的形式是Selector组成的列表，其 实 它 是 S electorL ist类 型 ， SelectorList和 Selector都</span><br><span class="line">可以继续调用xpath()和 css()等方法来进一步提取数据。</span><br><span class="line">在上面的例子中，我们提取了 a 节点。接下来，我们尝试继续调用xpath()方法来提取a节点内 包含的img节点 ，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.xpath(<span class="string">'./img'</span>)</span><br><span class="line">[&lt;Selector xpath=<span class="string">'./img'</span> dmta=<span class="string">'&lt;img src="imagel_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image2_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image3_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image4_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image5_thumb.jpg"&gt;'</span>&gt;]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我们获得了a节点里面的所有img节点，结果为<span class="number">5</span></span><br><span class="line">值得注意的是，选择器的最前方加.(点)，这代表提取元素内部的数据，如果没有加点，则代表从根节点开始提取。此处我们用了./img的提取方式，则代表从 a 节点里进行提取。如果此处我们用//img ,则还是从html节点里进行提取。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">我们刚才使用了response.selector.xpath()方法对数据进行了提取。 Scrapy提供了两个实用的快</span><br><span class="line">捷方法， response.xpath()和 response.css(), 它们二者的功能完全等同于 response. selector.xpath()和 response.selector.css()o 方便起见，后面我们统一直接调用response的 xpath()和 css()方法进</span><br><span class="line">行选择。</span><br><span class="line"></span><br><span class="line">现在我们得到的是SelectorList类型的变量，该变量是由Selector对象组成的列表。我们可以用索引单独取出其中某个Selector元素，如下所示：</span><br><span class="line">» &gt; result[<span class="number">0</span>]</span><br><span class="line">&lt;Selector xpath = <span class="string">'//a'</span> data=<span class="string">'&lt;a href="imagel.html"&gt;Name: My image 1 &lt;'</span>&gt;</span><br><span class="line"></span><br><span class="line">我们可以像操作列表一样操作这个SelectorList</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">但是现在获取的内容是Selector或者SelectorList类型，并不是真正的文本内容。那么具体的内容怎么提取呢？</span><br><span class="line">比如我们现在想提取出a节点元素，就可以利用extract ()方法，如下所示：</span><br><span class="line">» &gt; result.extract()</span><br><span class="line">[ <span class="string">'&lt;a href=" imagel.html"&gt;Name:My image1&lt;brximg src= "im a g e l_ th u m b .jp g "x/a &gt; '</span>, <span class="string">'&lt;a href="im age2. html"&gt;Name:</span></span><br><span class="line"><span class="string">My image 2 &lt; brxim g src="im age2_thum b.jpg"x/a&gt;'</span>, <span class="string">' &lt;a h re f ="image3. html"&gt;Name: My image 3 &lt; brxim g</span></span><br><span class="line"><span class="string">src="image3_thumb.jpg"x/a&gt;'</span>, <span class="string">'&lt;a href ="image4.html"&gt;Name: My image 4 &lt;brximg src="image4_thumb.jpg"x/a&gt;'</span>,</span><br><span class="line"><span class="string">' &lt;a h re f=" images. htm l" &gt;Name: My image 5 &lt; b rxim g src="im age5_thum b.jpg"x/a&gt;, ]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> 这里使用了extract()方法，我们就可以把真实需要的内容获取下来。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">我们还可以改写XPath表达式，来选取节点的内部文本和属性，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'//a/text()'</span>).extract()</span><br><span class="line">[ <span class="string">' Name: My image 1 '</span>, <span class="string">'Name: My image 2 '</span> , <span class="string">'Name: My image 3 '</span>, <span class="string">' Name: My image 4 '</span> , <span class="string">'Name: My image 5 '</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>re sponse .xpath(<span class="string">'//a/@href'</span> ).extract()</span><br><span class="line">[ <span class="string">'im a g e l.h tm l'</span>, <span class="string">'im ag e2.h tm l'</span>, <span class="string">' image3. h tm l'</span>, <span class="string">'im ag e4.h tm l'</span>, <span class="string">'im ag e5.h tm l'</span>]</span><br><span class="line"></span><br><span class="line"> 我们只需要再加一层/text()就可以获取节点的内部文本，或者加一层/@href就可以获取节点的href属性。其中，@符号后面内容就是要获取的属性名称。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">但是这里有一个问题：如果符合要求的节点只有一个，那么返回的结果会是什么呢？我们再用一个实例来感受一下，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'//a[@href= "imagel.html"]/text()'</span> ) .extract()</span><br><span class="line">[<span class="string">'Name: My image1'</span>]</span><br><span class="line"></span><br><span class="line">我们用属性限制了匹配的范围，使 XPath只可以匹配到一个元素。然后用 extract()方法提取结果，其结果还是一个列表形式，其文本是列表的第一个元素。但很多情况下，我们其实想要的数据就是第一个元素内容，这里我们通过加一个索引来获取，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'//a [@href="imagel.html"]/text ()'</span>) .extract()[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="string">' Name: My image 1 '</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">但是，这个写法很明显是有风险的。一旦XPath有问题，那么extract()后的结果可能是一个空列表。如果我们再用索引来获取，那不就会可能导致数组越界吗？</span><br><span class="line">所以，另外一个方法可以专门提取单个元素，它叫作extract_first() 我们可以改写上面的例子</span><br><span class="line">如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath (<span class="string">'//a [@href="imagel.html"]/text()'</span>).ex tract_first()</span><br><span class="line"><span class="string">' Name: My image 1 '</span></span><br><span class="line">这样，我们直接利用e x tra c t_ first()方法将匹配的第一个结果提取出来，同时我们也不用担心数组越界的问题。</span><br><span class="line">另外我们也可以为extract_first()方法设置一个默认值参数,这样当XPath规则提取不到内容时会直接使用默认值。例 如 将 XPath改成一个不存在的规则，重新执行代码，如下所示：</span><br><span class="line">&gt; » response.xpath (<span class="string">'//a[@href="imagel"]/text()'</span>).extract_ first()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'//a[@href="im ag el"]/text()'</span>).extract_ first(<span class="string">'DefaultImage'</span>)</span><br><span class="line"><span class="string">'DefaultImage'</span></span><br><span class="line">这里 如果XPath匹配不到任何元素，调用extract_first()会返回空，也不会报错。</span><br><span class="line"></span><br><span class="line">在第二行代码中，我们还传递了一个参数当作默认值，如 Default Image0 这样如果XPath匹配不到结果的话，返回值会使用这个参数来代替，可以看到输出正是如此。</span><br><span class="line">现在为止，我们了解了 Scrapy中 的 XPath的相关用法，包括嵌套查询、提取内容、提取单个内容、获取文本和属性等。</span><br></pre></td></tr></table></figure>
+
+<h3 id="XPath用法总结"><a href="#XPath用法总结" class="headerlink" title="XPath用法总结"></a>XPath用法总结</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>找标签</span><br><span class="line">./xxx</span><br><span class="line">//xxx</span><br><span class="line">/xxx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2.</span>获取内容</span><br><span class="line">response.xpath(...../xxxx/text())</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3.</span>获取真实标签</span><br><span class="line">response.xpath(.../xxxx).extract()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4.</span>获取属性</span><br><span class="line">response.xpath(.../xxxx/@herf) <span class="comment"># @符号后面内容就是要获取的属性名</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5.</span>属性限制</span><br><span class="line">response.xpath(<span class="string">'//a[@href="imagel.html"]/text()'</span> )</span><br></pre></td></tr></table></figure>
+
+<h2 id="CSS选择器"><a href="#CSS选择器" class="headerlink" title="CSS选择器"></a>CSS选择器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">接下来，我们看看CSS选择器的用法</span><br><span class="line">Scrapy的选择器同时还对接了CSS选择器，使用response.css()方法可以使用CSS选择器来选择对应的元素。</span><br><span class="line">例如在上文我们选取了所有的a节点，那么CSS选择器同样可以做到，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.css(<span class="string">'a'</span>)</span><br><span class="line">[&lt; S elector xp a th = <span class="string">'d e sce n d a n t-o r-se lf: :a '</span> data=<span class="string">'&lt;a h re f= "imagel.html"&gt;Name: My image 1 &lt; '</span>&gt; ,</span><br><span class="line">&lt;S elector xp a th = <span class="string">'d e sce n d a n t-o r-se lf: :a '</span> data=<span class="string">'&lt;a h re f= "image2. h tm l" &gt;Name: My image 2 &lt; '</span>&gt; ,</span><br><span class="line">&lt;S elector xp a th = <span class="string">'d e sce n d a n t-o r-se lf: :a '</span> data=<span class="string">'&lt;a h re f= "image3. html"&gt;Name: My image 3 &lt; &gt;</span></span><br><span class="line"><span class="string">&lt;S elector xp a th = '</span>d e sce n d a n t-o r-se lf: :a <span class="string">' data='</span>&lt;a h re f= <span class="string">"image4. html"</span>&gt;Name: My image <span class="number">4</span> &lt; <span class="string">'&gt; ,</span></span><br><span class="line"><span class="string">&lt;S elector xp a th = '</span>d e sce n d a n t-o r-se lf: :a <span class="string">' data='</span>&lt;a h re f= <span class="string">"images. h tm l"</span> &gt;Name: My image <span class="number">5</span> &lt; <span class="string">'&gt; ]</span></span><br><span class="line"><span class="string">同样，调 用 ex tract()方法就可以提取出节点，如下所示：</span></span><br><span class="line"><span class="string">» &gt; re s p o n s e .c s s ('</span>a <span class="string">').e x tra c t。</span></span><br><span class="line"><span class="string">[ '</span>&lt;a h re f=<span class="string">" im age l. h tm l"</span> &gt;Name: My image <span class="number">1</span> &lt; brx im g src = <span class="string">"im a g e l_ th u m b .jp g "</span>x/a &gt; <span class="string">', '</span>&lt;a h re f=<span class="string">" image2. htm l"</span> &gt;Name:</span><br><span class="line">My image <span class="number">2</span> &lt; brx im g src=<span class="string">"im age2 _thu m b.jp g"</span>x/a &gt; <span class="string">', '</span>&lt;a href=<span class="string">"image3.html"</span>&gt;Name: My image <span class="number">3</span> &lt; brx im g</span><br><span class="line">src="image3_thumb.jpg"&gt;&lt;/a&gt;*, '&lt;a hre f=" image4.html"&gt;Name: My image 4 &lt;brxim g src="image4_thumb.jp g " x /a &gt; ',</span><br><span class="line"><span class="string">' &lt;a h re f ="image5.html"&gt;Name: My image 5 &lt; brx im g src="image5_thumb. jp g " x / a &gt; '</span>]</span><br><span class="line">用法和 XPath选择是完全一样的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">另外，我们也可以进行属性选择和嵌套选择，如下所示：</span><br><span class="line">&gt; » response.css(<span class="string">'a [h re f="im a g e l. html"]'</span>).extract()</span><br><span class="line">[ <span class="string">'&lt;a href="imagel.htm l"&gt;Name: My image 1 &lt; brx im g src = "im a g e l_ th u m b .jp g "x/a &gt; '</span>]</span><br><span class="line">&gt; » response.css(<span class="string">'a[href="imagel.html"] img'</span>).extract()</span><br><span class="line">[ <span class="string">'&lt;img src=" imagel_thumb. jp g " &gt; '</span>]</span><br><span class="line"></span><br><span class="line">这里用[href=<span class="string">"image.html"</span>]限定了href属性，可以看到匹配结果就只有一个了。另外如果想找a节点内的 img节点，只需要再加一个空格和img即可。选择器的写法和标准CSS选择器写法如出一辙</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们也可以使用extract_first()方法提取列表的第一个元素，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.css(,a[href=<span class="string">"imagel.html"</span>] img<span class="string">').extract_fi:rst()</span></span><br><span class="line"><span class="string">'</span>&lt;img src=<span class="string">"imagel_thumb•jpg"</span>&gt;<span class="string">'</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">接下来的两个用法不太一样。节点的内部文本和属性的获取是这样实现的，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.css(<span class="string">'a[href="imagel.html"]::text'</span>).extract_first()</span><br><span class="line"><span class="string">'Name: My image 1 '</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.css(<span class="string">'a[href="imagel.html"] img::attr(src)'</span>).extract_first()</span><br><span class="line"><span class="string">'imagel_thumb.jpg</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">获取文本和属性需要用::te x t和 ：：a ttr ()的写法。而其他库如Beautiful Soup或 pyquery都有单独</span><br><span class="line">的方法。</span><br><span class="line">另外， CSS选择器和XPath选择器一样可以嵌套选择。我们可以先用XPath选择器选中所有a 节</span><br><span class="line">点 ，再利用CSS选择器选中img节点，再 用 XPath选择器获取属性。我们用一个实例来感受一下，如</span><br><span class="line">下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'//a'</span>).css(<span class="string">'img'</span>).xpath(<span class="string">'@src'</span>).extract()</span><br><span class="line">[<span class="string">'imagel_thumb.jpg'</span>, <span class="string">'image2_thumb.jpg'</span>, <span class="string">'image3_thumb.jpg'</span>, <span class="string">'image4_thumb.jpg'</span>, <span class="string">'image5_thumb.jpg'</span>]</span><br><span class="line">我们成功获取了所有img节点的 sr c 属性。</span><br><span class="line">因此，我们可以随意使用xpath()和 css()方法二者自由组合实现嵌套查询，二者是完全兼容的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="css用法总结"><a href="#css用法总结" class="headerlink" title="css用法总结"></a>css用法总结</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>获取文本</span><br><span class="line">response.css(<span class="string">'xxxx::text'</span>).extract_first()</span><br><span class="line"><span class="number">2.</span>获取属性</span><br><span class="line">response.css(<span class="string">'xxxx::attr(xxx)'</span>).extract_first()</span><br><span class="line"><span class="number">3.</span>获取标签</span><br><span class="line">response.css(<span class="string">'a'</span>)</span><br><span class="line"><span class="number">4.</span>限制属性</span><br><span class="line">response.css(<span class="string">'a[href="xxxx"]'</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="正则匹配"><a href="#正则匹配" class="headerlink" title="正则匹配"></a>正则匹配</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Scrapy的选择器还支持正则匹配。比如，在示例的a 节点中的文本类似于Name: My image1 , 现在我们只想把Name:后面的内容提取出来，这时就可以借助re()方法，实现如下：</span><br><span class="line">&gt;&gt;&gt;response.xpath(<span class="string">'//a/text()'</span>).re(<span class="string">'Name:\s(.*)'</span>)</span><br><span class="line">[<span class="string">'My image 1 '</span>, <span class="string">'My image 2 '</span>, <span class="string">'My image 3 1, '</span>My image <span class="number">4</span> <span class="string">', '</span>My image <span class="number">5</span> <span class="string">']</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> 我们给re()方法传了一个正则表达式，其中(.*)就是要匹配的内容，输出的结果就是正则表达式</span></span><br><span class="line"><span class="string">匹配的分组，结果会依次输出。</span></span><br><span class="line"><span class="string">如果同时存在两个分组，那么结果依然会被按序输出，如下所示:</span></span><br><span class="line">&gt;&gt;&gt; response.xpath('//a/text()').re('(.*?):\s(.*)')</span><br><span class="line">[<span class="string">'Name'</span>, <span class="string">'My image 1 '</span>, <span class="string">'Name'</span>, <span class="string">'My image 2 '</span>, <span class="string">'Name'</span>, <span class="string">'My image 3 '</span>Name<span class="string">', '</span>My image <span class="number">4</span> <span class="string">', '</span>Name<span class="string">', '</span>My image</span><br><span class="line"><span class="number">5</span> <span class="string">']</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> 类 </span></span><br><span class="line"><span class="string"> 似 extract_first()方法，re_first()方法可以选取列表的第一个元素，用法如下:</span></span><br><span class="line">&gt;&gt;&gt; response.xpath('//a/text()').re_first('(.*?):\s(.*)')</span><br><span class="line"><span class="number">1</span>Name1</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'//a/text()'</span>).re_first(<span class="string">'Name:\s(.*)'</span>)</span><br><span class="line"><span class="string">'My image 1</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">不论正则匹配了几个分组，结果都会等于列表的第一个元素。</span><br><span class="line">值得注意的是， response对象不能直接调用：re()和 re _ first()方法。如果想要对全文进行正则匹</span><br><span class="line">配，可以先调用xpath()方法再正则匹配，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.re(<span class="string">'Name:\s(.*)'</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File <span class="string">"&lt;console&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line"><span class="number">13486</span> 第 <span class="number">13</span>章 Scrapy框架的使用</span><br><span class="line">AttributeError: <span class="string">'HtmlResponse'</span> object has no attribute <span class="string">'re'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>response.xpath(<span class="string">'.,).re('</span>Name:\s(.*)&lt;br&gt;,)</span><br><span class="line">[<span class="string">'My image 1 '</span>, <span class="string">'My image 2 '</span>My image <span class="number">3</span> <span class="string">', '</span>My image <span class="number">4</span> <span class="string">', '</span>My image <span class="number">5</span> <span class="string">']</span></span><br><span class="line"><span class="string">&gt;&gt;&gt; response.xpath('</span>.,).re_first(<span class="string">'Name:\s(.*)&lt;br&gt;,)</span></span><br><span class="line"><span class="string">'</span>My image <span class="number">1</span> <span class="string">'</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> 通过上面的例子，我们可以看到，直接调用re()方法会提示没有re属性。但是这里首先调用了xpath ('</span>.<span class="string">')选中全文，然后调用re()和 re_first()方法，就可以进行正则匹配了。</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<hr>
+<blockquote>
+<p>没有伞的孩子，必须努力奔跑!</p>
+</blockquote>
+<p>Typewriter Mode** 已开启。</p>
+<p>可以在<code>视图</code>菜单中关闭</p>
+<p>不再显示关闭</p>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html">崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年03月22日 - 17:03</p>
+  <p><span>最后更新:</span>2022年03月19日 - 21:03</p>
+  <p><span>原始链接:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用">http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python%E7%88%AC%E8%99%AB/" rel="tag"><i class="fa fa-tag"></i> python爬虫</a>
+          
+            <a href="/tags/Scrapy%E6%A1%86%E6%9E%B6/" rel="tag"><i class="fa fa-tag"></i> Scrapy框架</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.1%2013.2)%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%A5%E9%97%A8.html" rel="next" title="崔庆才python3爬虫-13章 Scrapy框架的使用">
+                <i class="fa fa-chevron-left"></i> 崔庆才python3爬虫-13章 Scrapy框架的使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95.html" rel="prev" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法">
+                崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">276</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">42</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">109</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#崔庆才python3爬虫-13章-Scrapy框架的使用-Selector的使用"><span class="nav-number">1.</span> <span class="nav-text">崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#直接使用"><span class="nav-number">1.1.</span> <span class="nav-text">直接使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scrapy-shell"><span class="nav-number">1.2.</span> <span class="nav-text">scrapy shell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.1.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XPath选择器"><span class="nav-number">1.3.</span> <span class="nav-text">XPath选择器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#XPath用法总结"><span class="nav-number">1.3.1.</span> <span class="nav-text">XPath用法总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS选择器"><span class="nav-number">1.4.</span> <span class="nav-text">CSS选择器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#css用法总结"><span class="nav-number">1.4.1.</span> <span class="nav-text">css用法总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则匹配"><span class="nav-number">1.5.</span> <span class="nav-text">正则匹配</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">243.6k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
