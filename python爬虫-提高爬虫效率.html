@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="TianYong&#39;s Blog">
 <meta property="og:description" content="python爬虫-提高爬虫效率httpx1比 requests 更强大 Python 库，让你的爬虫效率提高一倍  什么是协程？1简单来说，协程是一种基于线程之上，但又比线程更加轻量级的存在。对于系统内核来说，协程具有不可见的特性，所以这种由 程序员自己写程序来管理 的轻量级线程又常被称作 &quot;用户空间线程&quot;  协程比多线程好在哪呢？1231. 线程的控制权在操作系统手中，">
 <meta property="article:published_time" content="2020-04-04T07:55:30.000Z">
-<meta property="article:modified_time" content="2022-03-13T05:20:02.507Z">
+<meta property="article:modified_time" content="2022-03-29T12:44:23.168Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="python爬虫">
 <meta property="article:tag" content="async">
@@ -481,7 +481,8 @@
 
 <h3 id="进程池或线程池"><a href="#进程池或线程池" class="headerlink" title="进程池或线程池"></a>进程池或线程池</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> multiprocessing.dummy <span class="keyword">import</span> Pool</span><br><span class="line"></span><br><span class="line">start_time = time.time()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request</span><span class="params">(url)</span>:</span></span><br><span class="line">    print(<span class="string">"正在下载"</span>, url)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    print(<span class="string">"下载完成"</span>, url)</span><br><span class="line"></span><br><span class="line">url_list = [</span><br><span class="line">    <span class="string">"https://www.baidu.com"</span>,</span><br><span class="line">    <span class="string">"https://www.taobao.com"</span>,</span><br><span class="line">    <span class="string">"https://www.jd.com"</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">pool = Pool(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">pool.map(request, url_list)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"执行耗时:"</span>, time.time() - start_time)</span><br></pre></td></tr></table></figure>
 
-<h3 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h3><h4 id="协程相关的概念"><a href="#协程相关的概念" class="headerlink" title="协程相关的概念"></a>协程相关的概念</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- event_loop：事件循环，相当于一个无限循环，我们可以把一些函数注册到这个事件循环上，当满足某些条件的时候，函数就会被循环执行。程序是按照设定的顺序从头执行到尾，运行的次数也是完全按照设定。当在编写异步程序时，必然其中有部分程序的运行耗时是比较久的，需要先让出当前程序的控制权，让其在背后运行，让另一部分的程序先运行起来。当背后运行的程序完成后，也需要及时通知主程序已经完成任务可以进行下一步操作，但这个过程所需的时间是不确定的，需要主程序不断的监听状态，一旦收到了任务完成的消息，就开始进行下一步。loop就是这个持续不断的监视器。</span><br><span class="line"></span><br><span class="line">- coroutine：中文翻译叫协程，在 Python 中常指代为协程对象类型，我们可以将协程对象注册到事件循环中，它会被事件循环调用。我们可以使用 async 关键字来定义一个方法，这个方法在调用时不会立即被执行，而是返回一个协程对象。</span><br><span class="line"></span><br><span class="line">- task：任务，它是对协程对象的进一步封装，包含了任务的各个状态。</span><br><span class="line"></span><br><span class="line">- future：代表将来执行或还没有执行的任务，实际上和 task 没有本质区别。</span><br><span class="line"></span><br><span class="line">- 另外我们还需要了解 async&#x2F;await 关键字，它是从 Python 3.5 才出现的，专门用于定义协程。其中，async 定义一个协程，await 用来使挂起阻塞方法的执行。</span><br></pre></td></tr></table></figure>
+<h3 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h3><p><a href="https://github.com/kanadeblisst/aioBUser" target="_blank" rel="external nofollow noopener noreferrer">优质项目</a></p>
+<h4 id="协程相关的概念"><a href="#协程相关的概念" class="headerlink" title="协程相关的概念"></a>协程相关的概念</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- event_loop：事件循环，相当于一个无限循环，我们可以把一些函数注册到这个事件循环上，当满足某些条件的时候，函数就会被循环执行。程序是按照设定的顺序从头执行到尾，运行的次数也是完全按照设定。当在编写异步程序时，必然其中有部分程序的运行耗时是比较久的，需要先让出当前程序的控制权，让其在背后运行，让另一部分的程序先运行起来。当背后运行的程序完成后，也需要及时通知主程序已经完成任务可以进行下一步操作，但这个过程所需的时间是不确定的，需要主程序不断的监听状态，一旦收到了任务完成的消息，就开始进行下一步。loop就是这个持续不断的监视器。</span><br><span class="line"></span><br><span class="line">- coroutine：中文翻译叫协程，在 Python 中常指代为协程对象类型，我们可以将协程对象注册到事件循环中，它会被事件循环调用。我们可以使用 async 关键字来定义一个方法，这个方法在调用时不会立即被执行，而是返回一个协程对象。</span><br><span class="line"></span><br><span class="line">- task：任务，它是对协程对象的进一步封装，包含了任务的各个状态。</span><br><span class="line"></span><br><span class="line">- future：代表将来执行或还没有执行的任务，实际上和 task 没有本质区别。</span><br><span class="line"></span><br><span class="line">- 另外我们还需要了解 async&#x2F;await 关键字，它是从 Python 3.5 才出现的，专门用于定义协程。其中，async 定义一个协程，await 用来使挂起阻塞方法的执行。</span><br></pre></td></tr></table></figure>
 
 <h4 id="创建一个协程对象"><a href="#创建一个协程对象" class="headerlink" title="创建一个协程对象"></a>创建一个协程对象</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">创建一个协程对象，只需要在函数名前加上一个<span class="keyword">async</span>关键字即可</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">request</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"正在下载"</span>)</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    print(<span class="string">"下载完成"</span>)</span><br><span class="line"></span><br><span class="line">c = request()</span><br></pre></td></tr></table></figure>
 
@@ -533,7 +534,7 @@
   <p><span>本文标题:</span><a href="/python%E7%88%AC%E8%99%AB-%E6%8F%90%E9%AB%98%E7%88%AC%E8%99%AB%E6%95%88%E7%8E%87.html">python爬虫-提高爬虫效率</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2020年04月04日 - 15:04</p>
-  <p><span>最后更新:</span>2022年03月13日 - 13:03</p>
+  <p><span>最后更新:</span>2022年03月29日 - 20:03</p>
   <p><span>原始链接:</span><a href="/python%E7%88%AC%E8%99%AB-%E6%8F%90%E9%AB%98%E7%88%AC%E8%99%AB%E6%95%88%E7%8E%87.html" title="python爬虫-提高爬虫效率">http://tianyong.fun/python%E7%88%AC%E8%99%AB-%E6%8F%90%E9%AB%98%E7%88%AC%E8%99%AB%E6%95%88%E7%8E%87.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/python%E7%88%AC%E8%99%AB-%E6%8F%90%E9%AB%98%E7%88%AC%E8%99%AB%E6%95%88%E7%8E%87.html" aria-label="复制成功！"></i></span>
   </p>
@@ -703,7 +704,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">277</span>
+			  <span class="site-state-item-count">291</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -714,7 +715,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">44</span>
+			  <span class="site-state-item-count">45</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -725,7 +726,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">110</span>
+			  <span class="site-state-item-count">113</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -854,7 +855,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">244.5k</span>
+    <span title="Site words total count">280.4k</span>
   
 </div>
 

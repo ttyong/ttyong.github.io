@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="python爬虫,Scrapy框架,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法和Downloader Middleware 的用法1在 Scrapy中，要抓取网站的链接配置、抓取逻辑、解析逻辑里其实都是在Spider中配置的。在前一节实例中，我们发现抓取逻辑也是在Spider中完成的。本节我们就来专门了解一下Spider的基本用法。  Spider的用法Spider运行流程12345678在实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法">
+<meta property="og:url" content="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法和Downloader Middleware 的用法1在 Scrapy中，要抓取网站的链接配置、抓取逻辑、解析逻辑里其实都是在Spider中配置的。在前一节实例中，我们发现抓取逻辑也是在Spider中完成的。本节我们就来专门了解一下Spider的基本用法。  Spider的用法Spider运行流程12345678在实">
+<meta property="article:published_time" content="2020-03-22T09:26:28.000Z">
+<meta property="article:modified_time" content="2022-03-28T09:01:54.540Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="python爬虫">
+<meta property="article:tag" content="Scrapy框架">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/崔庆才python3爬虫-13章(13.4 13.5)  Scrapy框架的使用- Spider的用法和Downloader Middleware 的用法.html">
+
+
+
+
+
+  <title>崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-22T17:26:28+08:00">
+                2020-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  19
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="崔庆才python3爬虫-13章-Scrapy框架的使用-Spider的用法和Downloader-Middleware-的用法"><a href="#崔庆才python3爬虫-13章-Scrapy框架的使用-Spider的用法和Downloader-Middleware-的用法" class="headerlink" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法和Downloader Middleware 的用法"></a>崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法和Downloader Middleware 的用法</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在 Scrapy中，要抓取网站的链接配置、抓取逻辑、解析逻辑里其实都是在Spider中配置的。在前一节实例中，我们发现抓取逻辑也是在Spider中完成的。本节我们就来专门了解一下Spider的基本用法。</span><br></pre></td></tr></table></figure>
+
+<h2 id="Spider的用法"><a href="#Spider的用法" class="headerlink" title="Spider的用法"></a>Spider的用法</h2><h3 id="Spider运行流程"><a href="#Spider运行流程" class="headerlink" title="Spider运行流程"></a>Spider运行流程</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在实现Scrapy爬虫项目时，最核心的类便是Spider类了， 它定义了如何爬取某个网站的流程和解析方式。 简单来讲， Spider要做的事就是如下两件：</span><br><span class="line">□ 定义爬取网站的动作；</span><br><span class="line">□ 分析爬取下来的网页。</span><br><span class="line">对于Spider类来说，整个爬取循环过程如下所述。</span><br><span class="line">□ 以初始的URL初始化Request,并设置回调函数。当该 Request成功请求并返回时， Response生成并作为参数传给该回调函数。</span><br><span class="line">□ 在回调函数内分析返回的网页内容。返回结果有两种形式。一种是解析到的有效结果返回字典或Item对象，它们可以经过处理后(或宜接)保存。另一种是解析得到下一个(如下一页)链接，可以利用此链接构造Request并设置新的回调函数，返回Request等待后续调度。</span><br><span class="line">□ 如果返回的是字典或Item对象，我们可通过Feed Exports等组件将返回结果存入到文件。如果设置了Pipeline的话，我们可以使用Pipeline处 理 (如过滤、修正等) 并保存。</span><br><span class="line">□ 如果返回的是 Reqeust, 那么Request执行成功得到Response之后，Response会被传递给Request中定义的回调函数，在回调函数中我们可以再次使用选择器来分析新得到的网页内容 ，并根据分析的数据生成Item。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Spider类分析"><a href="#Spider类分析" class="headerlink" title="Spider类分析"></a>Spider类分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在上一节的例子中，我们定义的Spider是继承自 scrapy.spiders.Spider, scrapy.spiders.Spider</span><br><span class="line">这个类是最简单最基本的Spider类，其他Spider必须继承这个类。还有后面一些特殊Spider类也都是继承自它。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scrapy.spiders.Spider这个类提供了 start_requests()方法的默认实现，读取并请求start_urls属性，并根据返回的结果调用parse()方法解析结果。它还有如下一些基础属性。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">name： 爬虫名称，是定义Spider名字的字符串。Spider的名字定义了 Scrapy如何定位并初始化Spider,它必须是唯一的。不过我们可以生成多个相同的Spider实例，数量没有限制。</span><br><span class="line"></span><br><span class="line">□ name是Spider最重要的属性。如果 Spider爬取单个网站，一个常见的做法是以该网站的域名名称来命名Spider例如，Spider爬取 mywebsite.com ,该 Spider通常会被命名为mywebsite</span><br><span class="line">□ allowedd_mains 允许爬取的域名，是可选配置，不在此范围的链接不会被跟进爬取。</span><br><span class="line">□ start_urls它是起始URL列表，当我们没有实现start_requests()方法时，默认会从这个列表开始抓取。</span><br><span class="line">□ custom _settings 它是一个字典，是专属于本Spider的配置，此设置会覆盖项目全局的设置。此设置必须在初始化前被更新，必须定义成类变量。</span><br><span class="line">□ crawler。它是由from_crawler()方法设置的，代表的是本Spider类对应的Crawler对象。Crawler对象包含了很多项目组件，利用它我们可以获取项目的一些配置信息，如最常见的获取项目的设置信息，即Settings</span><br><span class="line">□ settings 它是一个Settings对象，利用它我们可以直接获取项目的全局设置变量。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">除了基础属性， Spider还有一些常用的方法。</span><br><span class="line">□ start_requests() 此方法用于生成初始请求，它必须返回一个可迭代对象。此方法会默认使用start_urls 里面的URL来构造Request,而且 Request是GET请求方式。如果我们想在启动时以POST方式访问某个站点，可以直接重写这个方法，发送POST请求时使用FormRequest即可。</span><br><span class="line">□ parse() 当Response没有指定回调函数时，该方法会默认被调用。它负责处理Response,处理返回结果，并从中提取出想要的数据和下一步的请求，然后返回。该方法需要返回一个包含Request或Item 的可迭代对象。</span><br><span class="line">□ closed() 当 Spider关闭时，该方法会被调用，在这里一般会定义释放资源的一些操作或其他收尾操作。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">以上内容可能不太好理解。不过不用担心，后面会有很多使用这些属性和方法的实例。通过这些实例，我们慢慢熟练掌握它们。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-errbacks-to-catch-exceptions-in-request-processing"><a href="#Using-errbacks-to-catch-exceptions-in-request-processing" class="headerlink" title="Using errbacks to catch exceptions in request processing"></a>Using errbacks to catch exceptions in request processing</h3><p><a href="https://docs.scrapy.org/en/latest/topics/request-response.html" target="_blank" rel="external nofollow noopener noreferrer">官方文档</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> scrapy.spidermiddlewares.httperror <span class="keyword">import</span> HttpError</span><br><span class="line"><span class="keyword">from</span> twisted.internet.error <span class="keyword">import</span> DNSLookupError</span><br><span class="line"><span class="keyword">from</span> twisted.internet.error <span class="keyword">import</span> TimeoutError, TCPTimedOutError</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ErrbackSpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">    name = <span class="string">"errback_example"</span></span><br><span class="line">    start_urls = [</span><br><span class="line">        <span class="string">"http://www.httpbin.org/"</span>,              <span class="comment"># HTTP 200 expected</span></span><br><span class="line">        <span class="string">"http://www.httpbin.org/status/404"</span>,    <span class="comment"># Not found error</span></span><br><span class="line">        <span class="string">"http://www.httpbin.org/status/500"</span>,    <span class="comment"># server issue</span></span><br><span class="line">        <span class="string">"http://www.httpbin.org:12345/"</span>,        <span class="comment"># non-responding host, timeout expected</span></span><br><span class="line">        <span class="string">"https://example.invalid/"</span>,             <span class="comment"># DNS error expected</span></span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> u <span class="keyword">in</span> self.start_urls:</span><br><span class="line">            <span class="keyword">yield</span> scrapy.Request(u, callback=self.parse_httpbin,</span><br><span class="line">                                    errback=self.errback_httpbin,</span><br><span class="line">                                    dont_filter=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_httpbin</span><span class="params">(self, response)</span>:</span></span><br><span class="line">        self.logger.info(<span class="string">'Got successful response from &#123;&#125;'</span>.format(response.url))</span><br><span class="line">        <span class="comment"># do something useful here...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">errback_httpbin</span><span class="params">(self, failure)</span>:</span></span><br><span class="line">        <span class="comment"># log all failures</span></span><br><span class="line">        self.logger.error(repr(failure))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># in case you want to do something special for some errors,</span></span><br><span class="line">        <span class="comment"># you may need the failure's type:</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> failure.check(HttpError):</span><br><span class="line">            <span class="comment"># these exceptions come from HttpError spider middleware</span></span><br><span class="line">            <span class="comment"># you can get the non-200 response</span></span><br><span class="line">            response = failure.value.response</span><br><span class="line">            self.logger.error(<span class="string">'HttpError on %s'</span>, response.url)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> failure.check(DNSLookupError):</span><br><span class="line">            <span class="comment"># this is the original request</span></span><br><span class="line">            request = failure.request</span><br><span class="line">            self.logger.error(<span class="string">'DNSLookupError on %s'</span>, request.url)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> failure.check(TimeoutError, TCPTimedOutError):</span><br><span class="line">            request = failure.request</span><br><span class="line">            self.logger.error(<span class="string">'TimeoutError on %s'</span>, request.url)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Accessing-additional-data-in-errback-functions"><a href="#Accessing-additional-data-in-errback-functions" class="headerlink" title="Accessing additional data in errback functions"></a>Accessing additional data in errback functions</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">    request = scrapy.Request(<span class="string">'http://www.example.com/index.html'</span>,</span><br><span class="line">                             callback=self.parse_page2,</span><br><span class="line">                             errback=self.errback_page2,</span><br><span class="line">                             cb_kwargs=dict(main_url=response.url))</span><br><span class="line">    <span class="keyword">yield</span> request</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_page2</span><span class="params">(self, response, main_url)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">errback_page2</span><span class="params">(self, failure)</span>:</span></span><br><span class="line">    <span class="keyword">yield</span> dict(</span><br><span class="line">        main_url=failure.request.cb_kwargs[<span class="string">'main_url'</span>],</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<h3 id="DOWNLOAD-TIMEOUT"><a href="#DOWNLOAD-TIMEOUT" class="headerlink" title="DOWNLOAD_TIMEOUT"></a>DOWNLOAD_TIMEOUT</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Default: <span class="number">180</span></span><br><span class="line"></span><br><span class="line">The amount of time (<span class="keyword">in</span> secs) that the downloader will wait before timing out.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">This timeout can be set per spider using download_timeout spider attribute <span class="keyword">and</span> per-request using download_timeout Request.meta key.</span><br></pre></td></tr></table></figure>
+
+<h3 id="DUPEFILTER-CLASS"><a href="#DUPEFILTER-CLASS" class="headerlink" title="DUPEFILTER_CLASS"></a>DUPEFILTER_CLASS</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Default: <span class="string">'scrapy.dupefilters.RFPDupeFilter'</span></span><br><span class="line"></span><br><span class="line">The <span class="class"><span class="keyword">class</span> <span class="title">used</span> <span class="title">to</span> <span class="title">detect</span> <span class="title">and</span> <span class="title">filter</span> <span class="title">duplicate</span> <span class="title">requests</span>.</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">The</span> <span class="title">default</span> <span class="params">(RFPDupeFilter)</span> <span class="title">filters</span> <span class="title">based</span> <span class="title">on</span> <span class="title">request</span> <span class="title">fingerprint</span> <span class="title">using</span> <span class="title">the</span> <span class="title">scrapy</span>.<span class="title">utils</span>.<span class="title">request</span>.<span class="title">request_fingerprint</span> <span class="title">function</span>. <span class="title">In</span> <span class="title">order</span> <span class="title">to</span> <span class="title">change</span> <span class="title">the</span> <span class="title">way</span> <span class="title">duplicates</span> <span class="title">are</span> <span class="title">checked</span> <span class="title">you</span> <span class="title">could</span> <span class="title">subclass</span> <span class="title">RFPDupeFilter</span> <span class="title">and</span> <span class="title">override</span> <span class="title">its</span> <span class="title">request_fingerprint</span> <span class="title">method</span>. <span class="title">This</span> <span class="title">method</span> <span class="title">should</span> <span class="title">accept</span> <span class="title">scrapy</span> <span class="title">Request</span> <span class="title">object</span> <span class="title">and</span> <span class="title">return</span> <span class="title">its</span> <span class="title">fingerprint</span> <span class="params">(a string)</span>.</span></span><br><span class="line"><span class="class"></span></span><br><span class="line">You can disable filtering of duplicate requests by setting DUPEFILTER_CLASS to 'scrapy.dupefilters.BaseDupeFilter'. Be very careful about this however, because you can get into crawling loops. It’s usually a better idea to set the dont_filter parameter to True on the specific Request that should not be filtered.</span><br></pre></td></tr></table></figure>
+
+<h3 id="Settings-per-spider"><a href="#Settings-per-spider" class="headerlink" title="Settings per-spider"></a>Settings per-spider</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Spiders (See the Spiders chapter <span class="keyword">for</span> reference) can define their own settings that will take precedence <span class="keyword">and</span> override the project ones. They can do so by setting their custom_settings attribute:</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">    name = <span class="string">'myspider'</span></span><br><span class="line"></span><br><span class="line">    custom_settings = &#123;</span><br><span class="line">        <span class="string">'SOME_SETTING'</span>: <span class="string">'some value'</span>,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Downloader-Middleware-的用法"><a href="#Downloader-Middleware-的用法" class="headerlink" title="Downloader Middleware 的用法"></a>Downloader Middleware 的用法</h2><p><a href="https://docs.scrapy.org/en/latest/topics/downloader-middleware.html" target="_blank" rel="external nofollow noopener noreferrer">DOWNLOAD_MIDDLEWARE官方文档</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Downloader Middleware即下载中间件，它是处于Scrapy的Request和 Response之间的处理模块。</span><br><span class="line">我们首先来看看它的架构，如图 <span class="number">13</span>・<span class="number">1</span>所示。</span><br><span class="line">Scheduler从队列中拿出一个Request发送给Downloader执行下载，这个过程会经过Downloader Middleware的处理。另外，当Downloader将Request下载完成得到Response返回给Spider时会再次经过Downloader Middleware处理。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">也就是说，Downloader Middleware在整个架构中起作用的位置是以下两个。</span><br><span class="line">□ 在 Scheduler调度出队列的Request发 送 给 Doanloader下载之前，也就是我们可以在Request执行下载之前对其进行修改。</span><br><span class="line">□ 在下载后生成的Response发送给 Spider之前，也就是我们可以在生成Resposne被 Spider解析之前对其进行修改。</span><br><span class="line">Downloader Middleware的功能十分强大，修改User-Agent、 处理重定向、设置代理、失败重试、设置Cookies等功能都需要借助它来实现。下面我们来了解一下Downloader Middleware的详细用法。</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">需要说明的是， Scrapy其实已经提供了许多Downloader Middleware, 比如负责失败重试、自动重定向等功能的Middleware,它们被DOWNLOADER_MIDDLEWARES_BASE变量所定义。</span><br><span class="line"></span><br><span class="line">DOWNLOADER_MIDDLEWARES_BASE 变量的内容如下所示:</span><br><span class="line">&#123;</span><br><span class="line"><span class="string">'scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware'</span>: <span class="number">100</span>,</span><br><span class="line"><span class="string">'scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware'</span>: <span class="number">300</span>,</span><br><span class="line"><span class="string">'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware'</span>: <span class="number">350</span>,</span><br><span class="line"><span class="string">'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware'</span>: <span class="number">400</span>,</span><br><span class="line"><span class="string">'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware'</span>: <span class="number">500</span>,</span><br><span class="line"><span class="string">'scrapy.downloadermiddlewares.retry.RetryMiddleware'</span>: <span class="number">550</span>,</span><br><span class="line"><span class="number">1</span>scrapy.downloadermiddlewares.ajaxcrawl.AjaxCrawlMiddleware<span class="string">': 560,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware<span class="string">': 580,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware<span class="string">': 590,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.redirect.RedirectMiddleware<span class="string">': 600,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.cookies.CookiesMiddleware<span class="string">': 700,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware<span class="string">': 750,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.stats.DownloaderStats<span class="string">': 850,</span></span><br><span class="line"><span class="string">'</span>scrapy.downloadermiddlewares.htt匹ache.HttpCacheMiddleware<span class="string">': 900,</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  这是一个字典格式，字典的键名是Scrapy内置的Downloader Middleware的名称，键值代表了调用的优先级，优先级是一个数字，(数字越小代表越靠近Scrapy引擎)，数字越大代表越靠近Downloader,数字小的Downloader Middleware会被优先调用。</span></span><br><span class="line"><span class="string">  如果自己定义的Downloader Middleware要添加到项目里， DOWNLOADE R_MIDDLEWARES_BASE变量不能直接修改。 Scrapy提供了另外一个设置变量DOWNLOADER_MIDDLEWARES,我们直接修改这个变量就可以添加自己定义的Downloader Middleware, 以及禁用DOWN LOADER_MIDDLEWARES_BASE里面定义的Downloader Middleware</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">下面我们具体来看看Downloader Middleware的使用方法。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DOWNLOADER_MIDDLEWARE_BASE和DOWNLOADER_MIDDLEWARE列表里的会最终一起排序</span><br><span class="line"></span><br><span class="line">如果想禁用内置的在DOWNLOADER_MIDDLEWARE_BASE里且启用的middleware，那么需要在DOWNLOADER_MIDDLEWARE设置它的值为<span class="literal">None</span>(You should never modify this setting <span class="keyword">in</span> your project, modify DOWNLOADER_MIDDLEWARES instead.)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">(DOWNLOADER_MIDDLEWARE_BASE默认值:https://docs.scrapy.org/en/latest/topics/settings.html<span class="comment">#std-setting-DOWNLOADER_MIDDLEWARES_BASE)</span></span><br><span class="line"></span><br><span class="line">Finally, keep <span class="keyword">in</span> mind that some middlewares may need to be enabled through a particular setting. See each middleware documentation <span class="keyword">for</span> more info.</span><br></pre></td></tr></table></figure>
+
+<h3 id="核心方法"><a href="#核心方法" class="headerlink" title="核心方法"></a>核心方法</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  Scrapy内置的Downloader Middleware为Scrapy提供了基础的功能，但在项目实战中我们往往需要单独定义Downloader Middleware</span><br><span class="line">不用担心，这个过程非常简单，我们只需要实现某几个方法即可。</span><br><span class="line">  每个Downloader Middleware都定义了一个或多个方法的类，核心的方法有如下三个。</span><br><span class="line">□ process_request(request, spider)</span><br><span class="line">□ process_response(request, response, spider)</span><br><span class="line">□ process_exception(request, exception, spider)</span><br><span class="line"></span><br><span class="line">我们只需要实现至少一个方法，就可以定义一个Downloader Middleware</span><br><span class="line">下面我们来看看这三个方法的详细用法。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-request-request-spider"><a href="#process-request-request-spider" class="headerlink" title="process_request(request, spider)"></a>process_request(request, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Request被 Scrapy引擎调度给Downloader之前，process_request()方法就会被调用，也就是在Request从队列里调度出来到Downloader下载执行之前 ，我们都可以用 process_request()方法对Request进行处理。方法的返回值必须为<span class="literal">None</span>，Response对象，Request对象之一，或者抛出IgnoreRequest</span><br><span class="line">异常。</span><br><span class="line"></span><br><span class="line">process_request()方法的参数有如下两个。</span><br><span class="line">□ request,是 Request对象，即被处理的 Request。</span><br><span class="line">□ spider,是 Spdier对象，即此 Request对应的Spider</span><br><span class="line"></span><br><span class="line">返回类型不同，产生的效果也不同。下面归纳一下不同的返回情况。</span><br><span class="line">□ 当返回是<span class="literal">None</span>时，Scrapy将继续处理该Request, 接着执行其他 Downloader Middleware的process_request()方法，一直到 Downloader把 Request执行后得到Response才结束。这个过程其实就是修改Request的过程，不同的Downloader Middleware按照设置的优先级顺序依次</span><br><span class="line">对Request进行修改，最后送至Downloader执行。</span><br><span class="line"></span><br><span class="line">□ 当返回为 Response对象时，更低优先级的Downloader Middleware的 process_request()和process_exception()方法就不会被继续调用，每个 Downloader Middleware的process_response()方法转而被依次调用。调用完毕之后，直接将 Response对象发送给Spider来处理。</span><br><span class="line"></span><br><span class="line">□ 当返回为Request对象时，更低优先级的Downloader Middleware的 process_request()方法会停止执行。这个Request会重新放到调度队列里，其实它就是一个全新的Request,等待被调度。如果被Scheduler调度了，那么所有的 Downloader Middleware 的 process_request()方法会被重新按照顺序执行。</span><br><span class="line"></span><br><span class="line">□ 如果IgnoreRequest异常抛出，则所有的Downloader Middleware的 process_exception()方法会依次执行。如果没有一个方法处理这个异常，那 么 Request的 errorback()方法就会回调。如果该异常还没有被处理，那么它便会被忽略。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-response-request-response-spider"><a href="#process-response-request-response-spider" class="headerlink" title="process_response(request, response, spider)"></a>process_response(request, response, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Downloader执行Request下载之后，会得到对应的Response。Scrapy引擎便会将Response发送给Spider进行解析。在发送之前，我们都可以用process_response()方法来对Response进行处理。方法的返回值必须为Request对象、Response对象之一，或者抛出IgnoreRequest异常。</span><br><span class="line"></span><br><span class="line">process_response()方法的参数有如下三个。</span><br><span class="line">□ request,是 Request对象，即此Response对应的 Request</span><br><span class="line">□ response,是 Response对象，即此被处理的Response</span><br><span class="line">□ spider,是Spider对象，即此Response对应的 Spider</span><br><span class="line"></span><br><span class="line">下面归纳一下不同的返回情况。</span><br><span class="line">□ 当返回为Request对象时，更低优先级的Downloader Middleware的 process_response()方法不会继续调用。该Request对象会重新放到调度队列里等待被调度，它相当于一个全新的Request。然后，该Request会被process_request()方法顺次处理。</span><br><span class="line">□ 当返回为Response对象时，更低优先级的Downloader Middleware的 process_response()方法会继续调用, 继续对该Response对象进行处理。</span><br><span class="line">□如果IgnoreRequest异常抛出，则Request的errorback()方法会回调。如果该异常还没有被处理 ，那么它便会被忽略。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-exception-request-exception-spider"><a href="#process-exception-request-exception-spider" class="headerlink" title="process_exception(request, exception, spider)"></a>process_exception(request, exception, spider)</h4><p><a href="https://blog.csdn.net/sc_lilei/article/details/80702449" target="_blank" rel="external nofollow noopener noreferrer">参考案例</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">当Downloader或process_request()方法抛出异常时，例如抛出 IgnoreRequest异常，process_exception()方法就会被调用。方法的返回值必须为<span class="literal">None</span>、Response对象、Request对象之一。</span><br><span class="line"></span><br><span class="line">process_exception()方法的参数有如下三个。</span><br><span class="line">□ request,是Request对象，即产生异常的Request</span><br><span class="line">□ exception,是Exception对象，即抛出的异常。</span><br><span class="line">□ spdier,是Spider对象，即Request对应的Spider。</span><br><span class="line"></span><br><span class="line">下面归纳一下不同的返回值。</span><br><span class="line">□ 当返回为<span class="literal">None</span>时，更低优先级的Downloader Middleware的 process_exception()会被继续顺次调用，直到所有的方法都被调度完毕。</span><br><span class="line">□ 当返回为 Response对象时，更低优先级的Downloader Middleware的process_exception()方法不再被继续调用，每个Downloader Middleware的 process_response()方法转而被依次调用。</span><br><span class="line">□ 当返回为Request对象时，更低优先级的Downloader Middleware的process_exception()也不再被继续调用，该Request对象会重新放到调度队列里面等待被调度，它相当于一个全新的Request。然后，该 Request又会被process_request()方法顺次处理。</span><br><span class="line"></span><br><span class="line">以上内容便是这三个方法的详细使用逻辑。在使用它们之前，请先对这三个方法的返回值的处理情况有一个清晰的认识。在自定义Downloader Middleware的时候，也一定要注意每个方法的返回类型。</span><br><span class="line"></span><br><span class="line">下面我们用一个案例实战来加深一下对Downloader Middleware用法的理解</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目实战"><a href="#项目实战" class="headerlink" title="项目实战"></a>项目实战</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">新建一个项目，命令如下所示：</span><br><span class="line">scrapy startproject scrapydownloadertest</span><br><span class="line">新建了一个Scrapy项目，名为scrapydownloadertest 进入项目，新建一个</span><br><span class="line"></span><br><span class="line">Spider,命令如下所示:</span><br><span class="line">scrapy genspider httpbin httpbin.org</span><br><span class="line">新建了一个Spider,名为httpbin ,源代码如下所示：</span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HttpbinSpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">	name = <span class="string">'httpbin'</span></span><br><span class="line">    allowed_domains = [<span class="string">'httpbin.org'</span>]</span><br><span class="line">	start_urls = [<span class="string">'http://httpbin.org/'</span>]</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">		<span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">接下来我们修改 start_urls为 ：[http://httpbin.org/get]</span><br><span class="line">随后将 parse()方法添加一行日志输出，将 response变量的text属性输出出来，这样我们便可以看到Scrapy发送的Request信息了。</span><br><span class="line"></span><br><span class="line">修改Spider内容如下所示：</span><br><span class="line"><span class="keyword">import</span> scrapy</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HttpbinSpider</span><span class="params">(scrapy.Spider)</span>:</span></span><br><span class="line">	name = <span class="string">'httpbin'</span></span><br><span class="line">	allowed_domains = [<span class="string">'httpbin.org'</span>]</span><br><span class="line">	start_urls = [<span class="string">'http://httpbin.org/get'</span>]</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">		self.logger.debug(response.text)</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用process-request-设置USER-AGENT"><a href="#使用process-request-设置USER-AGENT" class="headerlink" title="(使用process_request)设置USER_AGENT"></a>(使用process_request)设置USER_AGENT</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">接下来运行此Spider,执行如下命令：</span><br><span class="line">scrapy crawl httpbin</span><br><span class="line">Scrapy运行结果包含Scrapy发送的Request信息, 内容如下所示：</span><br><span class="line">&#123;</span><br><span class="line"><span class="string">"args"</span>： &#123;&#125;,</span><br><span class="line"><span class="string">"headers"</span>: &#123;</span><br><span class="line"><span class="string">"Accept"</span>: <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*； q=0.8"</span>,</span><br><span class="line"><span class="string">"Accept-Encoding"</span>: <span class="string">"gzip,deflate,br"</span>,</span><br><span class="line"><span class="string">"Accept-Language"</span>: <span class="string">"en"</span>,</span><br><span class="line"><span class="string">"Connection"</span>: <span class="string">"close"</span>,</span><br><span class="line"><span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>,</span><br><span class="line"><span class="string">"User-Agent"</span>: <span class="string">"Scrapy/1.4.0 (+http://scrapy.org)"</span></span><br><span class="line">&#125;,</span><br><span class="line"><span class="string">"origin"</span>: <span class="string">"60.207.237.85"</span>,</span><br><span class="line"><span class="string">"url"</span>: <span class="string">"http://httpbin.org/get"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">我们观察一下Headers, Scrapy发送的Request使用的User-Agent是(Scrapy/lda+httpW/scrapy.org),</span><br><span class="line"></span><br><span class="line">这其实是由Scrapy内置的UserAgentMiddleware设置的, UserAgentMiddleware的源码如下所示：</span><br><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> signals</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserAgentMiddleware</span><span class="params">(object)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">_init_</span><span class="params">(self, user_agent=<span class="string">'Scrapy'</span>)</span>:</span></span><br><span class="line">		self.user_agent = user_agent</span><br><span class="line"><span class="meta">	@classmethod</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">from_crawler</span><span class="params">(cls, crawler)</span>:</span></span><br><span class="line">		o = cls(crawler.settings[<span class="string">'USER_AGENT'</span>])</span><br><span class="line">		crawler.signals.connect(o.spider_opened, 					signal=signals.spider_opened)</span><br><span class="line">		<span class="keyword">return</span> o</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">spider_opened</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">        self.user_agent = getatti(spider,<span class="string">'user_agent'</span>, self.user_agent)</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></span><br><span class="line">		<span class="keyword">if</span> self.user_agent:</span><br><span class="line">			request.headers.setdefault(<span class="string">b'User-Agent'</span>, self.user_agent)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在from_crawler()方法中，首先尝试获取settings里面USER_AGENT,然后把USER_AGENT传递给_init_()方法进行初始化，其参数就是user_agent。如果没有传递USER_AGENT参数就默认设置为Scrapy字符串。我们新建的项目没有设置USER_AGENT,所 这里的user_agent变量就是Scrapy接下来，在 process_request()方法中，将user-agent变量设置为headers变量的一个属性，这样就成功设置了User-Agent 因此，User-Agent 就是通过此 Downloader Middleware 的 process_request()方法设置的。</span><br><span class="line"></span><br><span class="line">修改请求时的User-Agent可以有两种方式：一是修改settings里面的 USER_AGENT变量；二是通过Downloader Middleware的process_request()方法来修改。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第一种方法非常简单，我们只需要在setting.py里面加一行USER_AGENT的定义即可：</span><br><span class="line">USER_AGENT = <span class="string">'Moz订la/5.0 (Macintosh; Intel Mac OS X 1O_12_6) AppleWebKit/537.36 (KHTML, like Gecko)</span></span><br><span class="line"><span class="string">Chrome/59.0.3071.115 Safari/537.36'</span></span><br><span class="line"></span><br><span class="line">一般推荐使用此方法来设置。但是如果想设置得更灵活，比如设置随机的User-Agent,那就需要借助Downloader Middleware了。所以接下来我们用 Downloader Middleware实现一个随机 User-Agent的设置。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">在 middlewares.py 里面添加一个RandomUserAgentMiddleware 的类，如下所示：</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RandomUserAgentMiddleware</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">_</span> <span class="title">init_</span> <span class="params">(self)</span>:</span></span><br><span class="line">		self.user_agents = [</span><br><span class="line"><span class="string">'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)'</span>,</span><br><span class="line"><span class="string">'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.2 (KHTML, like Gecko) Chrome/22.0.1216.0</span></span><br><span class="line"><span class="string">Safari/537.2'</span>,<span class="string">'Mozilla/5.0 (Xll; Ubuntu; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0.1'</span></span><br><span class="line">]</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></span><br><span class="line">		request.headers[<span class="string">'User-Agent'</span>] = random.choice(self.user_agents)</span><br><span class="line"></span><br><span class="line">    我们首先在类的 _init_方法中定义了三个不同的 User-Agent,并用一个列表来表示。接下来实现了process_request()方法，它有一个参数request,我们直接修改request的属性即可。在这里我们直接设置了request变量的 headers属性的User-Agent,设置内容是随机选择的User-Agent,这样一个 Downloader Middleware就写好了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">不过，要使之生效我们还需要再去调用这个Downloader Middleware 在 settings.py中，将DOWNLOADER_MIDDLEWARES取消注释，并设置成如下内容：</span><br><span class="line">DOWNLOADER_MIDDLEWARES = &#123;</span><br><span class="line"><span class="string">'scrapydownloadertest.middlewares.RandomUserAgentMiddleware'</span>: <span class="number">543</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">接下来我们重新运行Spider,就可以看到User-Agent被成功修改为列表中所定义的随机的一个User-Agent了 :</span><br><span class="line">&#123;</span><br><span class="line"><span class="string">"args"</span>: &#123;&#125;,</span><br><span class="line"><span class="string">"headers"</span>: &#123;</span><br><span class="line"><span class="string">"Accept"</span>: <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span>,</span><br><span class="line"><span class="string">"Accept-Encoding"</span>: <span class="string">"gzip,deflate,br"</span>,</span><br><span class="line"><span class="string">"Accept-Language"</span>: <span class="string">"en"</span>,</span><br><span class="line"><span class="string">"Connection"</span>: <span class="string">"close"</span>,</span><br><span class="line"><span class="string">"Host"</span>: <span class="string">"httpbin.org"</span>,</span><br><span class="line"><span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9 0 en-US)"</span></span><br><span class="line">&#125;,</span><br><span class="line"><span class="string">"origin"</span>: <span class="string">"60.207.237.85"</span>,</span><br><span class="line"><span class="string">"url"</span>: <span class="string">"http://httpbin.org/get"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">我们就通过实现Downloader Middleware并利用pmcess_request()方法成功设置了随机的User-Agent。</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用process-response"><a href="#使用process-response" class="headerlink" title="使用process_response()"></a>使用process_response()</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">  另外，Downloader Middleware还有process_response()方法。 Downloader对Request执行下载之后会得到Response,随后Scrapy引擎会将Response发送回Spider进行处理。但是在Response被发送给Spider之前，我们同样可以使用process_response()方法对Response进行处理。</span><br><span class="line">  比如这里修改一下Response 的状态码，在 RandomUserAgentMiddleware 添加如下代码：</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_response</span><span class="params">(self, request, response, spider)</span>:</span></span><br><span class="line">	response.status = <span class="number">201</span></span><br><span class="line">	<span class="keyword">return</span> response</span><br><span class="line">我们将response变量的status属性修改为<span class="number">201</span> ,随后将 response返回 ,这个被修改后的Response就会被发送到Spider</span><br><span class="line"></span><br><span class="line">我们再在Spider里面输出修改后的状态码，在 parse()方法中添加如下的输出语句：</span><br><span class="line">self.logger.debug(<span class="string">'Status Code: '</span> + str(response.status))</span><br><span class="line"></span><br><span class="line">重新运行之后，控制台输出了如下内容：</span><br><span class="line">[httpbin] DEBUG: Status Code: <span class="number">201</span></span><br><span class="line"></span><br><span class="line">可以发现， Response的状态码成功修改了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="process-exception"><a href="#process-exception" class="headerlink" title="process_exception"></a>process_exception</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">因此要想对Response进行后处理，就可以借助于process_response()方法。</span><br><span class="line">另外还有一个process_exception()方法，它是用来处理异常的方法。如果需要异常处理的话，我们可以调用此方法。不过这个方法的使用频率相对低一些，在此不用实例演示。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">本节讲解了Downloader Middleware的基本用法。此组件非常重要，是做异常处理和反爬处理的核心。后面我们会在实战中应用此组件来处理代理、 Cookies等内容。</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<blockquote>
+<p>没有伞的孩子，必须努力奔跑!</p>
+</blockquote>
+<p>Typewriter Mode** 已开启。</p>
+<p>可以在<code>视图</code>菜单中关闭</p>
+<p>不再显示关闭</p>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html">崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年03月22日 - 17:03</p>
+  <p><span>最后更新:</span>2022年03月28日 - 17:03</p>
+  <p><span>原始链接:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法">http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python%E7%88%AC%E8%99%AB/" rel="tag"><i class="fa fa-tag"></i> python爬虫</a>
+          
+            <a href="/tags/Scrapy%E6%A1%86%E6%9E%B6/" rel="tag"><i class="fa fa-tag"></i> Scrapy框架</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.10)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Scrapy%E9%80%9A%E7%94%A8%E7%88%AC%E8%99%AB.html" rel="next" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Scrapy通用爬虫">
+                <i class="fa fa-chevron-left"></i> 崔庆才python3爬虫-13章 Scrapy框架的使用-Scrapy通用爬虫
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html" rel="prev" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用">
+                崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">291</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">113</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#崔庆才python3爬虫-13章-Scrapy框架的使用-Spider的用法和Downloader-Middleware-的用法"><span class="nav-number">1.</span> <span class="nav-text">崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法和Downloader Middleware 的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spider的用法"><span class="nav-number">1.1.</span> <span class="nav-text">Spider的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spider运行流程"><span class="nav-number">1.1.1.</span> <span class="nav-text">Spider运行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spider类分析"><span class="nav-number">1.1.2.</span> <span class="nav-text">Spider类分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-errbacks-to-catch-exceptions-in-request-processing"><span class="nav-number">1.1.3.</span> <span class="nav-text">Using errbacks to catch exceptions in request processing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Accessing-additional-data-in-errback-functions"><span class="nav-number">1.1.4.</span> <span class="nav-text">Accessing additional data in errback functions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DOWNLOAD-TIMEOUT"><span class="nav-number">1.1.5.</span> <span class="nav-text">DOWNLOAD_TIMEOUT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DUPEFILTER-CLASS"><span class="nav-number">1.1.6.</span> <span class="nav-text">DUPEFILTER_CLASS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Settings-per-spider"><span class="nav-number">1.1.7.</span> <span class="nav-text">Settings per-spider</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Downloader-Middleware-的用法"><span class="nav-number">1.2.</span> <span class="nav-text">Downloader Middleware 的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用说明"><span class="nav-number">1.2.1.</span> <span class="nav-text">使用说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法"><span class="nav-number">1.2.2.</span> <span class="nav-text">核心方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#process-request-request-spider"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">process_request(request, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#process-response-request-response-spider"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">process_response(request, response, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#process-exception-request-exception-spider"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">process_exception(request, exception, spider)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目实战"><span class="nav-number">1.3.</span> <span class="nav-text">项目实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用process-request-设置USER-AGENT"><span class="nav-number">1.3.1.</span> <span class="nav-text">(使用process_request)设置USER_AGENT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用process-response"><span class="nav-number">1.3.2.</span> <span class="nav-text">使用process_response()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#process-exception"><span class="nav-number">1.3.3.</span> <span class="nav-text">process_exception</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">280.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

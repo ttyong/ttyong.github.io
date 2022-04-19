@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="TianYong&#39;s Blog">
 <meta property="og:description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用1我们之前介绍了利用Beautiful Soup, pyquery以及正则表达式来提取网页数据，这确实非常方便,而 Scrapy还提供了自己的数据提取方法，即 Selector ( 选择器)。 Selector是基于lxml来构建的，支持XPath选择器、CSS选择器以及正则表达式，功能全面，解析速度和准确度非常">
 <meta property="article:published_time" content="2020-03-22T09:26:28.000Z">
-<meta property="article:modified_time" content="2022-03-19T13:08:12.822Z">
+<meta property="article:modified_time" content="2022-03-28T11:49:37.249Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="python爬虫">
 <meta property="article:tag" content="Scrapy框架">
@@ -443,7 +443,8 @@
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">运行结果如下所示：</span><br><span class="line">Hello World</span><br><span class="line">我们在这里没有在Scrapy框架中运行，而是把 Scrapy中的 Selector单独拿出来使用了，构建的时候传入t e x t 参数，就生成了一个S electo r选择器对象，然后就可以像前面我们所用的Scrapy中的解析方式一样，调用xpath()、css()等方法来提取了。</span><br><span class="line">在这里我们查找的是源代码中的title中的文本，在XPath选择器最后加text() 方法就可以实现文本的提取了。</span><br><span class="line">以上内容就是Selector的直接使用方式。同 Beautiful Soup等库类似， Selector其实也是强大的网页解析库。如果方便的话，我们也可以在其他项目中直接使用Selector来提取数据。</span><br><span class="line">接下来，我们用实例来详细讲解Selector的用法。</span><br></pre></td></tr></table></figure>
 
-<h2 id="scrapy-shell"><a href="#scrapy-shell" class="headerlink" title="scrapy shell"></a>scrapy shell</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">由于Selector主要是与Scrapy结合使用，如 Scrapy的回调函数中的参数response直接调用xpath()或者css()方法来提取数据，所以在这里我们借助Scrapy shell来模拟Scrapy请求的过程，来讲解相关的提取方法</span><br></pre></td></tr></table></figure>
+<h2 id="scrapy-shell"><a href="#scrapy-shell" class="headerlink" title="scrapy shell"></a>scrapy shell</h2><p><a href="https://docs.scrapy.org/en/latest/topics/shell.html" target="_blank" rel="external nofollow noopener noreferrer">官方文档</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">由于Selector主要是与Scrapy结合使用，如 Scrapy的回调函数中的参数response直接调用xpath()或者css()方法来提取数据，所以在这里我们借助Scrapy shell来模拟Scrapy请求的过程，来讲解相关的提取方法</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">我们用官方文档的一个样例页面来做演不:http://doc.scrapy.org/en/latest/_static/selectors-sample1.html0</span><br><span class="line">        </span><br><span class="line">开启Scrapy shell, 在命令行输入如下命令：</span><br><span class="line">scrapy shell http://doc.scrapy.org/en/latest/_static/selectors-samplel.html</span><br><span class="line">    </span><br><span class="line">我们就进入到Scrapy shell模式。这个过程其实是， Scmpy发起了一次请求，请求的URL就是刚才</span><br><span class="line">命令行下输入的U R L ,然后把一些可操作的变量传递给我们，如 request. response等</span><br></pre></td></tr></table></figure>
 
@@ -459,15 +460,15 @@
 
 
 
-<h2 id="XPath选择器"><a href="#XPath选择器" class="headerlink" title="XPath选择器"></a>XPath选择器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">进入Scrapy shell之后，我们将主要操作response这个变量来进行解析。因为我们解析的是HTML代码 ， Selector将自动使用HTML语法来分析。</span><br><span class="line">response有一个属性selector ,我们调用response.selector返回的内容就相当于用response的</span><br><span class="line">body构造了一个Selector对象。通过 这 个Selector对象我们可以调用解析方法如xpath()、css()等 ，</span><br><span class="line">通过向方法传入XPath或 CSS选择器参数就可以实现信息的提取。</span><br><span class="line">我们用一个实例感受一下，如下所示：</span><br></pre></td></tr></table></figure>
+<h2 id="XPath选择器"><a href="#XPath选择器" class="headerlink" title="XPath选择器"></a>XPath选择器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">进入Scrapy shell之后，我们将主要操作response这个变量来进行解析。因为我们解析的是HTML代码，Selector将自动使用HTML语法来分析。</span><br><span class="line">response有一个属性selector ,我们调用response.selector返回的内容就相当于用response的body构造了一个Selector对象。通过这个Selector对象我们可以调用解析方法如xpath()、css()等，通过向方法传入XPath或 CSS选择器参数就可以实现信息的提取。</span><br><span class="line">我们用一个实例感受一下，如下所示：</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我们用一个实例感受一下，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result = response.selector.xpath(<span class="string">'//a'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result</span><br><span class="line">[&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="imagel.html"&gt;Name: My image 1 &lt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="image2.html"&gt;Name: My image 2 &lt;*&gt;,</span></span><br><span class="line"><span class="string">&lt;Selector xpath='</span>//a<span class="string">' data='</span>&lt;a href=<span class="string">"image3.html"</span>&gt;Name: My image <span class="number">3</span> &lt;*&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="image4.html"&gt;Name: My image 4 &lt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'//a'</span> data=<span class="string">'&lt;a href="images.html"&gt;Name: My image 5 &lt;*&gt;]</span></span><br><span class="line"><span class="string">&gt;&gt;&gt; type(result)</span></span><br><span class="line"><span class="string">scrapy.selector.unified.SelectorList</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">打印结果的形式是Selector组成的列表，其 实 它 是 S electorL ist类 型 ， SelectorList和 Selector都</span><br><span class="line">可以继续调用xpath()和 css()等方法来进一步提取数据。</span><br><span class="line">在上面的例子中，我们提取了 a 节点。接下来，我们尝试继续调用xpath()方法来提取a节点内 包含的img节点 ，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.xpath(<span class="string">'./img'</span>)</span><br><span class="line">[&lt;Selector xpath=<span class="string">'./img'</span> dmta=<span class="string">'&lt;img src="imagel_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image2_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image3_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image4_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image5_thumb.jpg"&gt;'</span>&gt;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">打印结果的形式是Selector组成的列表，其实它是Selector List类型， SelectorList和Selector都可以继续调用xpath()和css()等方法来进一步提取数据。</span><br><span class="line">在上面的例子中，我们提取了a节点。接下来，我们尝试继续调用xpath()方法来提取a节点内包含的img节点，如下所示：</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.xpath(<span class="string">'./img'</span>)</span><br><span class="line">[&lt;Selector xpath=<span class="string">'./img'</span> dmta=<span class="string">'&lt;img src="imagel_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image2_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image3_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image4_thumb.jpg"&gt;'</span>&gt;,</span><br><span class="line">&lt;Selector xpath=<span class="string">'./img'</span> data=<span class="string">'&lt;img src="image5_thumb.jpg"&gt;'</span>&gt;]</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我们获得了a节点里面的所有img节点，结果为<span class="number">5</span></span><br><span class="line">值得注意的是，选择器的最前方加.(点)，这代表提取元素内部的数据，如果没有加点，则代表从根节点开始提取。此处我们用了./img的提取方式，则代表从 a 节点里进行提取。如果此处我们用//img ,则还是从html节点里进行提取。</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我们获得了a节点里面的所有img节点，结果为<span class="number">5</span></span><br><span class="line">值得注意的是，选择器的最前方加.(点)，这代表提取元素内部的数据，如果没有加点，则代表从根节点开始提取。此处我们用了./img的提取方式，则代表从a节点里进行提取。如果此处我们用//img ,则还是从html节点里进行提取。</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">我们刚才使用了response.selector.xpath()方法对数据进行了提取。 Scrapy提供了两个实用的快</span><br><span class="line">捷方法， response.xpath()和 response.css(), 它们二者的功能完全等同于 response. selector.xpath()和 response.selector.css()o 方便起见，后面我们统一直接调用response的 xpath()和 css()方法进</span><br><span class="line">行选择。</span><br><span class="line"></span><br><span class="line">现在我们得到的是SelectorList类型的变量，该变量是由Selector对象组成的列表。我们可以用索引单独取出其中某个Selector元素，如下所示：</span><br><span class="line">» &gt; result[<span class="number">0</span>]</span><br><span class="line">&lt;Selector xpath = <span class="string">'//a'</span> data=<span class="string">'&lt;a href="imagel.html"&gt;Name: My image 1 &lt;'</span>&gt;</span><br><span class="line"></span><br><span class="line">我们可以像操作列表一样操作这个SelectorList</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">我们刚才使用了response.selector.xpath()方法对数据进行了提取。 Scrapy提供了两个实用的快捷方法，response.xpath()和 response.css(), 它们二者的功能完全等同于 response. selector.xpath()和 response.selector.css()o 方便起见，后面我们统一直接调用response的 xpath()和 css()方法进行选择。</span><br><span class="line"></span><br><span class="line">现在我们得到的是SelectorList类型的变量，该变量是由Selector对象组成的列表。我们可以用索引单独取出其中某个Selector元素，如下所示：</span><br><span class="line">» &gt; result[<span class="number">0</span>]</span><br><span class="line">&lt;Selector xpath = <span class="string">'//a'</span> data=<span class="string">'&lt;a href="imagel.html"&gt;Name: My image 1 &lt;'</span>&gt;</span><br><span class="line"></span><br><span class="line">我们可以像操作列表一样操作这个SelectorList</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">但是现在获取的内容是Selector或者SelectorList类型，并不是真正的文本内容。那么具体的内容怎么提取呢？</span><br><span class="line">比如我们现在想提取出a节点元素，就可以利用extract ()方法，如下所示：</span><br><span class="line">» &gt; result.extract()</span><br><span class="line">[ <span class="string">'&lt;a href=" imagel.html"&gt;Name:My image1&lt;brximg src= "im a g e l_ th u m b .jp g "x/a &gt; '</span>, <span class="string">'&lt;a href="im age2. html"&gt;Name:</span></span><br><span class="line"><span class="string">My image 2 &lt; brxim g src="im age2_thum b.jpg"x/a&gt;'</span>, <span class="string">' &lt;a h re f ="image3. html"&gt;Name: My image 3 &lt; brxim g</span></span><br><span class="line"><span class="string">src="image3_thumb.jpg"x/a&gt;'</span>, <span class="string">'&lt;a href ="image4.html"&gt;Name: My image 4 &lt;brximg src="image4_thumb.jpg"x/a&gt;'</span>,</span><br><span class="line"><span class="string">' &lt;a h re f=" images. htm l" &gt;Name: My image 5 &lt; b rxim g src="im age5_thum b.jpg"x/a&gt;, ]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> 这里使用了extract()方法，我们就可以把真实需要的内容获取下来。</span></span><br></pre></td></tr></table></figure>
 
@@ -533,7 +534,7 @@
   <p><span>本文标题:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html">崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2020年03月22日 - 17:03</p>
-  <p><span>最后更新:</span>2022年03月19日 - 21:03</p>
+  <p><span>最后更新:</span>2022年03月28日 - 19:03</p>
   <p><span>原始链接:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用">http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html" aria-label="复制成功！"></i></span>
   </p>
@@ -614,8 +615,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.1%2013.2)%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%A5%E9%97%A8.html" rel="next" title="崔庆才python3爬虫-13章 Scrapy框架的使用">
-                <i class="fa fa-chevron-left"></i> 崔庆才python3爬虫-13章 Scrapy框架的使用
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CDownloader%20Middleware%20%E7%9A%84%E7%94%A8%E6%B3%95.html" rel="next" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法">
+                <i class="fa fa-chevron-left"></i> 崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法
               </a>
             
           </div>
@@ -624,8 +625,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.4%2013.5)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%E7%9A%84%E7%94%A8%E6%B3%95.html" rel="prev" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法">
-                崔庆才python3爬虫-13章 Scrapy框架的使用-Spider的用法 <i class="fa fa-chevron-right"></i>
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html" rel="prev" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法">
+                崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -701,7 +702,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">277</span>
+			  <span class="site-state-item-count">291</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -712,7 +713,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">44</span>
+			  <span class="site-state-item-count">45</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -723,7 +724,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">110</span>
+			  <span class="site-state-item-count">113</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -852,7 +853,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">244.5k</span>
+    <span title="Site words total count">280.4k</span>
   
 </div>
 

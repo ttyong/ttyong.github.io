@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="python爬虫,Scrapy框架,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法和Item PipelineSpider Middleware的用法 12345678Spider Middleware是介入到Scrapy的 Spider处理机制的钩子框架。我们首先来看看它的架构，如图13-1所示。当Downloader生成Response之后，Response会被发送给Sp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法">
+<meta property="og:url" content="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法和Item PipelineSpider Middleware的用法 12345678Spider Middleware是介入到Scrapy的 Spider处理机制的钩子框架。我们首先来看看它的架构，如图13-1所示。当Downloader生成Response之后，Response会被发送给Sp">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/18/qkSa1P.md.png">
+<meta property="article:published_time" content="2020-03-22T09:26:28.000Z">
+<meta property="article:modified_time" content="2022-03-31T03:07:23.621Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="python爬虫">
+<meta property="article:tag" content="Scrapy框架">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2022/03/18/qkSa1P.md.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/崔庆才python3爬虫-13章(13.6 13.7)  Scrapy框架的使用- Spider Middleware的用法和Item Pipeline.html">
+
+
+
+
+
+  <title>崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-22T17:26:28+08:00">
+                2020-03-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="崔庆才python3爬虫-13章-Scrapy框架的使用-Spider-Middleware的用法和Item-Pipeline"><a href="#崔庆才python3爬虫-13章-Scrapy框架的使用-Spider-Middleware的用法和Item-Pipeline" class="headerlink" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法和Item Pipeline"></a>崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法和Item Pipeline</h1><h2 id="Spider-Middleware的用法"><a href="#Spider-Middleware的用法" class="headerlink" title="Spider Middleware的用法"></a>Spider Middleware的用法</h2><p><a href="https://imgtu.com/i/qkSa1P" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2022/03/18/qkSa1P.md.png" alt="qkSa1P.md.png"></a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Spider Middleware是介入到Scrapy的 Spider处理机制的钩子框架。我们首先来看看它的架构，如图<span class="number">13</span><span class="number">-1</span>所示。</span><br><span class="line">当Downloader生成Response之后，Response会被发送给Spider,在发送给Spider之前，Response会首先经过Spider Middleware处理，当 Spider处理生成Item和Request之后, Item和 Request还会经</span><br><span class="line">过Spider Middleware 的处理。</span><br><span class="line"></span><br><span class="line">Spider Middleware有如下三个作用。</span><br><span class="line">□ 我们可以在Downloader生成的Response发送给 Spider之前，也就是在Response发送给Spider之前对 Response进行处理。</span><br><span class="line">□ 我们可以在Spider生成的Request发送给Scheduler之前，也就是在 Request发送给 Scheduler之前对 Request进行处理。</span><br><span class="line">□ 我们可以在Spider生成的Item发送给Item Pipeline之前，也就是在 Item发送给Item Pipeline之前对 Item 进行处理。</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">需要说明的是，Scrapy其实已经提供了许多Spider Middleware, 它们被 SPIDER_MIDDLEWARES_BASE这个变量所定义。</span><br><span class="line">SPIDER_MIDDLEWARES_BASE 变量的内容如下：</span><br><span class="line">&#123;</span><br><span class="line"><span class="string">'scrapy.spidermiddlewares.httperror.HttpErrorMiddleware'</span>: <span class="number">50</span>,</span><br><span class="line"><span class="string">'scrapy.spidermiddlewares.offsite.OffsiteMiddleware'</span>: <span class="number">500</span>,</span><br><span class="line"><span class="string">'scrapy.spidermiddlewares.referer.RefererMiddleware'</span>: <span class="number">700</span>,</span><br><span class="line"><span class="string">'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware'</span>: <span class="number">800</span>,</span><br><span class="line"><span class="string">'scrapy.spidermiddlewares.depth.DepthMiddleware'</span>: <span class="number">900</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">和Downloader Middleware一样，Spider Middleware首先加入到 SPIDER_MIDDLEWARES设置中，该设置会和Scrapy中 SPIDER_MIDDLEWARES_BASE定义的Spider Middleware合并。然后根据键值的数字优先级排序 ，得到一个有序列表。第一个Middleware是最靠近引擎的，最后一个Middleware是最靠近Spider的〉</span><br></pre></td></tr></table></figure>
+
+<h3 id="核心方法"><a href="#核心方法" class="headerlink" title="核心方法"></a>核心方法</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Scrapy内置的Spider Middleware为Scrapy提供了基础的功能。如果我们想要扩展其功能，只需要实现某几个方法即可。</span><br><span class="line">每个Spider Middleware都定义了以下一个或多个方法的类，核心方法有如下<span class="number">4</span>个。</span><br><span class="line">□ process_spider_input(response, spider)</span><br><span class="line">□ process_spider_output(response, resuIt, spider)</span><br><span class="line">□ process_spider_exception(response, exception, spider)</span><br><span class="line">□ process_start_requests(start_requests, spider)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">只需要实现其中一个方法就可以定义一个Spider Middlewareo 下面我们来看看这<span class="number">4</span> 个方法的详细用法。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-spider-input-response-spider"><a href="#process-spider-input-response-spider" class="headerlink" title="process_spider_input(response, spider)"></a>process_spider_input(response, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">当Response被Spider Middleware处理时，process_spider_input()方法被调用。</span><br><span class="line"></span><br><span class="line">process_spider_input()方法的参数有如下两个。</span><br><span class="line">□ response,是Response对象，即被处理的 Response</span><br><span class="line">□ spider,是Spider对象，即该Response对应的Spider</span><br><span class="line"></span><br><span class="line">□ process_spider_input()应该返回<span class="literal">None</span>或者抛出一个异常。</span><br><span class="line">如果它返回<span class="literal">None</span>, Scrapy将会继续处理该Response, 调用所有其他的Spider Middleware,直到Spider处理该Response</span><br><span class="line">□ 如果它抛出一个异常， Scrapy将不会调用任何其他Spider Middleware的process_spider_input()方法，而调用Request的 errback()方法。 errback的输出将会被重新输入到中间件中，使用</span><br><span class="line">process_spider_output()方法来处理，当其抛出异常时则调用 process_spider_exception()来处理。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-spider-output-response-result-spider"><a href="#process-spider-output-response-result-spider" class="headerlink" title="process_spider_output(response, result, spider)"></a>process_spider_output(response, result, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">当Spider处理Response返回结果时，process_spider_output()方法被调用。</span><br><span class="line">□ process_spider_output()方法的参数有如下三个。</span><br><span class="line">  response,是 Response对象，即生成该输出的Response</span><br><span class="line">  result, 包含Request或Item对象的可迭代对象，即Spider返回的结果。</span><br><span class="line">  spider,是 Spider对象，即其结果对应的Spider。</span><br><span class="line"></span><br><span class="line">process_spider_output()必须返回包含Request或 Item对象的可迭代对象。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-spider-exception-response-exception-spider"><a href="#process-spider-exception-response-exception-spider" class="headerlink" title="process_spider_exception(response, exception, spider)"></a>process_spider_exception(response, exception, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">当Spider或Spider Middleware的process_spider_input()方法抛出异常时，process_spider_exception()方法被调用。</span><br><span class="line"></span><br><span class="line">process_spider_exception()方法的参数有如下三个。</span><br><span class="line">□ response,是Response对象，即异常被抛出时被处理的Response</span><br><span class="line">□ exception,是Exception对象，即被抛出的异常。</span><br><span class="line">□ spider,是 Spider对象，即抛出该异常的Spider</span><br><span class="line"></span><br><span class="line">process_spider_exception()必须要么返回<span class="literal">None</span>,要么返回一个包含Response或Item对象的可迭代对象。</span><br><span class="line"></span><br><span class="line">  如果它返回<span class="literal">None</span>, Scrapy将继续处理该异常，调用其他Spider Middleware中的process_spider_exception()方法，直到所有Spider Middleware都被调用。</span><br><span class="line">  如果它返回一个可迭代对象，则其他Spider Middleware的 process_spider_output()方法被调用，其他的process_spider_exception()不会被调用。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-start-reqeusts-start-requests-spider"><a href="#process-start-reqeusts-start-requests-spider" class="headerlink" title="process_start_reqeusts(start.requests, spider)"></a>process_start_reqeusts(start.requests, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">process_start_requests()方法以Spider启动的Request为参数被调用，执行的过程类似于process_spider_output(),只不过它没有相关联的Response,并且必须返回Request</span><br><span class="line"></span><br><span class="line">process_start_requests()方法的参数有如下两个。</span><br><span class="line">□ start_requests,是包含Request 的可迭代对象，即Start Requests</span><br><span class="line">□ spider,是 Spider对象，即Start Requests所属的Spider</span><br><span class="line"></span><br><span class="line">process_start_requests()必须返回另一个包含Request对象的可迭代对象。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">本节介绍了Spider Middleware 的基本原理和自定义Spider Middleware 的方法。 Spider Middleware</span><br><span class="line">使用的频率不如Downloader Middleware的高，在必要的情况下它可以用来方便数据的处理。</span><br></pre></td></tr></table></figure>
+
+<h2 id="Item-Pipeline"><a href="#Item-Pipeline" class="headerlink" title="Item Pipeline"></a>Item Pipeline</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Item Pipeline是项目管道。在前面我们已经了解了Item Pipeline的基本用法，本节我们再作详细了解它的用法。</span><br><span class="line"></span><br><span class="line">首先我们看看Item Pipeline在 Scrapy中的架构，如图<span class="number">13</span><span class="number">-1</span>所示。</span><br><span class="line">图中的最左侧即为Item Pipeline,它的调用发生在Spider产生Item之后。当 Spider解析完Response之后，Item就会传递到Item Pipeline,被定义的 Item Pipeline组件会顺次调用，完成一连串的处理过程，比如数据清洗、存储等。</span><br><span class="line"></span><br><span class="line">Item Pipeline的主要功能有如下<span class="number">4</span>点 。</span><br><span class="line">□ 清理HTML数据。</span><br><span class="line">□ 验证爬取数据，检查爬取字段。</span><br><span class="line">□ 查重并丢弃重复内容。</span><br><span class="line">□ 将爬取结果保存到数据库。</span><br></pre></td></tr></table></figure>
+
+<h3 id="核心方法-1"><a href="#核心方法-1" class="headerlink" title="核心方法"></a>核心方法</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">我们可以自定义Item Pipeline,只需要实现指定的方法，其中必须要实现的一个方法是 ：</span><br><span class="line">process_item(item, spider)</span><br><span class="line"></span><br><span class="line">另外还有如下几个比较实用的方法。</span><br><span class="line">□ open_spider(spider)</span><br><span class="line">□ close_spider(spider)</span><br><span class="line">□ from_crawler(cls, crawler)</span><br><span class="line"></span><br><span class="line">下面我们详细介绍这几个方法的用法。</span><br></pre></td></tr></table></figure>
+
+<h4 id="process-item-item-spider"><a href="#process-item-item-spider" class="headerlink" title="process_item(item, spider)"></a>process_item(item, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">process_item()是必须要实现的方法，被定义的Item Pipeline会默认调用这个方法对Item进行处理比如，我们可以进行数据处理或者将数据写入到数据库等操作。(它必须返回Item类型的值或者抛出一个Dropitem异常。)</span><br><span class="line"></span><br><span class="line">process_item()方法的参数有如下两个。</span><br><span class="line">□ item ,是 Item对象，即被处理的Item。</span><br><span class="line">□ spider,是 Spider对象，即生成该 Item的Spider</span><br><span class="line"></span><br><span class="line">process_item()方法的返回类型归纳如下。</span><br><span class="line">□ 如果它返回的是Item对象，那么此Item会被低优先级的Item Pipeline的 process_item()方法处理，直到所有的方法被调用完毕。</span><br><span class="line">□如果它抛出的是Dropitem异常，那么此Item会被丢弃, 不再进行处理。</span><br></pre></td></tr></table></figure>
+
+<h4 id="open-spider-self-spider"><a href="#open-spider-self-spider" class="headerlink" title="open_spider(self, spider)"></a>open_spider(self, spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open_spider()方法是在Spider开启的时候被自动调用的。在这里我们可以做一些初始化操作，如开启数据库连接等。其中，参数spider就是被开启的Spider对象。</span><br></pre></td></tr></table></figure>
+
+<h4 id="close-spider-spider"><a href="#close-spider-spider" class="headerlink" title="close_spider(spider)"></a>close_spider(spider)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">close_spider()方法是在Spider关闭的时候自动调用的。在这里我们可以做一些收尾工作，如关闭数据库连接等。其中，参数spider就是被关闭的Spider对象</span><br></pre></td></tr></table></figure>
+
+<h4 id="from-crawler-cls-crawler"><a href="#from-crawler-cls-crawler" class="headerlink" title="from_crawler(cls, crawler)"></a>from_crawler(cls, crawler)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">from_crawler()方法是一个类方法，用@classmethod标识，是一种依赖注入的方式。它的参数是crawler,通过crawler对象，我们可以拿到Scrapy的所有核心组件，如全局配置的每个信息，然后创建一个Pipeline实例。参数cls就是 Class,最后返回一个Class实例。</span><br></pre></td></tr></table></figure>
+
+<h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们以爬取<span class="number">360</span>摄影美图为例，来分别实现MongoDB存储、MySQL存储、Image图片存储的三个Pipeline</span><br><span class="line"></span><br><span class="line">请确保已经安装好MongoDB和MySQL数据库，安装好Python的PyMongo、PyMySQL、Scrapy框架，如没有安装可以参考第<span class="number">1</span>章的安装说明。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们这次爬取的目标网站为：https://image.so.com。打开此页面，切换到摄影页面，网页中呈现了许许多多的摄影美图。我们打开浏览器开发者工具，过滤器切换到XHR选项，然后下拉页面，可以看到下面就会呈现许多Ajax请求</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">返回格式是JSON</span><br><span class="line">其中list字段就是一张张图片的详情信息，包含了<span class="number">30</span>张图片的ID、名称、链接、缩略图等信息。另外观察Ajax请求的参数信息，有一个参数sn一直在变化，这个参数很明显就是偏移量。当sn为<span class="number">30</span>时，返回的是前<span class="number">30</span>张图片，sn为<span class="number">60</span>时，返回的就是第<span class="number">31</span><span class="number">-60</span>张图片。另外,ch参数是摄影类别，listtype是排序方式，temp参数可以忽略。</span><br><span class="line"></span><br><span class="line">所以我们抓取时只需要改变sn的数值就好了。</span><br><span class="line">下面我们用Scrapy来实现图片的抓取，将图片的信息保存到MongoDB、MySQL,同时将图片存储到本地。</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">首先新建一个项目，命令如下所示：</span><br><span class="line">scrapy startproject images36O</span><br><span class="line"></span><br><span class="line">接下来新建一个Spider,命令如下所示：</span><br><span class="line">scrapy genspider images images.so.com</span><br><span class="line">这样我们就成功创建了一个Spidero</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="构造请求"><a href="#构造请求" class="headerlink" title="构造请求"></a>构造请求</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">接下来定义爬取的页数。比如爬取<span class="number">50</span>页、每页<span class="number">30</span>张,也就是<span class="number">1500</span>张图片，我们可以</span><br><span class="line">先在settings.py里面定义一个变量MAX_PAGE,添加如下定义：</span><br><span class="line">MAX_PAGE = <span class="number">50</span></span><br><span class="line"></span><br><span class="line">定义start_requests()方法，用来生成<span class="number">50</span>次请求，如下所示：</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(self)</span>:</span></span><br><span class="line">	data = &#123;<span class="string">'ch'</span>: <span class="string">'photography'</span>, <span class="string">'listtype'</span>: <span class="string">'new'</span>&#125;</span><br><span class="line">	base_url = <span class="string">'https://image.so.com/zj ?'</span></span><br><span class="line">	<span class="keyword">for</span> page <span class="keyword">in</span> range(l, self.settings.get(<span class="string">'MAX_PAGE'</span>) + <span class="number">1</span>):</span><br><span class="line">		data[<span class="string">'sn'</span>] = page * <span class="number">30</span></span><br><span class="line">		params = urlencode(datm)</span><br><span class="line">		url = base_url + params</span><br><span class="line">		<span class="keyword">yield</span> Request(url, self.parse)</span><br><span class="line"></span><br><span class="line">在这里我们首先定义了初始的两个参数，sn参数是遍历循环生成的。然后利用 urlencode()方法将字典转化为URL的GET参数，构造出完整的URL ,构造并生成Request。</span><br><span class="line"></span><br><span class="line">还需要引入scrapy.Request和 urllib.parse模块，如下所示：</span><br><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Spider, Request</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlencode</span><br><span class="line"></span><br><span class="line">再修改settings.py中 的 ROBOTSTXT_OBEY变量，将其设置为<span class="literal">False</span>,否则无法抓取，如下所示：</span><br><span class="line">ROBOTSTXT_OBEY = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">运行爬虫，即可以看到链接都请求成功，执行命令如下所示：</span><br><span class="line">scrapy crawl images</span><br><span class="line"></span><br><span class="line">所有请求的状态码都是<span class="number">200</span> ,这就证明图片信息爬取成功</span><br></pre></td></tr></table></figure>
+
+<h4 id="提取信息"><a href="#提取信息" class="headerlink" title="提取信息"></a>提取信息</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">首先定义一个Item,叫作Imageltem,如下所示：</span><br><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Item, Field</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ImageItem</span><span class="params">(Item)</span>:</span></span><br><span class="line">	collection = table = <span class="string">'images'</span></span><br><span class="line">	id = Field()</span><br><span class="line">	url = Field()</span><br><span class="line">	title = Field()</span><br><span class="line">	thumb = Field()</span><br><span class="line"></span><br><span class="line">在这里我们定义了<span class="number">4</span>个字段，包括图片的ID、链接、标 题、缩略图。另外还有两个属性collection和table, 都定义为images字符串，分别代表MongoDB存储 的Collection名称和MySQL存储的表名称。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">接下来我们提取Spider里有关信息，将parse()方法改写为如下所示：</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></span><br><span class="line">	result = json.loads(response.text)</span><br><span class="line">	<span class="keyword">for</span> image <span class="keyword">in</span> result.get(<span class="string">'list'</span>):</span><br><span class="line">		item = Imageltem()</span><br><span class="line">		item[<span class="string">'id'</span>] = image.get(<span class="number">1</span>imageid<span class="string">')</span></span><br><span class="line"><span class="string">		item[ '</span>url<span class="string">' ] = image.get(,qhimg_u:r].,)</span></span><br><span class="line"><span class="string">		item['</span>title<span class="string">'] = image.get('</span>group_title<span class="string">')</span></span><br><span class="line"><span class="string">		item['</span> thum<span class="string">b'] = image, ge t(，qhimg_thumb_u:rT)</span></span><br><span class="line"><span class="string">		yield item</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">首先解析JSON,遍历其list字段，取出一个个图片信息，然后再对Imageltem赋值，生成Item对象。</span></span><br><span class="line"><span class="string">                               </span></span><br><span class="line"><span class="string">这样我们就完成了信息的提取。</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="存储信息"><a href="#存储信息" class="headerlink" title="存储信息"></a>存储信息</h4><h5 id="MONGODB"><a href="#MONGODB" class="headerlink" title="MONGODB"></a>MONGODB</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">首先确保MongoDB已经正常安装并且正常运行。</span><br><span class="line">我们用一个MongoPipeline将信息保存到MongoDB, 在pipelines.py里添加如下类的实现：</span><br><span class="line"><span class="keyword">import</span> pymongo</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MongoPipeline</span><span class="params">(object)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">_init_</span><span class="params">(self, mongo_uri, mongo_db)</span>:</span></span><br><span class="line">		self.mongo_uri = mongo_uri</span><br><span class="line">		self.mongo_db = mongo_db</span><br><span class="line"><span class="meta">	@classmethod</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">from_crawler</span><span class="params">(cls, crawler)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> cls(</span><br><span class="line">mongo_uri=crawler.settings.get(<span class="string">'MONGO_URI'</span>),</span><br><span class="line">mongo_db=crawler.settings.get(<span class="string">'MONGO_DB'</span>)</span><br><span class="line">)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">open_spider</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">		self.client = pymongo.MongoClient(self.mongo_uri)</span><br><span class="line">		self.db = self.client[self.mongo_db]</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></span><br><span class="line">		self.db[item.collection].insert(dict(item))</span><br><span class="line">		<span class="keyword">return</span> item</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">close_spider</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">		self.client.close()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">这里需要用到两个变量，MONGO_URI和MONGO_DB,即存储到MongoDB的链接地址和数据库名称。</span><br><span class="line"></span><br><span class="line">我们在settings.py里添加这两个变量, 如下所示：</span><br><span class="line">MONGO_URI = <span class="string">'localhost'</span></span><br><span class="line">MONGODB = <span class="string">'images36O'</span></span><br><span class="line"></span><br><span class="line">这样一个保存到MongoDB的 Pipeline的就创建好了。这里最主要的方法是process_item()方法,直接调用Collection对象的insert()方法即可完成数据的插入，最后返回Item 对象。</span><br></pre></td></tr></table></figure>
+
+<h5 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">首先确保MySQL已经正确安装并且正常运行。</span><br><span class="line">新建一个数据库，名字还是images360, SQL语句如下所示：</span><br><span class="line">CREATE DATABASE images36O DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci</span><br><span class="line"></span><br><span class="line">新建一个数据表，包含id 、u rl、title、thumb四个字段，SQL语句如下所示：</span><br><span class="line">CREATE TABLE images (id VARCHAR(<span class="number">255</span>) PRIMARY KEY, url VARCHAR(<span class="number">255</span>) NULL, title VARCHAR(<span class="number">255</span>) NULL ,</span><br><span class="line">thumb VARCHAR(<span class="number">255</span>) NULL)</span><br><span class="line"></span><br><span class="line">执行完SQL语句之后，我们就成功创建好了数据表。接下来就可以往表里存储数据了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">接下来我们实现一个MySOLPipeline,代码如下所示：</span><br><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MysqlPipeline</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">_init_</span><span class="params">(self, host, database, user, password, port)</span>:</span></span><br><span class="line">        self.host = host</span><br><span class="line">        self.database = database</span><br><span class="line">        self.user = user</span><br><span class="line">        self.password = password</span><br><span class="line">        self.port = port</span><br><span class="line"><span class="meta">	@classmethod</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">from_crawler</span><span class="params">(cls, crawler)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> cls(</span><br><span class="line">host=crawler.settings.get(<span class="string">'MYSOL_HOST'</span>),</span><br><span class="line">database=crawler.settings.get(<span class="string">'MYSOL_DATABASE'</span>),</span><br><span class="line">user=crawler.settings.get(<span class="string">'MYSOL_USER'</span>),</span><br><span class="line">password=crawler.settings.get(<span class="string">'MYSOL_PASSWORD'</span>),</span><br><span class="line">port=crawler.settings.get(<span class="string">'MYSOL_PORT'</span>),</span><br><span class="line">)</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">open_spider</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">		self.db = pymysql.connect(self.host, self.user, 	self.password, self.database, charset=<span class="string">'utf8'</span>,</span><br><span class="line">port=self.port)</span><br><span class="line">		self.cursor = self.db.cursor()</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">close_spider</span><span class="params">(self, spider)</span>:</span></span><br><span class="line">		self.db.close()</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></span><br><span class="line">		data = dict(item)</span><br><span class="line">		keys = <span class="string">', '</span>.join(data.keys())</span><br><span class="line">		values = <span class="string">', '</span>.join([<span class="string">'%s'</span>] * len(data))</span><br><span class="line">		sql = <span class="string">'insert into %s (%s) values (%s)'</span> % (item.table, keys, values)</span><br><span class="line">		self.cursor.execute(sql, tuple(data.values()))</span><br><span class="line">		self.db.commit()</span><br><span class="line">		<span class="keyword">return</span> item</span><br></pre></td></tr></table></figure>
+
+<h5 id="Image-Pipeline"><a href="#Image-Pipeline" class="headerlink" title="Image Pipeline"></a>Image Pipeline</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Scrapy提 供了专门处理下载的Pipeline,包括文件下载和图片下载。下载文件和图片的原理与抓取页面的原理一样，因此下载过程支持异步和多线程，下载十分高效。下面我们来看看具体的实现过程。</span><br><span class="line">官方文档地址为： https://doc.scrapy.org/en/latest/topics/media-pipeline.htmlo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">首先定义存储文件的路径，需要定义一个IMAGES_STORE变量，在 settings.py中添加如下代码：</span><br><span class="line">IMACES_STORE = <span class="string">'./images'</span></span><br><span class="line">在这里我们将路径定义为当前路径下的images子文件夹，即下载的图片都会保存到本项目的images文件夹中。</span><br><span class="line">内置的ImagesPipeline会默认读取Item的image_urls字段，并认为该字段是一个列表形式，它会遍历Item的image_urls字段，然后取出每个URL进行图片下载。</span><br><span class="line">但是现在生成的Item 的图片链接字段并不是image_urls字段表示的，也不是列表形式，而是单个的URL。所以为了实现下载，我们需要重新定义下载的部分逻辑，即要自定义ImagePipeline,继承内置的ImagesPipeline,重写几个方法。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> Request</span><br><span class="line"><span class="keyword">from</span> scrapy.exceptions <span class="keyword">import</span> DropItem</span><br><span class="line"><span class="keyword">from</span> scrapy.pipelines.images <span class="keyword">import</span> ImagesPipeline</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ImagePipeline</span><span class="params">(ImagesPipeline)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">file_path</span><span class="params">(self, request, response=None, info=None)</span>:</span></span><br><span class="line">		url = request.url</span><br><span class="line">		file_name = url.split(<span class="number">7</span><span class="string">' )[-l]</span></span><br><span class="line"><span class="string">		return file_name</span></span><br><span class="line"><span class="string">	def item_completed(self, results, item, info):</span></span><br><span class="line"><span class="string">		image_paths = [x['</span>path<span class="string">'] for ok, x in results if ok]</span></span><br><span class="line"><span class="string">		if not image_paths:</span></span><br><span class="line"><span class="string">			raise Dropltem('</span>Image Downloaded Failed<span class="string">')</span></span><br><span class="line"><span class="string">		return item</span></span><br><span class="line"><span class="string">	def get_media_requests(self, item, info):</span></span><br><span class="line"><span class="string">		yield Request(item['</span>url<span class="string">'])</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在这里我们实现了ImagePipeline,继承Scrapy内置的Im agesPipeline,重写下面几个方法。</span><br><span class="line">□ get_media_requests()。它的第一个参数item是爬取生成的Item对象。我们将它的url字段取出来，然后直接生成Request对象。此Request加入到调度队列，等待被调度，执行下载。</span><br><span class="line">□ file_path() 它的第一个参数request就是当前下载对应的Request对象。这个方法用来返回保存的文件名，直接将图片链接的最后一部分当作文件名即可。它利用split() 函数分割链接</span><br><span class="line">并提取最后一部分，返回结果。这样此图片下载之后保存的名称就是该函数返回的文件名。</span><br><span class="line">□ item_completed(),它是当单个Item 完成下载时的处理方法。因为并不是每张图片都会下载成功，所以我们需要分析下载结果并剔除下载失败的图片。如果某张图片下载失败，那么我们就不需保存此Item到数据库。该方法的第一个参数results就是该Item对应的下载结果，它是一个列表形式，列表每一个元素是一个元组，其中包含了下载成功或失败的信息。这里我们遍历下载结果找出所有成功的下载列表。如果列表为空，那么该Item对应的图片下载失败 ，随即抛出异常Dropitem,该Item忽略。否则返回该Item,说明此Item有效。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">现在为止，三个Item Pipeline的定义就完成了。最后只需要启用就可以了，修改settings.py, 设置ITEM_PIPELINES,如下所示：</span><br><span class="line">ITEM_PIPELINES = &#123;</span><br><span class="line"><span class="string">'images36O.pipelines.ImagePipeline'</span>: <span class="number">300</span>,</span><br><span class="line"><span class="string">'images36O.pipelines.MongoPipeline'</span>: <span class="number">301</span>,</span><br><span class="line"><span class="string">'images36O.pipelines.MysqlPipeline'</span>: <span class="number">302</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">这里注意调用的顺序。我们需要优先调用ImagePipeline对Item做下载后的筛选，下载失败的Item就直接忽略，它们就不会保存到MongoDB和MySQL里。随后再调用其他两个存储的Pipeline,这样就能确保存入数据库的图片都是下载成功的。</span><br><span class="line"></span><br><span class="line">接下来运行程序，执行爬取，如下所示：</span><br><span class="line">scrapy crawl images</span><br><span class="line">爬虫一边爬取一边下载，下载速度非常快</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p>没有伞的孩子，必须努力奔跑!</p>
+</blockquote>
+<p>Typewriter Mode** 已开启。</p>
+<p>可以在<code>视图</code>菜单中关闭</p>
+<p>不再显示关闭</p>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html">崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年03月22日 - 17:03</p>
+  <p><span>最后更新:</span>2022年03月31日 - 11:03</p>
+  <p><span>原始链接:</span><a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法">http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.6%2013.7)%20%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%20Spider%20Middleware%E7%9A%84%E7%94%A8%E6%B3%95%E5%92%8CItem%20Pipeline.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python%E7%88%AC%E8%99%AB/" rel="tag"><i class="fa fa-tag"></i> python爬虫</a>
+          
+            <a href="/tags/Scrapy%E6%A1%86%E6%9E%B6/" rel="tag"><i class="fa fa-tag"></i> Scrapy框架</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8(13.3)-%20Selector%E7%9A%84%E4%BD%BF%E7%94%A8.html" rel="next" title="崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用">
+                <i class="fa fa-chevron-left"></i> 崔庆才python3爬虫-13章 Scrapy框架的使用-Selector的使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%B4%94%E5%BA%86%E6%89%8Dpython3%E7%88%AC%E8%99%AB-13%E7%AB%A0(13.1%2013.2)%20Scrapy%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%85%A5%E9%97%A8.html" rel="prev" title="崔庆才python3爬虫-13章 Scrapy框架的使用">
+                崔庆才python3爬虫-13章 Scrapy框架的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">291</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">113</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#崔庆才python3爬虫-13章-Scrapy框架的使用-Spider-Middleware的用法和Item-Pipeline"><span class="nav-number">1.</span> <span class="nav-text">崔庆才python3爬虫-13章 Scrapy框架的使用-Spider Middleware的用法和Item Pipeline</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spider-Middleware的用法"><span class="nav-number">1.1.</span> <span class="nav-text">Spider Middleware的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用说明"><span class="nav-number">1.1.1.</span> <span class="nav-text">使用说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">核心方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#process-spider-input-response-spider"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">process_spider_input(response, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#process-spider-output-response-result-spider"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">process_spider_output(response, result, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#process-spider-exception-response-exception-spider"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">process_spider_exception(response, exception, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#process-start-reqeusts-start-requests-spider"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">process_start_reqeusts(start.requests, spider)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Item-Pipeline"><span class="nav-number">1.2.</span> <span class="nav-text">Item Pipeline</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#核心方法-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">核心方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#process-item-item-spider"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">process_item(item, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#open-spider-self-spider"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">open_spider(self, spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#close-spider-spider"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">close_spider(spider)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#from-crawler-cls-crawler"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">from_crawler(cls, crawler)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实战"><span class="nav-number">1.2.2.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建项目"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#构造请求"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">构造请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提取信息"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">提取信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#存储信息"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">存储信息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#MONGODB"><span class="nav-number">1.2.2.4.1.</span> <span class="nav-text">MONGODB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MySQL"><span class="nav-number">1.2.2.4.2.</span> <span class="nav-text">MySQL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Image-Pipeline"><span class="nav-number">1.2.2.4.3.</span> <span class="nav-text">Image Pipeline</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">280.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
