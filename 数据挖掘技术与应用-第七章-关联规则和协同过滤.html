@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="瑞翼教育,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="数据挖掘与机器学习-第七章 关联规则和协同过滤12345关联规则最早用于购物篮分析关联规则(Association Rules或Basket Analysis)是形如X-&gt;Y的蕴含式。其中，X和分别称为关联规则的先导(Antecedent，或Left-Hand-Side，LHS)和后继(Consequent或Right-Hand-Side,RHS)。关联规则利用其支持度和置信度从大量数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据挖掘与机器学习-第七章 关联规则和协同过滤">
+<meta property="og:url" content="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%92%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="数据挖掘与机器学习-第七章 关联规则和协同过滤12345关联规则最早用于购物篮分析关联规则(Association Rules或Basket Analysis)是形如X-&gt;Y的蕴含式。其中，X和分别称为关联规则的先导(Antecedent，或Left-Hand-Side，LHS)和后继(Consequent或Right-Hand-Side,RHS)。关联规则利用其支持度和置信度从大量数">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203033498.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203210462.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203351304.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203618438.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203728962.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203830348.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204107481.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204251715.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204641040.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204744910.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204911541.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503205415499.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503205538418.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503205828246.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210240246.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210330591.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210443080.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210523821.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210639340.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210922697.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503211449052.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503212213358.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503212434808.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504103736736.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504103823217.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504103906853.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165123328.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165203678.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165252234.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165335268.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165423507.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165500970.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111224639.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111306768.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111355397.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111620461.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112139300.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112251678.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112333799.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112411626.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112904173.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113246629.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113628453.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113744512.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113953624.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114048120.png">
+<meta property="og:image" content="c:%5CUsers%5CTy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220504114147730.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20220504114252204.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114403470.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114610063.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114625553.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114654628.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114715624.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114744048.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114805601.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114827492.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504115324968.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504115354970.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504163224086.png">
+<meta property="article:published_time" content="2022-05-03T12:27:07.000Z">
+<meta property="article:modified_time" content="2022-05-05T02:41:43.837Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="瑞翼教育">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203033498.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/数据挖掘技术与应用-第七章-关联规则和协同过滤.html">
+
+
+
+
+
+  <title>数据挖掘与机器学习-第七章 关联规则和协同过滤 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%92%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据挖掘与机器学习-第七章 关联规则和协同过滤</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-03T20:27:07+08:00">
+                2022-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/" itemprop="url" rel="index">
+                    <span itemprop="name">数据挖掘技术与应用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="数据挖掘与机器学习-第七章-关联规则和协同过滤"><a href="#数据挖掘与机器学习-第七章-关联规则和协同过滤" class="headerlink" title="数据挖掘与机器学习-第七章 关联规则和协同过滤"></a>数据挖掘与机器学习-第七章 关联规则和协同过滤</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">关联规则最早用于购物篮分析</span><br><span class="line"></span><br><span class="line">关联规则(Association Rules或Basket Analysis)是形如X-&gt;Y的蕴含式。其中，X和分别称为关联规则的先导(Antecedent，或Left-Hand-Side，LHS)和后继(Consequent或Right-Hand-Side,RHS)。</span><br><span class="line"></span><br><span class="line">关联规则利用其支持度和置信度从大量数据中挖掘出有价值的数据项之间的相互关系。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">一些常见概念:数据库D，事务T，项集I，支持度Confidence，置信度Support</span><br></pre></td></tr></table></figure>
+
+<h2 id="推荐算法"><a href="#推荐算法" class="headerlink" title="推荐算法"></a>推荐算法</h2><h3 id="推荐算法目的"><a href="#推荐算法目的" class="headerlink" title="推荐算法目的"></a>推荐算法目的</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203033498.png" alt="image-20220503203033498" style="zoom:80%;">
+
+<h3 id="如何进行推荐"><a href="#如何进行推荐" class="headerlink" title="如何进行推荐"></a>如何进行推荐</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203210462.png" alt="image-20220503203210462"></p>
+<h4 id="关联规则挖掘"><a href="#关联规则挖掘" class="headerlink" title="关联规则挖掘"></a>关联规则挖掘</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203351304.png" alt="image-20220503203351304" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203618438.png" alt="image-20220503203618438" style="zoom:80%;">
+
+<h4 id="啤酒尿布案例"><a href="#啤酒尿布案例" class="headerlink" title="啤酒尿布案例"></a>啤酒尿布案例</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203728962.png" alt="image-20220503203728962" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503203830348.png" alt="image-20220503203830348"></p>
+<h4 id="关联规则的引言"><a href="#关联规则的引言" class="headerlink" title="关联规则的引言"></a>关联规则的引言</h4><h5 id="关联规则定义"><a href="#关联规则定义" class="headerlink" title="关联规则定义"></a>关联规则定义</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204107481.png" alt="image-20220503204107481"></p>
+<h5 id="关联规则度量"><a href="#关联规则度量" class="headerlink" title="关联规则度量"></a>关联规则度量</h5><h6 id="支持度"><a href="#支持度" class="headerlink" title="支持度"></a>支持度</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204251715.png" alt="image-20220503204251715"></p>
+<h6 id="置信度"><a href="#置信度" class="headerlink" title="置信度"></a>置信度</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204641040.png" alt="image-20220503204641040"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204744910.png" alt="image-20220503204744910"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果满足最小支持度阈值和最小置信度阈值，则我们认为关联规则是有效的。这些阈值可以认为设定。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="关联规则挖掘的步骤"><a href="#关联规则挖掘的步骤" class="headerlink" title="关联规则挖掘的步骤"></a>关联规则挖掘的步骤</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503204911541.png" alt="image-20220503204911541"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503205415499.png" alt="image-20220503205415499"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503205538418.png" alt="image-20220503205538418"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503205828246.png" alt="image-20220503205828246"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">关联规则的挖掘过程主要包含两个阶段：第一个阶段从资料集合中找出所有的高频项目组(Frequent Item)，第二阶段从这些高频项目组产生关联规则(Association Rule)。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">第一阶段高频的含义是是指某一项目组出现的频率相对于所有记录而言，必须达到某一水平。也就是支持度。</span><br><span class="line">一个满足最小支持度的k-itemset，称为高频K-项目组(Frequent k-itemset)，一般表示为Frequent k。算法从Frequent k项目组中再产生Frequent k+1，直到无法再找到更长的高频项目组为止。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">第二阶段：从高频项目组产生关联规则，这是利用前一步骤的高频k-项目组来产生规则，在最小置信度的条件门槛下，若一规则所求得的置信度满足最小置信度，称此规则为关联规则。</span><br></pre></td></tr></table></figure>
+
+<h2 id="Apriori算法"><a href="#Apriori算法" class="headerlink" title="Apriori算法"></a>Apriori算法</h2><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210240246.png" alt="image-20220503210240246" style="zoom:80%;">
+
+<h3 id="apriori定律"><a href="#apriori定律" class="headerlink" title="apriori定律"></a>apriori定律</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210330591.png" alt="image-20220503210330591"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210443080.png" alt="image-20220503210443080"></p>
+<h3 id="apriori算法"><a href="#apriori算法" class="headerlink" title="apriori算法"></a>apriori算法</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210523821.png" alt="image-20220503210523821"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210639340.png" alt="image-20220503210639340"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503210922697.png" alt="image-20220503210922697"></p>
+<h3 id="apriori算法核心思想"><a href="#apriori算法核心思想" class="headerlink" title="apriori算法核心思想"></a>apriori算法核心思想</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503211449052.png" alt="image-20220503211449052" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503212213358.png" alt="image-20220503212213358"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503212434808.png" alt="image-20220503212434808" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504103736736.png" alt="image-20220504103736736" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504103823217.png" alt="image-20220504103823217" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504103906853.png" alt="image-20220504103906853" style="zoom:80%;">
+
+<h3 id="apriori算法的缺点"><a href="#apriori算法的缺点" class="headerlink" title="apriori算法的缺点"></a>apriori算法的缺点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.对数据库的扫描次数过多</span><br><span class="line">2.会产生大量的中间项集</span><br><span class="line">3.采用唯一支持度</span><br><span class="line">4.算法的适应面窄</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">主要改进方向:</span><br><span class="line">减少候选集产生</span><br><span class="line">降低无效的扫描库次数</span><br><span class="line">提高候选集与原数据的比较次数</span><br></pre></td></tr></table></figure>
+
+<h3 id="apriori算法实现"><a href="#apriori算法实现" class="headerlink" title="apriori算法实现"></a>apriori算法实现</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165123328.png" alt="image-20220504165123328" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165203678.png" alt="image-20220504165203678" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165252234.png" alt="image-20220504165252234" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165335268.png" alt="image-20220504165335268" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165423507.png" alt="image-20220504165423507" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504165500970.png" alt="image-20220504165500970" style="zoom:80%;">
+
+
+
+<h2 id="协同过滤-基于用户"><a href="#协同过滤-基于用户" class="headerlink" title="协同过滤(基于用户)"></a>协同过滤(基于用户)</h2><h3 id="协同过滤-基于用户-1"><a href="#协同过滤-基于用户-1" class="headerlink" title="协同过滤(基于用户)"></a>协同过滤(基于用户)</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111224639.png" alt="image-20220504111224639" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111306768.png" alt="image-20220504111306768" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111355397.png" alt="image-20220504111355397" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504111620461.png" alt="image-20220504111620461" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112139300.png" alt="image-20220504112139300" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112251678.png" alt="image-20220504112251678" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112333799.png" alt="image-20220504112333799" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112411626.png" alt="image-20220504112411626"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504112904173.png" alt="image-20220504112904173" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113246629.png" alt="image-20220504113246629" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113628453.png" alt="image-20220504113628453" style="zoom:80%;">
+
+<h3 id="协同过滤-基于物品"><a href="#协同过滤-基于物品" class="headerlink" title="协同过滤(基于物品)"></a>协同过滤(基于物品)</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113744512.png" alt="image-20220504113744512" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504113953624.png" alt="image-20220504113953624" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114048120.png" alt="image-20220504114048120" style="zoom:80%;">
+
+<p><img src="C:%5CUsers%5CTy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220504114147730.png" alt="image-20220504114147730"></p>
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20220504114252204.png" alt="image-20220504114252204" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114403470.png" alt="image-20220504114403470" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114610063.png" alt="image-20220504114610063" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114625553.png" alt="image-20220504114625553" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114654628.png" alt="image-20220504114654628" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114715624.png" alt="image-20220504114715624"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114744048.png" alt="image-20220504114744048"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114805601.png" alt="image-20220504114805601"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504114827492.png" alt="image-20220504114827492" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504115324968.png" alt="image-20220504115324968" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504115354970.png" alt="image-20220504115354970" style="zoom:80%;">
+
+<h3 id="实验八-协同过滤算法"><a href="#实验八-协同过滤算法" class="headerlink" title="实验八 协同过滤算法"></a>实验八 协同过滤算法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">【实验原理】</span><br><span class="line">协同过滤简单来说是利用某兴趣相投、拥有共同经验之群体的喜好来推荐用户感兴趣的信息，个人通过合作的机制给予信息相当程度的回应（如评分）并记录下来以达到过滤的目的进而帮助别人筛选信息，回应不一定局限于特别感兴趣的，特别不感兴趣信息的纪录也相当重要。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">题目：使用协同过滤（基于用户）构建简单的电影推荐系统</span><br><span class="line">假设我们以字典形式保存用户关于电影的评分数据，请构建一个电影推荐程序。</span><br><span class="line">STEP1：编写函数计算欧式距离字典数据中两两用户的欧式距离。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A dictionary of movie critics and their ratings of a small#</span></span><br><span class="line">critics=&#123;<span class="string">'A'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">3.5</span>,<span class="string">'唐人街探案'</span>:<span class="number">1.0</span>&#125;,</span><br><span class="line">        <span class="string">'B'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">2.5</span>,<span class="string">'唐人街探案'</span>:<span class="number">3.5</span>,<span class="string">'星球大战'</span>:<span class="number">3.0</span>,<span class="string">'寻龙诀'</span>:<span class="number">3.5</span>,<span class="string">'神探夏洛克'</span>:<span class="number">2.5</span>,<span class="string">'小门神'</span>:<span class="number">3.0</span>&#125;,</span><br><span class="line">         <span class="string">'C'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">3.0</span>,<span class="string">'唐人街探案'</span>:<span class="number">3.5</span>,<span class="string">'星球大战'</span>:<span class="number">1.5</span>,<span class="string">'寻龙诀'</span>:<span class="number">5.0</span>,<span class="string">'神探夏洛克'</span>:<span class="number">3.0</span>,<span class="string">'小门神'</span>:<span class="number">3.5</span>&#125;,</span><br><span class="line">         <span class="string">'D'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">2.5</span>,<span class="string">'唐人街探案'</span>:<span class="number">3.5</span>,<span class="string">'寻龙诀'</span>:<span class="number">3.5</span>,<span class="string">'神探夏洛克'</span>:<span class="number">4.0</span>&#125;,</span><br><span class="line">         <span class="string">'E'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">3.5</span>,<span class="string">'唐人街探案'</span>:<span class="number">2.0</span>,<span class="string">'星球大战'</span>:<span class="number">4.5</span>,<span class="string">'神探夏洛克'</span>:<span class="number">3.5</span>,<span class="string">'小门神'</span>:<span class="number">2.0</span>&#125;,</span><br><span class="line">         <span class="string">'F'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">3.0</span>,<span class="string">'唐人街探案'</span>:<span class="number">4.0</span>,<span class="string">'星球大战'</span>:<span class="number">2.0</span>,<span class="string">'寻龙诀'</span>:<span class="number">3.0</span>,<span class="string">'神探夏洛克'</span>:<span class="number">3.0</span>,<span class="string">'小门神'</span>:<span class="number">2.0</span>&#125;,</span><br><span class="line">         <span class="string">'G'</span>:&#123;<span class="string">'老炮儿'</span>:<span class="number">4.5</span>,<span class="string">'唐人街探案'</span>:<span class="number">1.5</span>,<span class="string">'星球大战'</span>:<span class="number">3.0</span>,<span class="string">'寻龙诀'</span>:<span class="number">5.0</span>,<span class="string">'神探夏洛克'</span>:<span class="number">3.5</span>&#125;&#125;</span><br><span class="line">print(critics[<span class="string">"B"</span>][<span class="string">'星球大战'</span>])</span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Returns a distance-based similarity score for person1 and person2</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sim_distance</span><span class="params">(prefs,person1,person2)</span>:</span></span><br><span class="line">    <span class="comment"># Get the list of shared_times</span></span><br><span class="line">    si=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> prefs[person1]:</span><br><span class="line">        <span class="keyword">if</span> item <span class="keyword">in</span> prefs[person2]:si[item]=<span class="number">1</span></span><br><span class="line">    <span class="comment"># if they have no rating in common, return 0</span></span><br><span class="line">    <span class="keyword">if</span> len(si)==<span class="number">0</span>:<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="comment"># Add up the squares of all the differences</span></span><br><span class="line">    sum_of_squares=sum([pow(prefs[person1][item]-prefs[person2][item],<span class="number">2</span>) <span class="keyword">for</span> item <span class="keyword">in</span> prefs[person1] <span class="keyword">if</span> item <span class="keyword">in</span> prefs[person2]])</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>/(<span class="number">1</span>+sqrt(sum_of_squares))</span><br><span class="line">print(sim_distance(critics, <span class="string">'A'</span>, <span class="string">'B'</span>))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">STEP2：编写函数依据欧式距离大小以及协同过滤算法（用户）实现电影的推荐。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Gets recommendations for a person by using a weighted average</span></span><br><span class="line"><span class="comment"># of every other user's rankings</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getRecommendations</span><span class="params">(prefs, person, similarity=sim_distance)</span>:</span></span><br><span class="line">    totals=&#123;&#125;</span><br><span class="line">    simSums=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> other <span class="keyword">in</span> prefs:</span><br><span class="line">        <span class="comment"># don't compare me to myself</span></span><br><span class="line">        <span class="keyword">if</span> other == person:<span class="keyword">continue</span></span><br><span class="line">        sim=similarity(prefs,person,other)</span><br><span class="line">        <span class="comment"># ignore scores of zero or lower</span></span><br><span class="line">        <span class="keyword">if</span> sim&lt;=<span class="number">0</span>:<span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> prefs[other]:</span><br><span class="line">            <span class="comment"># only score movies I haven't seen yet</span></span><br><span class="line">            <span class="keyword">if</span> item <span class="keyword">not</span> <span class="keyword">in</span> prefs[person] <span class="keyword">or</span> prefs[person][item]==<span class="number">0</span>:</span><br><span class="line">                <span class="comment"># Similarity * Score</span></span><br><span class="line">                totals.setdefault(item,<span class="number">0</span>)</span><br><span class="line">                totals[item]+=prefs[other][item]*sim</span><br><span class="line">                <span class="comment"># Sum of similarities</span></span><br><span class="line">                simSums.setdefault(item,<span class="number">0</span>)</span><br><span class="line">                simSums[item]+=sim</span><br><span class="line">    <span class="comment"># Create the normalized list</span></span><br><span class="line">    rankings=[(total/simSums[item],item) <span class="keyword">for</span> item,total <span class="keyword">in</span> totals.items()]</span><br><span class="line">    <span class="comment"># Return the sorted list</span></span><br><span class="line">    rankings.sort()</span><br><span class="line">    rankings.reverse()</span><br><span class="line">    <span class="keyword">return</span> rankings</span><br><span class="line">print(getRecommendations(critics, <span class="string">'A'</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220504163224086.png" alt="image-20220504163224086"></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%92%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4.html">数据挖掘与机器学习-第七章 关联规则和协同过滤</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年05月03日 - 20:05</p>
+  <p><span>最后更新:</span>2022年05月05日 - 10:05</p>
+  <p><span>原始链接:</span><a href="/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%92%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4.html" title="数据挖掘与机器学习-第七章 关联规则和协同过滤">http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%92%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%92%8C%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%91%9E%E7%BF%BC%E6%95%99%E8%82%B2/" rel="tag"><i class="fa fa-tag"></i> 瑞翼教育</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E8%B5%A4%E8%A3%B8%E8%A3%B8%E7%9A%84%E7%BB%9F%E8%AE%A1%E5%AD%A6-%E7%AC%AC%E4%B8%80%E7%AB%A0.html" rel="next" title="赤裸裸的统计学 第一章">
+                <i class="fa fa-chevron-left"></i> 赤裸裸的统计学 第一章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AB%E7%AB%A0-%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90.html" rel="prev" title="数据挖掘与机器学习-第八章 图像数据分析">
+                数据挖掘与机器学习-第八章 图像数据分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">307</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据挖掘与机器学习-第七章-关联规则和协同过滤"><span class="nav-number">1.</span> <span class="nav-text">数据挖掘与机器学习-第七章 关联规则和协同过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#推荐算法"><span class="nav-number">1.1.</span> <span class="nav-text">推荐算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#推荐算法目的"><span class="nav-number">1.1.1.</span> <span class="nav-text">推荐算法目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何进行推荐"><span class="nav-number">1.1.2.</span> <span class="nav-text">如何进行推荐</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关联规则挖掘"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">关联规则挖掘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#啤酒尿布案例"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">啤酒尿布案例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关联规则的引言"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">关联规则的引言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#关联规则定义"><span class="nav-number">1.1.2.3.1.</span> <span class="nav-text">关联规则定义</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关联规则度量"><span class="nav-number">1.1.2.3.2.</span> <span class="nav-text">关联规则度量</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#支持度"><span class="nav-number">1.1.2.3.2.1.</span> <span class="nav-text">支持度</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#置信度"><span class="nav-number">1.1.2.3.2.2.</span> <span class="nav-text">置信度</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关联规则挖掘的步骤"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">关联规则挖掘的步骤</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apriori算法"><span class="nav-number">1.2.</span> <span class="nav-text">Apriori算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#apriori定律"><span class="nav-number">1.2.1.</span> <span class="nav-text">apriori定律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apriori算法"><span class="nav-number">1.2.2.</span> <span class="nav-text">apriori算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apriori算法核心思想"><span class="nav-number">1.2.3.</span> <span class="nav-text">apriori算法核心思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apriori算法的缺点"><span class="nav-number">1.2.4.</span> <span class="nav-text">apriori算法的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apriori算法实现"><span class="nav-number">1.2.5.</span> <span class="nav-text">apriori算法实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#协同过滤-基于用户"><span class="nav-number">1.3.</span> <span class="nav-text">协同过滤(基于用户)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#协同过滤-基于用户-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">协同过滤(基于用户)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协同过滤-基于物品"><span class="nav-number">1.3.2.</span> <span class="nav-text">协同过滤(基于物品)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验八-协同过滤算法"><span class="nav-number">1.3.3.</span> <span class="nav-text">实验八 协同过滤算法</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">296.7k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -89,12 +89,12 @@
 
 
 
-<meta name="description" content="第八周 第4章 Hive核心实战  hadoop实验课-hive  综合案例1234567891011接下来我们来看一个综合案例，主要使用外部分区表和视图实现需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标分析一下：Flume按天把日志数据保存到HDFS中的对应目录中针对Flume的source可以使用execsource、channe">
+<meta name="description" content="第八周 第4章 Hive核心实战    综合案例1234567891011接下来我们来看一个综合案例，主要使用外部分区表和视图实现需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标分析一下：Flume按天把日志数据保存到HDFS中的对应目录中针对Flume的source可以使用execsource、channel可以使用基于文件的或者内存">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大数据开发工程师-第八周 第4章 Hive核心实战2">
 <meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%204.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
-<meta property="og:description" content="第八周 第4章 Hive核心实战  hadoop实验课-hive  综合案例1234567891011接下来我们来看一个综合案例，主要使用外部分区表和视图实现需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标分析一下：Flume按天把日志数据保存到HDFS中的对应目录中针对Flume的source可以使用execsource、channe">
+<meta property="og:description" content="第八周 第4章 Hive核心实战    综合案例1234567891011接下来我们来看一个综合案例，主要使用外部分区表和视图实现需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标分析一下：Flume按天把日志数据保存到HDFS中的对应目录中针对Flume的source可以使用execsource、channel可以使用基于文件的或者内存">
 <meta property="article:published_time" content="2022-02-20T04:01:53.000Z">
 <meta property="article:modified_time" content="2022-02-24T04:34:32.668Z">
 <meta property="article:author" content="TTYONG">
@@ -407,7 +407,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  428
+                  423
                 </span>
               
 
@@ -453,7 +453,7 @@
 
 <h1 id="第八周-第4章-Hive核心实战"><a href="#第八周-第4章-Hive核心实战" class="headerlink" title="第八周 第4章 Hive核心实战"></a>第八周 第4章 Hive核心实战</h1>
 
-<a href="/hadoop%E5%AE%9E%E9%AA%8C%E8%AF%BE-hive.html" title="hadoop实验课-hive">hadoop实验课-hive</a>
+
 
 <h2 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">接下来我们来看一个综合案例，主要使用外部分区表和视图实现</span><br><span class="line">需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标</span><br><span class="line">分析一下：</span><br><span class="line">Flume按天把日志数据保存到HDFS中的对应目录中</span><br><span class="line">针对Flume的source可以使用execsource、channel可以使用基于文件的或者内存的，sink使用hdfssink，在hdfssink的path路径中需要使用%Y%m%d获取日期，将每天的日志数据采集到指定的hdfs目录中</span><br><span class="line">这个是我们在前面学习Flume的时候已经讲过的了，这个倒不难</span><br><span class="line">后面就是需要对按天采集的日志数据建表，由于这份数据可能会被多种计算引擎使用，所以建议使用外部表，这样就算我们不小心把表删了，数据也还是在的，不影响其他人使用，还有就是这份数据是按天分目录存储的，在实际工作中，离线计算的需求大部分都是按天计算的，所以在这里最好在表中增加日期这个</span><br><span class="line">分区字段，所以最终决定使用外部分区表。</span><br><span class="line">前面FLume采集数据的流程我们就不再演示了，在这我就直接使用之前我们使用hdfs落盘的数据了。</span><br><span class="line">我们之前有一个案例是分类型，分目录，把多种类型的数据存储到不同的目录下</span><br><span class="line">目录结构是这样的，首先是按天，然后是按照类型</span><br></pre></td></tr></table></figure>
 
@@ -642,7 +642,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">294</span>
+			  <span class="site-state-item-count">307</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -653,7 +653,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">45</span>
+			  <span class="site-state-item-count">49</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -664,7 +664,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">116</span>
+			  <span class="site-state-item-count">120</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -779,7 +779,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2022</span>
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -793,7 +793,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">285.1k</span>
+    <span title="Site words total count">296.7k</span>
   
 </div>
 

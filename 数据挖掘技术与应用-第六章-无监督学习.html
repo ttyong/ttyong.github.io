@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="瑞翼教育,聚类算法,降维,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="数据挖掘与机器学习-第六章 无监督学习无监督学习       聚类算法聚类算法概述概述    聚类算法的功能  应用场景  聚类算法评判指标  聚类中的数据结构              划分聚类           K-means的结束  初始质心对K-means聚类的影响    k值对K-means聚类影响      K均值算法运行注意注意     K-means的局限  代码演示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据挖掘与机器学习-第六章 无监督学习">
+<meta property="og:url" content="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="数据挖掘与机器学习-第六章 无监督学习无监督学习       聚类算法聚类算法概述概述    聚类算法的功能  应用场景  聚类算法评判指标  聚类中的数据结构              划分聚类           K-means的结束  初始质心对K-means聚类的影响    k值对K-means聚类影响      K均值算法运行注意注意     K-means的局限  代码演示">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501190951624.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191007822.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191415249.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191433623.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191820991.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193524211.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192004496.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192136152.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192338381.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192727185.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193145739.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193302490.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193651567.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193917612.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193958301.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501194602336.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501194631285.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201310322.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201335554.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201535367.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201928871.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202124441.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202300544.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202448532.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202723681.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501203112501.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501203347291.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501203612942.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204039193.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204157961.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204434926.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204544635.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205311328.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205412746.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204631882.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204800712.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204845099.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204917651.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205520990.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205831554.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205114718.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205640485.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205655388.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210728445.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210750702.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205956115.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210057792.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210257323.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210157413.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210617952.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211009912.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211120687.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211241313.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211525185.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211730793.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211835185.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212028190.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212205387.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212312263.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212341282.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212410882.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212432114.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212525238.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212554701.png">
+<meta property="og:image" content="c:%5CUsers%5CTy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220502230526521.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230608684.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230621659.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230804936.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230837133.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231725538.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231754409.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231830373.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231942230.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231106481.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231225481.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502232403856.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502232657432.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502232809663.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233103676.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233507139.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233715789.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233937292.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502234018714.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502234305030.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502234406008.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503104338542.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503104426208.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503115501342.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503194259180.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503195924871.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503201744350.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105529797.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105543965.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105606469.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105704085.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105812789.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110033101.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110216627.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110324120.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110355824.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110454902.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110559964.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110708437.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110925058.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503111042035.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503111113897.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503163502436.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503111206374.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503172833866.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503174033270.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503175412127.png">
+<meta property="article:published_time" content="2022-05-01T11:03:08.000Z">
+<meta property="article:modified_time" content="2022-05-05T02:41:38.003Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="瑞翼教育">
+<meta property="article:tag" content="聚类算法">
+<meta property="article:tag" content="降维">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501190951624.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/数据挖掘技术与应用-第六章-无监督学习.html">
+
+
+
+
+
+  <title>数据挖掘与机器学习-第六章 无监督学习 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据挖掘与机器学习-第六章 无监督学习</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-01T19:03:08+08:00">
+                2022-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/" itemprop="url" rel="index">
+                    <span itemprop="name">数据挖掘技术与应用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="数据挖掘与机器学习-第六章-无监督学习"><a href="#数据挖掘与机器学习-第六章-无监督学习" class="headerlink" title="数据挖掘与机器学习-第六章 无监督学习"></a>数据挖掘与机器学习-第六章 无监督学习</h1><h2 id="无监督学习"><a href="#无监督学习" class="headerlink" title="无监督学习"></a>无监督学习</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501190951624.png" alt="image-20220501190951624"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191007822.png" alt="image-20220501191007822" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191415249.png" alt="image-20220501191415249" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191433623.png" alt="image-20220501191433623" style="zoom:80%;">
+
+<h2 id="聚类算法"><a href="#聚类算法" class="headerlink" title="聚类算法"></a>聚类算法</h2><h3 id="聚类算法概述"><a href="#聚类算法概述" class="headerlink" title="聚类算法概述"></a>聚类算法概述</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501191820991.png" alt="image-20220501191820991" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193524211.png" alt="image-20220501193524211" style="zoom:80%;">
+
+<h4 id="聚类算法的功能"><a href="#聚类算法的功能" class="headerlink" title="聚类算法的功能"></a>聚类算法的功能</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192004496.png" alt="image-20220501192004496" style="zoom:80%;">
+
+<h4 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192136152.png" alt="image-20220501192136152" style="zoom:80%;">
+
+<h4 id="聚类算法评判指标"><a href="#聚类算法评判指标" class="headerlink" title="聚类算法评判指标"></a>聚类算法评判指标</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192338381.png" alt="image-20220501192338381" style="zoom:80%;">
+
+<h3 id="聚类中的数据结构"><a href="#聚类中的数据结构" class="headerlink" title="聚类中的数据结构"></a>聚类中的数据结构</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501192727185.png" alt="image-20220501192727185" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193145739.png" alt="image-20220501193145739"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193302490.png" alt="image-20220501193302490"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193651567.png" alt="image-20220501193651567" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193917612.png" alt="image-20220501193917612" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501193958301.png" alt="image-20220501193958301" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501194602336.png" alt="image-20220501194602336" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501194631285.png" alt="image-20220501194631285" style="zoom:80%;">
+
+<h3 id="划分聚类"><a href="#划分聚类" class="headerlink" title="划分聚类"></a>划分聚类</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201310322.png" alt="image-20220501201310322" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201335554.png" alt="image-20220501201335554" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201535367.png" alt="image-20220501201535367"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501201928871.png" alt="image-20220501201928871"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202124441.png" alt="image-20220501202124441"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202300544.png" alt="image-20220501202300544"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202448532.png" alt="image-20220501202448532" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501202723681.png" alt="image-20220501202723681"></p>
+<h4 id="K-means的结束"><a href="#K-means的结束" class="headerlink" title="K-means的结束"></a>K-means的结束</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501203112501.png" alt="image-20220501203112501"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501203347291.png" alt="image-20220501203347291"></p>
+<h4 id="初始质心对K-means聚类的影响"><a href="#初始质心对K-means聚类的影响" class="headerlink" title="初始质心对K-means聚类的影响"></a>初始质心对K-means聚类的影响</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501203612942.png" alt="image-20220501203612942"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204039193.png" alt="image-20220501204039193"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204157961.png" alt="image-20220501204157961" style="zoom:80%;">
+
+<h4 id="k值对K-means聚类影响"><a href="#k值对K-means聚类影响" class="headerlink" title="k值对K-means聚类影响"></a>k值对K-means聚类影响</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204434926.png" alt="image-20220501204434926" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204544635.png" alt="image-20220501204544635"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205311328.png" alt="image-20220501205311328"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205412746.png" alt="image-20220501205412746" style="zoom:80%;">
+
+<h4 id="K均值算法运行注意注意"><a href="#K均值算法运行注意注意" class="headerlink" title="K均值算法运行注意注意"></a>K均值算法运行注意注意</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204631882.png" alt="image-20220501204631882"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204800712.png" alt="image-20220501204800712"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204845099.png" alt="image-20220501204845099" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501204917651.png" alt="image-20220501204917651"></p>
+<h4 id="K-means的局限"><a href="#K-means的局限" class="headerlink" title="K-means的局限"></a>K-means的局限</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205520990.png" alt="image-20220501205520990"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205831554.png" alt="image-20220501205831554"></p>
+<h4 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205114718.png" alt="image-20220501205114718" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205640485.png" alt="image-20220501205640485"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205655388.png" alt="image-20220501205655388" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210728445.png" alt="image-20220501210728445" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210750702.png" alt="image-20220501210750702" style="zoom:80%;">
+
+<h3 id="层次聚类"><a href="#层次聚类" class="headerlink" title="层次聚类"></a>层次聚类</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501205956115.png" alt="image-20220501205956115" style="zoom:80%;">
+
+<h4 id="凝聚层次聚类"><a href="#凝聚层次聚类" class="headerlink" title="凝聚层次聚类"></a>凝聚层次聚类</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210057792.png" alt="image-20220501210057792"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210257323.png" alt="image-20220501210257323" style="zoom:80%;">
+
+
+
+<h4 id="分裂层次聚类"><a href="#分裂层次聚类" class="headerlink" title="分裂层次聚类"></a>分裂层次聚类</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210157413.png" alt="image-20220501210157413"></p>
+<h4 id="层次聚类运行过程"><a href="#层次聚类运行过程" class="headerlink" title="层次聚类运行过程"></a>层次聚类运行过程</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501210617952.png" alt="image-20220501210617952" style="zoom:80%;">
+
+<h4 id="层次聚类问题"><a href="#层次聚类问题" class="headerlink" title="层次聚类问题"></a>层次聚类问题</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211009912.png" alt="image-20220501211009912"></p>
+<h5 id="簇间相似度"><a href="#簇间相似度" class="headerlink" title="簇间相似度"></a>簇间相似度</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211120687.png" alt="image-20220501211120687"></p>
+<h6 id="MIN-单连接"><a href="#MIN-单连接" class="headerlink" title="MIN(单连接)"></a>MIN(单连接)</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211241313.png" alt="image-20220501211241313"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211525185.png" alt="image-20220501211525185" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211730793.png" alt="image-20220501211730793"></p>
+<h6 id="MAX-全连接"><a href="#MAX-全连接" class="headerlink" title="MAX(全连接)"></a>MAX(全连接)</h6><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501211835185.png" alt="image-20220501211835185" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212028190.png" alt="image-20220501212028190" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212205387.png" alt="image-20220501212205387"></p>
+<h6 id="组平均"><a href="#组平均" class="headerlink" title="组平均"></a>组平均</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212312263.png" alt="image-20220501212312263"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212341282.png" alt="image-20220501212341282"></p>
+<h6 id="质心距离"><a href="#质心距离" class="headerlink" title="质心距离"></a>质心距离</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212410882.png" alt="image-20220501212410882"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212432114.png" alt="image-20220501212432114"></p>
+<h4 id="层次聚类特点"><a href="#层次聚类特点" class="headerlink" title="层次聚类特点"></a>层次聚类特点</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212525238.png" alt="image-20220501212525238"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220501212554701.png" alt="image-20220501212554701"></p>
+<p><img src="C:%5CUsers%5CTy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220502230526521.png" alt="image-20220502230526521"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230608684.png" alt="image-20220502230608684" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230621659.png" alt="image-20220502230621659" style="zoom:80%;">
+
+<h3 id="密度聚类"><a href="#密度聚类" class="headerlink" title="密度聚类"></a>密度聚类</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230804936.png" alt="image-20220502230804936" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502230837133.png" alt="image-20220502230837133" style="zoom:80%;">
+
+<h4 id="DBSCAN"><a href="#DBSCAN" class="headerlink" title="DBSCAN"></a>DBSCAN</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231725538.png" alt="image-20220502231725538" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231754409.png" alt="image-20220502231754409" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231830373.png" alt="image-20220502231830373" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231942230.png" alt="image-20220502231942230" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231106481.png" alt="image-20220502231106481"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502231225481.png" alt="image-20220502231225481" style="zoom:80%;">
+
+<h5 id="直接密度可达和密度可达"><a href="#直接密度可达和密度可达" class="headerlink" title="直接密度可达和密度可达"></a>直接密度可达和密度可达</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502232403856.png" alt="image-20220502232403856"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502232657432.png" alt="image-20220502232657432" style="zoom:80%;">
+
+<h5 id="密度相连"><a href="#密度相连" class="headerlink" title="密度相连"></a>密度相连</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502232809663.png" alt="image-20220502232809663"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233103676.png" alt="image-20220502233103676" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233507139.png" alt="image-20220502233507139" style="zoom:80%;">
+
+<h4 id="DBSCAN算法"><a href="#DBSCAN算法" class="headerlink" title="DBSCAN算法"></a>DBSCAN算法</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233715789.png" alt="image-20220502233715789"></p>
+<h5 id="DBSCAN优势"><a href="#DBSCAN优势" class="headerlink" title="DBSCAN优势"></a>DBSCAN优势</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502233937292.png" alt="image-20220502233937292"></p>
+<h5 id="DBSCAN劣势"><a href="#DBSCAN劣势" class="headerlink" title="DBSCAN劣势"></a>DBSCAN劣势</h5><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502234018714.png" alt="image-20220502234018714" style="zoom:80%;">
+
+<h3 id="聚类质量"><a href="#聚类质量" class="headerlink" title="聚类质量"></a>聚类质量</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502234305030.png" alt="image-20220502234305030" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220502234406008.png" alt="image-20220502234406008" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503104338542.png" alt="image-20220503104338542" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503104426208.png" alt="image-20220503104426208" style="zoom:80%;">
+
+<h2 id="实验六-聚类算法"><a href="#实验六-聚类算法" class="headerlink" title="实验六 聚类算法"></a>实验六 聚类算法</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503115501342.png" alt="image-20220503115501342">    </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> misc</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> cluster</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment">###STEP1###</span></span><br><span class="line"><span class="comment">#compress_image函数实现图片压缩功能，compress_image函数将每个像素作为一个元素进行聚类，以此减少其颜色个数。</span></span><br><span class="line"><span class="comment">#参数img是图片传入的接口，因此我们需要知道变量img的数据结构，请自行查看。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compress_image</span><span class="params">(img,num_cluster)</span>:</span></span><br><span class="line">    <span class="comment"># 思考，聚类算法对输入的数据结构要求如何？</span></span><br><span class="line">    <span class="comment"># STEP1.1：将img结构进行转换即每个像素作为一个元素，使之能符合聚类算法数据输入的要求。</span></span><br><span class="line">    X=img.reshape((<span class="number">-1</span>,<span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 创建KMeans聚类模型，并训练。</span></span><br><span class="line">    kmeans=cluster.KMeans(n_clusters=num_cluster,n_init=<span class="number">4</span>,random_state=<span class="number">5</span>)</span><br><span class="line">    kmeans.fit(X)</span><br><span class="line">    <span class="comment"># STEP1.2：分别获取每个数据聚类后的label，以及每个label的质心。</span></span><br><span class="line">    labels=kmeans.labels_</span><br><span class="line">    centroids=kmeans.cluster_centers_.squeeze()</span><br><span class="line">    <span class="comment"># STEP1.3：使用质心的数值代替原数据的label值，那么我们将获得一个新的图像。</span></span><br><span class="line">    <span class="comment"># 提示，使用numpy的choose函数进行进行质心值的代替，reshape函数回复原图片的数据结构，并返回结果。</span></span><br><span class="line">    input_image_compressed=np.choose(labels,centroids).reshape(img.reshape)</span><br><span class="line">    <span class="keyword">return</span> input_image_compressed</span><br><span class="line"></span><br><span class="line"><span class="comment">### STEP2</span></span><br><span class="line"><span class="comment">#plot_image函数打印图片</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_image</span><span class="params">(img,title)</span>:</span></span><br><span class="line">    vmin=img.min()</span><br><span class="line">    vmax=img.max()</span><br><span class="line">    plt.figure()</span><br><span class="line">    plt.title(title)</span><br><span class="line">    plt.imshow(img,cmap=plt.cm.gray,vmin=vmin,vmax=vmax)</span><br><span class="line"></span><br><span class="line"><span class="comment">###STEP3###</span></span><br><span class="line"><span class="comment">#读入图片，设置压缩率，实现压缩</span></span><br><span class="line"><span class="comment">#设置图片的路径和压缩比例</span></span><br><span class="line">input_file=<span class="string">r"D:\重庆第二师范学院\2020秋大三上\数据挖掘与机器学习 程雪峰\实验六 聚类算法\flower.jpg"</span></span><br><span class="line">num_bits=<span class="number">2</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> <span class="number">1</span>&lt;=num_bits&lt;=<span class="number">8</span>:</span><br><span class="line">    <span class="keyword">raise</span> TypeError(<span class="string">'Number of bits should be between 1 and 8'</span>)</span><br><span class="line">num_clusters = np.power(<span class="number">2</span>,num_bits)</span><br><span class="line"><span class="comment"># 输出压缩比例</span></span><br><span class="line">compression_rate = round(<span class="number">100</span>*(<span class="number">8.0</span>-num_bits)/<span class="number">8.0</span>,<span class="number">2</span>)</span><br><span class="line">print(<span class="string">"\nThe size of the image will be reduced by a factor of"</span>)</span><br><span class="line">print(<span class="string">"\nCompression rate = "</span>+str(compression_rate)+<span class="string">"%"</span>)</span><br><span class="line"><span class="comment"># 加载需要压缩的图片</span></span><br><span class="line">input_image=misc.imread(input_file,<span class="literal">True</span>).astype(np.uint8)</span><br><span class="line"><span class="comment"># 原始图像的输出</span></span><br><span class="line">plot_image(input_image,<span class="string">'Original image'</span>)</span><br><span class="line"><span class="comment"># 压缩后的图像输出</span></span><br><span class="line">input_image_compressed=compress_image(input_image,num_clusters)</span><br><span class="line">plot_image(input_image_compressed,<span class="string">'Compressed image; compression rate = '</span>+str(compression_rate)+<span class="string">'%'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="实验七-集成学习"><a href="#实验七-集成学习" class="headerlink" title="实验七 集成学习"></a>实验七 集成学习</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">决策树(Decision Tree）是在已知各种情况发生概率的基础上，通过构成决策树来求取净现值的期望值大于等于零的概率，评价项目风险，判断其可行性的决策分析方法，是直观运用概率分析的一种图解法。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503194259180.png" alt="image-20220503194259180"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">题目一：分析影响房价的因素</span><br><span class="line">我们现在需要使用决策树来对房价的因素进行分析发现哪个属性最重要，在前面实验中我们已经熟悉了波士顿房价这个数据集，这个数据集由13个属性，以及一个价格所组成，房子的属性影响价格的走势，但是每一个属性的重要程度是不一样的，回想决策树的原理，我们可以使用决策树帮我们判别出特征属性的重要程度。提示：使用决策树回归器DecisionTreeRegressor的feature_importances_ 方法。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error,explained_variance_score</span><br><span class="line"><span class="keyword">from</span> sklearn.utils <span class="keyword">import</span> shuffle</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment"># Load housing data</span></span><br><span class="line">    housing_data=datasets.load_boston()</span><br><span class="line">    <span class="comment"># Shuffle the data</span></span><br><span class="line">    X,y=shuffle(housing_data.data,housing_data.target,random_state=<span class="number">7</span>)</span><br><span class="line">    <span class="comment"># Split the data 80/20 (80% for training, 20% for testing)</span></span><br><span class="line">    num_training=int(<span class="number">0.8</span>*len(X))</span><br><span class="line">    X_train,y_train=X[:num_training],y[:num_training]</span><br><span class="line">    X_test,y_test=X[num_training:],y[num_training:]</span><br><span class="line">    <span class="comment"># Fit decision tree regression model</span></span><br><span class="line">    dt_regressor=DecisionTreeRegressor(max_depth=<span class="number">4</span>)</span><br><span class="line">    dt_regressor.fit(X_train,y_train)</span><br><span class="line">    <span class="comment"># Evaluate performance of Decision Tree regressor</span></span><br><span class="line">    y_pre_dt=dt_regressor.predict(X_test)</span><br><span class="line">    mse=mean_squared_error(y_test,y_pre_dt)</span><br><span class="line">    evs=explained_variance_score(y_test,y_pre_dt)</span><br><span class="line">    print(<span class="string">"\n#### Decision Tree performance ####"</span>)</span><br><span class="line">    print(<span class="string">"Mean squared error ="</span>,round(mse, <span class="number">2</span>))</span><br><span class="line">    print(<span class="string">"Explained variance score ="</span>,round(evs,<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Plot relative feature importances</span></span><br><span class="line">    feature_importance = <span class="number">100.0</span>*(dt_regressor.feature_importances_/max(dt_regressor.feature_importances_))</span><br><span class="line">    <span class="comment"># Sort the values and flip them</span></span><br><span class="line">    index_sorted=np.flipud(np.argsort(feature_importance))</span><br><span class="line">    <span class="comment"># Arrange the X ticks</span></span><br><span class="line">    pos=np.arange(index_sorted.shape[<span class="number">0</span>])+<span class="number">0.5</span></span><br><span class="line">    <span class="comment"># Plot the bar graph</span></span><br><span class="line">    plt.figure()</span><br><span class="line">    plt.bar(pos,feature_importance[index_sorted],align=<span class="string">'center'</span>)</span><br><span class="line">    plt.xticks(pos,housing_data.feature_names[index_sorted])</span><br><span class="line">    plt.ylabel(<span class="string">'Relative Importance'</span>)</span><br><span class="line">    plt.title(<span class="string">'Decision Tree regressor'</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503195924871.png" alt="image-20220503195924871" style="zoom:80%;">
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">题目二：随机森林</span><br><span class="line">使用sklearn自带数据集digits进行练习，请将数据集划分为训练与测试集，分别使用决策树和随机森林算法对数据digits的训练集进行分类，比较决策树算法和随机森林算法的表现，并思考是否可以继续提升随机森林算法的表现？该如何实现呢？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> metrics</span><br><span class="line"></span><br><span class="line">dig = datasets.load_digits()</span><br><span class="line">X_train,X_test,Y_train,Y_test=train_test_split(dig.data,dig.target,test_size=<span class="number">0.4</span>,random_state=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">dtc=DecisionTreeClassifier()</span><br><span class="line">rfc=RandomForestClassifier()</span><br><span class="line">rfc2=RandomForestClassifier(n_estimators=<span class="number">200</span>,max_features=<span class="number">8</span>)</span><br><span class="line">dtc_pre=dtc.fit(X_train,Y_train).predict(X_test)</span><br><span class="line">rfc_pre=rfc.fit(X_train,Y_train).predict(X_test)</span><br><span class="line">rfc2_pre=rfc2.fit(X_train,Y_train).predict(X_test)</span><br><span class="line">print(metrics.accuracy_score(Y_test,dtc_pre))</span><br><span class="line">print(metrics.accuracy_score(Y_test,rfc_pre))</span><br><span class="line">print(metrics.accuracy_score(Y_test,rfc2_pre))</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503201744350.png" alt="image-20220503201744350" style="zoom:80%;">
+
+
+
+<h2 id="数据降维"><a href="#数据降维" class="headerlink" title="数据降维"></a>数据降维</h2><h3 id="降维"><a href="#降维" class="headerlink" title="降维"></a>降维</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105529797.png" alt="image-20220503105529797"></p>
+<h3 id="现实中的数据"><a href="#现实中的数据" class="headerlink" title="现实中的数据"></a>现实中的数据</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105543965.png" alt="image-20220503105543965"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105606469.png" alt="image-20220503105606469"></p>
+<h3 id="降维的必要性"><a href="#降维的必要性" class="headerlink" title="降维的必要性"></a>降维的必要性</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105704085.png" alt="image-20220503105704085"></p>
+<h3 id="特征维度减少的方法"><a href="#特征维度减少的方法" class="headerlink" title="特征维度减少的方法"></a>特征维度减少的方法</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503105812789.png" alt="image-20220503105812789"></p>
+<h4 id="特征选择"><a href="#特征选择" class="headerlink" title="特征选择"></a>特征选择</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110033101.png" alt="image-20220503110033101" style="zoom:80%;">
+
+<h4 id="特征选择代码实现"><a href="#特征选择代码实现" class="headerlink" title="特征选择代码实现"></a>特征选择代码实现</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110216627.png" alt="image-20220503110216627"></p>
+<h3 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110324120.png" alt="image-20220503110324120"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110355824.png" alt="image-20220503110355824" style="zoom:80%;">
+
+<h4 id="常用的降维方法"><a href="#常用的降维方法" class="headerlink" title="常用的降维方法"></a>常用的降维方法</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110454902.png" alt="image-20220503110454902" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+独立成分分析</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="PCA算法"><a href="#PCA算法" class="headerlink" title="PCA算法"></a>PCA算法</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110559964.png" alt="image-20220503110559964"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110708437.png" alt="image-20220503110708437" style="zoom:80%;">
+
+<h6 id="PCA算法过程"><a href="#PCA算法过程" class="headerlink" title="PCA算法过程"></a>PCA算法过程</h6><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503110925058.png" alt="image-20220503110925058" style="zoom:80%;">
+
+<h6 id="PCA算法的特点"><a href="#PCA算法的特点" class="headerlink" title="PCA算法的特点"></a>PCA算法的特点</h6><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503111042035.png" alt="image-20220503111042035" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PCA对象非常有用，但对大型数据集有一定限制。最大的限制是PCA仅支持批处理，这意味着所有要处理的数据必须适合主内存。IncrementalPCA对象使用不同的处理形式使PCA允许部分计算。</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="PCA代码实现"><a href="#PCA代码实现" class="headerlink" title="PCA代码实现"></a>PCA代码实现</h6><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503111113897.png" alt="image-20220503111113897" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503163502436.png" alt="image-20220503163502436" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503111206374.png" alt="image-20220503111206374" style="zoom:80%;">
+
+<h6 id="Incremental-PCA实现"><a href="#Incremental-PCA实现" class="headerlink" title="Incremental PCA实现"></a>Incremental PCA实现</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PCA对象非常有用，但对大型数据集有一定限制。最大的限制是PCA仅支持批处理，这意味着所有要处理的数据必须适合主内存。IncrementalPCA对象使用不同的处理形式使PCA允许部分计算。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA,IncrementalPCA</span><br><span class="line">iris=load_iris()</span><br><span class="line">x=iris.data</span><br><span class="line">y=iris.target</span><br><span class="line">n_components=<span class="number">2</span></span><br><span class="line">ipca=IncrementalPCA(n_components=n_components,batch_size=<span class="number">10</span>)</span><br><span class="line">X_ipca=ipca.fit_transform(x)</span><br><span class="line">pca=PCA(n_components=n_components)</span><br><span class="line">X_pca=pca.fit_transform(x)</span><br><span class="line">colors=[<span class="string">'navy'</span>,<span class="string">'turquoise'</span>,<span class="string">'darkorange'</span>]</span><br><span class="line"><span class="keyword">for</span> X_transformed,title <span class="keyword">in</span> [(X_ipca,<span class="string">'Incremental PCA'</span>),(X_pca,<span class="string">"PCA"</span>)]:</span><br><span class="line">    plt.figure(figsize=(<span class="number">8</span>,<span class="number">8</span>))</span><br><span class="line">    <span class="keyword">for</span> color,i,target_name <span class="keyword">in</span> zip(colors,[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>],iris.target_names):</span><br><span class="line">        plt.scatter(X_transformed[y==i,<span class="number">0</span>],X_transformed[y==i,<span class="number">1</span>],color=color,lw=<span class="number">2</span>,label=target_name)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"Incremental"</span> <span class="keyword">in</span> title:</span><br><span class="line">        err=np.abs(np.abs(X_pca)-np.abs(X_ipca)).mean()</span><br><span class="line">        plt.title(title+<span class="string">' of iris dataset\nMean absolute unsigned error% .6f'</span>% err)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        plt.title(title+<span class="string">' of iris dataset'</span>)</span><br><span class="line">    plt.legend(loc=<span class="string">'best'</span>,shadow=<span class="literal">False</span>,scatterpoints=<span class="number">1</span>)</span><br><span class="line">    plt.axis([<span class="number">-4</span>,<span class="number">4</span>,<span class="number">-1.5</span>,<span class="number">1.5</span>])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503172833866.png" alt="image-20220503172833866" style="zoom: 67%;">
+
+<h5 id="FA-因子分析-算法"><a href="#FA-因子分析-算法" class="headerlink" title="FA(因子分析)算法"></a>FA(因子分析)算法</h5><img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503174033270.png" alt="image-20220503174033270" style="zoom: 67%;">
+
+<h5 id="LCA-独立成分分析-算法"><a href="#LCA-独立成分分析-算法" class="headerlink" title="LCA(独立成分分析)算法"></a>LCA(独立成分分析)算法</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> mpl_toolkits.mplot3d <span class="keyword">import</span> Axes3D</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets.samples_generator <span class="keyword">import</span> make_blobs</span><br><span class="line"></span><br><span class="line">X,y=make_blobs(n_samples=<span class="number">10000</span>,n_features=<span class="number">3</span>,centers=[[<span class="number">3</span>,<span class="number">3</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],[<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>]],cluster_std=[<span class="number">0.2</span>,<span class="number">0.1</span>,<span class="number">0.2</span>,<span class="number">0.2</span>]</span><br><span class="line">               ,random_state=<span class="number">9</span>)</span><br><span class="line">fig=plt.figure()</span><br><span class="line">ax=Axes3D(fig,rect=[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>],elev=<span class="number">30</span>,azim=<span class="number">20</span>)</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>],X[:,<span class="number">1</span>],X[:,<span class="number">2</span>],marker=<span class="string">'.'</span>)</span><br><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> FastICA</span><br><span class="line">ica=FastICA(n_components=<span class="number">2</span>)</span><br><span class="line">ica.fit(X)</span><br><span class="line">X_new=ica.fit_transform(X)</span><br><span class="line">print(len(X_new[:,<span class="number">0</span>]),len(X_new[:,<span class="number">1</span>]))</span><br><span class="line">ax1=fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">plt.scatter(X_new[:,<span class="number">0</span>],X_new[:,<span class="number">1</span>],marker=<span class="string">'.'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/Images/image-20220503175412127.png" alt="image-20220503175412127" style="zoom:80%;">
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html">数据挖掘与机器学习-第六章 无监督学习</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年05月01日 - 19:05</p>
+  <p><span>最后更新:</span>2022年05月05日 - 10:05</p>
+  <p><span>原始链接:</span><a href="/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html" title="数据挖掘与机器学习-第六章 无监督学习">http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%91%9E%E7%BF%BC%E6%95%99%E8%82%B2/" rel="tag"><i class="fa fa-tag"></i> 瑞翼教育</a>
+          
+            <a href="/tags/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 聚类算法</a>
+          
+            <a href="/tags/%E9%99%8D%E7%BB%B4/" rel="tag"><i class="fa fa-tag"></i> 降维</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90.html" rel="next" title="数据挖掘与机器学习-第五章 回归分析">
+                <i class="fa fa-chevron-left"></i> 数据挖掘与机器学习-第五章 回归分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E8%B5%A4%E8%A3%B8%E8%A3%B8%E7%9A%84%E7%BB%9F%E8%AE%A1%E5%AD%A6-%E7%AC%AC%E4%B8%80%E7%AB%A0.html" rel="prev" title="赤裸裸的统计学 第一章">
+                赤裸裸的统计学 第一章 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">307</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据挖掘与机器学习-第六章-无监督学习"><span class="nav-number">1.</span> <span class="nav-text">数据挖掘与机器学习-第六章 无监督学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#无监督学习"><span class="nav-number">1.1.</span> <span class="nav-text">无监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#聚类算法"><span class="nav-number">1.2.</span> <span class="nav-text">聚类算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类算法概述"><span class="nav-number">1.2.1.</span> <span class="nav-text">聚类算法概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概述"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#聚类算法的功能"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">聚类算法的功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用场景"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#聚类算法评判指标"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">聚类算法评判指标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类中的数据结构"><span class="nav-number">1.2.2.</span> <span class="nav-text">聚类中的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#划分聚类"><span class="nav-number">1.2.3.</span> <span class="nav-text">划分聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#K-means的结束"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">K-means的结束</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始质心对K-means聚类的影响"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">初始质心对K-means聚类的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#k值对K-means聚类影响"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">k值对K-means聚类影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#K均值算法运行注意注意"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">K均值算法运行注意注意</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#K-means的局限"><span class="nav-number">1.2.3.5.</span> <span class="nav-text">K-means的局限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码演示"><span class="nav-number">1.2.3.6.</span> <span class="nav-text">代码演示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#层次聚类"><span class="nav-number">1.2.4.</span> <span class="nav-text">层次聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#凝聚层次聚类"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">凝聚层次聚类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分裂层次聚类"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">分裂层次聚类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#层次聚类运行过程"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">层次聚类运行过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#层次聚类问题"><span class="nav-number">1.2.4.4.</span> <span class="nav-text">层次聚类问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#簇间相似度"><span class="nav-number">1.2.4.4.1.</span> <span class="nav-text">簇间相似度</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#MIN-单连接"><span class="nav-number">1.2.4.4.1.1.</span> <span class="nav-text">MIN(单连接)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#MAX-全连接"><span class="nav-number">1.2.4.4.1.2.</span> <span class="nav-text">MAX(全连接)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#组平均"><span class="nav-number">1.2.4.4.1.3.</span> <span class="nav-text">组平均</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#质心距离"><span class="nav-number">1.2.4.4.1.4.</span> <span class="nav-text">质心距离</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#层次聚类特点"><span class="nav-number">1.2.4.5.</span> <span class="nav-text">层次聚类特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">1.2.4.6.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密度聚类"><span class="nav-number">1.2.5.</span> <span class="nav-text">密度聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DBSCAN"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">DBSCAN</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#直接密度可达和密度可达"><span class="nav-number">1.2.5.1.1.</span> <span class="nav-text">直接密度可达和密度可达</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#密度相连"><span class="nav-number">1.2.5.1.2.</span> <span class="nav-text">密度相连</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DBSCAN算法"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">DBSCAN算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DBSCAN优势"><span class="nav-number">1.2.5.2.1.</span> <span class="nav-text">DBSCAN优势</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DBSCAN劣势"><span class="nav-number">1.2.5.2.2.</span> <span class="nav-text">DBSCAN劣势</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类质量"><span class="nav-number">1.2.6.</span> <span class="nav-text">聚类质量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验六-聚类算法"><span class="nav-number">1.3.</span> <span class="nav-text">实验六 聚类算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验七-集成学习"><span class="nav-number">1.4.</span> <span class="nav-text">实验七 集成学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据降维"><span class="nav-number">1.5.</span> <span class="nav-text">数据降维</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#降维"><span class="nav-number">1.5.1.</span> <span class="nav-text">降维</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#现实中的数据"><span class="nav-number">1.5.2.</span> <span class="nav-text">现实中的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#降维的必要性"><span class="nav-number">1.5.3.</span> <span class="nav-text">降维的必要性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征维度减少的方法"><span class="nav-number">1.5.4.</span> <span class="nav-text">特征维度减少的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特征选择"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">特征选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特征选择代码实现"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">特征选择代码实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征提取"><span class="nav-number">1.5.5.</span> <span class="nav-text">特征提取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用的降维方法"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">常用的降维方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PCA算法"><span class="nav-number">1.5.5.1.1.</span> <span class="nav-text">PCA算法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#PCA算法过程"><span class="nav-number">1.5.5.1.1.1.</span> <span class="nav-text">PCA算法过程</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#PCA算法的特点"><span class="nav-number">1.5.5.1.1.2.</span> <span class="nav-text">PCA算法的特点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#PCA代码实现"><span class="nav-number">1.5.5.1.1.3.</span> <span class="nav-text">PCA代码实现</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Incremental-PCA实现"><span class="nav-number">1.5.5.1.1.4.</span> <span class="nav-text">Incremental PCA实现</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FA-因子分析-算法"><span class="nav-number">1.5.5.1.2.</span> <span class="nav-text">FA(因子分析)算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LCA-独立成分分析-算法"><span class="nav-number">1.5.5.1.3.</span> <span class="nav-text">LCA(独立成分分析)算法</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">296.7k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
