@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="林子雨,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第四章 分布式数据库HBase概述从BigTable说起12BigTable是一个分布式存储系统BigTable起初用于解决典型的互联网搜索问题  1234567•建立互联网索引1 爬虫持续不断地抓取新页面，这些页面每页一行地存储到BigTable里2 MapReduce计算作业运行在整张表上，生成索引，为网络搜索应用做准备•搜索互联网3 用户发起网络搜索请求4 网络搜索应用查询建立好的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林子雨 大数据技术原理与应用-第四章 分布式数据库HBase">
+<meta property="og:url" content="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93HBase.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第四章 分布式数据库HBase概述从BigTable说起12BigTable是一个分布式存储系统BigTable起初用于解决典型的互联网搜索问题  1234567•建立互联网索引1 爬虫持续不断地抓取新页面，这些页面每页一行地存储到BigTable里2 MapReduce计算作业运行在整张表上，生成索引，为网络搜索应用做准备•搜索互联网3 用户发起网络搜索请求4 网络搜索应用查询建立好的">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281327539.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281329752.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281332502.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281418222.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281430826.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281433903.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281434121.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281436903.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230228145808169.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281500698.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281518866.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281518309.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281522002.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281525790.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281536901.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281537564.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281537467.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281557920.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281558723.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281607273.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281621195.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281820158.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281820966.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281821565.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281824040.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282029835.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282031644.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282032278.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282057560.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282059055.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282113102.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282133190.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282139347.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282200531.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282216054.png">
+<meta property="article:published_time" content="2023-02-28T05:13:43.000Z">
+<meta property="article:modified_time" content="2023-02-28T14:29:12.985Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="林子雨">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281327539.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/林子雨-大数据技术原理与应用-第四章-分布式数据库HBase.html">
+
+
+
+
+
+  <title>林子雨 大数据技术原理与应用-第四章 分布式数据库HBase | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93HBase.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">林子雨 大数据技术原理与应用-第四章 分布式数据库HBase</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-02-28T13:13:43+08:00">
+                2023-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据技术原理与应用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第四章-分布式数据库HBase"><a href="#第四章-分布式数据库HBase" class="headerlink" title="第四章 分布式数据库HBase"></a>第四章 分布式数据库HBase</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="从BigTable说起"><a href="#从BigTable说起" class="headerlink" title="从BigTable说起"></a>从BigTable说起</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BigTable是一个分布式存储系统</span><br><span class="line">BigTable起初用于解决典型的互联网搜索问题</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">•建立互联网索引</span><br><span class="line">1 爬虫持续不断地抓取新页面，这些页面每页一行地存储到BigTable里</span><br><span class="line">2 MapReduce计算作业运行在整张表上，生成索引，为网络搜索应用做准备</span><br><span class="line">•搜索互联网</span><br><span class="line">3 用户发起网络搜索请求</span><br><span class="line">4 网络搜索应用查询建立好的索引，从BigTable得到网页</span><br><span class="line">5 搜索结果提交给用户</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281327539.png" alt="image-20230228132330400"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">•BigTable是一个分布式存储系统</span><br><span class="line">•利用谷歌提出的MapReduce分布式并行计算模型来处理海量数据</span><br><span class="line">•使用谷歌分布式文件系统GFS作为底层数据存储</span><br><span class="line">•采用Chubby提供协同服务管理</span><br><span class="line">•可以扩展到PB级别的数据和上千台机器，具备广泛应用性、可扩展性、高性能和高可用性等特点</span><br><span class="line">•谷歌的许多项目都存储在BigTable中，包括搜索、地图、财经、打印、社交网站Orkut、视频共享网站YouTube和博客网站Blogger等</span><br></pre></td></tr></table></figure>
+
+<h3 id="HBase简介"><a href="#HBase简介" class="headerlink" title="HBase简介"></a>HBase简介</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HBase是一个高可靠、高性能、面向列、可伸缩的分布式数据库，是谷歌BigTable的开源实现，主要用来存储非结构化和半结构化的松散数据。HBase的目标是处理非常庞大的表，可以通过水平扩展的方式，利用廉价计算机集群处理由超过10亿行数据和数百万列元素组成的数据表</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281329752.png" alt="image-20230228132917704" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281332502.png" alt="image-20230228133233461" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">关系数据库已经流行很多年，并且Hadoop已经有了HDFS和MapReduce，为什么需要HBase?</span><br><span class="line">•Hadoop可以很好地解决大规模数据的离线批量处理问题，但是，受限于Hadoop MapReduce编程框架的高延迟数据处理机制，使得Hadoop无法满足大规模数据实时处理应用的需求</span><br><span class="line">•HDFS面向批量访问模式，不是随机访问模式</span><br><span class="line">•传统的通用关系型数据库无法应对在数据规模剧增时导致的系统扩展性和性能问题（分库分表也不能很好解决）</span><br><span class="line">•传统关系数据库在数据结构变化时一般需要停机维护；空列浪费存储空间</span><br><span class="line">•因此，业界出现了一类面向半结构化数据存储和处理的高可扩展、低写入&#x2F;查询延迟的系统，例如，键值数据库、文档数据库和列族数据库（如BigTable和HBase等）</span><br><span class="line">•HBase已经成功应用于互联网服务领域和传统行业的众多在线式数据分析处理系统中</span><br></pre></td></tr></table></figure>
+
+<h3 id="HBase与传统关系数据库的对比分析"><a href="#HBase与传统关系数据库的对比分析" class="headerlink" title="HBase与传统关系数据库的对比分析"></a>HBase与传统关系数据库的对比分析</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">• HBase与传统的关系数据库的区别主要体现在以下几个方面：</span><br><span class="line">• （1）数据类型：关系数据库采用关系模型，具有丰富的数据类型和存储方式，HBase则采用了更加简单的数据模型，它把数据存储为未经解释的字符串</span><br><span class="line">• （2）数据操作：关系数据库中包含了丰富的操作，其中会涉及复杂的多表连接。HBase操作则不存在复杂的表与表之间的关系，只有简单的插入、查询、删除、清空等，因为HBase在设计上就避免了复杂的表和表之间的关系</span><br><span class="line">• （3）存储模式：关系数据库是基于行模式存储的。HBase是基于列存储的，每个列族都由几个文件保存，不同列族的文件是分离的</span><br><span class="line">• （4）数据索引：关系数据库通常可以针对不同列构建复杂的多个索</span><br><span class="line">引，以提高数据访问性能。HBase只有一个索引——行键，通过巧妙</span><br><span class="line">的设计，HBase中的所有访问方法，或者通过行键访问，或者通过行</span><br><span class="line">键扫描，从而使得整个系统不会慢下来</span><br><span class="line">• （5）数据维护：在关系数据库中，更新操作会用最新的当前值去替</span><br><span class="line">换记录中原来的旧值，旧值被覆盖后就不会存在。而在HBase中执行</span><br><span class="line">更新操作时，并不会删除数据旧的版本，而是生成一个新的版本，旧</span><br><span class="line">有的版本仍然保留</span><br><span class="line">• （6）可伸缩性：关系数据库很难实现横向扩展，纵向扩展的空间也</span><br><span class="line">比较有限。相反，HBase和BigTable这些分布式数据库就是为了实现</span><br><span class="line">灵活的水平扩展而开发的，能够轻易地通过在集群中增加或者减少硬</span><br><span class="line">件数量来实现性能的伸缩</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="HBase访问接口"><a href="#HBase访问接口" class="headerlink" title="HBase访问接口"></a>HBase访问接口</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281418222.png" alt="image-20230228141802166"></p>
+<h2 id="HBase数据模型"><a href="#HBase数据模型" class="headerlink" title="HBase数据模型"></a>HBase数据模型</h2><h3 id="数据模型概述"><a href="#数据模型概述" class="headerlink" title="数据模型概述"></a>数据模型概述</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">• HBase是一个稀疏、多维度、排序的映射表，这张表的索引是行键、列族、列限定符和时间戳</span><br><span class="line">• 每个值是一个未经解释的字符串，没有数据类型</span><br><span class="line">• 用户在表中存储数据，每一行都有一个可排序的行键和任意多的列</span><br><span class="line">• 表在水平方向由一个或者多个列族组成，一个列族中可以包含任意多个列，同一个列族里面的数据存储在一起</span><br><span class="line">• 列族支持动态扩展，可以很轻松地添加一个列族或列，无需预先定义列的数量以及类型，所有列均以字符串形式存储，用户需要自行进行数据类型转换</span><br><span class="line">• HBase中执行更新操作时，并不会删除数据旧的版本，而是生成一个新的版本，旧有的版本仍然保留（这是和HDFS只允许追加不允许修改的特性相关的）</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据模型相关概念"><a href="#数据模型相关概念" class="headerlink" title="数据模型相关概念"></a>数据模型相关概念</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">• 表：HBase采用表来组织数据，表由行和列组成，列划分为若干个列族</span><br><span class="line">• 行：每个HBase表都由若干行组成，每个行由行键（row key）来标识。</span><br><span class="line">• 列族：一个HBase表被分组成许多“列族”（Column Family）的集合，它是</span><br><span class="line">基本的访问控制单元</span><br><span class="line">• 列限定符：列族里的数据通过列限定符（或列）来定位</span><br><span class="line">• 单元格：在HBase表中，通过行、列族和列限定符确定一个“单元格”（cell），单元格中存储的数据没有数据类型，总被视为字节数组byte[]</span><br><span class="line">• 时间戳：每个单元格都保存着同一份数据的多个版本，这些版本采用时间戳进行索引</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281430826.png" alt="image-20230228143056780" style="zoom:80%;">
+
+<h3 id="数据坐标"><a href="#数据坐标" class="headerlink" title="数据坐标"></a>数据坐标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">• HBase中需要根据行键、列族、列限定符和时间戳来确定一个单元格，因此</span><br><span class="line">，可以视为一个“四维坐标”，即[行键, 列族, 列限定符, 时间戳]</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281433903.png" alt="image-20230228143358844" style="zoom:80%;">
+
+<h3 id="概念视图"><a href="#概念视图" class="headerlink" title="概念视图"></a>概念视图</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281434121.png" alt="image-20230228143426066" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这里能看出hbase是稀疏表</span><br><span class="line">但实际物理储存不是这样的</span><br></pre></td></tr></table></figure>
+
+<h3 id="物理视图"><a href="#物理视图" class="headerlink" title="物理视图"></a>物理视图</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281436903.png" alt="image-20230228143617852" style="zoom:80%;">
+
+<h3 id="面向列的存储"><a href="#面向列的存储" class="headerlink" title="面向列的存储"></a>面向列的存储</h3><img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230228145808169.png" alt="image-20230228145808169" style="zoom:80%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281500698.png" alt="image-20230228150021647"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">列式存储适用于分析，如只分析年龄、性别</span><br><span class="line">还有一个好处是同一列数据类型相同，好压缩</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="HBase的实现原理"><a href="#HBase的实现原理" class="headerlink" title="HBase的实现原理"></a>HBase的实现原理</h2><h3 id="HBase功能组件"><a href="#HBase功能组件" class="headerlink" title="HBase功能组件"></a>HBase功能组件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HBase的实现包括三个主要的功能组件：</span><br><span class="line">– （1）库函数：链接到每个客户端</span><br><span class="line">– （2）一个Master主服务器</span><br><span class="line">– （3）许多个Region服务器</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">• 主服务器Master负责管理和维护HBase表的分区信息，维护Region服务器列表，分配Region，负载均衡</span><br><span class="line">• Region服务器负责存储和维护分配给自己的Region，处理来自客户端的读写请求</span><br><span class="line">• 客户端并不是直接从Master主服务器上读取数据，而是在获得Region的存储位置信息后，直接从Region服务器上读取数据</span><br><span class="line">• 客户端并不依赖Master，而是通过Zookeeper来获得Region位置信息，大多数客户端甚至从来不和Master通信，这种设计方式使得Master负载很小</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="表和Region"><a href="#表和Region" class="headerlink" title="表和Region"></a>表和Region</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•开始只有一个Region，后来不断分裂</span><br><span class="line">•Region拆分操作非常快，接近瞬间，因为拆分之后的Region读取的仍然是原存储文件，直到“合并”过程把存储文件异步地写到独立的文件之后，才会读取新文件</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281518866.png" alt="image-20230228151807823" style="zoom:80%;">
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281518309.png" alt="image-20230228151836266" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">•每个Region默认大小是100MB到200MB（2006年以前的硬件配置）</span><br><span class="line">•每个Region的最佳大小取决于单台服务器的有效处理能力</span><br><span class="line">•目前每个Region最佳大小建议1GB-2GB（2013年以后的硬件配置）</span><br><span class="line">•同一个Region不会被分拆到多个Region服务器</span><br><span class="line">•每个Region服务器存储10-1000个Region</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281522002.png" alt="image-20230228152226946"></p>
+<h3 id="Region的定位"><a href="#Region的定位" class="headerlink" title="Region的定位"></a>Region的定位</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">•元数据表，又名.META.表，存储了Region和Region服务器的映射关系</span><br><span class="line">•当HBase表很大时， .META.表也会被分裂成多个Region</span><br><span class="line">•根数据表，又名-ROOT-表，记录所有元数据的具体位置</span><br><span class="line">•-ROOT-表只有唯一一个Region，名字是在程序中被写死的</span><br><span class="line">•Zookeeper文件记录了-ROOT-表的位置</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281525790.png" alt="image-20230228152512735"></p>
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281536901.png" alt="image-20230228153623839" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">•为了加快访问速度，.META.表的全部Region都会被保存在内存中</span><br><span class="line">•假设.META.表的每行（一个映射条目）在内存中大约占用1KB，并且每个Region限制为128MB，那么，上面的三层结构可以保存的用户数据表的Region数目的计算方法是：</span><br><span class="line">•（-ROOT-表能够寻址的.META.表的Region个数）×（每个.META.表的Region可以寻址的用户数据表的Region个数）</span><br><span class="line">•一个-ROOT-表最多只能有一个Region，也就是最多只能有128MB，按照每行（一个映射条目）占用1KB内存计算，128MB空间可以容纳128MB&#x2F;1KB&#x3D;217行，也就是说，一个-ROOT-表可以寻址217个.META.表的Region。</span><br><span class="line">•同理，每个.META.表的 Region可以寻址的用户数据表的Region个数是128MB&#x2F;1KB&#x3D;217。</span><br><span class="line">•最终，三层结构可以保存的Region数目是(128MB&#x2F;1KB) × (128MB&#x2F;1KB) &#x3D; 234个Region</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281537564.png" alt="image-20230228153722526" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">客户端访问数据时的“三级寻址”</span><br><span class="line">•为了加速寻址，客户端会缓存位置信息，同时，需要解决缓存失效问题</span><br><span class="line">•寻址过程客户端只需要询问Zookeeper服务器，不需要连接Master服务器</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281537467.png" alt="image-20230228153756421" style="zoom:80%;">
+
+<h2 id="HBase运行机制"><a href="#HBase运行机制" class="headerlink" title="HBase运行机制"></a>HBase运行机制</h2><h3 id="HBase系统架构"><a href="#HBase系统架构" class="headerlink" title="HBase系统架构"></a>HBase系统架构</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281557920.png" alt="image-20230228155722859" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 客户端</span><br><span class="line">客户端包含访问HBase的接口，同时在缓存中维护着已经访问过的Region位置信息，用来加快后续数据访问过程</span><br><span class="line">2. Zookeeper服务器</span><br><span class="line">Zookeeper可以帮助选举出一个Master作为集群的总管，并保证在任何时刻总有唯一一个Master在运行，这就避免了Master的“单点失效”问题</span><br><span class="line"></span><br><span class="line">Zookeeper是一个很好的集群管理工具，被大量用于分布式计算，提供配置维护、域名服务、分布式同步、组服务等。</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281558723.png" alt="image-20230228155838651" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">3. Master</span><br><span class="line">主服务器Master主要负责表和Region的管理工作：</span><br><span class="line">	管理用户对表的增加、删除、修改、查询等操作</span><br><span class="line">	实现不同Region服务器之间的负载均衡</span><br><span class="line">	在Region分裂或合并后，负责重新调整Region的分布</span><br><span class="line">	对发生故障失效的Region服务器上的Region进行迁移</span><br><span class="line">4. Region服务器</span><br><span class="line">	Region服务器是HBase中最核心的模块，负责维护分配给自己的Region，并响应用户的读写请求</span><br></pre></td></tr></table></figure>
+
+<h3 id="Region服务器工作原理"><a href="#Region服务器工作原理" class="headerlink" title="Region服务器工作原理"></a>Region服务器工作原理</h3><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281607273.png" alt="image-20230228160741212" style="zoom:80%;">
+
+<h4 id="用户读写数据过程"><a href="#用户读写数据过程" class="headerlink" title="用户读写数据过程"></a>用户读写数据过程</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">•用户写入数据时，被分配到相应Region服务器去执行</span><br><span class="line">•用户数据首先被写入到MemStore和Hlog中</span><br><span class="line">•只有当操作写入Hlog之后，commit()调用才会将其返回给客户端</span><br><span class="line">•当用户读取数据时，Region服务器会首先访问MemStore缓存，如果找不到，再去磁盘上面的StoreFile中寻找</span><br></pre></td></tr></table></figure>
+
+<h4 id="缓存的刷新"><a href="#缓存的刷新" class="headerlink" title="缓存的刷新"></a>缓存的刷新</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•系统会周期性地把MemStore缓存里的内容刷写到磁盘的StoreFile文件中，清空缓存，并在Hlog里面写入一个标记</span><br><span class="line">•每次刷写都生成一个新的StoreFile文件，因此，每个Store包含多个StoreFile文件</span><br><span class="line">•每个Region服务器都有一个自己的HLog文件，每次启动都检查该文件，确认最近一次执行缓存刷新操作之后是否发生新的写入操作；如果发现更新，则先写入MemStore，再刷写到StoreFile，最后删除旧的Hlog文件，开始为用户提供服务</span><br></pre></td></tr></table></figure>
+
+<h4 id="StoreFile-的合并"><a href="#StoreFile-的合并" class="headerlink" title="StoreFile  的合并"></a>StoreFile  的合并</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•每次刷写都生成一个新的StoreFile，数量太多，影响查找速度</span><br><span class="line">•调用Store.compact()把多个合并成一个</span><br><span class="line">•合并操作比较耗费资源，只有数量达到一个阈值才启动合并</span><br></pre></td></tr></table></figure>
+
+<h3 id="Store工作原理"><a href="#Store工作原理" class="headerlink" title="Store工作原理"></a>Store工作原理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•Store是Region服务器的核心</span><br><span class="line">•多个StoreFile合并成一个</span><br><span class="line">•单个StoreFile过大时，又触发分裂操作，1个父Region被分裂成两个子Region</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281621195.png" alt="image-20230228162152144" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这就是上面region的分裂</span><br></pre></td></tr></table></figure>
+
+<h3 id="HLog工作原理"><a href="#HLog工作原理" class="headerlink" title="HLog工作原理"></a>HLog工作原理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">• 分布式环境必须要考虑系统出错。HBase采用HLog保证系统恢复</span><br><span class="line">• HBase系统为每个Region服务器配置了一个HLog文件，它是一种预写式日志（Write Ahead Log）</span><br><span class="line">• 用户更新数据必须首先写入日志后，才能写入MemStore缓存，并且，直到MemStore缓存内容对应的日志已经写入磁盘，该缓存内容才能被刷写到磁盘</span><br><span class="line">• Zookeeper会实时监测每个Region服务器的状态，当某个Region服务器发生故障时，Zookeeper会通知Master</span><br><span class="line">• Master首先会处理该故障Region服务器上面遗留的HLog文件，这个遗留的HLog文件中包含了来自多个Region对象的日志记录</span><br><span class="line">• 系统会根据每条日志记录所属的Region对象对HLog数据进行拆分，分别放到相应Region对象的目录下，然后，再将失效的Region重新分配到可用的Region服务器中，并把与该Region对象相关的HLog日志记录也发送给相应的Region服务器</span><br><span class="line">• Region服务器领取到分配给自己的Region对象以及与之相关的HLog日志记录以后，会重新做一遍日志记录中的各种操作，把日志记录中的数据写入到MemStore缓存中，然后，刷新到磁盘的StoreFile文件中，完成数据恢复</span><br><span class="line">• 共用日志优点：提高对表的写操作性能；缺点：恢复时需要分拆日志</span><br></pre></td></tr></table></figure>
+
+<h2 id="HBase应用方案"><a href="#HBase应用方案" class="headerlink" title="HBase应用方案"></a>HBase应用方案</h2><h3 id="HBase实际应用中的性能优化方法"><a href="#HBase实际应用中的性能优化方法" class="headerlink" title="HBase实际应用中的性能优化方法"></a>HBase实际应用中的性能优化方法</h3><h4 id="行键"><a href="#行键" class="headerlink" title="行键"></a>行键</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">行键是按照字典序存储，因此，设计行键时，要充分利用这个排序特点，将经常一起读取的数据存储到一块，将最近可能会被访问的数据放在一块。</span><br><span class="line"></span><br><span class="line">举个例子：如果最近写入HBase表中的数据是最可能被访问的，可以考虑将时间戳作为行键的一部分，由于是字典序排序，所以可以使用Long.MAX_VALUE - timestamp作为行键，这样能保证新写入的数据在读取时可以被快速命中。</span><br></pre></td></tr></table></figure>
+
+<h4 id="InMemory"><a href="#InMemory" class="headerlink" title="InMemory"></a>InMemory</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">创建表的时候，可以通过HColumnDescriptor.setInMemory(true)将表放到</span><br><span class="line">Region服务器的缓存中，保证在读取的时候被cache命中。</span><br></pre></td></tr></table></figure>
+
+<h4 id="Max-Version"><a href="#Max-Version" class="headerlink" title="Max Version"></a>Max Version</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">创建表的时候，可以通过HColumnDescriptor.setMaxVersions(int maxVersions)设置表中数据的最大版本，如果只需要保存最新版本的数据，那么可以设置setMaxVersions(1)。</span><br></pre></td></tr></table></figure>
+
+<h4 id="Time-To-Live"><a href="#Time-To-Live" class="headerlink" title="Time To Live"></a>Time To Live</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">•Time To Live</span><br><span class="line">创建表的时候，可以通过HColumnDescriptor.setTimeToLive(int timeToLive)</span><br><span class="line">设置表中数据的存储生命期，过期数据将自动被删除，例如如果只需要存储</span><br><span class="line">最近两天的数据，那么可以设置setTimeToLive(2 * 24 * 60 * 60)。</span><br></pre></td></tr></table></figure>
+
+<h3 id="HBase性能监视"><a href="#HBase性能监视" class="headerlink" title="HBase性能监视"></a>HBase性能监视</h3><h4 id="Master-status-自带"><a href="#Master-status-自带" class="headerlink" title="Master-status(自带)"></a>Master-status(自带)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">•HBase Master默认基于Web的UI</span><br><span class="line">服务端口为60010，HBase region</span><br><span class="line">服务器默认基于Web的UI服务端</span><br><span class="line">口为60030.如果master运行在名</span><br><span class="line">为master.foo.com的主机中，</span><br><span class="line">mater的主页地址就是</span><br><span class="line">http:&#x2F;&#x2F;master.foo.com:60010，用</span><br><span class="line">户可以通过Web浏览器输入这个</span><br><span class="line">地址查看该页面</span><br><span class="line">•可以查看HBase集群的当前状态</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281820158.png" alt="image-20230228182008076" style="zoom:80%;">
+
+<h4 id="Ganglia"><a href="#Ganglia" class="headerlink" title="Ganglia"></a>Ganglia</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ganglia是UC Berkeley发起的一个开源集群监视项目，用于监控系统性能</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281820966.png" alt="image-20230228182042858" style="zoom:80%;">
+
+<h4 id="OpenTSDB"><a href="#OpenTSDB" class="headerlink" title="OpenTSDB"></a>OpenTSDB</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OpenTSDB可以从大规模的集群（包括集群中的网络设备、操作系统、应用程序）</span><br><span class="line">中获取相应的metrics并进行存储、索引以及服务，从而使得这些数据更容易让人</span><br><span class="line">理解，如web化，图形化等</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281821565.png" alt="image-20230228182110452" style="zoom:80%;">
+
+<h4 id="Ambari"><a href="#Ambari" class="headerlink" title="Ambari"></a>Ambari</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ambari 的作用就是创建、管理、监视 Hadoop 的集群</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302281824040.png" alt="image-20230228182401952" style="zoom:80%;">
+
+<h3 id="在HBase之上构建SQL引擎"><a href="#在HBase之上构建SQL引擎" class="headerlink" title="在HBase之上构建SQL引擎"></a>在HBase之上构建SQL引擎</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">NoSQL区别于关系型数据库的一点就是NoSQL不使用SQL作为查询语言，</span><br><span class="line">至于为何在NoSQL数据存储HBase上提供SQL接口，有如下原因：</span><br><span class="line"> 1.易使用。使用诸如SQL这样易于理解的语言，使人们能够更加轻松地使用HBase。</span><br><span class="line"> 2.减少编码。使用诸如SQL这样更高层次的语言来编写，减少了编写的代码量。 </span><br><span class="line"></span><br><span class="line">方案：</span><br><span class="line">1.Hive整合HBase</span><br><span class="line">2.Phoenix</span><br></pre></td></tr></table></figure>
+
+<h4 id="Hive整合HBase"><a href="#Hive整合HBase" class="headerlink" title="Hive整合HBase"></a>Hive整合HBase</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hive与HBase的整合功能从Hive0.6.0版本已经开始出现，利用两者对外的API接口互相通信，通信主要依靠hive_hbase-handler.jar工具包(Hive Storage Handlers)。由于HBase有一次比较大的版本变动，所以并不是每个版本的Hive都能和现有的HBase版本进行整合，所以在使用过程中特别注意的就是两者版本的一致性。</span><br></pre></td></tr></table></figure>
+
+<h4 id="Phoenix"><a href="#Phoenix" class="headerlink" title="Phoenix"></a>Phoenix</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Phoenix由Salesforce.com开源，是构建在Apache HBase之上的一个SQL中间层，可以让开发者在HBase上执行SQL查询。</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建HBase二级索引"><a href="#构建HBase二级索引" class="headerlink" title="构建HBase二级索引"></a>构建HBase二级索引</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">HBase只有一个针对行健的索引</span><br><span class="line">访问HBase表中的行，只有三种方式：</span><br><span class="line">    •通过单个行健访问</span><br><span class="line">    •通过一个行健的区间来访问</span><br><span class="line">    •全表扫描</span><br><span class="line"></span><br><span class="line">使用其他产品为HBase行健提供索引功能：</span><br><span class="line">•Hindex二级索引</span><br><span class="line">•HBase+Redis</span><br><span class="line">•HBase+solr</span><br><span class="line"></span><br><span class="line">原理：采用HBase0.92版本之后引入的Coprocessor特性</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">•Coprocessor构建二级索引</span><br><span class="line">•Coprocessor提供了两个实现：endpoint和observer，endpoint相当于关系型数</span><br><span class="line">据库的存储过程，而observer则相当于触发器</span><br><span class="line">•observer允许我们在记录put前后做一些处理，因此，而我们可以在插入数据时</span><br><span class="line">同步写入索引表</span><br><span class="line"></span><br><span class="line">优点：</span><br><span class="line">非侵入性：引擎构建在HBase之上，既没有对HBase进行任何改动，也不需要上层应用做任何妥协</span><br><span class="line"></span><br><span class="line">•缺点：每插入一条数据需要向索引表插入数据，即耗时是双倍的，对HBase的集群的压力也是双倍的</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282029835.png" alt="image-20230228202924759" style="zoom:80%;">
+
+<h4 id="Hindex二级索引"><a href="#Hindex二级索引" class="headerlink" title="Hindex二级索引"></a>Hindex二级索引</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Hindex 是华为公司开发的纯 Java 编写的HBase二级索引，兼容 Apache HBase 0.94.8。当前的特性如下：</span><br><span class="line">•多个表索引</span><br><span class="line">•多个列索引</span><br><span class="line">•基于部分列值的索引</span><br></pre></td></tr></table></figure>
+
+<h4 id="HBase-Redis"><a href="#HBase-Redis" class="headerlink" title="HBase+Redis"></a>HBase+Redis</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">•Redis+HBase方案</span><br><span class="line">•Coprocessor构建二级索引</span><br><span class="line">•Redis做客户端缓存</span><br><span class="line">•将索引实时更新到Redis等KV系统中，定时从KV更新索引到HBase的索引表中</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282031644.png" alt="image-20230228203150589" style="zoom:80%;">
+
+<h4 id="Solr-HBase"><a href="#Solr-HBase" class="headerlink" title="Solr+HBase"></a>Solr+HBase</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Solr是一个高性能，采用Java5开发，基于Lucene的全文搜索服务器。同时对其</span><br><span class="line">进行了扩展，提供了比Lucene更为丰富的查询语言，同时实现了可配置、可扩展</span><br><span class="line">并对查询性能进行了优化，并且提供了一个完善的功能管理界面，是一款非常优</span><br><span class="line">秀的全文搜索引擎。</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282032278.png" alt="image-20230228203218220" style="zoom:80%;">
+
+<h2 id="HBase编程实践"><a href="#HBase编程实践" class="headerlink" title="HBase编程实践"></a>HBase编程实践</h2><h3 id="HBase的安装与配置"><a href="#HBase的安装与配置" class="headerlink" title="HBase的安装与配置"></a>HBase的安装与配置</h3><h4 id="HBase安装"><a href="#HBase安装" class="headerlink" title="HBase安装"></a>HBase安装</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">•下载安装包hbase-1.1.2-bin.tar.gz</span><br><span class="line">•解压安装包hbase-1.1.2-bin.tar.gz至路径 &#x2F;usr&#x2F;local</span><br><span class="line">•配置系统环境,将hbase下的bin目录添加到系统的path中</span><br><span class="line"></span><br><span class="line">备注：第2章安装完Hadoop时，只包含HDFS和MapReduce等核心组件，</span><br><span class="line">并不包含HBase，因此，HBase需要单独安装</span><br></pre></td></tr></table></figure>
+
+<h4 id="HBase配置"><a href="#HBase配置" class="headerlink" title="HBase配置"></a>HBase配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">HBase有三种运行模式，单机模式、伪分布式模式、分布式模式。</span><br><span class="line">以下先决条件很重要，比如没有配置JAVA_HOME环境变量，就会报错。</span><br><span class="line">– JDK</span><br><span class="line">– Hadoop( 单机模式不需要，伪分布式模式和分布式模式需要)</span><br><span class="line">– SSH</span><br><span class="line"></span><br><span class="line">启动关闭Hadoop和HBase的顺序一定是：</span><br><span class="line">启动Hadoop—&gt;启动HBase—&gt;关闭HBase—&gt;关闭Hadoop</span><br><span class="line">HBASE_MANAGES_ZK&#x3D;true，则由HBase自己管理Zookeeper</span><br><span class="line">否则，启动独立的Zookeeper</span><br><span class="line">建议：单机版HBase，使用自带Zookeeper；集群安装HBase则采用单独Zookeeper集群</span><br></pre></td></tr></table></figure>
+
+<h3 id="HBase常用Shell命令"><a href="#HBase常用Shell命令" class="headerlink" title="HBase常用Shell命令"></a>HBase常用Shell命令</h3><h4 id="create、list"><a href="#create、list" class="headerlink" title="create、list"></a>create、list</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•create：创建表</span><br><span class="line">•list：列出HBase中所有的表信息</span><br><span class="line">例子1：创建一个表，该表名称为tempTable，包含3个列族f1，f2和f3</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282057560.png" alt="image-20230228205731501" style="zoom:80%;">
+
+<h4 id="put、scan"><a href="#put、scan" class="headerlink" title="put、scan"></a>put、scan</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">put：向表、行、列指定的单元格添加数据</span><br><span class="line"> 一次只能为一个表的一行数据的一个列添加一个数据</span><br><span class="line"> 在添加数据时，HBase会自动为添加的数据添加一个时间戳，当然，也可以在添加数据时人工指定时间戳的值</span><br><span class="line">scan：浏览表的相关信息</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例子2：继续向表tempTable中的第r1行、第“f1:c1”列，添加数据值为“hello,dblab”</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282059055.png" alt="image-20230228205940994" style="zoom:80%;">
+
+<h4 id="get"><a href="#get" class="headerlink" title="get"></a>get</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get：通过表名、行、列、时间戳、时间范围和版本号来获得相应单元格的值</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">例子3：</span><br><span class="line">（1）从tempTable中，获取第r1行、第“f1:c1”列的值</span><br><span class="line">（2）从tempTable中，获取第r1行、第“f1:c3”列的值</span><br><span class="line">备注：f1是列族，c1和c3都是列</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282113102.png" alt="image-20230228211300041" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">从运行结果可以看出： tempTable中第r1行、第“f1:c3”列的值当前不存在</span><br></pre></td></tr></table></figure>
+
+<h4 id="enable-disable：使表有效或无效"><a href="#enable-disable：使表有效或无效" class="headerlink" title="enable/disable：使表有效或无效"></a>enable/disable：使表有效或无效</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">删除之前，要使之无效</span><br></pre></td></tr></table></figure>
+
+<h4 id="drop：删除表"><a href="#drop：删除表" class="headerlink" title="drop：删除表"></a>drop：删除表</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282133190.png" alt="image-20230228213350133" style="zoom:80%;">
+
+<h3 id="HBase常用Java-API及应用实例"><a href="#HBase常用Java-API及应用实例" class="headerlink" title="HBase常用Java API及应用实例"></a>HBase常用Java API及应用实例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HBase是Java编写的，它的原生的API也是Java开发的，不过，可以使用Java或其他语言调用API来访问HBase</span><br><span class="line"></span><br><span class="line">首先要在工程中导入一下jar包：</span><br><span class="line">这里只需要导入hbase安装目录中的lib文件中的所有jar包，此处不用再导入</span><br><span class="line">第三章Hadoop中的jar包，避免由于Hadoop和HBase的版本冲突引起错误。</span><br><span class="line"></span><br><span class="line">备注：使用的HBase版本号为1.1.2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">任务要求：创建表、插入数据、浏览数据</span><br><span class="line">创建一个学生信息表，用来存储学生姓名（姓名作为行键，并且假设姓名不会重复）以及考试成绩，其中，考试成绩是一个列族，分别存储了各个科目的考试成绩。逻辑视图如表4-18所示。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282139347.png" alt="image-20230228213955290"></p>
+<h4 id="每次都建立和关闭连接"><a href="#每次都建立和关闭连接" class="headerlink" title="每次都建立和关闭连接"></a>每次都建立和关闭连接</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.client.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.util.Bytes;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chapter4</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Configuration configuration;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Connection connection;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Admin admin;</span><br><span class="line"> 	 </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span><span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">         createTable(“student”,<span class="keyword">new</span> String[]&#123;“score”&#125;);</span><br><span class="line">         insertData(“student”,“zhangsan”,“score”,“English”,“<span class="number">69</span>”);</span><br><span class="line">         insertData(“student”,“zhangsan”,“score”,“Math”,“<span class="number">86</span>”);</span><br><span class="line">        insertData(“student”,“zhangsan”,“score”,“Computer”,“<span class="number">77</span>”);</span><br><span class="line">         getData(“student”, “zhangsan”, “score”, “English”);</span><br><span class="line"> &#125;</span><br><span class="line">……</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;……&#125;<span class="comment">//建立连接</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>&#123;……&#125;<span class="comment">//关闭连接</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createTable</span><span class="params">()</span></span>&#123;……&#125;<span class="comment">//创建表</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">insertData</span><span class="params">()</span> </span>&#123;……&#125;<span class="comment">//插入数据</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> getData&#123;……&#125;<span class="comment">//浏览数据</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="所有操作只建立和关闭一次连接"><a href="#所有操作只建立和关闭一次连接" class="headerlink" title="所有操作只建立和关闭一次连接"></a>所有操作只建立和关闭一次连接</h4><h5 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//建立连接</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line"> 	configuration = HBaseConfiguration.create();      configuration.set(<span class="string">"hbase.rootdir"</span>,<span class="string">"hdfs://localhost:9000/hbase"</span>);</span><br><span class="line"> <span class="keyword">try</span>&#123;</span><br><span class="line">     connection = ConnectionFactory.createConnection(configuration);</span><br><span class="line">     admin = connection.getAdmin();</span><br><span class="line"> &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">	 e.printStackTrace();</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282200531.png" alt="image-20230228220028478" style="zoom:80%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">拷贝这个文件到工程目录也行，就不用写配置路径信息</span><br></pre></td></tr></table></figure>
+
+<h5 id="关闭连接"><a href="#关闭连接" class="headerlink" title="关闭连接"></a>关闭连接</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//关闭连接</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>&#123;</span><br><span class="line"> <span class="keyword">try</span>&#123;</span><br><span class="line"> 	<span class="keyword">if</span>(admin != <span class="keyword">null</span>)&#123;</span><br><span class="line">		 admin.close();</span><br><span class="line"> &#125;</span><br><span class="line">	 <span class="keyword">if</span>(<span class="keyword">null</span> != connection)&#123;</span><br><span class="line"> 		connection.close();</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line"> 	e.printStackTrace();</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">①创建表</span><br><span class="line">创建一个学生信息表，用来存储学生姓名（姓名作为行键，并且</span><br><span class="line">假设姓名不会重复）以及考试成绩，其中，考试成绩是一个列族，</span><br><span class="line">分别存储了各个科目的考试成绩。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*创建表*/</span></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> myTableName 表名</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> colFamily列族数组</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createTable</span><span class="params">(String myTableName,String[] colFamily)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">     TableName tableName = TableName.valueOf(myTableName);</span><br><span class="line">     <span class="keyword">if</span>(admin.tableExists(tableName))&#123;</span><br><span class="line"> 		System.out.println(<span class="string">"table exists!"</span>);</span><br><span class="line">	 &#125;<span class="keyword">else</span> &#123;</span><br><span class="line"> 		HTableDescriptor hTableDescriptor = <span class="keyword">new</span> HTableDescriptor(tableName);</span><br><span class="line"> 		<span class="keyword">for</span>(String str: colFamily)&#123;</span><br><span class="line"> 		HColumnDescriptor hColumnDescriptor = <span class="keyword">new</span> 			HColumnDescriptor(str);</span><br><span class="line"> 		hTableDescriptor.addFamily(hColumnDescriptor);</span><br><span class="line"> &#125;</span><br><span class="line"> 		admin.createTable(hTableDescriptor);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302282216054.png" alt="image-20230228221650996" style="zoom:67%;">
+
+<h5 id="添加数据"><a href="#添加数据" class="headerlink" title="添加数据"></a>添加数据</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">②添加数据</span><br><span class="line">现在向表student中添加数据。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*添加数据*/</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> tableName 表名</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> rowKey 行键</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> colFamily 列族</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> col 列限定符</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> val 数据</span></span><br><span class="line"><span class="comment">* <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">insertData</span><span class="params">(String tableName, String rowKey, String colFamily, String col, String val)</span> <span class="keyword">throws</span> IOException </span>&#123; </span><br><span class="line"> 	Table table = connection.getTable(TableName.valueOf(tableName));</span><br><span class="line">	 Put put = <span class="keyword">new</span> Put(Bytes.toBytes(rowkey));</span><br><span class="line">	 put.addColumn(Bytes.toBytes(colFamily), Bytes.toBytes(col), Bytes.toBytes(val));</span><br><span class="line">     table.put(put);</span><br><span class="line">     table.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">添加数据时，需要分别设置参数myTableName、rowkey、colFamily、col、val的</span><br><span class="line">值，然后运行上述代码</span><br><span class="line">为insertData()方法指定相应参数，并运行如下3</span><br><span class="line">行代码：</span><br><span class="line">insertData(&quot;student&quot;,&quot;zhangsan&quot;,&quot;score&quot;,&quot;English&quot;,&quot;69&quot;);</span><br><span class="line">insertData(&quot;student&quot;,&quot;zhangsan&quot;,&quot;score&quot;,&quot;Math&quot;,&quot;86&quot;);</span><br><span class="line">insertData(&quot;student&quot;,&quot;zhangsan&quot;,&quot;score&quot;,&quot;Computer&quot;,&quot;77&quot;);</span><br><span class="line">上述代码与如下HBase Shell命令等效：</span><br><span class="line">put &#39;student&#39;,’zhangsan’,’score:English’,’69’；</span><br><span class="line">put &#39;student&#39;,’zhangsan’,’score:Math’,’86’；</span><br><span class="line">put &#39;student&#39;,’zhangsan’,’score:Computer’,’77’；</span><br></pre></td></tr></table></figure>
+
+<h5 id="浏览数据"><a href="#浏览数据" class="headerlink" title="浏览数据"></a>浏览数据</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*获取某单元格数据*/</span></span><br><span class="line"><span class="comment">/** * <span class="doctag">@param</span> tableName 表名</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rowKey 行键</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> colFamily 列族</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> col 列限定符</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IOException */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getData</span><span class="params">(String tableName,String rowKey,String </span></span></span><br><span class="line"><span class="function"><span class="params">colFamily,String col)</span><span class="keyword">throws</span> IOException</span>&#123; </span><br><span class="line">     Table table = connection.getTable(TableName.valueOf(tableName));</span><br><span class="line">     Get get = <span class="keyword">new</span> Get(Bytes.toBytes(rowkey));</span><br><span class="line">    get.addColumn(Bytes.toBytes(colFamily),Bytes.toBytes(col));</span><br><span class="line">     <span class="comment">//获取的result数据是结果集，还需要格式化输出想要的数据才行</span></span><br><span class="line">     Result result = table.get(get);</span><br><span class="line">     System.out.println(<span class="keyword">new</span> </span><br><span class="line">String(result.getValue(colFamily.getBytes(),col==<span class="keyword">null</span>?<span class="keyword">null</span>:col.getBytes())));</span><br><span class="line">	 table.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">比如，现在要获取姓名为“zhangsan”在“English”上的数据，就可以在运行上述代码时，指定参数tableName为“student”、rowKey为“zhangsan”、colFamily为“score”、col为“English”。</span><br><span class="line"></span><br><span class="line">getData(&quot;student&quot;, &quot;zhangsan&quot;, &quot;score&quot;, &quot;English&quot;);</span><br><span class="line">上述代码与如下HBase Shell命令等效：</span><br><span class="line">get ‗student&#39;,&#39;zhangsan&#39;,&#123;COLUMN&#x3D;&gt;&#39;score:English&#39;&#125;‖</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93HBase.html">林子雨 大数据技术原理与应用-第四章 分布式数据库HBase</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年02月28日 - 13:02</p>
+  <p><span>最后更新:</span>2023年02月28日 - 22:02</p>
+  <p><span>原始链接:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93HBase.html" title="林子雨 大数据技术原理与应用-第四章 分布式数据库HBase">http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93HBase.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93HBase.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%9E%97%E5%AD%90%E9%9B%A8/" rel="tag"><i class="fa fa-tag"></i> 林子雨</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9FHDFS.html" rel="next" title="林子雨 大数据技术原理与应用-第三章 分布式文件系统HDFS">
+                <i class="fa fa-chevron-left"></i> 林子雨 大数据技术原理与应用-第三章 分布式文件系统HDFS
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC5%E7%AB%A0-NoSQL%E6%95%B0%E6%8D%AE%E5%BA%93.html" rel="prev" title="林子雨 大数据技术原理与应用-第5章 NoSQL数据库">
+                林子雨 大数据技术原理与应用-第5章 NoSQL数据库 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">319</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第四章-分布式数据库HBase"><span class="nav-number">1.</span> <span class="nav-text">第四章 分布式数据库HBase</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#从BigTable说起"><span class="nav-number">1.1.1.</span> <span class="nav-text">从BigTable说起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase简介"><span class="nav-number">1.1.2.</span> <span class="nav-text">HBase简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase与传统关系数据库的对比分析"><span class="nav-number">1.1.3.</span> <span class="nav-text">HBase与传统关系数据库的对比分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase访问接口"><span class="nav-number">1.2.</span> <span class="nav-text">HBase访问接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase数据模型"><span class="nav-number">1.3.</span> <span class="nav-text">HBase数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据模型概述"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据模型概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据模型相关概念"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据模型相关概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据坐标"><span class="nav-number">1.3.3.</span> <span class="nav-text">数据坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概念视图"><span class="nav-number">1.3.4.</span> <span class="nav-text">概念视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物理视图"><span class="nav-number">1.3.5.</span> <span class="nav-text">物理视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向列的存储"><span class="nav-number">1.3.6.</span> <span class="nav-text">面向列的存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase的实现原理"><span class="nav-number">1.4.</span> <span class="nav-text">HBase的实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase功能组件"><span class="nav-number">1.4.1.</span> <span class="nav-text">HBase功能组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表和Region"><span class="nav-number">1.4.2.</span> <span class="nav-text">表和Region</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Region的定位"><span class="nav-number">1.4.3.</span> <span class="nav-text">Region的定位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase运行机制"><span class="nav-number">1.5.</span> <span class="nav-text">HBase运行机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase系统架构"><span class="nav-number">1.5.1.</span> <span class="nav-text">HBase系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Region服务器工作原理"><span class="nav-number">1.5.2.</span> <span class="nav-text">Region服务器工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#用户读写数据过程"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">用户读写数据过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存的刷新"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">缓存的刷新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#StoreFile-的合并"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">StoreFile  的合并</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Store工作原理"><span class="nav-number">1.5.3.</span> <span class="nav-text">Store工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HLog工作原理"><span class="nav-number">1.5.4.</span> <span class="nav-text">HLog工作原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase应用方案"><span class="nav-number">1.6.</span> <span class="nav-text">HBase应用方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase实际应用中的性能优化方法"><span class="nav-number">1.6.1.</span> <span class="nav-text">HBase实际应用中的性能优化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#行键"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">行键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#InMemory"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">InMemory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Max-Version"><span class="nav-number">1.6.1.3.</span> <span class="nav-text">Max Version</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Time-To-Live"><span class="nav-number">1.6.1.4.</span> <span class="nav-text">Time To Live</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase性能监视"><span class="nav-number">1.6.2.</span> <span class="nav-text">HBase性能监视</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Master-status-自带"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">Master-status(自带)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ganglia"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">Ganglia</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenTSDB"><span class="nav-number">1.6.2.3.</span> <span class="nav-text">OpenTSDB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ambari"><span class="nav-number">1.6.2.4.</span> <span class="nav-text">Ambari</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在HBase之上构建SQL引擎"><span class="nav-number">1.6.3.</span> <span class="nav-text">在HBase之上构建SQL引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hive整合HBase"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">Hive整合HBase</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Phoenix"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">Phoenix</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建HBase二级索引"><span class="nav-number">1.6.4.</span> <span class="nav-text">构建HBase二级索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hindex二级索引"><span class="nav-number">1.6.4.1.</span> <span class="nav-text">Hindex二级索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HBase-Redis"><span class="nav-number">1.6.4.2.</span> <span class="nav-text">HBase+Redis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Solr-HBase"><span class="nav-number">1.6.4.3.</span> <span class="nav-text">Solr+HBase</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase编程实践"><span class="nav-number">1.7.</span> <span class="nav-text">HBase编程实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase的安装与配置"><span class="nav-number">1.7.1.</span> <span class="nav-text">HBase的安装与配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HBase安装"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">HBase安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HBase配置"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">HBase配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase常用Shell命令"><span class="nav-number">1.7.2.</span> <span class="nav-text">HBase常用Shell命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#create、list"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">create、list</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#put、scan"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">put、scan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#get"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#enable-disable：使表有效或无效"><span class="nav-number">1.7.2.4.</span> <span class="nav-text">enable&#x2F;disable：使表有效或无效</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#drop：删除表"><span class="nav-number">1.7.2.5.</span> <span class="nav-text">drop：删除表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase常用Java-API及应用实例"><span class="nav-number">1.7.3.</span> <span class="nav-text">HBase常用Java API及应用实例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#每次都建立和关闭连接"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">每次都建立和关闭连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#所有操作只建立和关闭一次连接"><span class="nav-number">1.7.3.2.</span> <span class="nav-text">所有操作只建立和关闭一次连接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#建立连接"><span class="nav-number">1.7.3.2.1.</span> <span class="nav-text">建立连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关闭连接"><span class="nav-number">1.7.3.2.2.</span> <span class="nav-text">关闭连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建表"><span class="nav-number">1.7.3.2.3.</span> <span class="nav-text">创建表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#添加数据"><span class="nav-number">1.7.3.2.4.</span> <span class="nav-text">添加数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#浏览数据"><span class="nav-number">1.7.3.2.5.</span> <span class="nav-text">浏览数据</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">344.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="林子雨,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第9章 图计算图计算简介图结构数据12345•许多大数据都是以大规模图或网络的形式呈现，如社交网络、传染病传播途径、交通事故对路网的影响•许多非图结构的大数据，也常常会被转换为图模型后进行分析•图数据结构很好地表达了数据之间的关联性•关联性计算是大数据计算的核心——通过获得数据的关联性，可以从噪音很多的海量数据中抽取有用的信息–比如，通过为购物者之间的关系建模，就能很快找到口味相似的用户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="林子雨 大数据技术原理与应用-第9章 图计算">
+<meta property="og:url" content="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC9%E7%AB%A0-%E5%9B%BE%E8%AE%A1%E7%AE%97.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第9章 图计算图计算简介图结构数据12345•许多大数据都是以大规模图或网络的形式呈现，如社交网络、传染病传播途径、交通事故对路网的影响•许多非图结构的大数据，也常常会被转换为图模型后进行分析•图数据结构很好地表达了数据之间的关联性•关联性计算是大数据计算的核心——通过获得数据的关联性，可以从噪音很多的海量数据中抽取有用的信息–比如，通过为购物者之间的关系建模，就能很快找到口味相似的用户">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308202813506.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082212630.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091325684.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308203709811.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308204037030.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308204100764.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308204959085.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308210115360.png">
+<meta property="og:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308210550499.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303090019737.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091405728.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091405163.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091414778.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082125420.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082125422.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082138941.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082143692.png">
+<meta property="article:published_time" content="2023-02-28T14:32:32.000Z">
+<meta property="article:modified_time" content="2023-03-09T15:04:20.844Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="林子雨">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/Ty/AppData/Roaming/Typora/typora-user-images/image-20230308202813506.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/林子雨-大数据技术原理与应用-第9章-图计算.html">
+
+
+
+
+
+  <title>林子雨 大数据技术原理与应用-第9章 图计算 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC9%E7%AB%A0-%E5%9B%BE%E8%AE%A1%E7%AE%97.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">林子雨 大数据技术原理与应用-第9章 图计算</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-02-28T22:32:32+08:00">
+                2023-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据技术原理与应用</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  8.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  28
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第9章-图计算"><a href="#第9章-图计算" class="headerlink" title="第9章 图计算"></a>第9章 图计算</h1><h2 id="图计算简介"><a href="#图计算简介" class="headerlink" title="图计算简介"></a>图计算简介</h2><h3 id="图结构数据"><a href="#图结构数据" class="headerlink" title="图结构数据"></a>图结构数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">•许多大数据都是以大规模图或网络的形式呈现，如社交网络、传染病传播途径、交通事故对路网的影响</span><br><span class="line">•许多非图结构的大数据，也常常会被转换为图模型后进行分析</span><br><span class="line">•图数据结构很好地表达了数据之间的关联性</span><br><span class="line">•关联性计算是大数据计算的核心——通过获得数据的关联性，可以从噪音很多的海量数据中抽取有用的信息–比如，通过为购物者之间的关系建模，就能很快找到口味相似的用户，并为之推荐商品</span><br><span class="line">–或者在社交网络中，通过传播关系发现意见领袖</span><br></pre></td></tr></table></figure>
+
+<h3 id="传统图计算解决方案的不足之处"><a href="#传统图计算解决方案的不足之处" class="headerlink" title="传统图计算解决方案的不足之处"></a>传统图计算解决方案的不足之处</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">很多传统的图计算算法都存在以下几个典型问题：</span><br><span class="line">（1）常常表现出比较差的内存访问局部性</span><br><span class="line">（2）针对单个顶点的处理工作过少</span><br><span class="line">（3）计算过程中伴随着并行度的改变</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">针对大型图（比如社交网络和网络图）的计算问题，可能的解决方案及其不足之处具体如下：</span><br><span class="line">•（1）为特定的图应用定制相应的分布式实现：通用性不好</span><br><span class="line">•（2）基于现有的分布式计算平台进行图计算：在性能和易用性方面往往无法达到最优</span><br><span class="line">•现有的并行计算框架像MapReduce还无法满足复杂的关联性计算</span><br><span class="line">•MapReduce作为单输入、两阶段、粗粒度数据并行的分布式计算框架，在表达多迭代、稀疏结构和细粒度数据时，力不从心</span><br><span class="line">•比如，有公司利用MapReduce进行社交用户推荐，对于5000万注册用户，50亿关系对，利用10台机器的集群，需要超过10个小时的计算</span><br><span class="line">•（3）使用单机的图算法库：比如BGL、LEAD、NetworkX、JDSL、Standford GraphBase和FGL等，但是，在可以解决的问题的规模方面具有很大的局限性</span><br><span class="line">•（4）使用已有的并行图计算系统：比如，Parallel BGL和CGM Graph，实现了很多并行图算法，但是，对大规模分布式系统非常重要的一些方面（比如容错），无法提供较好的支持</span><br></pre></td></tr></table></figure>
+
+<h3 id="图计算通用软件"><a href="#图计算通用软件" class="headerlink" title="图计算通用软件"></a>图计算通用软件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">针对大型图的计算，目前通用的图计算软件主要包括两种：</span><br><span class="line">	第一种主要是基于遍历算法的、实时的图数据库，如Neo4j、OrientDB、DEX和Infinite Graph</span><br><span class="line">	第二种是以图顶点为中心的、基于消息传递批处理的并行引擎，如GoldenOrb、Giraph、Pregel和Hama，这些图处理软件主要是基于BSP模型实现的并行图处理系统</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">一次BSP(整体同步并行计算模型、又称大同步模型)计算过程包括一系列全局超步（所谓的超步就是计算中的一次迭代），每个超步主要包括三个组件：</span><br><span class="line">•局部计算：每个参与的处理器都有自身的计算任务，它们只读取存储在本地内存中的值，不同处理器的计算任务都是异步并且独立的</span><br><span class="line"></span><br><span class="line">•通讯：处理器群相互交换数据，交换的形式是，由一方发起推送(put)和获取(get)操作</span><br><span class="line"></span><br><span class="line">•栅栏同步(Barrier Synchronization)：当一个处理器遇到“路障”（或栅栏），会等到其他所有处理器完成它们的计算步骤；每一次同步也是一个超步的完成和下一个超步的开始。图9-1是一个超步的垂直结构图</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308202813506.png" alt="image-20230308202813506" style="zoom:67%;">
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082212630.png" alt="image-20230308221246547"></p>
+<h2 id="Pregel简介"><a href="#Pregel简介" class="headerlink" title="Pregel简介"></a>Pregel简介</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">•谷歌公司在2003年到2004年公布了GFS、MapReduce和BigTable，成为后来云计算和Hadoop项目的重要基石</span><br><span class="line"></span><br><span class="line">•谷歌在后Hadoop时代的新“三驾马车”——Caffeine(大规模网页索引的建立)、Dremel(实时交互式分析产品)和Pregel，再一次影响着圈子与大数据技术的发展潮流</span><br><span class="line"></span><br><span class="line">•Pregel是一种基于BSP模型实现的并行图处理系统</span><br><span class="line">•为了解决大型图的分布式计算问题，Pregel搭建了一套可扩展的、有容错机制的平台，该平台提供了一套非常灵活的API，可以描述各种各样的图计算</span><br><span class="line">•Pregel作为分布式图计算的计算框架，主要用于图遍历、最短路径、PageRank计算等等</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pregel图计算模型"><a href="#Pregel图计算模型" class="headerlink" title="Pregel图计算模型"></a>Pregel图计算模型</h2><h3 id="有向图和顶点"><a href="#有向图和顶点" class="headerlink" title="有向图和顶点"></a>有向图和顶点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•Pregel计算模型以有向图作为输入，有向图的每个顶点都有一个String类型的顶点ID，每个顶点都有一个可修改的用户自定义值与之关联，每条有向边都和其源顶点关联，并记录了其目标顶点ID，边上有一个可修改的用户自定义值与之关联</span><br><span class="line">•在每个超步S中，图中的所有顶点都会并行执行相同的用户自定义函数。每个顶点可以接收前一个超步(S-1)中发送给它的消息，修改其自身及其出射边的状态，并发送消息给其他顶点，甚至是修改整个图的拓扑结构。需要指出的是，在这种计算模式中，边并不是核心对象，在边上面不会运行相应的计算，只有顶点才会执行用户自定义函数进行相应计算</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091325684.png" alt="image-20230309132510569"></p>
+<h3 id="顶点之间的消息传递"><a href="#顶点之间的消息传递" class="headerlink" title="顶点之间的消息传递"></a>顶点之间的消息传递</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">采用消息传递模型主要基于以下两个原因：</span><br><span class="line">（1）消息传递具有足够的表达能力，没有必要使用远程读取或共享内存的方式</span><br><span class="line">（2）有助于提升系统整体性能。大型图计算通常是由一个集群完成的，集群环境中执行远程数据读取会有较高的延迟；Pregel的消息模式采用异步和</span><br><span class="line">批量的方式传递消息，因此可以缓解远程读取的延迟</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308203709811.png" alt="image-20230308203709811" style="zoom:67%;">
+
+<h3 id="Pregel的计算过程"><a href="#Pregel的计算过程" class="headerlink" title="Pregel的计算过程"></a>Pregel的计算过程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">•Pregel的计算过程是由一系列被称为“超步”的迭代组成的。</span><br><span class="line"></span><br><span class="line">在每个超步中，每个顶点上面都会并行执行用户自定义的函数，该函数描述了一个顶点V在一个超步S中需要执行的操作。</span><br><span class="line"></span><br><span class="line">该函数可以读取前一个超步(S-1)中其他顶点发送给顶点V的消息，执行相应计算后，修改顶点V及其出射边的状态，然后沿着顶点V的出射边发送消息给其他顶点，而且，一个消息可能经过多条边的传递后被发送到任意已知ID的目标顶点上去。</span><br><span class="line"></span><br><span class="line">这些消息将会在下一个超步(S+1)中被目标顶点接收，然后像上述过程一样开始下一个超步(S+1)的迭代过程</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">•在Pregel计算过程中，一个算法什么时候可以结束，是由所有顶点的状态决定的</span><br><span class="line">•在第0个超步，所有顶点处于活跃状态，都会参与该超步的计算过程</span><br><span class="line">•当一个顶点不需要继续执行进一步的计算时，就会把自己的状态设置为“停机”，进入非活跃状态</span><br><span class="line">•一旦一个顶点进入非活跃状态，后续超步中就不会再在该顶点上执行计算，除非其他顶点给该顶点发送消息把它再次激活</span><br><span class="line">•当一个处于非活跃状态的顶点收到来自其他顶点的消息时，Pregel计算框架必须根据条件判断来决定是否将其显式唤醒进入活跃状态</span><br><span class="line">•当图中所有的顶点都已经标识其自身达到“非活跃（inactive）”状态，并且没有消息在传送的时候，算法就可以停止运行</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308204037030.png" alt="image-20230308204037030" style="zoom:67%;">
+
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308204100764.png" alt="image-20230308204100764" style="zoom:67%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">发送出去的消息，会在下一个超步执行，每一个顶点都有一个输入队列，队列中的值来源于上一个超步，每一个超步执行时去取自己输入队列中的值</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pregel的C-API"><a href="#Pregel的C-API" class="headerlink" title="Pregel的C++ API"></a>Pregel的C++ API</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Pregel已经预先定义好一个基类——Vertex类：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename VertexValue, typename EdgeValue, typename MessageValue&gt;</span><br><span class="line">class Vertex &#123;</span><br><span class="line"> public:</span><br><span class="line">    virtual void Compute(MessageIterator* msgs) &#x3D; 0;</span><br><span class="line">    const string&amp; vertex_id() const; &#x2F;&#x2F; 顶点ID</span><br><span class="line">    int64 superstep() const; &#x2F;&#x2F; 超步是第几步</span><br><span class="line">    const VertexValue&amp; GetValue(); &#x2F;&#x2F; 获得顶点的值</span><br><span class="line">    VertexValue* MutableValue(); &#x2F;&#x2F; 修改顶点值</span><br><span class="line">    OutEdgeIterator GetOutEdgeIterator();&#x2F;&#x2F; 获得该顶点出射边</span><br><span class="line">    void SendMessageTo(const string&amp; dest_vertex, const MessageValue&amp; message);</span><br><span class="line">    void VoteToHalt();&#x2F;&#x2F; 修改状态</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">•在Vetex类中，定义了三个值类型参数，分别表示顶点、边和消息。每一个顶点都有一个给定类型的值与之对应</span><br><span class="line">•编写Pregel程序时，需要继承Vertex类，并且覆写Vertex类的虚函数Compute() </span><br><span class="line"></span><br><span class="line">•在Pregel执行计算过程时，在每个超步中都会并行调用每个顶点上定义的Compute()函数</span><br><span class="line">•允许Compute()方法查询当前顶点及其边的信息，以及发送消息到其他的顶点</span><br><span class="line">    –Compute()方法可以调用GetValue()方法来获取当前顶点的值</span><br><span class="line">    –调用MutableValue()方法来修改当前顶点的值</span><br><span class="line">    –通过由出射边的迭代器提供的方法来查看、修改出射边对应的值</span><br><span class="line">•对状态的修改，对于被修改的顶点而言是可以立即被看见的，但是，对于其他顶点而言是不可见的，因此，不同顶点并发进行的数据访问是不存在竞争关系的</span><br><span class="line">整个过程中，唯一需要在超步之间持久化的顶点级状态，是顶点和其对</span><br><span class="line">应的边所关联的值，因而，Pregel计算框架所需要管理的图状态就只包括顶点和边所关联的值，这种做法大大简化了计算流程，同时，也有利于图的分布和故障恢复</span><br></pre></td></tr></table></figure>
+
+<h3 id="消息传递机制"><a href="#消息传递机制" class="headerlink" title="消息传递机制"></a>消息传递机制</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• 顶点之间的通讯是借助于消息传递机制来实现的，每条消息都包含了消息值和需要到达的目标顶点ID。用户可以通过Vertex类的模板参数来设定消息值的数据类型</span><br><span class="line">• 在一个超步S中，一个顶点可以发送任意数量的消息，这些消息将在下一个超步（S+1）中被其他顶点接收</span><br><span class="line">• 一个顶点V通过与之关联的出射边向外发送消息，并且，消息要到达的目标顶点并不一定是与顶点V相邻的顶点，一个消息可以连续经过多条连通的边到达某个与顶点V不相邻的顶点U，U可以从接收的消息中获取到与其不相邻的顶点V的ID</span><br></pre></td></tr></table></figure>
+
+<h3 id="Combiner"><a href="#Combiner" class="headerlink" title="Combiner"></a>Combiner</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">• Pregel计算框架在消息发出去之前，Combiner可以将发往同一个顶点的多个整型值进行求和得到一个值，只需向外发送这个“求和结果”，从而实现了由多个消息合并成一个消息，大大减少了传输和缓存的开销</span><br><span class="line">• 在默认情况下，Pregel计算框架并不会开启Combiner功能，因为，通常很难找到一种对所有顶点的Compute()函数都合适的Combiner</span><br><span class="line">• 当用户打算开启Combiner功能时，可以继承Combiner类并覆写虚函数Combine()</span><br><span class="line">• 此外，通常只对那些满足交换律和结合律的操作才可以去开启Combiner功能，因为，Pregel计算框架无法保证哪些消息会被合并，也无法保证消息传递给 Combine()的顺序和合并操作执行的顺序</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308204959085.png" alt="image-20230308204959085" style="zoom:67%;">
+
+<h3 id="Aggregator"><a href="#Aggregator" class="headerlink" title="Aggregator"></a>Aggregator</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">• Aggregator提供了一种全局通信、监控和数据查看的机制</span><br><span class="line">• 在一个超步S中，每一个顶点都可以向一个Aggregator提供一个数据，Pregel计算框架会对这些值进行聚合操作产生一个值，在下一个超步（S+1）中，图中的所有顶点都可以看见这个值</span><br><span class="line">• Aggregator的聚合功能，允许在整型和字符串类型上执行最大值、最小值、求和操作，比如，可以定义一个“Sum”Aggregator来统计每个顶点的出射边数量，最后相加可以得到整个图的边的数量</span><br><span class="line">• Aggregator还可以实现全局协同的功能，比如，可以设计“and” Aggregator来决定在某个超步中Compute()函数是否执行某些逻辑分支，只有当“and” Aggregator显示所有顶点都满足了某条件时，才去执行这些逻辑分支</span><br></pre></td></tr></table></figure>
+
+<h3 id="拓扑改变"><a href="#拓扑改变" class="headerlink" title="拓扑改变"></a>拓扑改变</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• Pregel计算框架允许用户在自定义函数Compute()中定义操作，修改图的拓扑结构，比如在图中增加（或删除）边或顶点</span><br><span class="line">• 对于全局拓扑改变，Pregel采用了惰性协调机制，在改变请求发出时，Pregel不会对这些操作进行协调，只有当这些改变请求的消息到达目标顶点并被执行时，Pregel才会对这些操作进行协调，这样，所有针对某个顶点V的拓扑修改操作所引发的冲突，都会由V自己来处理</span><br><span class="line">• 对于本地的局部拓扑改变，是不会引发冲突的，顶点或边的本地增减能够立即生效，很大程度上简化了分布式编程</span><br></pre></td></tr></table></figure>
+
+<h3 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• 在Pregel计算框架中，图的保存格式多种多样，包括文本文件、关系数据库或键值数据库等</span><br><span class="line">• 在Pregel中，“从输入文件生成得到图结构”和“执行图计算”这两个过程是分离的，从而不会限制输入文件的格式</span><br><span class="line">• 对于输出，Pregel也采用了灵活的方式，可以以多种方式进行输出</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pregel的体系结构"><a href="#Pregel的体系结构" class="headerlink" title="Pregel的体系结构"></a>Pregel的体系结构</h2><h3 id="Pregel的执行过程"><a href="#Pregel的执行过程" class="headerlink" title="Pregel的执行过程"></a>Pregel的执行过程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•在Pregel计算框架中，一个大型图会被划分成许多个分区，每个分区都包含了一部分顶点以及以其为起点的边</span><br><span class="line">•一个顶点应该被分配到哪个分区上，是由一个函数决定的，系统默认函数为hash(ID) mod N，其中，N为所有分区总数，ID是这个顶点的标识符；当然，用户也可以自己定义这个函数</span><br><span class="line">•这样，无论在哪台机器上，都可以简单根据顶点ID判断出该顶点属于哪个分区，即使该顶点可能已经不存在了</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308210115360.png" alt="image-20230308210115360" style="zoom:67%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">在理想的情况下（不发生任何错误），一个Pregel用户程序的执行过程如下：</span><br><span class="line">（1）选择集群中的多台机器执行图计算任务，每台机器上运行用户程序的一个副本，其中，有一台机器会被选为Master，其他机器作为Worker。Master只负责协调多个Worker执行任务，系统不会把图的任何分区分配给它。Worker借助于名称服务系统可以定位到Master的位置，并向Master发送自己的注册信息。</span><br><span class="line">（2）Master把一个图分成多个分区，并把分区分配到多个Worker。一个Worker会领到一个或多个分区，每个</span><br><span class="line">Worker知道所有其他Worker所分配到的分区情况。每个</span><br><span class="line">Worker负责维护分配给自己的那些分区的状态(顶点及边</span><br><span class="line">的增删)，对分配给自己的分区中的顶点执行Compute()函</span><br><span class="line">数，向外发送消息，并管理接收到的消息。</span><br><span class="line">（3）Master会把用户输入划分成多个部分，通常是基于文件边界进行划分。划分后，每个部分都是一系列记录的集合，每条记录都包含一定数量的顶点和边。然后，Master会为每个Worker分配用户输入的一部分。如果一个Worker从输入内容中加载到的顶点，刚好是自己所分配到的分区中的顶点，就会立即更新相应的数据结构。否则，该Worker会根据加载到的顶点的ID，把它发送到其所属的分区所在的Worker上。当所有的输入都被加载后，图中的所有顶点都会被标记为“活跃”状态。</span><br><span class="line">（4）Master向每个Worker发送指令，Worker收到指令后，开始运行一个超步。Worker会为自己管辖的每个分区分配一个线程，对于分区中的每个顶点，Worker会把来自上一个超步的、发给该顶点的消息传递给它，并调用处于“活跃”状态的顶点上的Compute()函数，在执行计算过程中，顶点可以对外发送消息，但是，所有消息的发送工作必须在本超步结束之前完成。当所有这些工作都完成以后，Worker会通知Master，并把自己在下一个超步还处于“活跃”状态的顶点的数量报告给Master。上述步骤会被不断重复，直到所有顶点都不再活跃并且系统中不会有任何消息在传输，这时，执行过程才会结束。</span><br><span class="line">（5）计算过程结束后，Master会给所有的Worker发送指令，通知每个Worker对自己的计算结果进行持久化存储。</span><br></pre></td></tr></table></figure>
+
+<img src="C:\Users\Ty\AppData\Roaming\Typora\typora-user-images\image-20230308210550499.png" alt="image-20230308210550499" style="zoom:67%;">
+
+<h3 id="容错性"><a href="#容错性" class="headerlink" title="容错性"></a>容错性</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• Pregel采用检查点机制来实现容错。在每个超步的开始，Master会通知所有的Worker把自己管辖的分区的状态（包括顶点值、边值以及接收到的消息），写入到持久化存储设备</span><br><span class="line">• Master会周期性地向每个Worker发送ping消息，Worker收到ping消息后会给Master发送反馈消息。如果Master在指定时间间隔内没有收到某个Worker的反馈消息，就会把该Worker标记为“失效”。同样地，如果一个Worker在指定的时间间隔内没有收到来自Master的ping消息，该Worker也会停止工作</span><br><span class="line">• 每个Worker上都保存了一个或多个分区的状态信息，当一个Worker发生故障时，它所负责维护的分区的当前状态信息就会丢失。Master监测到一个Worker发生故障“失效”后，会把失效Worker所分配到的分区，重新分配到其他处于正常工作状态的Worker集合上，然后，所有这些分区会从最近的某超步S开始时写出的检查点中，重新加载状态信息。很显然，这个超步S可能会比失效Worker上最后运行的超步S1要早好几个阶段，因此，为了恢复到最新的正确状态，需要重新执行从超步S到超步S1的所有操作</span><br></pre></td></tr></table></figure>
+
+<h3 id="Worker"><a href="#Worker" class="headerlink" title="Worker"></a>Worker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">在一个Worker中，它所管辖的分区的状态信息是保存在内存中的。分区中的顶点的状态信息包括：</span><br><span class="line">•顶点的当前值</span><br><span class="line">•以该顶点为起点的出射边列表，每条出射边包含了目标顶点ID和边的值</span><br><span class="line">•消息队列，包含了所有接收到的、发送给该顶点的消息</span><br><span class="line">•标志位，用来标记顶点是否处于活跃状态</span><br><span class="line"></span><br><span class="line">在每个超步中，Worker会对自己所管辖的分区中的每个顶点进行遍历，并调用顶点上的Compute()函数，在调用时，会把以下三个参数传递进去：</span><br><span class="line">•该顶点的当前值</span><br><span class="line">•一个接收到的消息的迭代器</span><br><span class="line">•一个出射边的迭代器</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">•在Pregel中，为了获得更好的性能，“标志位”和输入消息</span><br><span class="line">队列是分开保存的</span><br><span class="line">•对于每个顶点而言，Pregel只保存一份顶点值和边值，但是，会保存两份“标志位”和输入消息队列，分别用于当前超步和下一个超步</span><br><span class="line">•在超步S中，当一个Worker在进行顶点处理时，用于当前超步的消息会被处理，同时，它在处理过程中还会接收到来自其他Worker的消息，这些消息会在下一个超步S+1中被处理，因此，需要两个消息队列用于存放作用于当前超步S的消息和作用于下一个超步S+1的消息</span><br><span class="line">•如果一个顶点V在超步S接收到消息，那么，它表示V将会在下一个超步S+1中（而不是当前超步S中）处于“活跃”状态</span><br><span class="line">•当一个Worker上的一个顶点V需要发送消息到其他顶点U时，该Worker会首先判断目标顶点U是否位于自己机器上</span><br><span class="line">•如果目标顶点U在自己的机器上，就直接把消息放入到与目标顶点U对应的输入消息队列中</span><br><span class="line">•如果发现目标顶点U在远程机器上，这个消息就会被暂时缓存到本地，当缓存中的消息数目达到一个事先设定的阈值时，这些缓存消息会被批量异步发送出去，传输到目标顶点所在的Worker上</span><br><span class="line">•如果存在用户自定义的Combiner操作，那么，当消息被加入到输出队列或者到达输入队列时，就可以对消息执行合并操作，这样可以节省存储空间和网络传输开销</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Master"><a href="#Master" class="headerlink" title="Master"></a>Master</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">•Master主要负责协调各个Worker执行任务，每个Worker会借助于名称服务系统定位到Master的位置，并向Master发送自己的注册信息，Master会为每个Worker分配一个唯一的ID</span><br><span class="line">•Master维护着关于当前处于“有效”状态的所有Worker的各种信息，包括每个Worker的ID和地址信息，以及每个Worker被分配到的分区信息</span><br><span class="line">•虽然在集群中只有一个Master，但是，它仍然能够承担起一个大规模图计算的协调任务，这是因为Master中保存这些信息的数据结构的大小，只与分区的数量有关，而与顶点和边的数量无关</span><br><span class="line">•一个大规模图计算任务会被Master分解到多个Worker去执行，在每个超步开始时，Master都会向所有处于“有效”状态的Worker发送相同的指令，然后等待这些Worker的回应</span><br><span class="line">•如果在指定时间内收不到某个Worker的反馈，Master就认为这个Worker失效</span><br><span class="line">•如果参与任务执行的多个Worker中的任意一个发生了故障失效，Master就会进入恢复模式</span><br><span class="line">•在每个超步中，图计算的各种工作，比如输入、输出、计算、保存和从检查点中恢复，都会在“路障（barrier）”之前结束</span><br><span class="line">•如果路障同步成功，说明一个超步顺利结束，Master就会进入下一个处理阶段，图计算进入下一个超步的执行</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">•Master在内部运行了一个HTTP服务器来显示图计算过程的各种信息</span><br><span class="line">•用户可以通过网页随时监控图计算执行过程各个细节</span><br><span class="line">•图的大小</span><br><span class="line">•关于出度分布的柱状图</span><br><span class="line">•处于活跃状态的顶点数量</span><br><span class="line">•在当前超步的时间信息和消息流量</span><br><span class="line">•所有用户自定义Aggregator的值</span><br></pre></td></tr></table></figure>
+
+<h3 id="Aggregator-1"><a href="#Aggregator-1" class="headerlink" title="Aggregator"></a>Aggregator</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">• 每个用户自定义的Aggregator都会采用聚合函数对一个值集合进行聚合计算得到一个全局值</span><br><span class="line">• 每个Worker都保存了一个Aggregator的实例集，其中的每个实例都是由类型名称和实例名称来标识的</span><br><span class="line">• 在执行图计算过程的某个超步S中，每个Worker会利用一个Aggregator对当前本地分区中包含的所有顶点的值进行归约，得到一个本地的局部归约值</span><br><span class="line">• 在超步S结束时，所有Worker会将所有包含局部归约值的Aggregator的值进行最后的汇总，得到全局值，然后提交给Master</span><br><span class="line">• 在下一个超步S+1开始时，Master就会将Aggregator的全局值发送给每个Worker</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pregel的应用实例"><a href="#Pregel的应用实例" class="headerlink" title="Pregel的应用实例"></a>Pregel的应用实例</h2><h3 id="单源最短路径"><a href="#单源最短路径" class="headerlink" title="单源最短路径"></a>单源最短路径</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303090019737.png" alt="image-20230309001948663"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class ShortestPathVertex</span><br><span class="line"> : public Vertex&lt;int, int, int&gt; &#123;</span><br><span class="line"> void Compute(MessageIterator* msgs) &#123;</span><br><span class="line">     int mindist &#x3D; IsSource(vertex_id()) ? 0 : INF;</span><br><span class="line">     for (; !msgs-&gt;Done(); msgs-&gt;Next())</span><br><span class="line">     mindist &#x3D; min(mindist, msgs-&gt;Value());</span><br><span class="line">     if (mindist &lt; GetValue()) &#123;</span><br><span class="line">     *MutableValue() &#x3D; mindist;</span><br><span class="line">     OutEdgeIterator iter &#x3D; GetOutEdgeIterator();</span><br><span class="line">     for (; !iter.Done(); iter.Next())</span><br><span class="line">     SendMessageTo(iter.Target(),</span><br><span class="line">     mindist + iter.GetValue());</span><br><span class="line"> &#125;</span><br><span class="line"> VoteToHalt();</span><br><span class="line"> &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1 class ShortestPathVertex</span><br><span class="line">2 : public Vertex&lt;int, int, int&gt; &#123;</span><br><span class="line">3 void Compute(MessageIterator* msgs) &#123;</span><br><span class="line">4 	int mindist &#x3D; IsSource(vertex_id()) ? 0 : INF;</span><br><span class="line">5 	for (; !msgs-&gt;Done(); msgs-&gt;Next())</span><br><span class="line">6	 mindist&#x3D; min(mindist, msgs-&gt;Value());</span><br><span class="line">7 	if (mindist &lt; GetValue()) &#123;</span><br><span class="line">8 	*MutableValue() &#x3D; mindist;</span><br><span class="line">9 	OutEdgeIteratoriter &#x3D; GetOutEdgeIterator();</span><br><span class="line">10 		for (; !iter.Done(); iter.Next())</span><br><span class="line">11 			SendMessageTo(iter.Target(),</span><br><span class="line">12 mindist+ iter.GetValue());</span><br><span class="line">13 &#125;</span><br><span class="line">14 VoteToHalt();</span><br><span class="line">15 &#125;</span><br><span class="line">16 &#125;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091405728.png" alt="image-20230309140534677"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091405163.png" alt="image-20230309140546109"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303091414778.png" alt="image-20230309141445727"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">超步1：</span><br><span class="line">•顶点0：没有收到消息，依然非活跃</span><br><span class="line">•顶点1：收到消息100（唯一消息），被显式唤醒，执行计算，mindist变为100，小于顶点值INF，顶点值修改为100，没有出射边，不需要发送消息，最后变为非活跃</span><br><span class="line">•顶点2：收到消息30，被显式唤醒，执行计算， mindist变为30，小于顶点值INF，顶点值修改为30，有两条出射边，向顶点3发送消息90（即：30+60），向顶点1发送消息90（即：30+60），最后变为非活跃</span><br><span class="line">•顶点3：没有收到消息，依然非活跃</span><br><span class="line">•顶点4：收到消息10，被显式唤醒，执行计算， mindist变为10，小于顶点值INF，顶点值修改为10，向顶点3发送消息60（即：10+50），最后变为非活跃</span><br><span class="line">剩余超步省略……</span><br><span class="line">当所有顶点非活跃，并且没有消息传递，就结束</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="二分匹配"><a href="#二分匹配" class="headerlink" title="二分匹配"></a>二分匹配</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">程序的执行过程是由四个阶段组成的多个循环组成的，当程序执行到超步S时，S mod 4就可以得到当前超步处于循环的哪个阶段。每个循环的四个阶段如下：</span><br><span class="line"> （1）阶段0：对于左集合中的任意顶点V，如果V还没有被匹配，就发送消息给它的每个邻居顶点请求匹配，然后，顶点V会调用VoteToHalt()进入“非活跃”状态。如果顶点V已经找到了匹配，或者V没有找到匹配但是没有出射边，那么，顶点V就不会发送消息。当顶点V没有发送消息，或者顶点V发送了消息但是所有的消息接收者都已经被匹配，那么，该顶点就不会再变为“活跃（active）”状态</span><br><span class="line"> （2）阶段1：对于右集合中的任意顶点U，如果它还没有被匹配，则会随机选择它接收到的消息中的其中一个，并向左集合中的消息发送者发送消息表示接受该匹配请求，然后给左集合中的其他请求者发送拒绝消息；然后，顶点U会调用VoteToHalt()进入“非活跃”状态</span><br><span class="line"> （3）阶段2：左集合中那些还未被匹配的顶点，会从它所收到的、右集合发送过来的接受请求中，选择其中一个给予确认，并发送一个确认消息。对于左集合中已经匹配的顶点而言，因为它们在阶段0不会向右集合发送任何匹配请求消息，因而也不会接收到任何来自右集合的匹配接受消息，因此，是不会执行阶段2的</span><br><span class="line"> （4）阶段3：右集合中还未被匹配的任意顶点U，会收到来自左集合的匹配确认消息，但是，每个未匹配的顶点U，最多会收到一个确认消息。然后，顶点U会调VoteToHalt()进入“非活跃”状态，完成它自身的匹配工作</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pregel和MapReduce实现PageRank算法的对比"><a href="#Pregel和MapReduce实现PageRank算法的对比" class="headerlink" title="Pregel和MapReduce实现PageRank算法的对比"></a>Pregel和MapReduce实现PageRank算法的对比</h2><h3 id="PageRank算法"><a href="#PageRank算法" class="headerlink" title="PageRank算法"></a>PageRank算法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• PageRank是一个函数，它为网络中每个网页赋一个权值。通过该权值来判断该网页的重要性</span><br><span class="line">• 该权值分配的方法并不是固定的，对PageRank算法的一些简单变形都会改变网页的相对PageRank值（PR值）</span><br><span class="line">• PageRank作为谷歌的网页链接排名算法，基本公式如下：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082125420.png" alt="image-20230308212003706"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">• 对于任意一个网页链接，其PR值为链入到该链接的源链接的PR值对该链接的贡献和，其中，N表示该网络中所有网页的数量，Ni为第i个源链接的链出度，PRi表示第i个源链接的PR值</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">• 网络链接之间的关系可以用一个连通图来表示，下图就是四个网页（A,B,C,D）互相链入链出组成的连通图，从中可以看出，网页A中包含指向网页B、C和D的外链，网页B和D是网页A的源链接</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082125422.png" alt="image-20230308212407285"></p>
+<h3 id="PageRank算法在Pregel中的实现"><a href="#PageRank算法在Pregel中的实现" class="headerlink" title="PageRank算法在Pregel中的实现"></a>PageRank算法在Pregel中的实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">• 在Pregel计算模型中，图中的每个顶点会对应一个计算单元，每个计算单元包含三个成员变量：</span><br><span class="line">	顶点值（Vertex value）：顶点对应的PR值</span><br><span class="line">	出射边（Out edge）：只需要表示一条边，可以不取值</span><br><span class="line">	消息（Message）：传递的消息，因为需要将本顶点对其它顶点的PR贡献值，传递给目标顶点</span><br><span class="line">• 每个计算单元包含一个成员函数Compute()，该函数定义了顶点上的运算，包括该顶点的PR值计算，以及从该顶点发送消息到其链出顶点</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class PageRankVertex: public Vertex&lt;double, void, double&gt; &#123;</span><br><span class="line">public:</span><br><span class="line">     virtual void Compute(MessageIterator* msgs) &#123;</span><br><span class="line">        if (superstep() &gt;&#x3D; 1) &#123;</span><br><span class="line">            double sum &#x3D; 0;</span><br><span class="line">            for (;!msgs-&gt;Done(); msgs-&gt;Next())</span><br><span class="line">            sum +&#x3D; msgs-&gt;Value();</span><br><span class="line">            *MutableValue() &#x3D;</span><br><span class="line">            0.15 &#x2F; NumVertices() + 0.85 * sum;</span><br><span class="line">        &#125;</span><br><span class="line">        if (superstep() &lt; 30) &#123;</span><br><span class="line">             const int64 n &#x3D; GetOutEdgeIterator().size();</span><br><span class="line">             SendMessageToAllNeighbors(GetValue()&#x2F; n);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">        VoteToHalt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">• PageRankVertex继承自Vertex类，顶点值类型是double，用来保存PageRank中间值，消息类型也是double，用来传输PageRank值，边的value类型是void，因为不需要存储任何信息</span><br><span class="line">• 这里假设在第0个超步时，图中各顶点值被初始化为1&#x2F;NumVertices()，其中，NumVertices()表示顶点数目</span><br><span class="line">• 在前30个超步中，每个顶点都会沿着它的出射边，发送它的PageRank值除以出射边数目以后的结果值。从第1个超步开始，每个顶点会将到达的消息中的值加到sum值中，同时将它的PageRank值设为0.15&#x2F;NumVertices()+0.85*sum</span><br><span class="line">• 到了第30个超步后，就没有需要发送的消息了，同时所有的顶点停止计算，得到最终结果</span><br></pre></td></tr></table></figure>
+
+<h3 id="PageRank算法在MapReduce中的实现"><a href="#PageRank算法在MapReduce中的实现" class="headerlink" title="PageRank算法在MapReduce中的实现"></a>PageRank算法在MapReduce中的实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">• MapReduce也是谷歌公司提出的一种计算模型，它是为全量计算而设计</span><br><span class="line">• 采用MapReduce实现PageRank的计算过程包括三个阶段：</span><br><span class="line">     第一阶段：解析网页</span><br><span class="line">     第二阶段：PageRank分配</span><br><span class="line">     第三阶段：收敛阶段</span><br></pre></td></tr></table></figure>
+
+<h4 id="阶段1：解析网页"><a href="#阶段1：解析网页" class="headerlink" title="阶段1：解析网页"></a>阶段1：解析网页</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">• 该阶段的任务就是分析一个页面的链接数并赋初值。</span><br><span class="line">• 一个网页可以表示为由网址和内容构成的键值对&lt; URL，page content&gt;，作为Map任务的输入。阶段1的Map任务把&lt;URL，page content&gt;映射为&lt;URL，&lt;PRinit，url_list&gt;&gt;后进行输出，其中，PRinit是该URL页面对应的PageRank初始值，url_list包含了该URL页面中的外链所指向的所有URL。Reduce任务只是恒等函数，输入和输出相同。</span><br><span class="line">• 对右图，每个网页的初始PageRank值为1&#x2F;4。它在该阶段中:</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082138941.png" alt="image-20230308213807879" style="zoom:67%;">
+
+<h4 id="阶段2：PageRank分配"><a href="#阶段2：PageRank分配" class="headerlink" title="阶段2：PageRank分配"></a>阶段2：PageRank分配</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">• 该阶段的任务就是多次迭代计算页面的PageRank值。</span><br><span class="line">• 在该阶段中，Map任务的输入是&lt;URL，&lt;cur_rank，url_list&gt;&gt;，其中，cur_rank是该</span><br><span class="line">URL页面对应的PageRank当前值，url_list包含了该URL页面中的外链所指向的所有</span><br><span class="line">URL。</span><br><span class="line">• 对于url_list中的每个元素u，Map任务输出&lt;u，&lt;URL, cur_rank&#x2F;|url_list|&gt;&gt;（其中，|url_list|表示外链的个数），并输出链接关系&lt;URL，url_list&gt;。</span><br><span class="line">• 每个页面的PageRank当前值被平均分配给了它们的每个外链。Map任务的输出会作为下面Reduce任务的输入。对下图第一次迭代Map任务的输入输出如下：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303082143692.png" alt="image-20230308214310636"></p>
+<h4 id="阶段3：收敛阶段"><a href="#阶段3：收敛阶段" class="headerlink" title="阶段3：收敛阶段"></a>阶段3：收敛阶段</h4><h3 id="PageRank算法在Pregel和MapReduce中实现的比较"><a href="#PageRank算法在Pregel和MapReduce中实现的比较" class="headerlink" title="PageRank算法在Pregel和MapReduce中实现的比较"></a>PageRank算法在Pregel和MapReduce中实现的比较</h3><hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC9%E7%AB%A0-%E5%9B%BE%E8%AE%A1%E7%AE%97.html">林子雨 大数据技术原理与应用-第9章 图计算</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年02月28日 - 22:02</p>
+  <p><span>最后更新:</span>2023年03月09日 - 23:03</p>
+  <p><span>原始链接:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC9%E7%AB%A0-%E5%9B%BE%E8%AE%A1%E7%AE%97.html" title="林子雨 大数据技术原理与应用-第9章 图计算">http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC9%E7%AB%A0-%E5%9B%BE%E8%AE%A1%E7%AE%97.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC9%E7%AB%A0-%E5%9B%BE%E8%AE%A1%E7%AE%97.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%9E%97%E5%AD%90%E9%9B%A8/" rel="tag"><i class="fa fa-tag"></i> 林子雨</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC8%E7%AB%A0-%E6%B5%81%E8%AE%A1%E7%AE%97.html" rel="next" title="林子雨 大数据技术原理与应用-第8章 流计算">
+                <i class="fa fa-chevron-left"></i> 林子雨 大数据技术原理与应用-第8章 流计算
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC10%E7%AB%A0-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96.html" rel="prev" title="林子雨 大数据技术原理与应用-第10章 数据可视化">
+                林子雨 大数据技术原理与应用-第10章 数据可视化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">319</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第9章-图计算"><span class="nav-number">1.</span> <span class="nav-text">第9章 图计算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#图计算简介"><span class="nav-number">1.1.</span> <span class="nav-text">图计算简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#图结构数据"><span class="nav-number">1.1.1.</span> <span class="nav-text">图结构数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传统图计算解决方案的不足之处"><span class="nav-number">1.1.2.</span> <span class="nav-text">传统图计算解决方案的不足之处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图计算通用软件"><span class="nav-number">1.1.3.</span> <span class="nav-text">图计算通用软件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pregel简介"><span class="nav-number">1.2.</span> <span class="nav-text">Pregel简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pregel图计算模型"><span class="nav-number">1.3.</span> <span class="nav-text">Pregel图计算模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#有向图和顶点"><span class="nav-number">1.3.1.</span> <span class="nav-text">有向图和顶点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顶点之间的消息传递"><span class="nav-number">1.3.2.</span> <span class="nav-text">顶点之间的消息传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pregel的计算过程"><span class="nav-number">1.3.3.</span> <span class="nav-text">Pregel的计算过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例"><span class="nav-number">1.3.4.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pregel的C-API"><span class="nav-number">1.4.</span> <span class="nav-text">Pregel的C++ API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息传递机制"><span class="nav-number">1.4.1.</span> <span class="nav-text">消息传递机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Combiner"><span class="nav-number">1.4.2.</span> <span class="nav-text">Combiner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Aggregator"><span class="nav-number">1.4.3.</span> <span class="nav-text">Aggregator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑改变"><span class="nav-number">1.4.4.</span> <span class="nav-text">拓扑改变</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入和输出"><span class="nav-number">1.4.5.</span> <span class="nav-text">输入和输出</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pregel的体系结构"><span class="nav-number">1.5.</span> <span class="nav-text">Pregel的体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pregel的执行过程"><span class="nav-number">1.5.1.</span> <span class="nav-text">Pregel的执行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容错性"><span class="nav-number">1.5.2.</span> <span class="nav-text">容错性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Worker"><span class="nav-number">1.5.3.</span> <span class="nav-text">Worker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Master"><span class="nav-number">1.5.4.</span> <span class="nav-text">Master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Aggregator-1"><span class="nav-number">1.5.5.</span> <span class="nav-text">Aggregator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pregel的应用实例"><span class="nav-number">1.6.</span> <span class="nav-text">Pregel的应用实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单源最短路径"><span class="nav-number">1.6.1.</span> <span class="nav-text">单源最短路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二分匹配"><span class="nav-number">1.6.2.</span> <span class="nav-text">二分匹配</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pregel和MapReduce实现PageRank算法的对比"><span class="nav-number">1.7.</span> <span class="nav-text">Pregel和MapReduce实现PageRank算法的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PageRank算法"><span class="nav-number">1.7.1.</span> <span class="nav-text">PageRank算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PageRank算法在Pregel中的实现"><span class="nav-number">1.7.2.</span> <span class="nav-text">PageRank算法在Pregel中的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PageRank算法在MapReduce中的实现"><span class="nav-number">1.7.3.</span> <span class="nav-text">PageRank算法在MapReduce中的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#阶段1：解析网页"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">阶段1：解析网页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阶段2：PageRank分配"><span class="nav-number">1.7.3.2.</span> <span class="nav-text">阶段2：PageRank分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阶段3：收敛阶段"><span class="nav-number">1.7.3.3.</span> <span class="nav-text">阶段3：收敛阶段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PageRank算法在Pregel和MapReduce中实现的比较"><span class="nav-number">1.7.4.</span> <span class="nav-text">PageRank算法在Pregel和MapReduce中实现的比较</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">344.1k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
