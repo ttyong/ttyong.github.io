@@ -117,7 +117,7 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303032243094.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303040040026.png">
 <meta property="article:published_time" content="2023-02-28T14:31:52.000Z">
-<meta property="article:modified_time" content="2023-03-03T16:50:34.058Z">
+<meta property="article:modified_time" content="2023-03-14T02:01:17.369Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="林子雨">
 <meta name="twitter:card" content="summary">
@@ -475,13 +475,13 @@
 
 <h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•用户编写的MapReduce程序通过Client提交到JobTracker端</span><br><span class="line">•用户可通过Client提供的一些接口查看作业运行状态</span><br></pre></td></tr></table></figure>
 
-<h3 id="JobTracker"><a href="#JobTracker" class="headerlink" title="JobTracker"></a>JobTracker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•JobTracker负责资源监控和作业调度</span><br><span class="line">•JobTracker 监控所有TaskTracker与Job的健康状况，一旦发现失败，就将相应的任务转移到其他节点</span><br><span class="line">•JobTracker 会跟踪任务的执行进度、资源使用量等信息，并将这些信息告诉任务调度器（Task Scheduler），而调度器会在资源出现空闲时，选择合适的任务去使用这些资源</span><br></pre></td></tr></table></figure>
+<h3 id="JobTracker"><a href="#JobTracker" class="headerlink" title="JobTracker"></a>JobTracker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">•JobTracker负责资源监控和作业调度</span><br><span class="line">•JobTracker监控所有TaskTracker与Job的健康状况，一旦发现失败，就将相应的任务转移到其他节点</span><br><span class="line">•JobTracker会跟踪任务的执行进度、资源使用量等信息，并将这些信息告诉任务调度器（Task Scheduler），而调度器会在资源出现空闲时，选择合适的任务去使用这些资源</span><br></pre></td></tr></table></figure>
 
 <img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303031503481.png" alt="image-20230303150311444" style="zoom:67%;">
 
-<h3 id="TaskTracker"><a href="#TaskTracker" class="headerlink" title="TaskTracker"></a>TaskTracker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•TaskTracker 会周期性地通过“心跳”将本节点上资源的使用情况和任务的运行进度汇报给JobTracker，同时接收JobTracker 发送过来的命令并执行相应的操作（如启动新任务、杀死任务等）</span><br><span class="line">•TaskTracker 使用“slot”等量划分本节点上的资源量（CPU、内存等）。一个Task 获取到一个slot 后才有机会运行，而Hadoop调度器的作用就是将各个TaskTracker上的空闲slot分配给Task使用。slot 分为Map slot 和Reduce slot 两种，分别供MapTask 和Reduce Task 使用</span><br></pre></td></tr></table></figure>
+<h3 id="TaskTracker"><a href="#TaskTracker" class="headerlink" title="TaskTracker"></a>TaskTracker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•TaskTracker 会周期性地通过“心跳”将本节点上资源的使用情况和任务的运行进度汇报给JobTracker，同时接收JobTracker 发送过来的命令并执行相应的操作（如启动新任务、杀死任务等）</span><br><span class="line">•TaskTracker使用“slot”等量划分本节点上的资源量（CPU、内存等）。一个Task 获取到一个slot 后才有机会运行，而Hadoop调度器的作用就是将各个TaskTracker上的空闲slot分配给Task使用。slot分为Map slot 和Reduce slot两种，分别供MapTask和Reduce Task使用</span><br></pre></td></tr></table></figure>
 
-<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Task 分为Map Task 和Reduce Task 两种，均由TaskTracker 启动</span><br></pre></td></tr></table></figure>
+<h3 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Task分为Map Task 和Reduce Task 两种，均由TaskTracker 启动</span><br></pre></td></tr></table></figure>
 
 <img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303031503074.png" alt="image-20230303150354031" style="zoom:67%;">
 
@@ -494,9 +494,9 @@
 
 <h4 id="关于Split（分片）"><a href="#关于Split（分片）" class="headerlink" title="关于Split（分片）"></a>关于Split（分片）</h4><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303031532479.png" alt="image-20230303153252421" style="zoom:67%;">
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HDFS 以固定大小的block 为基本单位存储数据，而对于MapReduce 而言，其</span><br><span class="line">处理单位是split。split 是一个逻辑概念，它只包含一些元数据信息，比如数据</span><br><span class="line">起始位置、数据长度、数据所在节点等。它的划分方法完全由用户自己决定。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HDFS以固定大小的block为基本单位存储数据，而对于MapReduce 而言，其处理单位是split。split 是一个逻辑概念，它只包含一些元数据信息，比如数据起始位置、数据长度、数据所在节点等。它的划分方法完全由用户自己决定。</span><br></pre></td></tr></table></figure>
 
-<h4 id="Map任务的数量"><a href="#Map任务的数量" class="headerlink" title="Map任务的数量"></a>Map任务的数量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•Hadoop为每个split创建一个Map任务，split 的多少决定了Map任务的</span><br><span class="line">数目。大多数情况下，理想的分片大小是一个HDFS块</span><br></pre></td></tr></table></figure>
+<h4 id="Map任务的数量"><a href="#Map任务的数量" class="headerlink" title="Map任务的数量"></a>Map任务的数量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">•Hadoop为每个split创建一个Map任务，split 的多少决定了Map任务的数目。大多数情况下，理想的分片大小是一个HDFS块</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303031533401.png" alt="image-20230303153342357"></p>
 <h4 id="Reduce任务的数量"><a href="#Reduce任务的数量" class="headerlink" title="Reduce任务的数量"></a>Reduce任务的数量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">•最优的Reduce任务个数取决于集群中可用的reduce任务槽(slot)的数目</span><br><span class="line">•通常设置比reduce任务槽数目稍微小一些的Reduce任务个数（这样可以预留一些系统资源处理可能发生的错误）</span><br></pre></td></tr></table></figure>
@@ -590,7 +590,7 @@
   <p><span>本文标题:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC7%E7%AB%A0-mapreduce.html">林子雨 大数据技术原理与应用-第7章 mapreduce</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年02月28日 - 22:02</p>
-  <p><span>最后更新:</span>2023年03月04日 - 00:03</p>
+  <p><span>最后更新:</span>2023年03月14日 - 10:03</p>
   <p><span>原始链接:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC7%E7%AB%A0-mapreduce.html" title="林子雨 大数据技术原理与应用-第7章 mapreduce">http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC7%E7%AB%A0-mapreduce.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC7%E7%AB%A0-mapreduce.html" aria-label="复制成功！"></i></span>
   </p>
