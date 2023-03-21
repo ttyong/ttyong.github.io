@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hive,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第八周 第4章 Hive核心实战    Hive中的表类型123在Mysql中没有表类型这个概念，因为它就只有一种表。但是Hive中是有多种表类型的，我们可以分为四种，内部表、外部表、分区表、桶表下面来一个一个学习一下这些类型的表    内部表12345678910首先看内部表内部表也可以称为受控表它是Hive中的默认表类型，表数据默认存储在 warehouse 目录中在加载数据的过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第八周 第4章 Hive核心实战2">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%203-%E8%A1%A8%E7%B1%BB%E5%9E%8B.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第八周 第4章 Hive核心实战    Hive中的表类型123在Mysql中没有表类型这个概念，因为它就只有一种表。但是Hive中是有多种表类型的，我们可以分为四种，内部表、外部表、分区表、桶表下面来一个一个学习一下这些类型的表    内部表12345678910首先看内部表内部表也可以称为受控表它是Hive中的默认表类型，表数据默认存储在 warehouse 目录中在加载数据的过">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201529990.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201530239.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201531959.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201532427.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/23/bCVdy9.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/23/bCZgA0.md.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201536639.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201539849.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/23/bCn2Nt.md.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201547726.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201551307.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/23/bClx0g.md.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/23/bC1YHe.md.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201604091.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201605038.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201605253.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201605915.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201640543.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201657189.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/23/bPt0SJ.md.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201717785.png">
+<meta property="og:image" content="https://s4.ax1x.com/2022/02/24/biY1Tf.md.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201752242.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202119876.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202145430.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202129264.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202134148.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202135286.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202134265.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202135874.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202150864.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202153071.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202157571.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202159621.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202201910.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202203104.png">
+<meta property="article:published_time" content="2022-02-20T04:01:53.000Z">
+<meta property="article:modified_time" content="2023-03-20T16:31:33.119Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="Hive">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201529990.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第八周-第4章-Hive核心实战 3-表类型.html">
+
+
+
+
+
+  <title>大数据开发工程师-第八周 第4章 Hive核心实战2 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%203-%E8%A1%A8%E7%B1%BB%E5%9E%8B.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第八周 第4章 Hive核心实战2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-20T12:01:53+08:00">
+                2022-02-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  26
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+
+
+<h1 id="第八周-第4章-Hive核心实战"><a href="#第八周-第4章-Hive核心实战" class="headerlink" title="第八周 第4章 Hive核心实战"></a>第八周 第4章 Hive核心实战</h1>
+
+
+
+<h2 id="Hive中的表类型"><a href="#Hive中的表类型" class="headerlink" title="Hive中的表类型"></a>Hive中的表类型</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在Mysql中没有表类型这个概念，因为它就只有一种表。</span><br><span class="line">但是Hive中是有多种表类型的，我们可以分为四种，内部表、外部表、分区表、桶表</span><br><span class="line">下面来一个一个学习一下这些类型的表</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="内部表"><a href="#内部表" class="headerlink" title="内部表"></a>内部表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">首先看内部表</span><br><span class="line">内部表也可以称为受控表</span><br><span class="line">它是Hive中的默认表类型，表数据默认存储在 warehouse 目录中</span><br><span class="line"></span><br><span class="line">在加载数据的过程中，实际数据会被移动到warehouse目录中，就是咱们前面在使用load加载数据的时候，数据就会被加载到warehouse中表对应的目录中</span><br><span class="line">当我们删除表时，表中的数据和元数据将会被同时删除</span><br><span class="line"></span><br><span class="line">实际上，我们前面创建的表都属于受控表，前面我们已经演示了，创建一张表，其对应就，在metastore中存储表的元数据信息，当我们一旦从hive中删除一张表之后，表中的数据会被删除，在metastore中存储的元数据信息也会被删除。</span><br><span class="line"></span><br><span class="line">这就是内部表的特性。</span><br></pre></td></tr></table></figure>
+
+<h3 id="外部表"><a href="#外部表" class="headerlink" title="外部表"></a>外部表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">建表语句中包含 External 的表叫外部表</span><br><span class="line">外部表在加载数据的时候，实际数据并不会移动到warehouse目录中，只是与外部数据建立一个链接(映射关系)</span><br><span class="line"></span><br><span class="line">表的定义和数据的生命周期互相不约束，数据只是表对hdfs上的某一个目录的引用而已，当删除表定义的时候，数据依然是存在的。仅删除表和数据之间引用关系，所以这种表是比较安全的，就算是我们误删表了，数据还是没丢的</span><br><span class="line"></span><br><span class="line">我们来创建一张外部表，看一下外部表的建表语句该如何来写</span><br><span class="line">看一下官方文档</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201529990.png" alt="image-20230320152938447"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201530239.png" alt="image-20230320153023760"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201531959.png" alt="image-20230320153157542"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201532427.png" alt="image-20230320153244307"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">官网中的案例如下：</span><br><span class="line">主要就是在建表语句中增加了EXTERNAL 以及在最后通过locatin指定了这个表数据的存储位置，注意这个路径是hdfs的路径</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">那根据这个格式我们自己来创建一个外部表</span><br><span class="line">create external table external_table (</span><br><span class="line">key string</span><br><span class="line">) location &#39;&#x2F;data&#x2F;external&#39;;</span><br><span class="line"></span><br><span class="line">表创建完以后到hdfs上查询，如果指定的目录不存在会自动创建</span><br><span class="line">此时到hdfs的 &#x2F;user&#x2F;hive&#x2F;warehouse&#x2F; 目录下查看，是看不到这个表的目录的，因为这个表的目录是我们刚才通过location指定的目录</span><br><span class="line"></span><br><span class="line">我们再来看一下metastore中的tbls表，这里看到external_table的类型是外部表。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bCVdy9" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/23/bCVdy9.md.png" alt="bCVdy9.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 hivedata]# more external_table.data</span><br><span class="line">a </span><br><span class="line">b </span><br><span class="line">c </span><br><span class="line">d </span><br><span class="line">e</span><br><span class="line"></span><br><span class="line">加载数据</span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;external_table.dat into table external_table</span><br><span class="line">Loading data to table default.external_table</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.364 seconds</span><br><span class="line"></span><br><span class="line">此时加载的数据会存储到hdfs的 &#x2F;data&#x2F;external 目录下</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bCZgA0" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/23/bCZgA0.md.png" alt="bCZgA0.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">接下来尝试删除这个表，看看会发生什么现象</span><br><span class="line">hive (default)&gt; drop table external_table;</span><br><span class="line">到hdfs上查看数据，发现之前上传上去的数据还在</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201536639.png" alt="image-20230320153640047"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这个其实就是前面我们所说的外部表的特性，外部表被删除时，只会删除表的元数据，表中的数据不会被删除。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">在hive中查询目前所有的表信息，发现external_table表确实被删除了</span><br><span class="line">hive (default)&gt; show tables;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">stu</span><br><span class="line">stu2</span><br><span class="line">stu3</span><br><span class="line">student</span><br><span class="line">t1</span><br><span class="line">t2</span><br><span class="line">t2_bak</span><br><span class="line">t3</span><br><span class="line">t3_new</span><br><span class="line">Time taken: 0.025 seconds, Fetched: 9 row(s)</span><br><span class="line">然后到metastore中查看，发现metastore中的相应的记录也一并被删除掉了</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201539849.png" alt="image-20230320153934734"></p>
+<h4 id="内部表和外部表相互转化"><a href="#内部表和外部表相互转化" class="headerlink" title="内部表和外部表相互转化"></a>内部表和外部表相互转化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">注意：实际上内外部表是可以互相转化的，需要我们做一下简单的设置即可。</span><br><span class="line">内部表转外部表</span><br><span class="line">alter table tblName set tblproperties (‘external’&#x3D;‘true’);</span><br><span class="line">外部表转内部表</span><br><span class="line">alter table tblName set tblproperties (‘external’&#x3D;‘false’);</span><br><span class="line">(不要根据数据是否在warehouse中，来判断是否是内外部表；外部表不指定location时，删除外部表时，warehouse里的数据也不会被删除；内部表也可指指定数据不放到warehouse里，但删除表时，数据还是会被删除)</span><br><span class="line"></span><br><span class="line">在实际工作中，我们在hive中创建的表95%以上的都是外部表</span><br><span class="line">因为大致流程是这样的，我们先通过flume采集数据，把数据上传到hdfs中，然后在hive中创建外部表和hdfs上的数据绑定关系，就可以使用sql查询数据了，所以连load数据那一步都可以省略了，因为是先有数据，才创建的表。</span><br><span class="line"></span><br><span class="line">画图分析一下。</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bCn2Nt" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/23/bCn2Nt.md.png" alt="bCn2Nt.md.png"></a></p>
+<h3 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h3><h4 id="单个分区字段"><a href="#单个分区字段" class="headerlink" title="单个分区字段"></a>单个分区字段</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  假设我们的web服务器每天都产生一个日志数据文件，Flume把数据采集到HDFS中，每一天的数据存储到一个日期目录中。我们如果想查询某一天的数据的话，hive执行的时候默认会对所有文件都扫描一遍，然后再过滤出来我们想要查询的那一天的数据</span><br><span class="line">  </span><br><span class="line">如果你已经采集了一年的数据，这样每次计算都需要把一年的数据取出来，再过滤出来某一天的数据，效率就太低了，会非常浪费资源，所以我们可以让hive在查询的时候，根据你要查询的日期，直接定位到对应的日期目录。这样就可以直接查询满足条件的数据了，效率提升可不止一点点啊，是质的提升。</span><br><span class="line"></span><br><span class="line">想要实现这个功能，就需要使用分区表了</span><br><span class="line"></span><br><span class="line">  分区可以理解为分类，通过分区把不同类型的数据放到不同目录中</span><br><span class="line">  分区的标准就是指定分区字段，分区字段可以有一个或多个，根据咱们刚才举的例子，分区字段就是日期</span><br><span class="line">  分区表的意义在于优化查询，查询时尽量利用分区字段，如果不使用分区字段，就会全表扫描，最典型的一个场景就是把天作为分区字段，查询的时候指定天</span><br><span class="line"></span><br><span class="line">按照上面的分析，我们来创建一个分区表，使用partitioned by指定区分字段，分区字段的名称为dt，类型为string</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table partition_1 (</span><br><span class="line">id int,</span><br><span class="line">name string</span><br><span class="line">) partitioned by (dt string)</span><br><span class="line">row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;;</span><br><span class="line"></span><br><span class="line">查看表的信息，可以看到分区信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201547726.png" alt="image-20230320154742474"></p>
+<h5 id="加载数据时自动创建分区"><a href="#加载数据时自动创建分区" class="headerlink" title="加载数据时自动创建分区"></a>加载数据时自动创建分区</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">数据格式是这样的</span><br><span class="line">[root@bigdata04 hivedata]# more partition_1.data</span><br><span class="line">1 zhangsan</span><br><span class="line">2 lisi</span><br><span class="line"></span><br><span class="line">向分区表中加载数据【注意，在这里添加数据的同时需要指定分区信息】</span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;partition_1.data&#39; into table partition_1 partition(dt&#x3D;&#39;20200101&#39;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">来查看一下hdfs中的信息，刚才创建的分区信息在hdfs中的体现是一个目录。</span><br><span class="line">由于这个分区表属于内部表， 所以目录还在warehouse这个目录中</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201551307.png" alt="image-20230320155113146"></p>
+<h5 id="手动创建分区"><a href="#手动创建分区" class="headerlink" title="手动创建分区"></a>手动创建分区</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">当然我也可以手动在表中只创建分区：</span><br><span class="line">hive (default)&gt; alter table partition_1 add partition (dt&#x3D;&#39;2020-01-02&#39;);</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.295 seconds</span><br><span class="line"></span><br><span class="line">此时会发现hdfs中又多了一个目录，只不过这个分区目录中是没有数据的</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bClx0g" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/23/bClx0g.md.png" alt="bClx0g.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">向这个分区中添加数据，可以使用刚才的load命令或者hdfs的put命令都可以</span><br><span class="line"></span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;partition_1.data&#39; into table patition_1</span><br><span class="line">Loading data to table default.partition_1 partition (dt&#x3D;2020-01-02)</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bC1YHe" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/23/bC1YHe.md.png" alt="bC1YHe.md.png"></a></p>
+<h5 id="查看表的分区"><a href="#查看表的分区" class="headerlink" title="查看表的分区"></a>查看表的分区</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">如何查看我的表中目前有哪些分区呢，语法为： show partitions tblName</span><br><span class="line"></span><br><span class="line">hive (default)&gt; show partitions partition_1;</span><br><span class="line">OK</span><br><span class="line">partition</span><br><span class="line">dt&#x3D;2020-01-01</span><br><span class="line">dt&#x3D;2020-01-02</span><br><span class="line">Time taken: 0.246 seconds, Fetched: 2 row(s)</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除分区"><a href="#删除分区" class="headerlink" title="删除分区"></a>删除分区</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">那问题来了，刚才增加了一个分区，那我能删除一个分区吗？</span><br><span class="line">必须是可以的</span><br><span class="line"></span><br><span class="line">hive (default)&gt; alter table partition_1 drop partition(dt&#x3D;&#39;2020-01-02&#39;);</span><br><span class="line">Dropped the partition dt&#x3D;2020-01-02</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.771 seconds</span><br><span class="line"></span><br><span class="line">hive (default)&gt; show partitions partition_1;</span><br><span class="line">OK</span><br><span class="line">partition</span><br><span class="line">dt&#x3D;2020-01-01</span><br><span class="line">Time taken: 0.174 seconds, Fetched: 1 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意了，此时分区删除之后，分区中对应的数据也就没有了，因为是内部表，所以分区的数据是会被删掉的</span><br></pre></td></tr></table></figure>
+
+<h4 id="多个分区字段"><a href="#多个分区字段" class="headerlink" title="多个分区字段"></a>多个分区字段</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">刚才呢，我们创建了一个分区，但是有的业务需求，需要创建多个分区，可以吗？</span><br><span class="line">当然是可以的！</span><br><span class="line">这里再举一个例子。某学校，有若干二级学院，每年都招很多学生，学校的统计需求大部分会根据年份和学院名称作为条件</span><br><span class="line">所以为了提高后期的统计效率，我们最好是使用年份和学院名称作为分区字段</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">create table partition_2 (</span><br><span class="line">id int,</span><br><span class="line">name string</span><br><span class="line">) partitioned by (year int, school string)</span><br><span class="line">row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; desc partition_2;</span><br><span class="line">OK</span><br><span class="line">col_name data_type comment</span><br><span class="line">id int</span><br><span class="line">name string</span><br><span class="line">year int</span><br><span class="line">school string</span><br><span class="line"># Partition Information</span><br><span class="line"># col_name data_type comment</span><br><span class="line">year int</span><br><span class="line">school string</span><br><span class="line">Time taken: 0.097 seconds, Fetched: 9 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">数据文件内容</span><br><span class="line">[root@bigdata04 hivedata]# more partition_2.data</span><br><span class="line">1 zhangsan</span><br><span class="line">2 lisi</span><br><span class="line">3 wangwu</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：数据文件中只需要有id和name这两个字段的值就可以了，具体year和school这两个分区字段是在加载分区的时候指定的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;partition_2.data&#39; into partition_2 patition(year&#x3D;2020, school&#x3D;&quot;xk&quot;)</span><br><span class="line"></span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;partition_2.data&#39; into partition_2 patition(year&#x3D;2020, school&#x3D;&quot;english&quot;)</span><br><span class="line"></span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;partition_2.data&#39; into partition_2 patition(year&#x3D;2019, school&#x3D;&quot;xk&quot;)</span><br><span class="line"></span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;partition_2.data&#39; into partition_2 patition(year&#x3D;2019, school&#x3D;&quot;english&quot;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">查看分区信息</span><br><span class="line">hive (default)&gt; show partitions partition_2;</span><br><span class="line">OK</span><br><span class="line">partition</span><br><span class="line">year&#x3D;2019&#x2F;school&#x3D;english</span><br><span class="line">year&#x3D;2019&#x2F;school&#x3D;xk</span><br><span class="line">year&#x3D;2020&#x2F;school&#x3D;english</span><br><span class="line">year&#x3D;2020&#x2F;school&#x3D;xk</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询分区表"><a href="#查询分区表" class="headerlink" title="查询分区表"></a>查询分区表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">前面我们讲了如何创建、增加和删除分区</span><br><span class="line">还有一个比较重要的是我们该如何查询分区中的数据呢？其实非常简单，分区相当于我们的一个查询条件，直接跟在where后面就可以了。</span><br><span class="line"></span><br><span class="line">select * from partition_2; 【全表扫描，没有用到分区的特性】</span><br><span class="line">select * from partition_2 where year &#x3D; 2019;【用到了一个分区字段进行过滤】</span><br><span class="line">select * from partition_2 where year &#x3D; 2019 and school &#x3D; &#39;xk&#39;;【用到了两个分区字段进行过滤】</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">这就是分区表的主要操作</span><br><span class="line"></span><br><span class="line">其实我们在这使用的分区表可以认为是内部分区表，内部分区表的应用场景也不多，外部分区表的应用场景才多，外部分区表就是在外部表的基础上又增加了分区。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201604091.png" alt="image-20230320160454144"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201605038.png" alt="image-20230320160516832"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201605253.png" alt="image-20230320160547061"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201605915.png" alt="image-20230320160558709"></p>
+<h4 id="外部分区表"><a href="#外部分区表" class="headerlink" title="外部分区表"></a>外部分区表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">外部分区表示工作中最常用的表</span><br><span class="line">我们先来创建一个外部分区表</span><br><span class="line"></span><br><span class="line">create external table ex_par(</span><br><span class="line">id int,</span><br><span class="line">name string</span><br><span class="line">)partitioned by(dt string)</span><br><span class="line">row format delimited</span><br><span class="line">fields terminated by &#39;\t&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;ex_par&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">其它的操作和前面操作普通分区表是一样的，我们主要演示一下添加分区数据和删除分区的操作</span><br><span class="line"></span><br><span class="line">添加分区数据</span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;ex_par.data&#39; into table ex_par partition(dt&#x3D;20200101)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">hive (default)&gt; show partitions ex_par;</span><br><span class="line">OK</span><br><span class="line">partition</span><br><span class="line">dt&#x3D;2020-01-01</span><br><span class="line">Time taken: 0.415 seconds, Fetched: 1 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">删除分区(删除后，此时hdfs上的分区目录还在)</span><br><span class="line">hive (default)&gt; alter table ex_par drop partition(dt&#x3D;&#39;2020-01-01&#39;);</span><br><span class="line">Dropped the partition dt&#x3D;2020-01-01</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.608 seconds</span><br><span class="line"></span><br><span class="line">hive (default)&gt; show partitions ex_par;</span><br><span class="line">OK</span><br><span class="line">partition</span><br><span class="line">Time taken: 0.229 seconds</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">注意：此时分区目录的数据还是在的，因为这个是外部表，所以删除分区也只是删除分区的定义，分区中的数据还是在的，这个和内部分区表就不一样了</span><br><span class="line"></span><br><span class="line">虽然这个分区目录还在，但是刚才我们通过，show partitions已经查不到分区信息了，所以查询表数据是查不出来的，虽然这个目录确实在这个表对应的hdfs目录中，但是由于这个是一个分区表，这份数据没有和任何分区绑定，所以就查询不出来</span><br><span class="line"></span><br><span class="line">这个一定要注意，在实际工作中新手最容易遇到的一个问题就是，针对分区表，通过hdfs的put命令把数据上传上去了，但是却查不到数据，就是因为没有在表中添加分区信息，也就是说你们现在虽然在一起了，但是还没有领结婚证，国家还不承认。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201640543.png" alt="image-20230320164050086"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果数据已经上传上去了，如何给他们绑定关系呢？就是使用前面咱们讲的alter add partition命令，注意在这里需要通过location指定分区目录</span><br><span class="line">hive (default)&gt; alter table ex_par add partition(dt&#x3D;&#39;2020-01-01&#39;) location &#39;&#x2F;data&#x2F;ex_par&#x2F;dt&#x3D;20200101&#39;; (这里不写location后面的也可以)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">此时再查询分区数据和表数据，就正常了。</span><br><span class="line">hive (default)&gt; show partitions ex_par;</span><br><span class="line">OK</span><br><span class="line">partition</span><br><span class="line">dt&#x3D;2020-01-01</span><br><span class="line">Time taken: 0.19 seconds, Fetched: 1 row(s)</span><br><span class="line"></span><br><span class="line">hive (default)&gt; select * from ex_par;</span><br><span class="line">OK</span><br><span class="line">ex_par.id ex_par.name ex_par.dt</span><br><span class="line">1 zhangsan 2020-01-01</span><br><span class="line">2 lisi 2020-01-01</span><br><span class="line">3 wangwu 2020-01-01</span><br><span class="line">Time taken: 0.432 seconds, Fetched: 3 row(s)</span><br></pre></td></tr></table></figure>
+
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;ex_par.data&#39; into table ex_par  partition(dt&#x3D;&#39;20200101&#39;);</span><br><span class="line">load data .... partition 这条命令做了两个事情，1：上传数据，2：添加分区(绑定数据和分区之间的关系)</span><br><span class="line"></span><br><span class="line">hdfs dfs -mkdir &#x2F;data&#x2F;ex_par&#x2F;20200101</span><br><span class="line">hdfs dfs -put &#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;ex_par.data &#x2F;data&#x2F;ex_par&#x2F;20200101</span><br><span class="line"></span><br><span class="line">alter table ex_par add partition(dt&#x3D;&#39;20200101&#39;) location &#39;&#x2F;data&#x2F;ex_par&#x2F;dt&#x3D;20200101&#39;;</span><br><span class="line">上面这三条命令做了两件事情，1：上传数据 2：添加分区(绑定数据和分区之间的关系)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">外部分区表是工作中最常见的表</span><br></pre></td></tr></table></figure>
+
+<h3 id="桶表"><a href="#桶表" class="headerlink" title="桶表"></a>桶表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">桶表是对数据进行哈希取值，然后放到不同文件中存储</span><br><span class="line">物理上，每个桶就是表(或分区）里的一个文件</span><br><span class="line"></span><br><span class="line">什么时候会用到桶表呢？</span><br><span class="line">举个例子，针对中国的人口，主要集中河南、江苏、山东、广东、四川，其他省份就少的多了，你像西藏就三四百万，海南也挺少的，如果使用分区表，我们把省份作为分区字段，数据会集中在某几个分区，其他分区数据就不会很多，那这样对数据存储以及查询不太友好，在计算的时候会出现数据倾斜的问题，计算效率也不高，我们应该相对均匀的存放数据，从源头上解决，这个时候我们就可以采用分桶的概念，也就是使用桶表</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建桶表"><a href="#创建桶表" class="headerlink" title="创建桶表"></a>创建桶表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">下面来建立一个桶表：</span><br><span class="line">这个表的意思是按照id进行分桶，分成4个桶。</span><br><span class="line">create table bucket_tb(</span><br><span class="line">id int</span><br><span class="line">) clustered by (id) into 4 buckets;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">这个时候往桶中加载数据的时候，就不能使用load data的方式了，而是需要使用其它表中的数据，那么给桶表加载数据的写法就有新的变化了。</span><br><span class="line"></span><br><span class="line">类似这样的写法</span><br><span class="line">insert into table … select … from …;</span><br><span class="line"></span><br><span class="line">注意，在插入数据之前需要先设置开启桶操作，不然数据无法分到不同的桶里面</span><br><span class="line">其实这里的分桶就是设置reduce任务的数量，因为你分了多少个桶，最终结果就会产生多少个文件，最终结果中文件的数量就和reduce任务的数量是挂钩的</span><br><span class="line"></span><br><span class="line">设置完 set hive.enforce.bucketing &#x3D; true 可以自动控制reduce的数量从而适配bucket的个数</span><br><span class="line"></span><br><span class="line">hive (default)&gt; set hive.enforce.bucketing&#x3D;true;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">初始化一个表，用于向桶表中加载数据</span><br><span class="line">原始数据文件是这样的</span><br><span class="line"></span><br><span class="line">[root@bigdata04 hivedata]# more b_source.data</span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">5 </span><br><span class="line">6 </span><br><span class="line">7 </span><br><span class="line">8 </span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; create table b_source(id int);</span><br><span class="line">OK</span><br><span class="line">Time taken: 0.262 seconds</span><br><span class="line">hive (default)&gt; load data local inpath &#39;&#x2F;data&#x2F;soft&#x2F;hivedata&#x2F;b_source.data&#39; into table b_source;</span><br><span class="line"></span><br><span class="line">hive (default)&gt; select * from b_source;</span><br><span class="line">OK</span><br><span class="line">b_source.id</span><br><span class="line">1 </span><br><span class="line">2 </span><br><span class="line">3 </span><br><span class="line">4 </span><br><span class="line">5 </span><br><span class="line">6 </span><br><span class="line">7 </span><br><span class="line">8 </span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">Time taken: 0.187 seconds, Fetched: 12 row(s)</span><br></pre></td></tr></table></figure>
+
+<h4 id="向桶表加载数据"><a href="#向桶表加载数据" class="headerlink" title="向桶表加载数据"></a>向桶表加载数据</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">向桶表中加载数据</span><br><span class="line">hive (default)&gt; insert into table bucket_tb select id from b_source where id !&#x3D; NULL;</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看结果"><a href="#查看结果" class="headerlink" title="查看结果"></a>查看结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; select * from bucket_tb;</span><br><span class="line">OK</span><br><span class="line">bucket_tb.id</span><br><span class="line">12</span><br><span class="line">8 </span><br><span class="line">4 </span><br><span class="line">9 </span><br><span class="line">5 </span><br><span class="line">1</span><br><span class="line">10</span><br><span class="line">6 </span><br><span class="line">2</span><br><span class="line">11</span><br><span class="line">7 </span><br><span class="line">3</span><br><span class="line">Time taken: 0.183 seconds, Fetched: 12 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">按照我们设置的桶的数量为4，这样在hdfs中会存在4个对应的文件，每个文件的大小是相似的</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201657189.png" alt="image-20230320165751106"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">到hdfs上查看桶表中的文件内容，可以看出是通过对buckets取模确定的</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/bPt0SJ" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/23/bPt0SJ.md.png" alt="bPt0SJ.md.png"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这样就实现了数据分桶存储。</span><br></pre></td></tr></table></figure>
+
+<h4 id="桶表的作用"><a href="#桶表的作用" class="headerlink" title="桶表的作用"></a>桶表的作用</h4><h5 id="数据抽样"><a href="#数据抽样" class="headerlink" title="数据抽样"></a>数据抽样</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">数据抽样</span><br><span class="line">假如我们使用的是一个大规模的数据集,我们只想去抽取部分数据进行查看.使用bucket表可以变得更加的高效</span><br><span class="line"></span><br><span class="line">select * from bucket_tb tablesample(bucket 1 out of 4 on id);</span><br><span class="line">tablesample是抽样语句</span><br><span class="line"></span><br><span class="line">语法解析：TABLESAMPLE(BUCKET x OUT OF y ON column)</span><br><span class="line">y尽可能是桶表的bucket数的倍数或者因子，而且y必须要大于等于x</span><br><span class="line">y表示是把桶表中的数据随机分为多少桶(根据column重新分桶，分成4个)</span><br><span class="line">x表示取出第几桶的数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bucket 1 out of 4 on id：根据id对桶表中的数据重新分桶，分成4桶，取出第1桶的数据</span><br><span class="line">bucket 2 out of 4 on id：根据id对桶表中的数据重新分桶，分成4桶，取出第2桶的数据</span><br><span class="line">bucket 3 out of 4 on id：根据id对桶表中的数据重新分桶，分成4桶，取出第3桶的数据</span><br><span class="line">bucket 4 out of 4 on id：根据id对桶表中的数据重新分桶，分成4桶，取出第4桶的数据</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">验证一下效果，这里面四个SQL语句，每个SQL语句取出一个桶的数据，最终的总和就是表中的所有数据</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201717785.png" alt="image-20230320171725720"></p>
+<h5 id="提高某些查询效率"><a href="#提高某些查询效率" class="headerlink" title="提高某些查询效率"></a>提高某些查询效率</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">例如：join查询,可以避免产生笛卡尔积的操作</span><br><span class="line">select a.id,a.name,b.addr from a join b on a.id &#x3D; b.id;</span><br><span class="line"></span><br><span class="line">如果a表和b表已经是分桶表，而且分桶的字段是id字段，那么做这个操作的时候就不需要再进行全表笛卡尔积了，因为分桶之后相同规则的id已经在相同的文件里面了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="临时表"><a href="#临时表" class="headerlink" title="临时表"></a>临时表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">一般用普通内部表做临时表使用</span><br></pre></td></tr></table></figure>
+
+<h3 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hive中，也有视图的概念，那我们都知道视图实际上是一张虚拟的表，是对数据的逻辑表示，它的主要作用是为了降低查询的复杂度。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">那我们在Hive中如何来创建一个视图呢？</span><br><span class="line">需要使用create view命令，</span><br><span class="line">下面我们来创建一个视图</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建视图"><a href="#创建视图" class="headerlink" title="创建视图"></a>创建视图</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">hive (default)&gt; create view v1 as select t3_new.id,t3_new.stu_name from t3_new;</span><br><span class="line"></span><br><span class="line">此时通过 show tables 也可以查看到这个视图</span><br><span class="line">hive (default)&gt; show tables;</span><br><span class="line">OK</span><br><span class="line">tab_name</span><br><span class="line">b_source</span><br><span class="line">bucket_tb</span><br><span class="line">ex_par</span><br><span class="line">partition_1</span><br><span class="line">partition_2</span><br><span class="line">stu</span><br><span class="line">stu2</span><br><span class="line">stu3</span><br><span class="line">student</span><br><span class="line">t1</span><br><span class="line">t2</span><br><span class="line">t2_bak</span><br><span class="line">t3</span><br><span class="line">t3_new</span><br><span class="line">v1</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询视图"><a href="#查询视图" class="headerlink" title="查询视图"></a>查询视图</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">查看视图的结构，显示的内容和表显示的内容是没有区别的</span><br><span class="line"></span><br><span class="line">hive (default)&gt; desc v1;</span><br><span class="line">OK</span><br><span class="line">col_name data_type comment</span><br><span class="line">id int</span><br><span class="line">stu_name string</span><br><span class="line">Time taken: 0.041 seconds, Fetched: 2 row(s)</span><br><span class="line"></span><br><span class="line">通过视图查询数据</span><br><span class="line">hive (default)&gt; select * from v1;</span><br><span class="line">OK</span><br><span class="line">v1.id v1.stu_name</span><br><span class="line">1 张三</span><br><span class="line">2 李四</span><br><span class="line">3 王五</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：视图在&#x2F;user&#x2F;hive&#x2F;warehouse中是不存在的。因为它只是一个虚拟的表</span><br><span class="line"></span><br><span class="line">在元数据metastore中的体现</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgtu.com/i/biY1Tf" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/24/biY1Tf.md.png" alt="biY1Tf.md.png"></a></p>
+<h4 id="删除视图"><a href="#删除视图" class="headerlink" title="删除视图"></a>删除视图</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drop view v1;</span><br></pre></td></tr></table></figure>
+
+<h2 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">接下来我们来看一个综合案例，主要使用外部分区表和视图实现</span><br><span class="line"></span><br><span class="line">需求：Flume按天把日志数据采集到HDFS中的对应目录中，使用SQL按天统计每天数据的相关指标</span><br><span class="line"></span><br><span class="line">分析一下：</span><br><span class="line">Flume按天把日志数据保存到HDFS中的对应目录中</span><br><span class="line">针对Flume的source可以使用execsource、channel可以使用基于文件的或者内存的，sink使用hdfssink，在hdfssink的path路径中需要使用%Y%m%d获取日期，将每天的日志数据采集到指定的hdfs目录中</span><br><span class="line"></span><br><span class="line">这个是我们在前面学习Flume的时候已经讲过的了，这个倒不难</span><br><span class="line"></span><br><span class="line">后面就是需要对按天采集的日志数据建表，由于这份数据可能会被多种计算引擎使用，所以建议使用外部表，这样就算我们不小心把表删了，数据也还是在的，不影响其他人使用，还有就是这份数据是按天分目录存储的，在实际工作中，离线计算的需求大部分都是按天计算的，所以在这里最好在表中增加日期这个分区字段，所以最终决定使用外部分区表。</span><br><span class="line"></span><br><span class="line">前面FLume采集数据的流程我们就不再演示了，在这我就直接使用之前我们使用hdfs落盘的数据了。</span><br><span class="line"></span><br><span class="line">我们之前有一个案例是分类型，分目录，把多种类型的数据存储到不同的目录下</span><br><span class="line"></span><br><span class="line">目录结构是这样的，首先是按天，然后是按照类型</span><br></pre></td></tr></table></figure>
+
+<p>![image-20230320175120995](D:\GitHub\myblog\source_posts\大数据开发工程师-第八周-第4章-Hive核心实战 3-表类型\image-20230320175120995.png)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里面的数据是json格式的，也是有规律的，如果我们在建表的时候该怎么创建？</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303201752242.png" alt="image-20230320175214506"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">针对json格式的数据建表的时候没办法直接把每个字段都定义出来</span><br><span class="line"></span><br><span class="line">通常的解决方案是先写一个mapreduce数据清洗任务，只需要map阶段就行了，对json格式的数据进行解析，把里面每个字段的值全部解析出来，拼成一行，字段值中间可以使用逗号分割，然后再基于解析之后的数据在hive中建表就可以了。</span><br><span class="line"></span><br><span class="line">这个解决方案没有任何问题，如果硬要挑问题，那就只能鸡蛋里面挑骨头，说这个解决方案比较麻烦，还需要写MapReduce，不够优雅了。</span><br><span class="line"></span><br><span class="line">我们开发人员有时候一定要懒，这个懒不是说什么都不敢，而是要想办法把复杂的问题简单化，这个懒可以督促你去找出最方便快捷的解决方案。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在这里我们需要提前涉及一个函数get_json_object，这个函数可以从json格式的数据中解析出指定字段</span><br><span class="line">所以我的思路是这样的，先基于原始的json数据创建一个外部分区表，表中只有一个字段，保存原始的json字符串即可，分区字段是日期和数据类型</span><br><span class="line"></span><br><span class="line">然后再创建一个视图，视图中实现的功能就是查询前面创建的外部分区表，在查询的时候会解析json数据中的字段</span><br><span class="line"></span><br><span class="line">这样就方便了，我们以后查询直接查视图就可以查询出我们需要的字段信息了，并且一行代码都不需要写。</span><br></pre></td></tr></table></figure>
+
+<h3 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">create external table ex_par_more_type(</span><br><span class="line">log string</span><br><span class="line">)partitioned by(dt string,d_type string) </span><br><span class="line"> row format delimited </span><br><span class="line"> fields terminated by &#39;\t&#39;</span><br><span class="line"> location &#39;&#x2F;moreType&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">加载数据 【注意，此时的数据已经通过flume采集到hdfs中了，所以不需要使用load命令了，只需要使用一个alter命令添加分区信息就可以了,但是记得要把那三个子目录都添加进去】</span><br><span class="line"></span><br><span class="line">添加分区 【注意，这个步骤每天都要做一次】</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202119876.png" alt="image-20230320211922659"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以先查询一下数据，可以查询出来，说明前面的配置没有问题。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202145430.png" alt="image-20230320214504086"></p>
+<h3 id="创建视图-1"><a href="#创建视图-1" class="headerlink" title="创建视图"></a>创建视图</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">接下来就是重点了，需要创建视图，在创建视图的时候从数据中查询需要的字段信息</span><br><span class="line">注意了，由于这三种类型的数据字段是不一样的，所以创建一个视图还搞不定，只能针对每一种类型创建一个视图。</span><br><span class="line">如果这三种类型的数据字段都是一样的，就可以只创建一个视图了。</span><br><span class="line"></span><br><span class="line">注意：由于字段数量太多，在这里针对每个每种数据只获取里面的前4个字段</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">giftRecord类型的视图</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202129264.png" alt="image-20230320212834028"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">userInfo类型的视图</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202134148.png" alt="image-20230320213408763"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202135286.png" alt="image-20230320213529350"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">videoInfo类型的视图</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202134265.png" alt="image-20230320213447601"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202135874.png" alt="image-20230320213550522"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：此时在SQL后面加不加日期都是一样的，因为现在只有这一天的数据</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="创建定时器"><a href="#创建定时器" class="headerlink" title="创建定时器"></a>创建定时器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">后面想要查询数据就直接通过视图，指定日期查询就可以了，不指定日期的话会查询这个类型下面所有的数据。</span><br><span class="line">其实到这里还没完，因为后期flume每天都会采集新的数据上传到hdfs上面，所以我们需要每天都做一次</span><br><span class="line"></span><br><span class="line">添加分区的操作。</span><br><span class="line">这个操作肯定是要写到脚本中定时调度的，否则每天手工执行还不疯了</span><br><span class="line">开发脚本，脚本名称为 addPartition.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata04 hivedata]# vi addPartition.sh</span><br><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line"># 每天凌晨1点定时添加当天日期的分区</span><br><span class="line">if [ &quot;a$1&quot; &#x3D; &quot;a&quot; ]</span><br><span class="line">then</span><br><span class="line">	dt&#x3D;&#96;date +%Y%m%d&#96;</span><br><span class="line">else</span><br><span class="line">	dt&#x3D;$1</span><br><span class="line">fi</span><br><span class="line"># 指定添加分区操作</span><br><span class="line">hive -e &quot;</span><br><span class="line">alter table ex_par_more_type add if not exists partition(dt&#x3D;&#39;$&#123;dt&#125;&#39;,d_type&#x3D;&#39;g</span><br><span class="line">alter table ex_par_more_type add if not exists partition(dt&#x3D;&#39;$&#123;dt&#125;&#39;,d_type&#x3D;&#39;u</span><br><span class="line">alter table ex_par_more_type add if not exists partition(dt&#x3D;&#39;$&#123;dt&#125;&#39;,d_type&#x3D;&#39;v</span><br><span class="line">&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202150864.png" alt="image-20230320215040572"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202153071.png" alt="image-20230320215354733"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">不指定if not exists时，当存在分区时会报错</span><br><span class="line"></span><br><span class="line">可以将已有的分区删除了，再创建分区</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202157571.png" alt="image-20230320215740484"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">加-x 更清晰</span><br><span class="line"></span><br><span class="line">因为获取的是当天时间，hdfs上现在没有，所以用了下面的手动传参</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202159621.png" alt="image-20230320215911090"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202201910.png" alt="image-20230320220121268"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">配置crontab</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303202203104.png" alt="image-20230320220256889"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">这就是一个完整的开发流程，针对需要多次执行的sql一般都是需要配置到脚本中使用hive -e去执行的。</span><br><span class="line">最后再来分析一下，针对这个需求如果数据量不算太打，并且大家对计算效率要求也不算太高的话是没有问题的。</span><br><span class="line">因为现在这种逻辑是每次在查询视图的时候会对原始数据进行解析再计算，如果每天的数据量达到几百G，甚至上T的时候，查询效率就有点低了，大致需要10~20分钟左右，每次查询都是这样，不管你查询多少次，，每次都要根据原始数据进行解析。</span><br><span class="line">如果感觉这个时间不能接受，想要优化，那只能从源头进行优化了，就是先对原始的json数据进行清洗，把需要的字段解析出来，存储到hdfs中，再建表，这个时候就可以提高效率了，因为对原始数据解析的过程只需要一次，后期计算的时候都是对解析过的数据直接计算了，省略了解析步骤，效率可以提升一倍以上。</span><br><span class="line">所以这个就要综合实际情况去考虑了，选便捷性还是选效率</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%203-%E8%A1%A8%E7%B1%BB%E5%9E%8B.html">大数据开发工程师-第八周 第4章 Hive核心实战2</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2022年02月20日 - 12:02</p>
+  <p><span>最后更新:</span>2023年03月21日 - 00:03</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%203-%E8%A1%A8%E7%B1%BB%E5%9E%8B.html" title="大数据开发工程师-第八周 第4章 Hive核心实战2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%203-%E8%A1%A8%E7%B1%BB%E5%9E%8B.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%98%203-%E8%A1%A8%E7%B1%BB%E5%9E%8B.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hive/" rel="tag"><i class="fa fa-tag"></i> Hive</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC3%E7%AB%A0-Hive%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8.html" rel="next" title="大数据开发工程师-第八周 第3章 Hive基础使用">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第八周 第3章 Hive基础使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC4%E7%AB%A0-Hive%E6%A0%B8%E5%BF%83%E5%AE%9E%E6%88%981-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E8%A1%A8%E6%93%8D%E4%BD%9C.html" rel="prev" title="大数据开发工程师-第八周 第4章 Hive核心实战">
+                大数据开发工程师-第八周 第4章 Hive核心实战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">318</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第八周-第4章-Hive核心实战"><span class="nav-number">1.</span> <span class="nav-text">第八周 第4章 Hive核心实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hive中的表类型"><span class="nav-number">1.1.</span> <span class="nav-text">Hive中的表类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内部表"><span class="nav-number">1.1.1.</span> <span class="nav-text">内部表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#外部表"><span class="nav-number">1.1.2.</span> <span class="nav-text">外部表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内部表和外部表相互转化"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">内部表和外部表相互转化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分区表"><span class="nav-number">1.1.3.</span> <span class="nav-text">分区表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单个分区字段"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">单个分区字段</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#加载数据时自动创建分区"><span class="nav-number">1.1.3.1.1.</span> <span class="nav-text">加载数据时自动创建分区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#手动创建分区"><span class="nav-number">1.1.3.1.2.</span> <span class="nav-text">手动创建分区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#查看表的分区"><span class="nav-number">1.1.3.1.3.</span> <span class="nav-text">查看表的分区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除分区"><span class="nav-number">1.1.3.1.4.</span> <span class="nav-text">删除分区</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多个分区字段"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">多个分区字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询分区表"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">查询分区表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#外部分区表"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">外部分区表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#桶表"><span class="nav-number">1.1.4.</span> <span class="nav-text">桶表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建桶表"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">创建桶表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向桶表加载数据"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">向桶表加载数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看结果"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">查看结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#桶表的作用"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">桶表的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#数据抽样"><span class="nav-number">1.1.4.4.1.</span> <span class="nav-text">数据抽样</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#提高某些查询效率"><span class="nav-number">1.1.4.4.2.</span> <span class="nav-text">提高某些查询效率</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#临时表"><span class="nav-number">1.1.5.</span> <span class="nav-text">临时表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视图"><span class="nav-number">1.1.6.</span> <span class="nav-text">视图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建视图"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">创建视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询视图"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">查询视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除视图"><span class="nav-number">1.1.6.3.</span> <span class="nav-text">删除视图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#综合案例"><span class="nav-number">1.2.</span> <span class="nav-text">综合案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建表"><span class="nav-number">1.2.1.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建视图-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">创建视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建定时器"><span class="nav-number">1.2.3.</span> <span class="nav-text">创建定时器</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">355.9k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
