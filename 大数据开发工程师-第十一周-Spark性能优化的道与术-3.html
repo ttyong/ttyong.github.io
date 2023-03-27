@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第十一周 Spark性能优化的道与术-3性能优化分析123一个计算任务的执行主要依赖于CPU、内存、带宽Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十一周 Spark性能优化的道与术-3">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十一周 Spark性能优化的道与术-3性能优化分析123一个计算任务的执行主要依赖于CPU、内存、带宽Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spar">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271945127.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271944394.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272100115.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272101635.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272103931.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272230037.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272232315.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272234159.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280039960.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280042154.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280057687.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280054889.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280055569.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280117859.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280118186.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280116405.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280126634.png">
+<meta property="article:published_time" content="2023-03-27T11:31:29.000Z">
+<meta property="article:modified_time" content="2023-03-27T17:50:18.694Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271945127.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十一周-Spark性能优化的道与术-3.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十一周 Spark性能优化的道与术-3 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十一周 Spark性能优化的道与术-3</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-03-27T19:31:29+08:00">
+                2023-03-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  28
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第十一周-Spark性能优化的道与术-3"><a href="#第十一周-Spark性能优化的道与术-3" class="headerlink" title="第十一周 Spark性能优化的道与术-3"></a>第十一周 Spark性能优化的道与术-3</h1><h2 id="性能优化分析"><a href="#性能优化分析" class="headerlink" title="性能优化分析"></a>性能优化分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一个计算任务的执行主要依赖于CPU、内存、带宽</span><br><span class="line">Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。</span><br><span class="line">Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spark程序计算的数据量比较小，并且你的内存足够使用，那么只要网络不至于卡死，一般是不会有大的性能问题的。但是Spark程序的性能问题往往出现在针对大数据量进行计算（比如上亿条数的数据，或者上T规模的数据），这个时候如果内存分配不合理就会比较慢，所以，Spark性能优化，主要是对内存进行优化。</span><br></pre></td></tr></table></figure>
+
+<h2 id="内存都去哪了"><a href="#内存都去哪了" class="headerlink" title="内存都去哪了"></a>内存都去哪了</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 每个Java对象，都有一个对象头，会占用16个字节，主要是包括了一些对象的元信息，比如指向它的类的指针。如果一个对象本身很小，比如就包括了一个int类型的field，那么它的对象头实际上比对象自身还要大。</span><br><span class="line">2. Java的String对象的对象头，会比它内部的原始数据，要多出40个字节。因为它内部使用char数组来保存内部的字符序列，并且还要保存数组长度之类的信息。</span><br><span class="line">3. Java中的集合类型，比如HashMap和LinkedList，内部使用的是链表数据结构，所以对链表中的每一个数据，都使用了Entry对象来包装。Entry对象不光有对象头，还有指向下一个Entry的指针，通常占用8个字节。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">所以把原始文件中的数据转化为内存中的对象之后，占用的内存会比原始文件中的数据要大</span><br><span class="line"></span><br><span class="line">那我如何预估程序会消耗多少内存呢？</span><br><span class="line">通过cache方法，可以看到RDD中的数据cache到内存中之后占用多少内存，这样就能看出了</span><br><span class="line">代码如下：这个测试代码就只写一个scala版本的了</span><br></pre></td></tr></table></figure>
+
+<h3 id="scala"><a href="#scala" class="headerlink" title="scala"></a>scala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.scala</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 需求：测试内存占用情况</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">TestMemoryScala</span> </span>&#123;</span><br><span class="line"> <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">     <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">     conf.setAppName(<span class="string">"TestMemoryScala"</span>)</span><br><span class="line">     .setMaster(<span class="string">"local"</span>)</span><br><span class="line">     <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line">     <span class="keyword">val</span> dataRDD = sc.textFile(<span class="string">"hdfs://bigdata01:9000/hello_10000000.dat"</span>).cache()</span><br><span class="line">     <span class="keyword">val</span> count = dataRDD.count()</span><br><span class="line">         println(count)</span><br><span class="line">     <span class="comment">//while循环是为了保证程序不结束，方便在本地查看4040页面(在本地运行时的spark web页面)中的storage信息</span></span><br><span class="line">     <span class="keyword">while</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">     ;</span><br><span class="line">     &#125;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271945127.png" alt="image-20230327194520543"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271944394.png" alt="image-20230327194456852"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">执行代码，访问localhost的4040端口界面</span><br><span class="line">这个界面其实就是spark的任务界面，在本地运行任务的话可以直接访问4040界面查看</span><br><span class="line">点击stages可以看到任务的原始输入数据是多大</span><br><span class="line"></span><br><span class="line">点击storage可以看到将数据加载到内存，生成RDD之后的大小</span><br><span class="line"></span><br><span class="line">这样我们就能知道这一份数据在RDD中会占用多少内存了，这样在使用的时候，如果想要把数据全部都加载进内存，就需要给这个任务分配这么多内存了，当然了你分配少一些也可以，只不过这样计算效率会变低，因为RDD中的部分数据内存放不下就会放到磁盘了。</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能优化方案"><a href="#性能优化方案" class="headerlink" title="性能优化方案"></a>性能优化方案</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">下面我们通过这几个方式来实现对Spark程序的性能优化</span><br><span class="line">    高性能序列化类库</span><br><span class="line">    持久化或者checkpoint</span><br><span class="line">    JVM垃圾回收调优</span><br><span class="line">    提高并行度</span><br><span class="line">    数据本地化</span><br><span class="line">    算子优化</span><br></pre></td></tr></table></figure>
+
+<h3 id="高性能序列化类库"><a href="#高性能序列化类库" class="headerlink" title="高性能序列化类库"></a>高性能序列化类库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在任何分布式系统中，序列化都是扮演着一个重要的角色的。</span><br><span class="line">如果使用的序列化技术，在执行序列化操作的时候很慢，或者是序列化后的数据还是很大，那么会让分布式应用程序的性能下降很多。所以，进行Spark性能优化的第一步，就是进行序列化的性能优化。</span><br><span class="line"></span><br><span class="line">Spark默认会在一些地方对数据进行序列化，如果我们的算子函数使用到了外部的数据（比如Java中的自定义类型），那么也需要让其可序列化，否则程序在执行的时候是会报错的，提示没有实现序列化，这个一定要注意。</span><br><span class="line"></span><br><span class="line">原因是这样的：</span><br><span class="line">因为Spark的初始化工作是在Driver进程中进行的，但是实际执行是在Worker节点的Executor进程中进行的；当Executor端需要用到Driver端封装的对象时，就需要把Driver端的对象通过序列化传输到Executor端，这个对象就需要实现序列化。</span><br><span class="line">否则会报错，提示对象没有实现序列化</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意了，其实遇到这种没有实现序列化的对象，解决方法有两种</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 如果此对象可以支持序列化，则将其实现Serializable接口，让它支持序列化</span><br><span class="line">2. 如果此对象不支持序列化，针对一些数据库连接之类的对象，这种对象是不支持序列化的，所以可以把这个代码放到算子内部，这样就不会通过driver端传过去了，它会直接在executor中执行。</span><br><span class="line">Spark对于序列化的便捷性和性能进行了一个取舍和权衡。默认情况下，Spark倾向于序列化的便捷性，使用了Java自身提供的序列化机制——基于ObjectInputStream和 ObjectOutputStream的序列化机制，因为这种方式是Java原生提供的，使用起来比较方便，但是Java序列化机制的性能并不高。序列化的速度相对较慢，而且序列化以后的数据，相对来说还是比较大，比较占空间。所以，如果你的Spark应用程序对内存很敏感，那默认的Java序列化机制并不是最好的选择。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Spark实际上提供了两种序列化机制：</span><br><span class="line">Java序列化机制和Kryo序列化机制</span><br><span class="line">Spark只是默认使用了java这种序列化机制</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Java序列化机制：默认情况下，Spark使用Java自身的ObjectInputStream和ObjectOutputStream机制进行对象的序列化。只要你的类实现了Serializable接口，那么都是可以序列化的。Java序列化机制的速度比较慢，而且序列化后的数据占用的内存空间比较大，这是它的缺点</span><br><span class="line"></span><br><span class="line">Kryo序列化机制：Spark也支持使用Kryo序列化。Kryo序列化机制比Java序列化机制更快，而且序列化后的数据占用的空间更小，通常比Java序列化的数据占用的空间要小10倍左右。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Kryo序列化机制之所以不是默认序列化机制的原因：</span><br><span class="line"></span><br><span class="line">第一点：因为有些类型虽然实现了Seriralizable接口，但是它也不一定能够被Kryo进行序列化；</span><br><span class="line">第二点：如果你要得到最佳的性能，Kryo还要求你在Spark应用程序中，对所有你需要序列化的类型都进行手工注册，这样就比较麻烦了</span><br><span class="line"></span><br><span class="line">如果要使用Kryo序列化机制</span><br><span class="line">首先要用SparkConf设置spark.serializer的值为 org.apache.spark.serializer.KryoSerializer，就是将Spark的序列化器设置为KryoSerializer。这样，Spark在进行序列化时，就会使用Kryo进行序列化</span><br><span class="line">了。使用Kryo时针对需要序列化的类，需要预先进行注册，这样才能获得最佳性能——如果不注册的话，Kryo也能正常工作，只是Kryo必须时刻保存类型的全类名，反而占用不少内存。</span><br><span class="line">Spark默认对Scala中常用的类型在Kryo中做了注册，但是，如果在自己的算子中，使用了外部的自定义类型的对象，那么还是需要对其进行注册。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">注册自定义的数据类型格式：</span><br><span class="line">conf.registerKryoClasses(...)</span><br><span class="line"></span><br><span class="line">注意：如果要序列化的自定义的类型，字段特别多，此时就需要对Kryo本身进行优化，因为Kryo内部的缓存可能不够存放那么大的class对象</span><br><span class="line"></span><br><span class="line">需要调用SparkConf.set()方法，设置spark.kryoserializer.buffer.mb参数的值，将其调大，默认值为2，单位是MB ，也就是说最大能缓存2M的对象，然后进行序列化。可以在必要时将其调大。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">什么场景下适合使用Kryo序列化？</span><br><span class="line"></span><br><span class="line">一般是针对一些自定义的对象，例如我们自己定义了一个对象，这个对象里面包含了几十M，或者上百M的数据，然后在算子函数内部，使用到了这个外部的大对象</span><br><span class="line">如果默认情况下，让Spark用java序列化机制来序列化这种外部的大对象，那么就会导致序列化速度比较慢，并且序列化以后的数据还是比较大。</span><br><span class="line"></span><br><span class="line">所以，在这种情况下，比较适合使用Kryo序列化类库，来对外部的大对象进行序列化，提高序列化速度，减少序列化后的内存空间占用。</span><br><span class="line">用代码实现一个案例：</span><br><span class="line">scala代码如下：</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用kryo实现序列化"><a href="#使用kryo实现序列化" class="headerlink" title="使用kryo实现序列化"></a>使用kryo实现序列化</h4><h5 id="scala-1"><a href="#scala-1" class="headerlink" title="scala"></a>scala</h5><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.scala</span><br><span class="line"><span class="keyword">import</span> com.esotericsoftware.kryo.<span class="type">Kryo</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.serializer.<span class="type">KryoRegistrator</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.storage.<span class="type">StorageLevel</span></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 需求：Kryo序列化的使用</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">KryoSerScala</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">     <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>()</span><br><span class="line">     conf.setAppName(<span class="string">"KryoSerScala"</span>)</span><br><span class="line">     .setMaster(<span class="string">"local"</span>)</span><br><span class="line">     <span class="comment">//指定使用kryo序列化机制，注意：如果使用了registerKryoClasses，其实这一行设置可以省略的</span></span><br><span class="line">     .set(<span class="string">"spark.serializer"</span>,<span class="string">"org.apache.spark.serializer.KryoSerializer"</span>)</span><br><span class="line">     .registerKryoClasses(<span class="type">Array</span>(classOf[<span class="type">Person</span>]))<span class="comment">//注册自定义的数据类型(Array里也可以传多个)，注册了性能高一些</span></span><br><span class="line">     <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line">     <span class="keyword">val</span> dataRDD = sc.parallelize(<span class="type">Array</span>(<span class="string">"hello you"</span>,<span class="string">"hello me"</span>))</span><br><span class="line">     <span class="keyword">val</span> wordsRDD = dataRDD.flatMap(_.split(<span class="string">" "</span>))</span><br><span class="line">     <span class="keyword">val</span> personRDD = wordsRDD.map(word=&gt;<span class="type">Person</span>(word,<span class="number">18</span>)).persist(<span class="type">StorageLevel</span>.<span class="type">MEMORY_ONLY_SER</span>)</span><br><span class="line">     personRDD.foreach(println(_))</span><br><span class="line">     <span class="comment">//while循环是为了保证程序不结束，方便在本地查看4040页面中的storage信息</span></span><br><span class="line">     <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">     ;</span><br><span class="line">     &#125;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">                                                                 <span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">name: <span class="type">String</span>,age: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Serializable</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行任务，然后访问localhost的4040界面</span><br><span class="line">在界面中可以看到cache的数据大小是 31 字节。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272100115.png" alt="image-20230327210029655"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">那我们把kryo序列化设置去掉，使用默认的java序列化看一下效果</span><br><span class="line">修改代码，注释掉这两行代码即可</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;.set(&quot;spark.serializer&quot;,&quot;org.apache.spark.serializer.KryoSerializer&quot;)</span><br><span class="line">&#x2F;&#x2F;.registerKryoClasses(Array(classOf[Person]))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">运行任务，再访问4040界面</span><br><span class="line">发现此时占用的内存空间是 138 字节，比使用kryo的方式内存空间多占用了将近5倍。</span><br><span class="line">所以从这可以看出来，使用 kryo 序列化方式对内存的占用会降低很多。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272101635.png" alt="image-20230327210118413"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：如果我们只是将spark的序列化机制改为了kryo序列化，但是没有对使用到的自定义类型手工进行注册，那么此时内存的占用会介于前面两种情况之间</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">修改代码，只注释掉registerKryoClasses这一行代码</span><br><span class="line"></span><br><span class="line">.set(&quot;spark.serializer&quot;,&quot;org.apache.spark.serializer.KryoSerializer&quot;)</span><br><span class="line">&#x2F;&#x2F;.registerKryoClasses(Array(classOf[Person]))&#x2F;&#x2F;注册自定义的数据类型</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">运行任务，再访问4040界面</span><br><span class="line">发现此时的内存占用为123字节，介于前面的31字节和138字节之间。</span><br><span class="line">所以从这可以看出来，在使用kryo序列化的时候，针对自定义的类型最好是手工注册一下，否则就算开启了kryo序列化，性能的提升也是有限的。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272103931.png" alt="image-20230327210309583"></p>
+<h5 id="java"><a href="#java" class="headerlink" title="java"></a>java</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.java;</span><br><span class="line"><span class="keyword">import</span> com.esotericsoftware.kryo.Kryo;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.SparkConf;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.JavaRDD;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.JavaSparkContext;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.function.FlatMapFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.function.Function;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.function.VoidFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.serializer.KryoRegistrator;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.storage.StorageLevel;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 需求：Kryo序列化的使用</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KryoSerjava</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">         <span class="comment">//创建SparkContext：</span></span><br><span class="line">         SparkConf conf = <span class="keyword">new</span> SparkConf();</span><br><span class="line">         conf.setAppName(<span class="string">"KryoSerjava"</span>)</span><br><span class="line">         .setMaster(<span class="string">"local"</span>)</span><br><span class="line">         .set(<span class="string">"spark.serializer"</span>, <span class="string">"org.apache.spark.serializer.KryoSer</span></span><br><span class="line"><span class="string">         .set("</span>spark.kryo.classesToRegister<span class="string">", "</span>com.imooc.java.Person<span class="string">");</span></span><br><span class="line"><span class="string">         JavaSparkContext sc = new JavaSparkContext(conf);</span></span><br><span class="line"><span class="string">         JavaRDD&lt;String&gt; dataRDD = sc.parallelize(Arrays.asList("</span>hello you<span class="string">", "</span>hello me<span class="string">"));</span></span><br><span class="line"><span class="string">         JavaRDD&lt;String&gt; wordsRDD = dataRDD.flatMap(new FlatMapFunction&lt;String,String&gt;()&#123;</span></span><br><span class="line"><span class="string">         @Override</span></span><br><span class="line"><span class="string">         public Iterator&lt;String&gt; call(String line) throws Exception &#123;</span></span><br><span class="line"><span class="string">         return Arrays.asList(line.split("</span> <span class="string">")).iterator();</span></span><br><span class="line"><span class="string">         &#125;</span></span><br><span class="line"><span class="string">         &#125;);</span></span><br><span class="line"><span class="string">         </span></span><br><span class="line"><span class="string">         JavaRDD&lt;Person&gt; personRDD = wordsRDD.map(new Function&lt;String, Person&gt;</span></span><br><span class="line"><span class="string">         @Override</span></span><br><span class="line"><span class="string">         public Person call(String word) throws Exception &#123;</span></span><br><span class="line"><span class="string">         return new Person(word, 18);</span></span><br><span class="line"><span class="string">         &#125;</span></span><br><span class="line"><span class="string">         &#125;).persist(StorageLevel.MEMORY_ONLY_SER());</span></span><br><span class="line"><span class="string">         </span></span><br><span class="line"><span class="string">         personRDD.foreach(new VoidFunction&lt;Person&gt;() &#123;</span></span><br><span class="line"><span class="string">         @Override</span></span><br><span class="line"><span class="string">         public void call(Person person) throws Exception &#123;</span></span><br><span class="line"><span class="string">         System.out.println(person);</span></span><br><span class="line"><span class="string">         &#125;</span></span><br><span class="line"><span class="string">         &#125;);</span></span><br><span class="line"><span class="string">         while (true)&#123;</span></span><br><span class="line"><span class="string">         ;</span></span><br><span class="line"><span class="string">         &#125;</span></span><br><span class="line"><span class="string">         &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">     </span></span><br><span class="line"><span class="string">class Person implements Serializable&#123;</span></span><br><span class="line"><span class="string">    private String name;</span></span><br><span class="line"><span class="string">    private int age;</span></span><br><span class="line"><span class="string">    Person(String name,int age)&#123; // 这里讲可以通过什么自动生成，没听清</span></span><br><span class="line"><span class="string">        this.name = name;</span></span><br><span class="line"><span class="string">        this.age = age;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    @Override</span></span><br><span class="line"><span class="string">    public String toString() &#123; // alt+shift+s,右键generate-&gt;toString</span></span><br><span class="line"><span class="string">        return "</span>Person&#123;<span class="string">" +</span></span><br><span class="line"><span class="string">            "</span>name=<span class="string">'" + name + '</span>\<span class="string">''</span> +</span><br><span class="line">            <span class="string">", age="</span> + age +</span><br><span class="line">            <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="持久化或者checkpoint"><a href="#持久化或者checkpoint" class="headerlink" title="持久化或者checkpoint"></a>持久化或者checkpoint</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">针对程序中多次被transformation或者action操作的RDD进行持久化操作，避免对一个RDD反复进行计算，再进一步优化，使用Kryo序列化的持久化级别，减少内存占用</span><br><span class="line">为了保证RDD持久化数据在可能丢失的情况下还能实现高可靠，则需要对RDD执行Checkpoint操作</span><br><span class="line">这两个操作我们前面讲过了，在这就不再演示了</span><br></pre></td></tr></table></figure>
+
+<h3 id="JVM垃圾回收调优"><a href="#JVM垃圾回收调优" class="headerlink" title="JVM垃圾回收调优"></a>JVM垃圾回收调优</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">由于Spark是基于内存的计算引擎，RDD缓存的数据，以及算子执行期间创建的对象都是放在内存中的，所以针对Spark任务如果内存设置不合理会导致大部分时间都消耗在垃圾回收上</span><br><span class="line">对于垃圾回收来说，最重要的就是调节RDD缓存占用的内存空间，和算子执行时创建的对象占用的内存空间的比例。</span><br><span class="line">默认情况下，Spark使用每个executor 60%的内存空间来缓存RDD，那么只有40%的内存空间来存放算子执行期间创建的对象</span><br><span class="line">在这种情况下，可能由于内存空间的不足，并且算子对应的task任务在运行时创建的对象过大，那么一旦发现40%的内存空间不够用了，就会触发Java虚拟机的垃圾回收操作。</span><br><span class="line"></span><br><span class="line">因此在极端情况下，垃圾回收操作可能会被频繁触发。</span><br><span class="line">在这种情况下，如果发现垃圾回收频繁发生。那么就需要对这个比例进行调优了， spark.storage.memoryFraction参数的值默认是0.6。</span><br><span class="line">使用SparkConf().set(&quot;spark.storage.memoryFraction&quot;, &quot;0.5&quot;) 可以进行修改，就是将RDD缓存占用内存空间的比例降低为 50% ，从而提供更多的内存空间来保存task运行时创建的对象。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">因此，对于RDD持久化而言，完全可以使用Kryo序列化，加上降低其executor内存占比的方式，来减少其内存消耗。给task提供更多的内存，从而避免task在执行时频繁触发垃圾回收。</span><br><span class="line">我们可以对task的垃圾回收进行监测，在spark的任务执行界面，可以查看每个task执行消耗的时间，以及task gc消耗的时间。</span><br><span class="line"></span><br><span class="line">重新向集群中提交checkpoint的代码，查看spark任务的task指标信息</span><br><span class="line">确保Hadoop集群、yarn的historyserver进程以及spark的historyserver进程是正常运行的</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">删除checkpoint任务的输出目录</span><br><span class="line">[root@bigdata04 sparkjars]# hdfs dfs -rm -r &#x2F;out-chk001</span><br><span class="line"></span><br><span class="line">[root@bigdata04 sparkjars]# sh -x checkPointJob.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">点击生成的第一个job，再点击进去查看这个job的stage，进入第一个stage，查看task的执行情况，看这里面的GC time的数值会不会比较大，最直观的就是如果gc time这里标红了，则说明gc时间过长。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272230037.png" alt="image-20230327223033714"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">上面这个是分任务查看，其实还可以查看全局的，看Executor进程中整个任务执行总时间和gc的消耗时间。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272232315.png" alt="image-20230327223148318"></p>
+<h4 id="java-GC"><a href="#java-GC" class="headerlink" title="java GC"></a>java GC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">既然说到了Java中的GC，那我们就需要说道说道了。</span><br><span class="line">Java堆空间被划分成了两块空间：一个是年轻代，一个是老年代。</span><br><span class="line">年轻代放的是短时间存活的对象</span><br><span class="line">老年代放的是长时间存活的对象。</span><br><span class="line">年轻代又被划分了三块空间， Eden、Survivor1、Survivor2</span><br><span class="line"></span><br><span class="line">来看一下这个内存划分比例图</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272234159.png" alt="image-20230327223408841"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">年轻代占堆内存的1&#x2F;3，老年代占堆内存的2&#x2F;3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">其中年轻代又被划分了三块， Eden，Survivor1，Survivor2 的比例为 8:1:1</span><br><span class="line">Eden区域和Survivor1区域用于存放对象，Survivor2区域备用。</span><br><span class="line"></span><br><span class="line">我们创建的对象，首先会放入Eden区域，如果Eden区域满了，那么就会触发一次Minor GC，进行年轻代的垃圾回收(其实就是回收Eden区域内没有人使用的对象)，然后将存活的对象存入Survivor1区域，再创建对象的时候继续放入Eden区域。</span><br><span class="line"></span><br><span class="line">第二次Eden区域满了，那么Eden和Survivor1区域中存活的对象，会一块被移动到Survivor2区域中。然后Survivor1和Survivor2的角色调换，Survivor1变成了备用。</span><br><span class="line"></span><br><span class="line">当第三次Eden区域再满了的时候，Eden和Survivor2区域中存活的对象，会一块被移动到Survivor1区域中，按照这个规律进行循环</span><br><span class="line"></span><br><span class="line">如果一个对象，在年轻代中，撑过了多次垃圾回收(默认是15次)，都没有被回收掉，那么会被认为是长时间存活的，此时就会被移入老年代。此外，如果在将Eden和Survivor1中的存活对象，尝试放入Survivor2中时，发现Survivor2放满了，那么会直接放入老年代。此时就出现了，短时间存活的对象，也会进入老年代的问题。</span><br><span class="line"></span><br><span class="line">如果老年代的空间满了，那么就会触发Full GC，进行老年代的垃圾回收操作，如果执行Full GC也释放不了内存空间，就会报内存溢出的错误了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意了，Full GC是一个重量级的垃圾回收，Full GC执行的时候，程序是处于暂停状态的，这样会非常影响性能。</span><br></pre></td></tr></table></figure>
+
+<h4 id="spark-GC调优方案"><a href="#spark-GC调优方案" class="headerlink" title="spark GC调优方案"></a>spark GC调优方案</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Spark中，垃圾回收调优的目标就是，只有真正长时间存活的对象，才能进入老年代，短时间存活的对象，只能呆在年轻代。不能因为某个Survivor区域空间不够，在Minor GC时，就进入了老年代，从而造成短时间存活的对象，长期呆在老年代中占据了空间，这样Full GC时要回收大量的短时间存活的对象，导致Full GC速度缓慢。</span><br><span class="line"></span><br><span class="line">如果发现，在task执行期间，大量full gc发生了，那么说明，年轻代的Eden区域，给的空间不够大。此时可以执行一些操作来优化垃圾回收行为</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1：最直接的就是提高Executor的内存</span><br><span class="line">在spark-submit中通过参数指定executor的内存</span><br><span class="line">--executor-memory 1G </span><br><span class="line"></span><br><span class="line">2：调整Eden与s1和s2的比值【一般情况下不建议调整这块的比值】</span><br><span class="line">-XX:NewRatio&#x3D;4：设置年轻代(包括Eden和两个Survivor区)与年老代的比值(除去持久代).设置为4,则年轻代与年老代所占比值为1:4,年轻代占整个堆栈的1&#x2F;5</span><br><span class="line">-XX:SurvivorRatio&#x3D;4：设置年轻代中Eden区与Survivor区的大小比值.设置为4,则两个Survivor区与一个Eden区的比值为2:4,一个Survivor区占整个年轻代的1&#x2F;6</span><br><span class="line">具体使用的时候在 spark-submit 脚本中通过 --conf 参数设置即可</span><br><span class="line">--conf &quot;spark.executor.extraJavaOptions&#x3D; -XX:SurvivorRatio&#x3D;4 -XX:NewRatio&#x3D;4&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">其实最直接的就是增加Executor的内存，如果这个内存上不去，其它的修改都是徒劳。</span><br><span class="line">举个例子就是说，一个20岁的成年人和一个3岁的小孩</span><br><span class="line">3岁的小孩掌握再多的格斗技巧都没有用，在绝对的实力面前一切都是花架子。</span><br><span class="line">所以说我们一般很少需要去调整Eden、s1、s2的比值，一般都是直接增加Executor的内存比较靠谱。</span><br></pre></td></tr></table></figure>
+
+<h3 id="提高并行度"><a href="#提高并行度" class="headerlink" title="提高并行度"></a>提高并行度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">实际上Spark集群的资源并不一定会被充分利用到，所以要尽量设置合理的并行度，来充分地利用集群的资源，这样才能提高Spark程序的性能。</span><br><span class="line"></span><br><span class="line">Spark会自动设置以文件作为输入源的RDD的并行度，依据其大小，比如HDFS，就会给每一个block创建一个partition，也依据这个设置并行度。对于reduceByKey等会发生shuffle操作的算子，会使用并行度最大的父RDD的并行度</span><br><span class="line"></span><br><span class="line">可以手动使用textFile()、parallelize()等方法的第二个参数来设置并行度；也可以使用spark.default.parallelism参数，来设置统一的并行度。Spark官方的推荐是，给集群中的每个cpu core设置2~3个task。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">下面来举个例子</span><br><span class="line">我在spark-submit 脚本中给任务设置了5个executor，每个executor，设置了2个cpu core</span><br><span class="line">spark-submit \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode cluster \</span><br><span class="line">--executor-memory 1G \</span><br><span class="line">--num-executors 5 \   &#x2F;&#x2F; 为job设置5个executor</span><br><span class="line">--executor-cores 2 \   &#x2F;&#x2F; 分配两个CPU</span><br><span class="line">.....</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">此时，如果我在代码中设置了默认并行度为5</span><br><span class="line">conf.set(&quot;spark.default.parallelism&quot;,&quot;5&quot;)</span><br><span class="line"></span><br><span class="line">这个参数设置完了以后，也就意味着所有RDD的partition都被设置成了5个，针对RDD的每一个partition，spark会启动一个task来进行计算，所以对于所有的算子操作，都只会创建5个task来处理对应的RDD中的数据。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">但是注意了，我们前面在spark-submit脚本中设置了5个executor，每个executor 2个cpu core，所以这个时候spark其实会向yarn集群申请10个cpu core，但是我们在代码中设置了默认并行度为5，只会产生5个task，一个task使用一个cpu core，那也就意味着有5个cpu core是空闲的，这样申请的资源就浪费了一半。</span><br><span class="line"></span><br><span class="line">其实最好的情况，就是每个cpu core都不闲着，一直在运行，这样可以达到资源的最大使用率，其实让一个cpu core运行一个task都是有点浪费的，官方也建议让每个cpu core运行2~3个task，这样可以充分压榨CPU的性能</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">为什么这样说呢？</span><br><span class="line"></span><br><span class="line">是这样的，因为每个task执行的顺序和执行结束的时间很大概率是不一样的，如果正好有10个cpu，运行10个taks，那么某个task可能很快就执行完了，那么这个CPU就空闲下来了，这样资源就浪费了。</span><br><span class="line">所以说官方推荐，给每个cpu分配2~3个task是比较合理的，可以充分利用CPU资源，发挥它最大的价值。</span><br></pre></td></tr></table></figure>
+
+<h4 id="scala-2"><a href="#scala-2" class="headerlink" title="scala"></a>scala</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">下面我们来实际写个案例看一下效果</span><br><span class="line">Scala代码如下：</span><br><span class="line"></span><br><span class="line">package com.imooc.scala</span><br><span class="line">import org.apache.spark.&#123;SparkConf, SparkContext&#125;</span><br><span class="line">&#x2F;**</span><br><span class="line"> * 需求：设置并行度</span><br><span class="line"> * 1：可以在textFile或者parallelize等方法的第二个参数中设置并行度</span><br><span class="line"> * 2：或者通过spark.default.parallelism参数统一设置并行度</span><br><span class="line"> * Created by xuwei</span><br><span class="line"> *&#x2F;</span><br><span class="line">object MoreParallelismScala &#123;</span><br><span class="line">     def main(args: Array[String]): Unit &#x3D; &#123;</span><br><span class="line">     val conf &#x3D; new SparkConf()</span><br><span class="line">     conf.setAppName(&quot;MoreParallelismScala&quot;)</span><br><span class="line">     &#x2F;&#x2F;.setMaster(&quot;local&quot;)</span><br><span class="line">    &#x2F;&#x2F;设置全局并行度</span><br><span class="line">     conf.set(&quot;spark.default.parallelism&quot;,&quot;5&quot;)</span><br><span class="line">     val sc &#x3D; new SparkContext(conf)</span><br><span class="line">     val dataRDD &#x3D; sc.parallelize(Array(&quot;hello&quot;,&quot;you&quot;,&quot;hello&quot;,&quot;me&quot;,&quot;hehe&quot;,&quot;hello&quot;,&quot;you&quot;,&quot;hello&quot;,&quot;me&quot;,&quot;hehe&quot;))</span><br><span class="line">     dataRDD.map((_,1))</span><br><span class="line">     .reduceByKey(_ + _)</span><br><span class="line">     .foreach(println(_))</span><br><span class="line">     sc.stop()</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="java-1"><a href="#java-1" class="headerlink" title="java"></a>java</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.java;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.SparkConf;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.JavaRDD;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.JavaSparkContext;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.function.Function2;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.function.PairFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.api.java.function.VoidFunction;</span><br><span class="line"><span class="keyword">import</span> scala.Tuple2;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 需求：设置并行度</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MoreParallelismJava</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">     SparkConf conf = <span class="keyword">new</span> SparkConf();</span><br><span class="line">     conf.setAppName(<span class="string">"MoreParallelismJava"</span>);</span><br><span class="line">     <span class="comment">//设置全局并行度</span></span><br><span class="line">     conf.set(<span class="string">"spark.default.parallelism"</span>,<span class="string">"5"</span>);</span><br><span class="line">     JavaSparkContext sc = <span class="keyword">new</span> JavaSparkContext(conf);</span><br><span class="line">     JavaRDD&lt;String&gt; dataRDD = sc.parallelize(Arrays.asList(<span class="string">"hello"</span>,<span class="string">"you"</span>,<span class="string">"hello"</span>,<span class="string">"me"</span>,<span class="string">"hehe"</span>,<span class="string">"hello"</span>,<span class="string">"you"</span>,<span class="string">"hello"</span>,<span class="string">"me"</span>,<span class="string">"hehe"</span>));</span><br><span class="line">     dataRDD.mapToPair(<span class="keyword">new</span> PairFunction&lt;String, String, Integer&gt;() &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> Tuple2&lt;String, Integer&gt; <span class="title">call</span><span class="params">(String word)</span> <span class="keyword">throws</span> Exception </span></span><br><span class="line"><span class="function">     return new Tuple2&lt;String, Integer&gt;<span class="params">(word,<span class="number">1</span>)</span></span>;</span><br><span class="line">     &#125;</span><br><span class="line">     &#125;).reduceByKey(<span class="keyword">new</span> Function2&lt;Integer, Integer, Integer&gt;() &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">(Integer i1, Integer i2)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> i1 + i2;</span><br><span class="line">     &#125;</span><br><span class="line">     &#125;).foreach(<span class="keyword">new</span> VoidFunction&lt;Tuple2&lt;String, Integer&gt;&gt;() &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Tuple2&lt;String, Integer&gt; tup)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">     System.out.println(tup);</span><br><span class="line">     &#125;</span><br><span class="line">     &#125;);</span><br><span class="line">     sc.stop();                                                      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">对代码编译打包</span><br><span class="line">spark-submit脚本内容如下：</span><br><span class="line"></span><br><span class="line">[root@bigdata04 sparkjars]# vi moreParallelismJob.sh </span><br><span class="line">spark-submit \</span><br><span class="line">--class com.imooc.scala.MoreParallelismScala \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode cluster \</span><br><span class="line">--executor-memory 1G \</span><br><span class="line">--num-executors 5 \</span><br><span class="line">--executor-cores 2 \</span><br><span class="line">db_spark-1.0-SNAPSHOT-jar-with-dependencies.jar</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280039960.png" alt="image-20230328003937453"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">任务提交到集群运行之后，查看spark的任务界面(job)</span><br><span class="line">先看executors，这里显示了4个executor和1个driver进程，为什么不是5个executor进程呢？</span><br><span class="line"></span><br><span class="line">是因为我们现在使用的是yarn-cluster模式，driver进程运行在集群内部，所以它占了一个executor，如果使用的是yarn-client模式，就会产生5个executor和1个单独的driver进程。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280042154.png" alt="image-20230328004230697"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后去看satges界面，两个Stage都是5个task并行执行，这5个task会使用5个cpu，但是我们给这个任务申请了10个cpu，所以就有5个是空闲的了(这里没考虑driver的占用)。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280057687.png" alt="image-20230328005706629"></p>
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280054889.png" alt="image-20230328005414569"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当在sparkContext生成对象后，再设置默认并行度会出现问题</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280055569.png" alt="image-20230328005531042"></p>
+<h4 id="提高性能"><a href="#提高性能" class="headerlink" title="提高性能"></a>提高性能</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">如果想要最大限度利用CPU的性能，至少将spark.default.parallelism的值设置为10，这样可以实现一个cpu运行一个task，其实官方推荐是设置为20或者30。</span><br><span class="line">其实这个参数也可以在spark-submit脚本中动态设置，通过--conf参数设置，这样就比较灵活了。</span><br><span class="line"></span><br><span class="line">注意：此时需要将代码中设置spark.default.parallelism的配置注释掉</span><br><span class="line">&#x2F;&#x2F;conf.set(&quot;spark.default.parallelism&quot;,&quot;5&quot;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">为了看起来更清晰，在这我们使用 yarn-client 模式，这样driver就不会占用我们的分配的executor了</span><br><span class="line"></span><br><span class="line">[root@bigdata04 sparkjars]# vi moreParallelismJob2.sh </span><br><span class="line">spark-submit \</span><br><span class="line">--class com.imooc.scala.MoreParallelismScala \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode client \</span><br><span class="line">--executor-memory 1G \</span><br><span class="line">--num-executors 5 \</span><br><span class="line">--executor-cores 2 \</span><br><span class="line">--conf &quot;spark.default.parallelism&#x3D;10&quot; \</span><br><span class="line">db_spark-1.0-SNAPSHOT-jar-with-dependencies.jar</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">由于修改了代码，所以需要重新编译，打包，执行</span><br><span class="line">执行结束后再来查看spark的任务界面，可以看到此时有10个task并行执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280117859.png" alt="image-20230328011738873"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280118186.png" alt="image-20230328011801559"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280116405.png" alt="image-20230328011600636"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这就是并行度相关的设置</span><br><span class="line">接下来我们来看一个图，加深一下理解</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280126634.png" alt="image-20230328012605704"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这个图中描述的就是刚才我们演示的两种情况下Executor和Task之间的关系</span><br></pre></td></tr></table></figure>
+
+<h4 id="spark-submit常用参数"><a href="#spark-submit常用参数" class="headerlink" title="spark-submit常用参数"></a>spark-submit常用参数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">最后我们来分析总结一下spark-submit脚本中经常配置的一些参数</span><br><span class="line"></span><br><span class="line">--name mySparkJobName：指定任务名称(代码里也可以设置)</span><br><span class="line">--class com.imooc.scala.xxxxx ：指定入口类</span><br><span class="line">--master yarn ：指定集群地址(standalone)，on yarn模式指定yarn</span><br><span class="line">--deploy-mode cluster ：client代表yarn-client，cluster代表yarn-cluster</span><br><span class="line">--executor-memory 1G ：executor进程的内存大小，实际工作中设置2~4G即可</span><br><span class="line">--num-executors 2 ：分配多少个executor进程</span><br><span class="line">--executor-cores 2 : 一个executor进程分配多少个cpu core</span><br><span class="line">--driver-cores 1 ：(如果使用yarn-cluster模式，这里不用设置也行，直接按executor的配置来)driver进程分配多少cpu core，默认为1即可</span><br><span class="line">--driver-memory 1G：(如果使用yarn-cluster模式，这里不用设置也行，直接按executor的配置来)driver进程的内存，如果需要使用类似于collect之类的action算子向Driver端拉取数据，则这里可以设置大一些</span><br><span class="line">--jars fastjson.jar,abc.jar 在这里可以设置job依赖的第三方jar包(pom里spark-core没提供的)【不建议把第三方依赖打入程序的jar包中，一方面会导致jar变大；另一方面，同一个项目组同事用的第三方依赖版本问题；还有这里可以使用本地路径，或者hdfs路径(建议使用hdfs路径，因为使用本地路径依赖，还是会读取到hdfs上)】</span><br><span class="line">--conf &quot;spark.default.parallelism&#x3D;10&quot;：可以动态指定一些spark任务的参数，指定多个参</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">最后注意一点：针对 --num-executors 和 --executor-cores 的设置</span><br><span class="line">大家看这两种方式设置有什么区别：</span><br><span class="line">第一种方式：</span><br><span class="line">--num-executors 2</span><br><span class="line">--executor-cores 1</span><br><span class="line">第二种方式：</span><br><span class="line">--num-executors 1</span><br><span class="line">--executor-cores 2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">这两种设置最终都会向集群申请2个cpu core，可以并行运行两个task，但是这两种设置方式有什么区别呢？</span><br><span class="line"></span><br><span class="line">第一种方法：多executor模式</span><br><span class="line">由于每个executor只分配了一个cpu core，我们将无法利用在同一个JVM中运行多个任务的优点。我们假设这两个executor是在两个节点中启动的，那么针对广播变量这种操作，将在两个节点的中都复制1份，最终会复制两份</span><br><span class="line"></span><br><span class="line">第二种方法：多core模式</span><br><span class="line">此时一个executor中会有2个cpu core，这样可以利用同一个JVM中运行多个任务的优点，并且针对广播变量的这种操作，只会在这个executor对应的节点中复制1份即可。</span><br><span class="line"></span><br><span class="line">那是不是我可以给一个executor分配很多的cpu core，也不是的，因为一个executor的内存大小是固定的，如果在里面运行过多的task可能会导致内存不够用，所以这块一般在工作中我们会给一个executor分配 2~4G 内存，对应的分配 2~4个cpu core。</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html">大数据开发工程师-第十一周 Spark性能优化的道与术-3</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年03月27日 - 19:03</p>
+  <p><span>最后更新:</span>2023年03月28日 - 01:03</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-3">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint.html" rel="next" title="大数据开发工程师-第十一周 Spark性能优化的道与术-2">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十一周 Spark性能优化的道与术-2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-4.html" rel="prev" title="大数据开发工程师-第十一周 Spark性能优化的道与术-4">
+                大数据开发工程师-第十一周 Spark性能优化的道与术-4 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">322</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十一周-Spark性能优化的道与术-3"><span class="nav-number">1.</span> <span class="nav-text">第十一周 Spark性能优化的道与术-3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化分析"><span class="nav-number">1.1.</span> <span class="nav-text">性能优化分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存都去哪了"><span class="nav-number">1.2.</span> <span class="nav-text">内存都去哪了</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala"><span class="nav-number">1.2.1.</span> <span class="nav-text">scala</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化方案"><span class="nav-number">1.3.</span> <span class="nav-text">性能优化方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高性能序列化类库"><span class="nav-number">1.3.1.</span> <span class="nav-text">高性能序列化类库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用kryo实现序列化"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">使用kryo实现序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#scala-1"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#java"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">java</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持久化或者checkpoint"><span class="nav-number">1.3.2.</span> <span class="nav-text">持久化或者checkpoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM垃圾回收调优"><span class="nav-number">1.3.3.</span> <span class="nav-text">JVM垃圾回收调优</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#java-GC"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">java GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-GC调优方案"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">spark GC调优方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提高并行度"><span class="nav-number">1.3.4.</span> <span class="nav-text">提高并行度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scala-2"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java-1"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注意"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提高性能"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">提高性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-submit常用参数"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">spark-submit常用参数</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">389.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
