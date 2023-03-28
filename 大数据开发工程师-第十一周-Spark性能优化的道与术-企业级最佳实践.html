@@ -76,7 +76,7 @@
 
 
 
-  <meta name="keywords" content="tianyong">
+  <meta name="keywords" content="Spark,">
 
 
 
@@ -89,12 +89,12 @@
 
 
 
-<meta name="description" content="第十一周 Spark性能优化的道与术-3性能优化分析123一个计算任务的执行主要依赖于CPU、内存、带宽Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spar">
+<meta name="description" content="第十一周 Spark性能优化的道与术-企业级最佳实践性能优化分析123一个计算任务的执行主要依赖于CPU、内存、带宽Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大数据开发工程师-第十一周 Spark性能优化的道与术-3">
-<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
-<meta property="og:description" content="第十一周 Spark性能优化的道与术-3性能优化分析123一个计算任务的执行主要依赖于CPU、内存、带宽Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spar">
+<meta property="og:description" content="第十一周 Spark性能优化的道与术-企业级最佳实践性能优化分析123一个计算任务的执行主要依赖于CPU、内存、带宽Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271945127.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271944394.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272100115.png">
@@ -112,9 +112,12 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280118186.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280116405.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280126634.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281058668.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281108354.png">
 <meta property="article:published_time" content="2023-03-27T11:31:29.000Z">
-<meta property="article:modified_time" content="2023-03-27T17:50:18.694Z">
+<meta property="article:modified_time" content="2023-03-28T06:53:16.592Z">
 <meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="Spark">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271945127.png">
 
@@ -146,7 +149,7 @@
 
 
 
-  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十一周-Spark性能优化的道与术-3.html">
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十一周-Spark性能优化的道与术-企业级最佳实践.html">
 
 
 
@@ -321,7 +324,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="TTYONG">
@@ -365,6 +368,39 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -391,7 +427,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  7.4k
+                  8.1k
                 </span>
               
 
@@ -407,7 +443,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  28
+                  31
                 </span>
               
             </div>
@@ -433,7 +469,7 @@
 
 
 
-<h1 id="第十一周-Spark性能优化的道与术-3"><a href="#第十一周-Spark性能优化的道与术-3" class="headerlink" title="第十一周 Spark性能优化的道与术-3"></a>第十一周 Spark性能优化的道与术-3</h1><h2 id="性能优化分析"><a href="#性能优化分析" class="headerlink" title="性能优化分析"></a>性能优化分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一个计算任务的执行主要依赖于CPU、内存、带宽</span><br><span class="line">Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。</span><br><span class="line">Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spark程序计算的数据量比较小，并且你的内存足够使用，那么只要网络不至于卡死，一般是不会有大的性能问题的。但是Spark程序的性能问题往往出现在针对大数据量进行计算（比如上亿条数的数据，或者上T规模的数据），这个时候如果内存分配不合理就会比较慢，所以，Spark性能优化，主要是对内存进行优化。</span><br></pre></td></tr></table></figure>
+<h1 id="第十一周-Spark性能优化的道与术-企业级最佳实践"><a href="#第十一周-Spark性能优化的道与术-企业级最佳实践" class="headerlink" title="第十一周 Spark性能优化的道与术-企业级最佳实践"></a>第十一周 Spark性能优化的道与术-企业级最佳实践</h1><h2 id="性能优化分析"><a href="#性能优化分析" class="headerlink" title="性能优化分析"></a>性能优化分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一个计算任务的执行主要依赖于CPU、内存、带宽</span><br><span class="line">Spark是一个基于内存的计算引擎，所以对它来说，影响最大的可能就是内存，一般我们的任务遇到了性能瓶颈大概率都是内存的问题，当然了CPU和带宽也可能会影响程序的性能，这个情况也不是没有的，只是比较少。</span><br><span class="line">Spark性能优化，其实主要就是在于对内存的使用进行调优。通常情况下，如果你的Spark程序计算的数据量比较小，并且你的内存足够使用，那么只要网络不至于卡死，一般是不会有大的性能问题的。但是Spark程序的性能问题往往出现在针对大数据量进行计算（比如上亿条数的数据，或者上T规模的数据），这个时候如果内存分配不合理就会比较慢，所以，Spark性能优化，主要是对内存进行优化。</span><br></pre></td></tr></table></figure>
 
 <h2 id="内存都去哪了"><a href="#内存都去哪了" class="headerlink" title="内存都去哪了"></a>内存都去哪了</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 每个Java对象，都有一个对象头，会占用16个字节，主要是包括了一些对象的元信息，比如指向它的类的指针。如果一个对象本身很小，比如就包括了一个int类型的field，那么它的对象头实际上比对象自身还要大。</span><br><span class="line">2. Java的String对象的对象头，会比它内部的原始数据，要多出40个字节。因为它内部使用char数组来保存内部的字符序列，并且还要保存数组长度之类的信息。</span><br><span class="line">3. Java中的集合类型，比如HashMap和LinkedList，内部使用的是链表数据结构，所以对链表中的每一个数据，都使用了Entry对象来包装。Entry对象不光有对象头，还有指向下一个Entry的指针，通常占用8个字节。</span><br></pre></td></tr></table></figure>
 
@@ -484,7 +520,7 @@
 
 <h3 id="持久化或者checkpoint"><a href="#持久化或者checkpoint" class="headerlink" title="持久化或者checkpoint"></a>持久化或者checkpoint</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">针对程序中多次被transformation或者action操作的RDD进行持久化操作，避免对一个RDD反复进行计算，再进一步优化，使用Kryo序列化的持久化级别，减少内存占用</span><br><span class="line">为了保证RDD持久化数据在可能丢失的情况下还能实现高可靠，则需要对RDD执行Checkpoint操作</span><br><span class="line">这两个操作我们前面讲过了，在这就不再演示了</span><br></pre></td></tr></table></figure>
 
-<h3 id="JVM垃圾回收调优"><a href="#JVM垃圾回收调优" class="headerlink" title="JVM垃圾回收调优"></a>JVM垃圾回收调优</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">由于Spark是基于内存的计算引擎，RDD缓存的数据，以及算子执行期间创建的对象都是放在内存中的，所以针对Spark任务如果内存设置不合理会导致大部分时间都消耗在垃圾回收上</span><br><span class="line">对于垃圾回收来说，最重要的就是调节RDD缓存占用的内存空间，和算子执行时创建的对象占用的内存空间的比例。</span><br><span class="line">默认情况下，Spark使用每个executor 60%的内存空间来缓存RDD，那么只有40%的内存空间来存放算子执行期间创建的对象</span><br><span class="line">在这种情况下，可能由于内存空间的不足，并且算子对应的task任务在运行时创建的对象过大，那么一旦发现40%的内存空间不够用了，就会触发Java虚拟机的垃圾回收操作。</span><br><span class="line"></span><br><span class="line">因此在极端情况下，垃圾回收操作可能会被频繁触发。</span><br><span class="line">在这种情况下，如果发现垃圾回收频繁发生。那么就需要对这个比例进行调优了， spark.storage.memoryFraction参数的值默认是0.6。</span><br><span class="line">使用SparkConf().set(&quot;spark.storage.memoryFraction&quot;, &quot;0.5&quot;) 可以进行修改，就是将RDD缓存占用内存空间的比例降低为 50% ，从而提供更多的内存空间来保存task运行时创建的对象。</span><br></pre></td></tr></table></figure>
+<h3 id="JVM垃圾回收调优"><a href="#JVM垃圾回收调优" class="headerlink" title="JVM垃圾回收调优"></a>JVM垃圾回收调优</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">由于Spark是基于内存的计算引擎，RDD缓存的数据，以及算子执行期间创建的对象都是放在内存中的，所以针对Spark任务如果内存设置不合理会导致大部分时间都消耗在垃圾回收上</span><br><span class="line"></span><br><span class="line">对于垃圾回收来说，最重要的就是调节RDD缓存占用的内存空间，和算子执行时创建的对象占用的内存空间的比例。</span><br><span class="line"></span><br><span class="line">默认情况下，Spark使用每个executor 60%的内存空间来缓存RDD，那么只有40%的内存空间来存放算子执行期间创建的对象</span><br><span class="line">在这种情况下，可能由于内存空间的不足，并且算子对应的task任务在运行时创建的对象过大，那么一旦发现40%的内存空间不够用了，就会触发Java虚拟机的垃圾回收操作。</span><br><span class="line"></span><br><span class="line">因此在极端情况下，垃圾回收操作可能会被频繁触发。</span><br><span class="line">在这种情况下，如果发现垃圾回收频繁发生。那么就需要对这个比例进行调优了， spark.storage.memoryFraction参数的值默认是0.6。</span><br><span class="line">使用SparkConf().set(&quot;spark.storage.memoryFraction&quot;, &quot;0.5&quot;) 可以进行修改，就是将RDD缓存占用内存空间的比例降低为 50% ，从而提供更多的内存空间来保存task运行时创建的对象。</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">因此，对于RDD持久化而言，完全可以使用Kryo序列化，加上降低其executor内存占比的方式，来减少其内存消耗。给task提供更多的内存，从而避免task在执行时频繁触发垃圾回收。</span><br><span class="line">我们可以对task的垃圾回收进行监测，在spark的任务执行界面，可以查看每个task执行消耗的时间，以及task gc消耗的时间。</span><br><span class="line"></span><br><span class="line">重新向集群中提交checkpoint的代码，查看spark任务的task指标信息</span><br><span class="line">确保Hadoop集群、yarn的historyserver进程以及spark的historyserver进程是正常运行的</span><br></pre></td></tr></table></figure>
 
@@ -513,7 +549,7 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">其实最直接的就是增加Executor的内存，如果这个内存上不去，其它的修改都是徒劳。</span><br><span class="line">举个例子就是说，一个20岁的成年人和一个3岁的小孩</span><br><span class="line">3岁的小孩掌握再多的格斗技巧都没有用，在绝对的实力面前一切都是花架子。</span><br><span class="line">所以说我们一般很少需要去调整Eden、s1、s2的比值，一般都是直接增加Executor的内存比较靠谱。</span><br></pre></td></tr></table></figure>
 
-<h3 id="提高并行度"><a href="#提高并行度" class="headerlink" title="提高并行度"></a>提高并行度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">实际上Spark集群的资源并不一定会被充分利用到，所以要尽量设置合理的并行度，来充分地利用集群的资源，这样才能提高Spark程序的性能。</span><br><span class="line"></span><br><span class="line">Spark会自动设置以文件作为输入源的RDD的并行度，依据其大小，比如HDFS，就会给每一个block创建一个partition，也依据这个设置并行度。对于reduceByKey等会发生shuffle操作的算子，会使用并行度最大的父RDD的并行度</span><br><span class="line"></span><br><span class="line">可以手动使用textFile()、parallelize()等方法的第二个参数来设置并行度；也可以使用spark.default.parallelism参数，来设置统一的并行度。Spark官方的推荐是，给集群中的每个cpu core设置2~3个task。</span><br></pre></td></tr></table></figure>
+<h3 id="提高并行度"><a href="#提高并行度" class="headerlink" title="提高并行度"></a>提高并行度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">实际上Spark集群的资源并不一定会被充分利用到，所以要尽量设置合理的并行度，来充分地利用集群的资源，这样才能提高Spark程序的性能。</span><br><span class="line"></span><br><span class="line">Spark会自动设置以文件作为输入源的RDD的并行度，依据其大小，比如HDFS，就会给每一个block创建一个partition，也依据这个设置并行度。对于reduceByKey等会发生shuffle操作的算子，会使用并行度最大的父RDD的并行度</span><br><span class="line"></span><br><span class="line">可以手动使用textFile()、parallelize()等方法的第二个参数来设置并行度(只针对这一个RDD)；也可以使用spark.default.parallelism参数(全局)，来设置统一的并行度。Spark官方的推荐是，给集群中的每个cpu core设置2~3个task。</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">下面来举个例子</span><br><span class="line">我在spark-submit 脚本中给任务设置了5个executor，每个executor，设置了2个cpu core</span><br><span class="line">spark-submit \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode cluster \</span><br><span class="line">--executor-memory 1G \</span><br><span class="line">--num-executors 5 \   &#x2F;&#x2F; 为job设置5个executor</span><br><span class="line">--executor-cores 2 \   &#x2F;&#x2F; 分配两个CPU</span><br><span class="line">.....</span><br></pre></td></tr></table></figure>
 
@@ -554,18 +590,20 @@
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303280126634.png" alt="image-20230328012605704"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这个图中描述的就是刚才我们演示的两种情况下Executor和Task之间的关系</span><br></pre></td></tr></table></figure>
 
-<h4 id="spark-submit常用参数"><a href="#spark-submit常用参数" class="headerlink" title="spark-submit常用参数"></a>spark-submit常用参数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">最后我们来分析总结一下spark-submit脚本中经常配置的一些参数</span><br><span class="line"></span><br><span class="line">--name mySparkJobName：指定任务名称(代码里也可以设置)</span><br><span class="line">--class com.imooc.scala.xxxxx ：指定入口类</span><br><span class="line">--master yarn ：指定集群地址(standalone)，on yarn模式指定yarn</span><br><span class="line">--deploy-mode cluster ：client代表yarn-client，cluster代表yarn-cluster</span><br><span class="line">--executor-memory 1G ：executor进程的内存大小，实际工作中设置2~4G即可</span><br><span class="line">--num-executors 2 ：分配多少个executor进程</span><br><span class="line">--executor-cores 2 : 一个executor进程分配多少个cpu core</span><br><span class="line">--driver-cores 1 ：(如果使用yarn-cluster模式，这里不用设置也行，直接按executor的配置来)driver进程分配多少cpu core，默认为1即可</span><br><span class="line">--driver-memory 1G：(如果使用yarn-cluster模式，这里不用设置也行，直接按executor的配置来)driver进程的内存，如果需要使用类似于collect之类的action算子向Driver端拉取数据，则这里可以设置大一些</span><br><span class="line">--jars fastjson.jar,abc.jar 在这里可以设置job依赖的第三方jar包(pom里spark-core没提供的)【不建议把第三方依赖打入程序的jar包中，一方面会导致jar变大；另一方面，同一个项目组同事用的第三方依赖版本问题；还有这里可以使用本地路径，或者hdfs路径(建议使用hdfs路径，因为使用本地路径依赖，还是会读取到hdfs上)】</span><br><span class="line">--conf &quot;spark.default.parallelism&#x3D;10&quot;：可以动态指定一些spark任务的参数，指定多个参</span><br></pre></td></tr></table></figure>
+<h4 id="spark-submit常用参数"><a href="#spark-submit常用参数" class="headerlink" title="spark-submit常用参数"></a>spark-submit常用参数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">最后我们来分析总结一下spark-submit脚本中经常配置的一些参数</span><br><span class="line"></span><br><span class="line">--name mySparkJobName：指定任务名称(代码里也可以设置)</span><br><span class="line">--class com.imooc.scala.xxxxx ：指定入口类</span><br><span class="line">--master yarn ：指定集群地址(standalone)，on yarn模式指定yarn</span><br><span class="line">--deploy-mode cluster ：client代表yarn-client，cluster代表yarn-cluster</span><br><span class="line">--executor-memory 1G ：executor进程的内存大小，实际工作中设置2~4G即可</span><br><span class="line">--num-executors 2 ：分配多少个executor进程</span><br><span class="line">--executor-cores 2 : 一个executor进程分配多少个cpu core</span><br><span class="line"></span><br><span class="line">--driver-cores 1 ：(如果使用yarn-cluster模式，这里不用设置也行，直接按executor的配置来)driver进程分配多少cpu core，默认为1即可</span><br><span class="line">--driver-memory 1G：(如果使用yarn-cluster模式，这里不用设置也行，直接按executor的配置来)driver进程的内存，如果需要使用类似于collect之类的action算子向Driver端拉取数据，则这里可以设置大一些</span><br><span class="line">--jars fastjson.jar,abc.jar 在这里可以设置job依赖的第三方jar包(pom里spark-core没提供的)【不建议把第三方依赖打入程序的jar包中，一方面会导致jar变大；另一方面，同一个项目组同事用的第三方依赖版本问题；还有这里可以使用本地路径，或者hdfs路径(建议使用hdfs路径，因为使用本地路径依赖，还是会读取到hdfs上)】</span><br><span class="line">--conf &quot;spark.default.parallelism&#x3D;10&quot;：可以动态指定一些spark任务的参数，指定多个参</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">最后注意一点：针对 --num-executors 和 --executor-cores 的设置</span><br><span class="line">大家看这两种方式设置有什么区别：</span><br><span class="line">第一种方式：</span><br><span class="line">--num-executors 2</span><br><span class="line">--executor-cores 1</span><br><span class="line">第二种方式：</span><br><span class="line">--num-executors 1</span><br><span class="line">--executor-cores 2</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">这两种设置最终都会向集群申请2个cpu core，可以并行运行两个task，但是这两种设置方式有什么区别呢？</span><br><span class="line"></span><br><span class="line">第一种方法：多executor模式</span><br><span class="line">由于每个executor只分配了一个cpu core，我们将无法利用在同一个JVM中运行多个任务的优点。我们假设这两个executor是在两个节点中启动的，那么针对广播变量这种操作，将在两个节点的中都复制1份，最终会复制两份</span><br><span class="line"></span><br><span class="line">第二种方法：多core模式</span><br><span class="line">此时一个executor中会有2个cpu core，这样可以利用同一个JVM中运行多个任务的优点，并且针对广播变量的这种操作，只会在这个executor对应的节点中复制1份即可。</span><br><span class="line"></span><br><span class="line">那是不是我可以给一个executor分配很多的cpu core，也不是的，因为一个executor的内存大小是固定的，如果在里面运行过多的task可能会导致内存不够用，所以这块一般在工作中我们会给一个executor分配 2~4G 内存，对应的分配 2~4个cpu core。</span><br></pre></td></tr></table></figure>
 
+<h3 id="数据本地化"><a href="#数据本地化" class="headerlink" title="数据本地化"></a>数据本地化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">数据本地化对于Spark Job性能有着巨大的影响。如果数据以及要计算它的代码是在一起的，那么性能当然会非常高。但是，如果数据和计算它的代码是分开的，那么其中之一必须到另外一方的机器上。通常来说，移动代码到其它节点，会比移动数据到代码所在的节点，速度要得多，因为代码比较小。Spark也正是基于这个数据本地化的原则来构建task调度算法的。</span><br><span class="line"></span><br><span class="line">数据本地化，指的是，数据离计算它的代码有多近。基于数据距离代码的距离，有几种数据本地化级别：</span><br><span class="line"></span><br><span class="line">数据本地化级别 解释</span><br><span class="line">PROCESS_LOCAL 进程本地化，性能最好：数据和计算它的代码在同一个JVM进程中</span><br><span class="line">NODE_LOCAL 节点本地化：数据和计算它的代码在一个节点上，但是不在一个JVM进程</span><br><span class="line">NO_PREF 数据从哪里过来，性能都是一样的，比如从数据库中获取数据，对于task而言在哪个机器上都是一样的</span><br><span class="line">RACK_LOCAL 数据和计算它的代码在一个机架上，数据需要通过网络在节点之间进行传输</span><br><span class="line">ANY 数据可能在任意地方，比如其它网络环境内，或者其它机架上，性能最差</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281058668.png" alt="image-20230328105831703"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Spark倾向使用最好的本地化级别调度task，但这是不现实的</span><br><span class="line">如果目前我们要处理的数据所在的executor上目前没有空闲的CPU，那么Spark就会放低本地化级别。这时有两个选择：</span><br><span class="line">第一，等待，直到executor上的cpu释放出来，那么就分配task过去；</span><br><span class="line">第二，立即在任意一个其它executor上启动一个task。</span><br><span class="line"></span><br><span class="line">Spark默认会等待指定时间，期望task要处理的数据所在的节点上的executor空闲出一个cpu，从而将task分配过去，只要超过了时间，那么Spark就会将task分配到其它任意一个空闲的executor上</span><br><span class="line"></span><br><span class="line">可以设置参数， spark.locality 系列参数，来调节Spark等待task可以进行数据本地化的时间</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spark.locality.wait（3000毫秒）：默认等待3秒(通用的所有级别)</span><br><span class="line">spark.locality.wait.process：等待指定的时间看能否达到数据和计算它的代码在同一个JVM</span><br><span class="line">spark.locality.wait.node：等待指定的时间看能否达到数据和计算它的代码在一个节点上执行</span><br><span class="line">spark.locality.wait.rack：等待指定的时间看能否达到数据和计算它的代码在一个机架上</span><br><span class="line"></span><br><span class="line">看这个图里面的task，此时的数据本地化级别是最优的 PROCESS_LOCAL</span><br></pre></td></tr></table></figure>
 
-
-
-
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281108354.png" alt="image-20230328110840007"></p>
 <hr>
 <blockquote>
 </blockquote>
@@ -585,12 +623,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html">大数据开发工程师-第十一周 Spark性能优化的道与术-3</a></p>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.html">大数据开发工程师-第十一周 Spark性能优化的道与术-3</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年03月27日 - 19:03</p>
-  <p><span>最后更新:</span>2023年03月28日 - 01:03</p>
-  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-3">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html</a>
-    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-3.html" aria-label="复制成功！"></i></span>
+  <p><span>最后更新:</span>2023年03月28日 - 14:03</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-3">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.html" aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
 </div>
@@ -652,6 +690,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Spark/" rel="tag"><i class="fa fa-tag"></i> Spark</a>
+          
+        </div>
+      
 
       
       
@@ -671,7 +715,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-4.html" rel="prev" title="大数据开发工程师-第十一周 Spark性能优化的道与术-4">
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E7%AE%97%E5%AD%90%E4%BC%98%E5%8C%96.html" rel="prev" title="大数据开发工程师-第十一周 Spark性能优化的道与术-4">
                 大数据开发工程师-第十一周 Spark性能优化的道与术-4 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -748,7 +792,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">322</span>
+			  <span class="site-state-item-count">323</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -864,7 +908,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十一周-Spark性能优化的道与术-3"><span class="nav-number">1.</span> <span class="nav-text">第十一周 Spark性能优化的道与术-3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化分析"><span class="nav-number">1.1.</span> <span class="nav-text">性能优化分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存都去哪了"><span class="nav-number">1.2.</span> <span class="nav-text">内存都去哪了</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala"><span class="nav-number">1.2.1.</span> <span class="nav-text">scala</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化方案"><span class="nav-number">1.3.</span> <span class="nav-text">性能优化方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高性能序列化类库"><span class="nav-number">1.3.1.</span> <span class="nav-text">高性能序列化类库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用kryo实现序列化"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">使用kryo实现序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#scala-1"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#java"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">java</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持久化或者checkpoint"><span class="nav-number">1.3.2.</span> <span class="nav-text">持久化或者checkpoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM垃圾回收调优"><span class="nav-number">1.3.3.</span> <span class="nav-text">JVM垃圾回收调优</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#java-GC"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">java GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-GC调优方案"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">spark GC调优方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提高并行度"><span class="nav-number">1.3.4.</span> <span class="nav-text">提高并行度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scala-2"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java-1"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注意"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提高性能"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">提高性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-submit常用参数"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">spark-submit常用参数</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十一周-Spark性能优化的道与术-企业级最佳实践"><span class="nav-number">1.</span> <span class="nav-text">第十一周 Spark性能优化的道与术-企业级最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化分析"><span class="nav-number">1.1.</span> <span class="nav-text">性能优化分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存都去哪了"><span class="nav-number">1.2.</span> <span class="nav-text">内存都去哪了</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala"><span class="nav-number">1.2.1.</span> <span class="nav-text">scala</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能优化方案"><span class="nav-number">1.3.</span> <span class="nav-text">性能优化方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高性能序列化类库"><span class="nav-number">1.3.1.</span> <span class="nav-text">高性能序列化类库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用kryo实现序列化"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">使用kryo实现序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#scala-1"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#java"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">java</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持久化或者checkpoint"><span class="nav-number">1.3.2.</span> <span class="nav-text">持久化或者checkpoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM垃圾回收调优"><span class="nav-number">1.3.3.</span> <span class="nav-text">JVM垃圾回收调优</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#java-GC"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">java GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-GC调优方案"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">spark GC调优方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提高并行度"><span class="nav-number">1.3.4.</span> <span class="nav-text">提高并行度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scala-2"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java-1"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注意"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提高性能"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">提高性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-submit常用参数"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">spark-submit常用参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据本地化"><span class="nav-number">1.3.5.</span> <span class="nav-text">数据本地化</span></a></li></ol></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -899,7 +943,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">389.4k</span>
+    <span title="Site words total count">395.9k</span>
   
 </div>
 
