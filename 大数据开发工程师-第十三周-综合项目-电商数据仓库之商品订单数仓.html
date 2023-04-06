@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第十三周 综合项目:电商数据仓库之商品订单数仓123和之前用户行为数仓构建步骤一样，先对下面两层进行构建，上面两层基于业务需求来构建这两层的表服务端数据在mysql中的表如下：(已通过sqoop抽取到hdfs上，只需要创建表将数据关联起来就可以了)   1hdfs上商品订单数据相关目录      ods层 建表脚本ods_mall_init_table.sh123456789101112">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十三周 综合项目:电商数据仓库之商品订单数仓123和之前用户行为数仓构建步骤一样，先对下面两层进行构建，上面两层基于业务需求来构建这两层的表服务端数据在mysql中的表如下：(已通过sqoop抽取到hdfs上，只需要创建表将数据关联起来就可以了)   1hdfs上商品订单数据相关目录      ods层 建表脚本ods_mall_init_table.sh123456789101112">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052249257.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052309451.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052310213.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052312876.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052313424.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052251060.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052333331.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052335705.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052336364.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052337003.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052344522.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052346838.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052349025.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052358185.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052353292.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052354916.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052355506.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052356274.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060014790.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060014322.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060015364.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060037068.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060037204.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060038053.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060107837.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060107081.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060108980.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060108252.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060109152.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060116924.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060119866.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060133819.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060133557.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060134761.png">
+<meta property="article:published_time" content="2023-04-05T14:30:13.000Z">
+<meta property="article:modified_time" content="2023-04-05T17:36:04.999Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052249257.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十三周-综合项目-电商数据仓库之商品订单数仓.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-05T22:30:13+08:00">
+                2023-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  24
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第十三周-综合项目-电商数据仓库之商品订单数仓"><a href="#第十三周-综合项目-电商数据仓库之商品订单数仓" class="headerlink" title="第十三周 综合项目:电商数据仓库之商品订单数仓"></a>第十三周 综合项目:电商数据仓库之商品订单数仓</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">和之前用户行为数仓构建步骤一样，先对下面两层进行构建，上面两层基于业务需求来构建这两层的表</span><br><span class="line"></span><br><span class="line">服务端数据在mysql中的表如下：(已通过sqoop抽取到hdfs上，只需要创建表将数据关联起来就可以了)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052249257.png" alt="image-20230405224934100"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdfs上商品订单数据相关目录</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052309451.png" alt="image-20230405230954102"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052310213.png" alt="image-20230405231024155"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052312876.png" alt="image-20230405231205937"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052313424.png" alt="image-20230405231347893"></p>
+<h2 id="ods层"><a href="#ods层" class="headerlink" title="ods层"></a>ods层</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052251060.png" alt="image-20230405225123910"></p>
+<h3 id="建表脚本"><a href="#建表脚本" class="headerlink" title="建表脚本"></a>建表脚本</h3><h4 id="ods-mall-init-table-sh"><a href="#ods-mall-init-table-sh" class="headerlink" title="ods_mall_init_table.sh"></a>ods_mall_init_table.sh</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> ods层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists ods_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists ods_mall.ods_user(</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   user_name            string,</span><br><span class="line">   user_gender          tinyint,</span><br><span class="line">   user_birthday        string,</span><br><span class="line">   e_mail               string,</span><br><span class="line">   mobile               string,</span><br><span class="line">   register_time        string,</span><br><span class="line">   is_blacklist         tinyint</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/user/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_user_extend(</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   is_pregnant_woman    tinyint,</span><br><span class="line">   is_have_children     tinyint,</span><br><span class="line">   is_have_car          tinyint,</span><br><span class="line">   phone_brand          string,</span><br><span class="line">   phone_cnt            int,</span><br><span class="line">   change_phone_cnt     int,</span><br><span class="line">   weight               int,</span><br><span class="line">   height               int</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/user_extend/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_user_addr(</span><br><span class="line">   addr_id              bigint,</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   addr_name            string,</span><br><span class="line">   order_flag           tinyint,</span><br><span class="line">   user_name            string,</span><br><span class="line">   mobile               string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/user_addr/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_goods_info(</span><br><span class="line">   goods_id             bigint,</span><br><span class="line">   goods_no             string,</span><br><span class="line">   goods_name           string,</span><br><span class="line">   curr_price           double,</span><br><span class="line">   third_category_id    int,</span><br><span class="line">   goods_desc           string,</span><br><span class="line">   create_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/goods_info/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_category_code(</span><br><span class="line">   first_category_id    int,</span><br><span class="line">   first_category_name  string,</span><br><span class="line">   second_category_id   int,</span><br><span class="line">   second_catery_name   string,</span><br><span class="line">   third_category_id    int,</span><br><span class="line">   third_category_name  string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/category_code/';</span><br><span class="line"></span><br><span class="line">create external table if not exists ods_mall.ods_user_order(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   order_date           string,</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   order_money          double,</span><br><span class="line">   order_type           int,</span><br><span class="line">   order_status         int,</span><br><span class="line">   pay_id               bigint,</span><br><span class="line">   update_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/user_order/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_order_item(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   goods_id             bigint,</span><br><span class="line">   goods_amount         int,</span><br><span class="line">   curr_price           double,</span><br><span class="line">   create_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/order_item/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_order_delivery(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   addr_id              bigint,</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   carriage_money       double,</span><br><span class="line">   create_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/order_delivery/';</span><br><span class="line"> </span><br><span class="line">create external table if not exists ods_mall.ods_payment_flow(</span><br><span class="line">   pay_id               bigint,</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   trade_no             bigint,</span><br><span class="line">   pay_money            double,</span><br><span class="line">   pay_type             int,</span><br><span class="line">   pay_time             string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/ods/payment_flow/';</span><br><span class="line"></span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h4 id="ods-mall-add-partition-sh"><a href="#ods-mall-add-partition-sh" class="headerlink" title="ods_mall_add_partition.sh"></a>ods_mall_add_partition.sh</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 给ods层的表添加分区，这个脚本后期每天执行一次</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨，添加昨天的分区，添加完分区之后，再执行后面的计算脚本</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_user add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_user_extend add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_user_addr add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_goods_info add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_category_code add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_user_order add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_order_item add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_order_delivery add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">alter table ods_mall.ods_payment_flow add <span class="keyword">if</span> not exists partition(dt=<span class="string">'20260101'</span>) location <span class="string">'20260101'</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这里用了开发用户行为数仓时用的添加分区通用脚本</span></span><br><span class="line">sh add_partition.sh ods_mall.ods_user $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_user_extend $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_user_addr $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_goods_info $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_category_code $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_user_order $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_order_item $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_order_delivery $&#123;dt&#125; $&#123;dt&#125;</span><br><span class="line">sh add_partition.sh ods_mall.ods_payment_flow $&#123;dt&#125; $&#123;dt&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="dwd层"><a href="#dwd层" class="headerlink" title="dwd层"></a>dwd层</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">其实可以直接对ods中对应的表进行抽取字段，但为了保险起见，对各个表中的id字段(是各个表的主键)进行过滤，因为数据采集过程中可能id字段会出现问题</span><br></pre></td></tr></table></figure>
+
+<h3 id="建表脚本-1"><a href="#建表脚本-1" class="headerlink" title="建表脚本"></a>建表脚本</h3><h4 id="dwd-mall-init-table-sh"><a href="#dwd-mall-init-table-sh" class="headerlink" title="dwd_mall_init_table.sh"></a>dwd_mall_init_table.sh</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> dwd层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists dwd_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists dwd_mall.dwd_user(</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   user_name            string,</span><br><span class="line">   user_gender          tinyint,</span><br><span class="line">   user_birthday        string,</span><br><span class="line">   e_mail               string,</span><br><span class="line">   mobile               string,</span><br><span class="line">   register_time        string,</span><br><span class="line">   is_blacklist         tinyint</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/user/';</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">create external table if not exists dwd_mall.dwd_user_extend(</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   is_pregnant_woman    tinyint,</span><br><span class="line">   is_have_children     tinyint,</span><br><span class="line">   is_have_car          tinyint,</span><br><span class="line">   phone_brand          string,</span><br><span class="line">   phone_cnt            int,</span><br><span class="line">   change_phone_cnt     int,</span><br><span class="line">   weight               int,</span><br><span class="line">   height               int</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/user_extend/';</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create external table if not exists dwd_mall.dwd_user_addr(</span><br><span class="line">   addr_id              bigint,</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   addr_name            string,</span><br><span class="line">   order_flag           tinyint,</span><br><span class="line">   user_name            string,</span><br><span class="line">   mobile               string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/user_addr/';</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">create external table if not exists dwd_mall.dwd_goods_info(</span><br><span class="line">   goods_id             bigint,</span><br><span class="line">   goods_no             string,</span><br><span class="line">   goods_name           string,</span><br><span class="line">   curr_price           double,</span><br><span class="line">   third_category_id    int,</span><br><span class="line">   goods_desc           string,</span><br><span class="line">   create_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/goods_info/';</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">create external table if not exists dwd_mall.dwd_category_code(</span><br><span class="line">   first_category_id    int,</span><br><span class="line">   first_category_name  string,</span><br><span class="line">   second_category_id   int,</span><br><span class="line">   second_catery_name   string,</span><br><span class="line">   third_category_id    int,</span><br><span class="line">   third_category_name  string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/category_code/';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create external table if not exists dwd_mall.dwd_user_order(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   order_date           string,</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   order_money          double,</span><br><span class="line">   order_type           int,</span><br><span class="line">   order_status         int,</span><br><span class="line">   pay_id               bigint,</span><br><span class="line">   update_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/user_order/';</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">create external table if not exists dwd_mall.dwd_order_item(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   goods_id             bigint,</span><br><span class="line">   goods_amount         int,</span><br><span class="line">   curr_price           double,</span><br><span class="line">   create_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/order_item/';</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">create external table if not exists dwd_mall.dwd_order_delivery(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   addr_id              bigint,</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   carriage_money       double,</span><br><span class="line">   create_time          string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/order_delivery/';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create external table if not exists dwd_mall.dwd_payment_flow(</span><br><span class="line">   pay_id               bigint,</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   trade_no             bigint,</span><br><span class="line">   pay_money            double,</span><br><span class="line">   pay_type             int,</span><br><span class="line">   pay_time             string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited   </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dwd/payment_flow/';</span><br><span class="line"></span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h4 id="dwd-mall-add-partition-sh"><a href="#dwd-mall-add-partition-sh" class="headerlink" title="dwd_mall_add_partition.sh"></a>dwd_mall_add_partition.sh</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 基于ods层的表进行清洗，将清洗之后的数据添加到dwd层对应表的对应分区中</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨执行一次</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line"> </span><br><span class="line">insert overwrite table dwd_mall.dwd_user partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   user_id,</span><br><span class="line">   user_name,</span><br><span class="line">   user_gender,</span><br><span class="line">   user_birthday,</span><br><span class="line">   e_mail,</span><br><span class="line">   mobile,</span><br><span class="line">   register_time,</span><br><span class="line">   is_blacklist</span><br><span class="line">from ods_mall.ods_user</span><br><span class="line">where dt = '$&#123;dt&#125;' and user_id is not null;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">insert overwrite table dwd_mall.dwd_user_extend partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   user_id,</span><br><span class="line">   is_pregnant_woman,</span><br><span class="line">   is_have_children,</span><br><span class="line">   is_have_car,</span><br><span class="line">   phone_brand,</span><br><span class="line">   phone_cnt,</span><br><span class="line">   change_phone_cnt,</span><br><span class="line">   weight,</span><br><span class="line">   height</span><br><span class="line">from ods_mall.ods_user_extend</span><br><span class="line">where dt = '$&#123;dt&#125;' and user_id is not null;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">insert overwrite table dwd_mall.dwd_user_addr partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   addr_id,</span><br><span class="line">   user_id,</span><br><span class="line">   addr_name,</span><br><span class="line">   order_flag,</span><br><span class="line">   user_name,</span><br><span class="line">   mobile</span><br><span class="line">from ods_mall.ods_user_addr</span><br><span class="line">where dt = '$&#123;dt&#125;' and addr_id is not null;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">insert overwrite table dwd_mall.dwd_goods_info partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   goods_id,</span><br><span class="line">   goods_no,</span><br><span class="line">   goods_name,</span><br><span class="line">   curr_price,</span><br><span class="line">   third_category_id,</span><br><span class="line">   goods_desc,</span><br><span class="line">   create_time</span><br><span class="line">from ods_mall.ods_goods_info</span><br><span class="line">where dt = '$&#123;dt&#125;' and goods_id is not null;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">insert overwrite table dwd_mall.dwd_category_code partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   first_category_id,</span><br><span class="line">   first_category_name,</span><br><span class="line">   second_category_id,</span><br><span class="line">   second_catery_name,</span><br><span class="line">   third_category_id,</span><br><span class="line">   third_category_name</span><br><span class="line">from ods_mall.ods_category_code</span><br><span class="line">where dt = '$&#123;dt&#125;' and first_category_id is not null;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">insert overwrite table dwd_mall.dwd_user_order partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   order_id,</span><br><span class="line">   order_date,</span><br><span class="line">   user_id,</span><br><span class="line">   order_money,</span><br><span class="line">   order_type,</span><br><span class="line">   order_status,</span><br><span class="line">   pay_id,</span><br><span class="line">   update_time </span><br><span class="line">from ods_mall.ods_user_order</span><br><span class="line">where dt = '$&#123;dt&#125;' and order_id is not null;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">insert overwrite table dwd_mall.dwd_order_item partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   order_id,</span><br><span class="line">   goods_id,</span><br><span class="line">   goods_amount,</span><br><span class="line">   curr_price,</span><br><span class="line">   create_time</span><br><span class="line">from ods_mall.ods_order_item</span><br><span class="line">where dt = '$&#123;dt&#125;' and order_id is not null;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">insert overwrite t able dwd_mall.dwd_order_delivery partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   order_id,</span><br><span class="line">   addr_id,</span><br><span class="line">   user_id,</span><br><span class="line">   carriage_money,</span><br><span class="line">   create_time</span><br><span class="line">from ods_mall.ods_order_delivery</span><br><span class="line">where dt = '$&#123;dt&#125;' and order_id is not null;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">insert overwrite table dwd_mall.dwd_payment_flow partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   pay_id,</span><br><span class="line">   order_id,</span><br><span class="line">   trade_no,</span><br><span class="line">   pay_money,</span><br><span class="line">   pay_type,</span><br><span class="line">   pay_time</span><br><span class="line">from ods_mall.ods_payment_flow</span><br><span class="line">where dt = '$&#123;dt&#125;' and order_id is not null;</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052333331.png" alt="image-20230405233300223"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052335705.png" alt="image-20230405233549286"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052336364.png" alt="image-20230405233613163"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052337003.png" alt="image-20230405233743838"></p>
+<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">需求一：用户信息宽表(后期查询用户信息时只需在一张表里查询，不需要关联多张表)</span><br><span class="line">需求二：电商GMV(电商领域很常见，表示一段时间内的交易总金额)</span><br><span class="line">需求三：商品相关指标(商品销售情况，比如哪些受用户喜欢)</span><br><span class="line">需求四：用户行为漏斗分析</span><br><span class="line"></span><br><span class="line">为了保证大家在练习的时候计算的需求结果和我的保持一致，所以针对后面的测试数据就不再随机生成了，而是生成固定的数据，一共1个月的数据</span><br><span class="line">从2026-02-01到2026-02-28的数据</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052344522.png" alt="image-20230405234430452"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052346838.png" alt="image-20230405234656212"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052349025.png" alt="image-20230405234927830"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">执行上面的代码，此时数据就会被上传到HDFS上面。</span><br><span class="line">然后执行ods层和dwd层的脚本，重新加载计算2026-02月份的数据。</span><br><span class="line">1：执行ods层的脚本</span><br><span class="line">写一个临时脚本，在脚本中写一个for循环，循环加载数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 加载ods层的数据</span></span><br><span class="line"></span><br><span class="line">for((i=1;i&lt;=28;i++))</span><br><span class="line">do</span><br><span class="line">	if [ $i -lt 10 ]</span><br><span class="line">	then</span><br><span class="line">		dt="2026020"$i</span><br><span class="line">	else</span><br><span class="line">		dt="202602"$i </span><br><span class="line">	fi</span><br><span class="line">	echo "ods_mall_add_partition.sh" $&#123;dt&#125;</span><br><span class="line">	sh ods_mall_add_partition.sh $&#123;dt&#125;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 计算dwd层的数据</span></span><br><span class="line"></span><br><span class="line">for((i=1;i&lt;=28;i++))</span><br><span class="line">do</span><br><span class="line">	if [ $i -lt 10 ]</span><br><span class="line">	then</span><br><span class="line">		dt="2026020"$i</span><br><span class="line">	else</span><br><span class="line">		dt="202602"$i</span><br><span class="line">	fi</span><br><span class="line">	echo "dwd_mall_add_partition.sh" $&#123;dt&#125;</span><br><span class="line">	sh  dwd_mall_add_partition.sh $&#123;dt&#125;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">等脚本执行完毕之后，验证一下结果，随便找一个日期的数据验证即可，能查到数据就说明是OK的。最好是再查看一下 partition的信息。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052358185.png" alt="image-20230405235827525"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052353292.png" alt="image-20230405235349443"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052354916.png" alt="image-20230405235406590"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052355506.png" alt="image-20230405235510464"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304052356274.png" alt="image-20230405235640110"></p>
+<h3 id="需求一：用户信息宽表"><a href="#需求一：用户信息宽表" class="headerlink" title="需求一：用户信息宽表"></a>需求一：用户信息宽表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">宽表主要是便于使用，在使用的时候不至于每次都要关联很多张表</span><br><span class="line">用户信息宽表包括服务端中的user表、user_extend表</span><br><span class="line">如果有需求的话其实还可以把用户的一些其它维度的数据关联过来，例如：当日的下单数量、消费金额等等指标，</span><br><span class="line">实现思路如下：</span><br><span class="line">对dwd_user表和dwd_user_extend表执行left join操作，通过user_id进行关联即可，将结果数据保存到 dws_user_info_all表中</span><br></pre></td></tr></table></figure>
+
+<h4 id="dws层"><a href="#dws层" class="headerlink" title="dws层"></a>dws层</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> dws_mall.dws_user_info_all(</span><br><span class="line">   user_id              <span class="built_in">bigint</span>,</span><br><span class="line">   user_name            <span class="keyword">string</span>,</span><br><span class="line">   user_gender          <span class="built_in">tinyint</span>,</span><br><span class="line">   user_birthday        <span class="keyword">string</span>,</span><br><span class="line">   e_mail               <span class="keyword">string</span>,</span><br><span class="line">   mobile               <span class="keyword">string</span>,</span><br><span class="line">   register_time        <span class="keyword">string</span>,</span><br><span class="line">   is_blacklist         <span class="built_in">tinyint</span>,</span><br><span class="line">   is_pregnant_woman    <span class="built_in">tinyint</span>,</span><br><span class="line">   is_have_children     <span class="built_in">tinyint</span>,</span><br><span class="line">   is_have_car          <span class="built_in">tinyint</span>,</span><br><span class="line">   phone_brand          <span class="keyword">string</span>,</span><br><span class="line">   phone_cnt            <span class="built_in">int</span>,</span><br><span class="line">   change_phone_cnt     <span class="built_in">int</span>,</span><br><span class="line">   weight               <span class="built_in">int</span>,</span><br><span class="line">   height               <span class="built_in">int</span></span><br><span class="line">)partitioned <span class="keyword">by</span>(dt <span class="keyword">string</span>) </span><br><span class="line"> <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span>  </span><br><span class="line"> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span></span><br><span class="line"> location <span class="string">'hdfs://bigdata01:9000/data/dws/user_info_all/'</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> dws_mall.dws_user_info_all <span class="keyword">partition</span>(dt=<span class="string">'20260201'</span>)  <span class="keyword">select</span> </span><br><span class="line">   du.user_id,</span><br><span class="line">   du.user_name,</span><br><span class="line">   du.user_gender,</span><br><span class="line">   du.user_birthday,</span><br><span class="line">   du.e_mail,</span><br><span class="line">   du.mobile,</span><br><span class="line">   du.register_time,</span><br><span class="line">   du.is_blacklist,</span><br><span class="line">   due.is_pregnant_woman,</span><br><span class="line">   due.is_have_children,</span><br><span class="line">   due.is_have_car,</span><br><span class="line">   due.phone_brand,</span><br><span class="line">   due.phone_cnt,</span><br><span class="line">   due.change_phone_cnt,</span><br><span class="line">   due.weight,</span><br><span class="line">   due.height</span><br><span class="line"><span class="keyword">from</span> dwd_mall.dwd_user <span class="keyword">as</span> du</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> dwd_mall.dwd_user_extend <span class="keyword">as</span> due</span><br><span class="line"><span class="keyword">on</span> du.user_id = due.user_id</span><br><span class="line"><span class="keyword">where</span> du.dt = <span class="string">'20260201'</span> <span class="keyword">and</span> due.dt = <span class="string">'20260201'</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="建表脚本-2"><a href="#建表脚本-2" class="headerlink" title="建表脚本"></a>建表脚本</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">针对 dws 层抽取脚本</span><br><span class="line">1：表初始化脚本(初始化执行一次)</span><br><span class="line">dws_mall_init_table_1.sh</span><br><span class="line">2：添加分区数据脚本(每天执行一次)</span><br><span class="line">dws_mall_add_partition_1.sh</span><br></pre></td></tr></table></figure>
+
+<h5 id="dws-mall-init-table-1-sh"><a href="#dws-mall-init-table-1-sh" class="headerlink" title="dws_mall_init_table_1.sh"></a>dws_mall_init_table_1.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求一：用户信息宽表</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> dws层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists dws_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists dws_mall.dws_user_info_all(</span><br><span class="line">   user_id              bigint,</span><br><span class="line">   user_name            string,</span><br><span class="line">   user_gender          tinyint,</span><br><span class="line">   user_birthday        string,</span><br><span class="line">   e_mail               string,</span><br><span class="line">   mobile               string,</span><br><span class="line">   register_time        string,</span><br><span class="line">   is_blacklist         tinyint,</span><br><span class="line">   is_pregnant_woman    tinyint,</span><br><span class="line">   is_have_children     tinyint,</span><br><span class="line">   is_have_car          tinyint,</span><br><span class="line">   phone_brand          string,</span><br><span class="line">   phone_cnt            int,</span><br><span class="line">   change_phone_cnt     int,</span><br><span class="line">   weight               int,</span><br><span class="line">   height               int</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dws/user_info_all/';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h5 id="dws-mall-add-partition-1-sh"><a href="#dws-mall-add-partition-1-sh" class="headerlink" title="dws_mall_add_partition_1.sh"></a>dws_mall_add_partition_1.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求一：用户信息宽表</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨执行一次</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">insert overwrite table dws_mall.dws_user_info_all partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   du.user_id,</span><br><span class="line">   du.user_name,</span><br><span class="line">   du.user_gender,</span><br><span class="line">   du.user_birthday,</span><br><span class="line">   du.e_mail,</span><br><span class="line">   du.mobile,</span><br><span class="line">   du.register_time,</span><br><span class="line">   du.is_blacklist,</span><br><span class="line">   due.is_pregnant_woman,</span><br><span class="line">   due.is_have_children,</span><br><span class="line">   due.is_have_car,</span><br><span class="line">   due.phone_brand,</span><br><span class="line">   due.phone_cnt,</span><br><span class="line">   due.change_phone_cnt,</span><br><span class="line">   due.weight,</span><br><span class="line">   due.height</span><br><span class="line">from dwd_mall.dwd_user as du</span><br><span class="line">left join dwd_mall.dwd_user_extend as due</span><br><span class="line">on du.user_id = due.user_id</span><br><span class="line">where du.dt = '$&#123;dt&#125;' and due.dt = '$&#123;dt&#125;';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060014790.png" alt="image-20230406001420794"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060014322.png" alt="image-20230406001456982"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060015364.png" alt="image-20230406001541136"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">问题：如何将服务端的数据和客户端的数据通过用户维度关联起来？</span><br><span class="line">之前统计的客户端数据(用户行为数据)针对用户相关的指标都是使用的xaid(因为用户在使用app时，不一定登陆了，所以没有用user_id)。</span><br><span class="line">但是在服务端数据中用户信息只有user_id。</span><br><span class="line">这两份数据如果先要关联起来，还需要在用户行为数仓中提取一个表，表里面只需要有两列：</span><br><span class="line">user_id和xaid。这样就可以把客户端数据和服务端数据中的用户关联起来了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="需求二：电商-GMV"><a href="#需求二：电商-GMV" class="headerlink" title="需求二：电商 GMV"></a>需求二：电商 GMV</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GMV：Gross Merchandise Volume，是指一定时间段内的成交总金额</span><br><span class="line">GMV多用于电商行业，这个实际指的是拍下的订单总金额，包含付款和未付款的部分。</span><br><span class="line">我们在统计的时候就可以将订单表中的每天的所有订单金额全部都累加起来就可以获取到当天的GMV了</span><br><span class="line"></span><br><span class="line">实现思路：</span><br><span class="line">对dwd_user_order表中的数据进行统计即可，通过order_money字段可以计算出来GMV，将结果数据保存到表 app_gmv中</span><br></pre></td></tr></table></figure>
+
+<h4 id="app层"><a href="#app层" class="headerlink" title="app层"></a>app层</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：gmv 字段的类型可以使用double或者decimal(10,2)都可以</span><br><span class="line">decimal(10,2)，可以更方便的控制小数位数，数据看起来更加清晰，所以建议使用decimal(10,2)。</span><br><span class="line">其实针对金钱相关的字段类型建议使用decimal(10,2)，使用double也不错，也是可以的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">create external table if not exists app_mall.app_gmv(</span><br><span class="line">    gmv   decimal(10,2) </span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by &#39;\t&#39;</span><br><span class="line"> location &#39;hdfs:&#x2F;&#x2F;bigdata01:9000&#x2F;data&#x2F;app&#x2F;gmv&#x2F;&#39;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">insert overwrite table app_mall.app_gmv partition(dt&#x3D;&#39;20260201&#39;)  select </span><br><span class="line">sum(order_money) as gmv</span><br><span class="line">from dwd_mall.dwd_user_order</span><br><span class="line">where dt &#x3D; &#39;20260201&#39;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="建表脚本-3"><a href="#建表脚本-3" class="headerlink" title="建表脚本"></a>建表脚本</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">针对 app 层抽取脚本</span><br><span class="line">1：表初始化脚本(初始化执行一次)</span><br><span class="line">app_mall_init_table_2.sh</span><br><span class="line">2：添加分区数据脚本(每天执行一次)</span><br><span class="line">app_mall_add_partition_2.sh</span><br></pre></td></tr></table></figure>
+
+<h5 id="app-mall-init-table-2-sh"><a href="#app-mall-init-table-2-sh" class="headerlink" title="app_mall_init_table_2.sh"></a>app_mall_init_table_2.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求二：电商GMV</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> app层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists app_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists app_mall.app_gmv(</span><br><span class="line">    gmv   decimal(10,2) </span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/app/gmv/';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h5 id="app-mall-add-partition-2-sh"><a href="#app-mall-add-partition-2-sh" class="headerlink" title="app_mall_add_partition_2.sh"></a>app_mall_add_partition_2.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求二：电商GMV</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨执行一次</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">insert overwrite table app_mall.app_gmv partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">sum(order_money) as gmv</span><br><span class="line">from dwd_mall.dwd_user_order</span><br><span class="line">where dt = '$&#123;dt&#125;';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">问题：有了每天的GMV，后期能不能计算月度GMV，季度GMV，以及年度GMV？以及GMV的同比，环比？</span><br><span class="line">可以的，有了每日的GMV之后，按照月、季度、年对GMV进行聚合即可。</span><br><span class="line">同比环比，我们在前面已经实现过类似的需求。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060037068.png" alt="image-20230406003729623"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060037204.png" alt="image-20230406003754317"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060038053.png" alt="image-20230406003824047"></p>
+<h3 id="需求三：商品相关指标"><a href="#需求三：商品相关指标" class="headerlink" title="需求三：商品相关指标"></a>需求三：商品相关指标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">针对这个需求我们主要统计两个指标</span><br><span class="line">1：商品销售情况（商品名称，一级类目，订单总量，销售额）</span><br><span class="line">2：商品品类偏好Top10（商品一级类目，订单总量）</span><br><span class="line"></span><br><span class="line">首先看第一个指标：商品销售情况</span><br><span class="line">这个指标主要统计商品名称，一级类目，订单总量，销售额这些字段信息</span><br><span class="line">订单中的详细信息是在dwd_order_item表中，需要关联dwd_goods_info和</span><br><span class="line">dwd_category_code获取商品名称和商品一级类目信息</span><br><span class="line"></span><br><span class="line">在这最好是基于这些表先构建一个商品订单信息的宽表dws_order_goods_all_info，便于后期</span><br><span class="line">其它需求复用。</span><br><span class="line">然后基于这个宽表统计出来这个指标需要的信息，保存到表app_goods_sales_item</span><br><span class="line"></span><br><span class="line">接着看第二个指标：商品品类偏好Top10</span><br><span class="line">这个指标可以在第一个指标的基础之上，根据一级类目进行分组，按照类目下的订单总量排序，取Top10，保存到表 app_category_top10中</span><br></pre></td></tr></table></figure>
+
+<h4 id="dws层-1"><a href="#dws层-1" class="headerlink" title="dws层"></a>dws层</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">create external table if not exists dws_mall.dws_order_goods_all_info(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   goods_id             bigint,</span><br><span class="line">   goods_amount         int,</span><br><span class="line">   order_curr_price           double,</span><br><span class="line">   order_create_time          string,</span><br><span class="line">   goods_no             string,</span><br><span class="line">   goods_name           string,</span><br><span class="line">   goods_curr_price           double,</span><br><span class="line">   goods_desc           string,</span><br><span class="line">   goods_create_time          string,</span><br><span class="line">   first_category_id    int,</span><br><span class="line">   first_category_name  string,</span><br><span class="line">   second_category_id   int,</span><br><span class="line">   second_catery_name   string,</span><br><span class="line">   third_category_id    int,</span><br><span class="line">   third_category_name  string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dws/order_goods_all_info/';</span><br><span class="line"></span><br><span class="line">insert overwrite table dws_mall.dws_order_goods_all_info partition(dt='20260201')  select </span><br><span class="line">   doi.order_id,</span><br><span class="line">   doi.goods_id,</span><br><span class="line">   doi.goods_amount,</span><br><span class="line">   doi.curr_price as order_curr_price,</span><br><span class="line">   doi.create_time as order_create_time,</span><br><span class="line">   dgi.goods_no,</span><br><span class="line">   dgi.goods_name,</span><br><span class="line">   dgi.curr_price as goods_curr_price,</span><br><span class="line">   dgi.goods_desc,</span><br><span class="line">   dgi.create_time as goods_create_time,</span><br><span class="line">   dcc.first_category_id,</span><br><span class="line">   dcc.first_category_name,</span><br><span class="line">   dcc.second_category_id,</span><br><span class="line">   dcc.second_catery_name,</span><br><span class="line">   dcc.third_category_id,</span><br><span class="line">   dcc.third_category_name</span><br><span class="line">from dwd_mall.dwd_order_item as doi</span><br><span class="line">left join dwd_mall.dwd_goods_info as dgi</span><br><span class="line">on doi.goods_id = dgi.goods_id</span><br><span class="line">left join dwd_mall.dwd_category_code as dcc</span><br><span class="line">on dgi.third_category_id = dcc.third_category_id</span><br><span class="line">where doi.dt = '20260201' and dgi.dt = '20260201' and dcc.dt = '20260201';</span><br></pre></td></tr></table></figure>
+
+<h5 id="开发脚本"><a href="#开发脚本" class="headerlink" title="开发脚本"></a>开发脚本</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">针对 dws 层抽取脚本</span><br><span class="line">1：表初始化脚本(初始化执行一次)</span><br><span class="line">dws_mall_init_table_3.sh</span><br><span class="line">2：添加分区数据脚本(每天执行一次)</span><br><span class="line">dws_mall_add_partition_3.sh</span><br></pre></td></tr></table></figure>
+
+<h6 id="dws-mall-init-table-3-sh"><a href="#dws-mall-init-table-3-sh" class="headerlink" title="dws_mall_init_table_3.sh"></a>dws_mall_init_table_3.sh</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求三：商品相关指标</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> dws层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists dws_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists dws_mall.dws_order_goods_all_info(</span><br><span class="line">   order_id             bigint,</span><br><span class="line">   goods_id             bigint,</span><br><span class="line">   goods_amount         int,</span><br><span class="line">   order_curr_price           double,</span><br><span class="line">   order_create_time          string,</span><br><span class="line">   goods_no             string,</span><br><span class="line">   goods_name           string,</span><br><span class="line">   goods_curr_price           double,</span><br><span class="line">   goods_desc           string,</span><br><span class="line">   goods_create_time          string,</span><br><span class="line">   first_category_id    int,</span><br><span class="line">   first_category_name  string,</span><br><span class="line">   second_category_id   int,</span><br><span class="line">   second_catery_name   string,</span><br><span class="line">   third_category_id    int,</span><br><span class="line">   third_category_name  string</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/dws/order_goods_all_info/';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h6 id="dws-mall-add-partition-3-sh"><a href="#dws-mall-add-partition-3-sh" class="headerlink" title="dws_mall_add_partition_3.sh"></a>dws_mall_add_partition_3.sh</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求三：商品相关指标</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨执行一次</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">insert overwrite table dws_mall.dws_order_goods_all_info partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   doi.order_id,</span><br><span class="line">   doi.goods_id,</span><br><span class="line">   doi.goods_amount,</span><br><span class="line">   doi.curr_price as order_curr_price,</span><br><span class="line">   doi.create_time as order_create_time,</span><br><span class="line">   dgi.goods_no,</span><br><span class="line">   dgi.goods_name,</span><br><span class="line">   dgi.curr_price as goods_curr_price,</span><br><span class="line">   dgi.goods_desc,</span><br><span class="line">   dgi.create_time as goods_create_time,</span><br><span class="line">   dcc.first_category_id,</span><br><span class="line">   dcc.first_category_name,</span><br><span class="line">   dcc.second_category_id,</span><br><span class="line">   dcc.second_catery_name,</span><br><span class="line">   dcc.third_category_id,</span><br><span class="line">   dcc.third_category_name</span><br><span class="line">from dwd_mall.dwd_order_item as doi</span><br><span class="line">left join dwd_mall.dwd_goods_info as dgi</span><br><span class="line">on doi.goods_id = dgi.goods_id</span><br><span class="line">left join dwd_mall.dwd_category_code as dcc</span><br><span class="line">on dgi.third_category_id = dcc.third_category_id</span><br><span class="line">where doi.dt = '$&#123;dt&#125;' and dgi.dt = '$&#123;dt&#125;' and dcc.dt = '$&#123;dt&#125;';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="app层-1"><a href="#app层-1" class="headerlink" title="app层"></a>app层</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> app_mall.app_goods_sales_item(</span><br><span class="line">    goods_name    <span class="keyword">string</span>,</span><br><span class="line">	first_category_name     <span class="keyword">string</span>,</span><br><span class="line">	order_total    <span class="built_in">bigint</span>,</span><br><span class="line">	price_total    <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>)</span><br><span class="line">)partitioned <span class="keyword">by</span>(dt <span class="keyword">string</span>) </span><br><span class="line"> <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span>  </span><br><span class="line"> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span></span><br><span class="line"> location <span class="string">'hdfs://bigdata01:9000/data/app/goods_sales_item/'</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> app_mall.app_goods_sales_item <span class="keyword">partition</span>(dt=<span class="string">'20260201'</span>)  <span class="keyword">select</span> </span><br><span class="line">goods_name,</span><br><span class="line">first_category_name,</span><br><span class="line"><span class="keyword">count</span>(order_id) <span class="keyword">as</span> order_total,</span><br><span class="line"><span class="keyword">sum</span>(goods_amount * order_curr_price) <span class="keyword">as</span> price_total</span><br><span class="line"><span class="keyword">from</span> dws_mall.dws_order_goods_all_info</span><br><span class="line"><span class="keyword">where</span> dt = <span class="string">'20260201'</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> goods_name,first_category_name;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> app_mall.app_category_top10(</span><br><span class="line">	first_category_name     <span class="keyword">string</span>,</span><br><span class="line">	order_total    <span class="built_in">bigint</span></span><br><span class="line">)partitioned <span class="keyword">by</span>(dt <span class="keyword">string</span>) </span><br><span class="line"> <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span>  </span><br><span class="line"> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span></span><br><span class="line"> location <span class="string">'hdfs://bigdata01:9000/data/app/category_top10/'</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> app_mall.app_category_top10 <span class="keyword">partition</span>(dt=<span class="string">'20260201'</span>)  <span class="keyword">select</span> </span><br><span class="line">first_category_name,</span><br><span class="line"><span class="keyword">sum</span>(order_total) <span class="keyword">as</span> order_total</span><br><span class="line"><span class="keyword">from</span> app_mall.app_goods_sales_item </span><br><span class="line"><span class="keyword">where</span> dt =<span class="string">'20260201'</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> first_category_name</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> order_total <span class="keyword">desc</span></span><br><span class="line"><span class="keyword">limit</span> <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="开发脚本-1"><a href="#开发脚本-1" class="headerlink" title="开发脚本"></a>开发脚本</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">针对 app 层抽取脚本</span><br><span class="line">1：表初始化脚本(初始化执行一次)</span><br><span class="line">app_mall_init_table_3.sh</span><br><span class="line">2：添加分区数据脚本(每天执行一次)</span><br><span class="line">app_mall_add_partition_3.sh</span><br></pre></td></tr></table></figure>
+
+<h5 id="app-mall-init-table-3-sh"><a href="#app-mall-init-table-3-sh" class="headerlink" title="app_mall_init_table_3.sh"></a>app_mall_init_table_3.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求三：商品相关指标</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> app层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists app_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists app_mall.app_goods_sales_item(</span><br><span class="line">    goods_name    string,</span><br><span class="line">	first_category_name     string,</span><br><span class="line">	order_total    bigint,</span><br><span class="line">	price_total    decimal(10,2)</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/app/goods_sales_item/';</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create external table if not exists app_mall.app_category_top10(</span><br><span class="line">	first_category_name     string,</span><br><span class="line">	order_total    bigint</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/app/category_top10/';</span><br><span class="line"> </span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h5 id="app-mall-add-partition-3-sh"><a href="#app-mall-add-partition-3-sh" class="headerlink" title="app_mall_add_partition_3.sh"></a>app_mall_add_partition_3.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求三：商品相关指标</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨执行一次</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">insert overwrite table app_mall.app_goods_sales_item partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">goods_name,</span><br><span class="line">first_category_name,</span><br><span class="line">count(order_id) as order_total,</span><br><span class="line">sum(goods_amount * order_curr_price) as price_total</span><br><span class="line">from dws_mall.dws_order_goods_all_info</span><br><span class="line">where dt = '$&#123;dt&#125;'</span><br><span class="line">group by goods_name,first_category_name;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">insert overwrite table app_mall.app_category_top10 partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">first_category_name,</span><br><span class="line">sum(order_total) as order_total</span><br><span class="line">from app_mall.app_goods_sales_item </span><br><span class="line">where dt ='$&#123;dt&#125;'</span><br><span class="line">group by first_category_name</span><br><span class="line">order by order_total desc</span><br><span class="line">limit 10;</span><br><span class="line"></span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060107837.png" alt="image-20230406010738922"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060107081.png" alt="image-20230406010754961"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060108980.png" alt="image-20230406010814759"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060108252.png" alt="image-20230406010840827"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060109152.png" alt="image-20230406010927249"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060116924.png" alt="image-20230406011604503"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">问题：如果想要统计商品品类内最受用户喜欢的Top10商品，如何统计？</span><br><span class="line">基于dws_order_goods_all_info表中的数据，根据商品品类进行分区，根据商品的订单总量</span><br><span class="line">进行排序，获取每个品类中用户喜欢的Top10商品</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="需求四：漏斗分析"><a href="#需求四：漏斗分析" class="headerlink" title="需求四：漏斗分析"></a>需求四：漏斗分析</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060119866.png" alt="image-20230406011942433"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">其实就是根据用户的行为一层一层分析用户的转化率。</span><br><span class="line">活跃--&gt;商品详情页--&gt;下单--&gt;支付</span><br><span class="line">每一个指标对应的表：</span><br><span class="line">活跃：dws_user_active_history</span><br><span class="line">商品详情页：dwd_good_item</span><br><span class="line">下单：dwd_user_order</span><br><span class="line">支付：dwd_user_order</span><br><span class="line">实现思路：</span><br><span class="line">首先统计当天活跃用户数量</span><br><span class="line">接着统计当天进入了多少个商品详情页</span><br><span class="line">接着统计当天下单的数量</span><br><span class="line">最后统计当天支付的数量</span><br><span class="line">并且计算每一层的转化率。</span><br><span class="line">最终把结果数据保存到表 app_user_conver_funnel中</span><br></pre></td></tr></table></figure>
+
+<h4 id="app-层"><a href="#app-层" class="headerlink" title="app 层"></a>app 层</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> app_mall.app_user_conver_funnel(</span><br><span class="line">    active_num    <span class="built_in">int</span>,</span><br><span class="line">    item_num     <span class="built_in">int</span>,</span><br><span class="line">    order_num    <span class="built_in">int</span>,</span><br><span class="line">    pay_num    <span class="built_in">int</span>,</span><br><span class="line">    active_to_item_ratio    <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>),</span><br><span class="line">    item_to_order_ratio    <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>),</span><br><span class="line">    order_to_pay_ratio    <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>)</span><br><span class="line">)partitioned <span class="keyword">by</span>(dt <span class="keyword">string</span>) </span><br><span class="line"> <span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span>  </span><br><span class="line"> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span></span><br><span class="line"> location <span class="string">'hdfs://bigdata01:9000/data/app/user_conver_funnel/'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> app_mall.app_user_conver_funnel <span class="keyword">partition</span>(dt=<span class="string">'20260201'</span>)  <span class="keyword">select</span> </span><br><span class="line">duah.active_num,</span><br><span class="line">dgi.item_num,</span><br><span class="line">duo.order_num,</span><br><span class="line">duo.pay_num,</span><br><span class="line">dgi.item_num/duah.active_num <span class="keyword">as</span> active_to_item_ratio,</span><br><span class="line">duo.order_num/dgi.item_num <span class="keyword">as</span> item_to_order_ratio,</span><br><span class="line">duo.pay_num/duo.order_num <span class="keyword">as</span> order_to_pay_ratio</span><br><span class="line"><span class="keyword">from</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">select</span> </span><br><span class="line">	<span class="keyword">count</span>(*) <span class="keyword">as</span> active_num</span><br><span class="line">	<span class="keyword">from</span> dws_mall.dws_user_active_history</span><br><span class="line">	<span class="keyword">where</span> dt = <span class="string">'20260201'</span></span><br><span class="line">) <span class="keyword">as</span> duah</span><br><span class="line"><span class="keyword">join</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">select</span> </span><br><span class="line">	<span class="keyword">count</span>(<span class="keyword">distinct</span> goods_id) <span class="keyword">as</span> item_num</span><br><span class="line">	<span class="keyword">from</span> dwd_mall.dwd_good_item</span><br><span class="line">    <span class="keyword">where</span> dt = <span class="string">'20260201'</span></span><br><span class="line">)<span class="keyword">as</span> dgi</span><br><span class="line"><span class="keyword">on</span> <span class="number">1</span>=<span class="number">1</span></span><br><span class="line"><span class="keyword">join</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">	<span class="keyword">count</span>(*) <span class="keyword">as</span> order_num,</span><br><span class="line">	<span class="keyword">sum</span>(<span class="keyword">case</span> <span class="keyword">when</span> order_status != <span class="number">0</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>) <span class="keyword">as</span> pay_num</span><br><span class="line">	<span class="keyword">from</span> dwd_mall.dwd_user_order</span><br><span class="line">	<span class="keyword">where</span> dt = <span class="string">'20260201'</span></span><br><span class="line">) <span class="keyword">as</span> duo</span><br><span class="line"><span class="keyword">on</span> <span class="number">1</span>=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="开发脚本-2"><a href="#开发脚本-2" class="headerlink" title="开发脚本"></a>开发脚本</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">针对 app 层抽取脚本</span><br><span class="line">1：表初始化脚本(初始化执行一次)</span><br><span class="line">app_mall_init_table_4.sh</span><br><span class="line">2：添加分区数据脚本(每天执行一次)</span><br><span class="line">app_mall_add_partition_4.sh</span><br></pre></td></tr></table></figure>
+
+<h5 id="app-mall-init-table-4-sh"><a href="#app-mall-init-table-4-sh" class="headerlink" title="app_mall_init_table_4.sh"></a>app_mall_init_table_4.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求四：漏斗分析</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> app层数据库和表初始化脚本，只需要执行一次即可</span></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">create database if not exists app_mall;</span><br><span class="line"></span><br><span class="line">create external table if not exists app_mall.app_user_conver_funnel(</span><br><span class="line">    active_num    int,</span><br><span class="line">    item_num     int,</span><br><span class="line">    order_num    int,</span><br><span class="line">    pay_num    int,</span><br><span class="line">    active_to_item_ratio    decimal(10,2),</span><br><span class="line">    item_to_order_ratio    decimal(10,2),</span><br><span class="line">    order_to_pay_ratio    decimal(10,2)</span><br><span class="line">)partitioned by(dt string) </span><br><span class="line"> row format delimited  </span><br><span class="line"> fields terminated by '\t'</span><br><span class="line"> location 'hdfs://bigdata01:9000/data/app/user_conver_funnel/';</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<h5 id="app-mall-add-partition-4-sh"><a href="#app-mall-add-partition-4-sh" class="headerlink" title="app_mall_add_partition_4.sh"></a>app_mall_add_partition_4.sh</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 需求四：漏斗分析</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨执行一次</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">insert overwrite table app_mall.app_user_conver_funnel partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">duah.active_num,</span><br><span class="line">dgi.item_num,</span><br><span class="line">duo.order_num,</span><br><span class="line">duo.pay_num,</span><br><span class="line">dgi.item_num/duah.active_num as active_to_item_ratio,</span><br><span class="line">duo.order_num/dgi.item_num as item_to_order_ratio,</span><br><span class="line">duo.pay_num/duo.order_num as order_to_pay_ratio</span><br><span class="line">from</span><br><span class="line">(</span><br><span class="line">    select </span><br><span class="line">	count(*) as active_num</span><br><span class="line">	from dws_mall.dws_user_active_history</span><br><span class="line">	where dt = '$&#123;dt&#125;'</span><br><span class="line">) as duah</span><br><span class="line">join</span><br><span class="line">(</span><br><span class="line">    select </span><br><span class="line">	count(distinct goods_id) as item_num</span><br><span class="line">	from dwd_mall.dwd_good_item</span><br><span class="line">    where dt = '$&#123;dt&#125;'</span><br><span class="line">)as dgi</span><br><span class="line">on 1=1</span><br><span class="line">join</span><br><span class="line">(</span><br><span class="line">    select</span><br><span class="line">	count(*) as order_num,</span><br><span class="line">	sum(case when order_status != 0 then 1 else 0 end) as pay_num</span><br><span class="line">	from dwd_mall.dwd_user_order</span><br><span class="line">	where dt = '$&#123;dt&#125;'</span><br><span class="line">) as duo</span><br><span class="line">on 1=1;</span><br><span class="line">"</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060133819.png" alt="image-20230406013300841"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060133557.png" alt="image-20230406013314309"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304060134761.png" alt="image-20230406013432629"></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html">大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年04月05日 - 22:04</p>
+  <p><span>最后更新:</span>2023年04月06日 - 01:04</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html" title="大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%934.html" rel="next" title="大数据开发工程师-第十二周 综合项目:电商数据仓库之用户行为数仓4">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十二周 综合项目:电商数据仓库之用户行为数仓4
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html" rel="prev" title="大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2">
+                大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">332</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">119</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十三周-综合项目-电商数据仓库之商品订单数仓"><span class="nav-number">1.</span> <span class="nav-text">第十三周 综合项目:电商数据仓库之商品订单数仓</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ods层"><span class="nav-number">1.1.</span> <span class="nav-text">ods层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建表脚本"><span class="nav-number">1.1.1.</span> <span class="nav-text">建表脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ods-mall-init-table-sh"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">ods_mall_init_table.sh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ods-mall-add-partition-sh"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">ods_mall_add_partition.sh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dwd层"><span class="nav-number">1.2.</span> <span class="nav-text">dwd层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建表脚本-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">建表脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dwd-mall-init-table-sh"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">dwd_mall_init_table.sh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dwd-mall-add-partition-sh"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">dwd_mall_add_partition.sh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需求分析"><span class="nav-number">1.3.</span> <span class="nav-text">需求分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#需求一：用户信息宽表"><span class="nav-number">1.3.1.</span> <span class="nav-text">需求一：用户信息宽表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dws层"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">dws层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#建表脚本-2"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">建表脚本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dws-mall-init-table-1-sh"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">dws_mall_init_table_1.sh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dws-mall-add-partition-1-sh"><span class="nav-number">1.3.1.1.3.</span> <span class="nav-text">dws_mall_add_partition_1.sh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需求二：电商-GMV"><span class="nav-number">1.3.2.</span> <span class="nav-text">需求二：电商 GMV</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#app层"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">app层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#建表脚本-3"><span class="nav-number">1.3.2.1.1.</span> <span class="nav-text">建表脚本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-mall-init-table-2-sh"><span class="nav-number">1.3.2.1.2.</span> <span class="nav-text">app_mall_init_table_2.sh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-mall-add-partition-2-sh"><span class="nav-number">1.3.2.1.3.</span> <span class="nav-text">app_mall_add_partition_2.sh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需求三：商品相关指标"><span class="nav-number">1.3.3.</span> <span class="nav-text">需求三：商品相关指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dws层-1"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">dws层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#开发脚本"><span class="nav-number">1.3.3.1.1.</span> <span class="nav-text">开发脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#dws-mall-init-table-3-sh"><span class="nav-number">1.3.3.1.1.1.</span> <span class="nav-text">dws_mall_init_table_3.sh</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dws-mall-add-partition-3-sh"><span class="nav-number">1.3.3.1.1.2.</span> <span class="nav-text">dws_mall_add_partition_3.sh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#app层-1"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">app层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#开发脚本-1"><span class="nav-number">1.3.3.2.1.</span> <span class="nav-text">开发脚本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-mall-init-table-3-sh"><span class="nav-number">1.3.3.2.2.</span> <span class="nav-text">app_mall_init_table_3.sh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-mall-add-partition-3-sh"><span class="nav-number">1.3.3.2.3.</span> <span class="nav-text">app_mall_add_partition_3.sh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需求四：漏斗分析"><span class="nav-number">1.3.4.</span> <span class="nav-text">需求四：漏斗分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#app-层"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">app 层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#开发脚本-2"><span class="nav-number">1.3.4.1.1.</span> <span class="nav-text">开发脚本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-mall-init-table-4-sh"><span class="nav-number">1.3.4.1.2.</span> <span class="nav-text">app_mall_init_table_4.sh</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#app-mall-add-partition-4-sh"><span class="nav-number">1.3.4.1.3.</span> <span class="nav-text">app_mall_add_partition_4.sh</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">444.2k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

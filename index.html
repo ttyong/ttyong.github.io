@@ -907,6 +907,643 @@ const ap = new APlayer({    container: document.getEleme
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html" itemprop="url">大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-05T22:30:33+08:00">
+                2023-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  21
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          
+
+
+
+
+第十三周 综合项目:电商数据仓库之商品订单数仓2拉链表什么是拉链表1234针对订单表、订单商品表，流水表，这些表中的数据是比较多的，如果使用全量的方式，会造成大量的数据冗余，浪费磁盘空间。所以这种表，一般使用增量的方式，每日采集新增的数据。在这注意一点：针对订单表，如果单纯的按照订单产生时间增量采集数据，是有问题的，因为用户可能今天下单，明天才支付，但是Hive是不支持数据更新的，这样虽然MySQL中订单的状态改变了，但是Hive中订单的状态还是之前的状态。
+
+1234想要解决这个问题，一般有这么几种方案：第一种：每天全量导入订单表的数据，这种方案在项目启动初期是没有多大问题的，因为
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+	</div>
+
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html" itemprop="url">大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-05T22:30:13+08:00">
+                2023-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  24
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          
+
+
+
+
+第十三周 综合项目:电商数据仓库之商品订单数仓123和之前用户行为数仓构建步骤一样，先对下面两层进行构建，上面两层基于业务需求来构建这两层的表服务端数据在mysql中的表如下：(已通过sqoop抽取到hdfs上，只需要创建表将数据关联起来就可以了)
+
+
+1hdfs上商品订单数据相关目录
+
+
+
+
+
+ods层
+建表脚本ods_mall_init_table.sh1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+	</div>
+
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%934.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%934.html" itemprop="url">大数据开发工程师-第十二周 综合项目:电商数据仓库之用户行为数仓4</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-04T16:46:35+08:00">
+                2023-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  14.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  70
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          
+
+
+
+
+综合项目:电商数据仓库之用户行为数仓41截止目前hdfs上，用户行为数据目录结构的样子
+
+
+
+用户行为数据数仓开发
+12数据仓库分为 4层：ods层、dwd层、dws层、app层，我们先来构建第一层：ods层
+
+123456注意：1：由于在构建数据仓库的时候我们会创建多个数据库，所以在创建以及使用表的时候最好都在表名前面带上对应的数据库名称，否则可能会出现一些不必要的问题，可能会把ods层的表建到dwd层。2：考虑到SQL重跑的情况，需要在SQL语句中添加if not exists3：hive中可以用string、date和timestamp表示日期时间，date用yyyy-MM-d
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%934.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+	</div>
+
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%933.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -953,6 +1590,39 @@ const ap = new APlayer({    container: document.getEleme
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -974,7 +1644,7 @@ const ap = new APlayer({    container: document.getEleme
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.2k
+                  7k
                 </span>
               
 
@@ -990,7 +1660,7 @@ const ap = new APlayer({    container: document.getEleme
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  31
                 </span>
               
             </div>
@@ -1652,607 +2322,11 @@ const ap = new APlayer({    container: document.getEleme
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80-%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="TTYONG">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TianYong's Blog">
-    </span>
-
-    
-      <header class="post-header">
-	  
-	  
-
-
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80-%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" itemprop="url">廖雪峰Java教程笔记-Java程序基础 变量和数据类型</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-03-29T22:24:52+08:00">
-                2023-03-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
-                    <span itemprop="name">廖雪峰java笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  4.5k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  18
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          
-
-
-
-
-变量和数据类型变量1在Java中，变量分为两种：基本类型的变量和引用类型的变量。
-
-1234*先定义再应用**可以一次性多个定义和赋值**没有赋值，将自动赋默认值(基本数据类型)**可以将一个基本数据类型变量赋值给另一个基本类型变量。不是指向同一个地址*
-
-基本数据类型有
-1234567891011~~~+ 整型 byte,short,int,long+ 浮点型 float,double   float要加上f或F，double可以省略+ 字符型 char  用单引号+ 布尔型 false,true~~~&#96;&#96;&#96;不同的数据类型占用的字节数不一样。我们看一下Jav
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80-%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-      
-	</div>
-
-
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="TTYONG">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TianYong's Blog">
-    </span>
-
-    
-      <header class="post-header">
-	  
-	  
-
-
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.html" itemprop="url">廖雪峰Java教程笔记-Java程序基础 Java程序基本结构</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-03-29T22:19:48+08:00">
-                2023-03-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
-                    <span itemprop="name">廖雪峰java笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  274
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          
-
-
-java程序基本结构类名规范12+ 首字母大写+ 字母开头，数字，下划线组合
-
-方法名规范1命名和class一样，但是首字母小写
-
-12345这里的方法名是main，返回值是void，表示没有任何返回值。我们注意到public除了可以修饰class外，也可以修饰方法。而关键字static是另一个修饰符，它表示静态方法，后面我们会讲解方法的类型，目前，我们只需要知道，Java入口程序规定的方法必须是静态方法，方法名必须为main，括号内的参数必须是String数组。每一行语句，分号结尾
-
-注释方法123+ &#x2F;&#x2F;+ &#x2F;*... *&#x2F;+ &#x2F;**
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E7%A1%80-Java%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-      
-	</div>
-
-
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-%E6%B3%9B%E5%9E%8B.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="TTYONG">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="TianYong's Blog">
-    </span>
-
-    
-      <header class="post-header">
-	  
-	  
-
-
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-%E6%B3%9B%E5%9E%8B.html" itemprop="url">廖雪峰Java教程笔记-泛型</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-03-29T18:03:11+08:00">
-                2023-03-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%BB%96%E9%9B%AA%E5%B3%B0java%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
-                    <span itemprop="name">廖雪峰java笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  4.1k
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  19
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          
-
-
-
-
-泛型什么是泛型123456789ArrayList是一种可变长数组，其内部使用的是Object类型public class ArrayList &#123;    private Object[] array;    private int size;    public void add(Object e) &#123;...&#125;    public void remove(int index) &#123;...&#125;    public Object get(int index) &#123;...&#125;&#125;
-
-123如果用上述ArrayList存储
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/%E5%BB%96%E9%9B%AA%E5%B3%B0Java%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0-%E6%B3%9B%E5%9E%8B.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-      
-	</div>
-
-
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/">33</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
   </nav>
 
 
@@ -2298,7 +2372,7 @@ java程序基本结构类名规范12+ 首字母大写+ 字母开头，数字，�
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">329</span>
+			  <span class="site-state-item-count">332</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -2433,7 +2507,7 @@ java程序基本结构类名规范12+ 首字母大写+ 字母开头，数字，�
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">414.9k</span>
+    <span title="Site words total count">444.2k</span>
   
 </div>
 

@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第十三周 综合项目:电商数据仓库之商品订单数仓2拉链表什么是拉链表1234针对订单表、订单商品表，流水表，这些表中的数据是比较多的，如果使用全量的方式，会造成大量的数据冗余，浪费磁盘空间。所以这种表，一般使用增量的方式，每日采集新增的数据。在这注意一点：针对订单表，如果单纯的按照订单产生时间增量采集数据，是有问题的，因为用户可能今天下单，明天才支付，但是Hive是不支持数据更新的，这样虽">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十三周 综合项目:电商数据仓库之商品订单数仓2拉链表什么是拉链表1234针对订单表、订单商品表，流水表，这些表中的数据是比较多的，如果使用全量的方式，会造成大量的数据冗余，浪费磁盘空间。所以这种表，一般使用增量的方式，每日采集新增的数据。在这注意一点：针对订单表，如果单纯的按照订单产生时间增量采集数据，是有问题的，因为用户可能今天下单，明天才支付，但是Hive是不支持数据更新的，这样虽">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061515178.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061527784.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061528829.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061531144.png">
+<meta property="og:image" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932%5Cimage-20230406153453757.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061542631.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061543916.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061544315.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061552760.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061553441.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061553044.png">
+<meta property="og:image" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932%5Cimage-20230406163700653.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061642146.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061641683.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061642440.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061645394.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061648636.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061649776.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061710378.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061710744.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061711261.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061658975.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062102932.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062103230.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062115317.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062115096.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062118908.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062119442.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062121862.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062124210.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062150906.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062155170.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062156281.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062156394.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062156493.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062200802.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062201588.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062201092.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062201869.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062202682.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062202551.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062206761.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062206575.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062208908.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062218260.png">
+<meta property="article:published_time" content="2023-04-05T14:30:33.000Z">
+<meta property="article:modified_time" content="2023-04-06T16:35:47.609Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061515178.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十三周-综合项目-电商数据仓库之商品订单数仓2.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-05T22:30:33+08:00">
+                2023-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  21
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第十三周-综合项目-电商数据仓库之商品订单数仓2"><a href="#第十三周-综合项目-电商数据仓库之商品订单数仓2" class="headerlink" title="第十三周 综合项目:电商数据仓库之商品订单数仓2"></a>第十三周 综合项目:电商数据仓库之商品订单数仓2</h1><h2 id="拉链表"><a href="#拉链表" class="headerlink" title="拉链表"></a>拉链表</h2><h3 id="什么是拉链表"><a href="#什么是拉链表" class="headerlink" title="什么是拉链表"></a>什么是拉链表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">针对订单表、订单商品表，流水表，这些表中的数据是比较多的，如果使用全量的方式，会造成大量的数据冗余，浪费磁盘空间。</span><br><span class="line">所以这种表，一般使用增量的方式，每日采集新增的数据。</span><br><span class="line"></span><br><span class="line">在这注意一点：针对订单表，如果单纯的按照订单产生时间增量采集数据，是有问题的，因为用户可能今天下单，明天才支付，但是Hive是不支持数据更新的，这样虽然MySQL中订单的状态改变了，但是Hive中订单的状态还是之前的状态。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">想要解决这个问题，一般有这么几种方案：</span><br><span class="line">第一种：每天全量导入订单表的数据，这种方案在项目启动初期是没有多大问题的，因为前期数据量不大，但是随着项目的运营，订单量暴增，假设每天新增1亿订单，之前已经累积了100亿订单，如果每天都是全量导入的话，那也就意味着每天都需要把数据库中的100多亿订单数据导入到HDFS中保存一份，这样会极大的造成数据冗余，太浪费磁盘空间了。</span><br><span class="line">第二种：只保存当天的全量订单表数据，每次在导入之前，删除前一天保存的全量订单数据，这种方式虽然不会造成数据冗余，但是无法查询订单的历史状态，只有当前的最新状态，也不太好。</span><br><span class="line">第三种：拉链表，这种方式在普通增量导入方式的基础之上进行完善，把变化的数据也导入进来，这样既不会造成大量的数据冗余，还可以查询订单的历史状态。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">拉链表是针对数据仓库设计中表存储数据的方式而定义的，顾名思义，所谓拉链，就是记录历史。记录一个事物从开始，一直到当前状态的所有历史变化的信息。</span><br><span class="line"></span><br><span class="line">下面就是一张拉链表，存储的是用户的最基本信息以及每条记录的生命周期。我们可以使用这张表拿到当天的最新数据以及之前的历史数据</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061515178.png" alt="image-20230406151532551"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">说明：</span><br><span class="line">start_time表示该条记录的生命周期开始时间，end_time 表示该条记录的生命周期结束时间；</span><br><span class="line">end_time &#x3D; &#39;9999-12-31&#39;表示该条记录目前处于有效状态；</span><br><span class="line"></span><br><span class="line">如果查询当前所有有效的记录，则使用 SQL</span><br><span class="line">select * from user where end_time &#x3D;&#39;9999-12-31&#39;</span><br><span class="line"></span><br><span class="line">如果查询2026-01-02的历史快照【获取指定时间内的有效数据】，则使用SQL</span><br><span class="line">select * from user where start_time &lt;&#x3D; &#39;2026-01-02&#39; and end_time &gt;&#x3D; &#39;2026-01-02&#39;</span><br><span class="line"></span><br><span class="line">这就是拉链表。</span><br></pre></td></tr></table></figure>
+
+<h3 id="如何制作拉链表"><a href="#如何制作拉链表" class="headerlink" title="如何制作拉链表"></a>如何制作拉链表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">那针对我们前面分析的订单表，希望使用拉链表的方式实现数据采集，因为每天都保存全量订单数据比较浪费磁盘空间，但是只采集增量的话无法反应订单的状态变化。</span><br><span class="line">所以需要既采集增量，还要采集订单状态变化了的数据。</span><br><span class="line">针对订单表中的订单状态字段有这么几个阶段</span><br><span class="line">未支付</span><br><span class="line">已支付</span><br><span class="line">未发货</span><br><span class="line">已发货</span><br><span class="line">在这我们先分析两种状态：未支付和已支付。</span><br><span class="line"></span><br><span class="line">我们先举个例子：</span><br><span class="line">假设我们的系统是2026年3月1日开始运营的</span><br><span class="line">那么到3月1日结束订单表所有数据如下：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061527784.png" alt="image-20230406152722507"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061528829.png" alt="image-20230406152831907"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">基于订单表中的这些数据如何制作拉链表？</span><br><span class="line"></span><br><span class="line">实现思路</span><br><span class="line">1：首先针对3月1号中的订单数据构建初始的拉链表，拉链表中需要有一个start_time(数据生效开始时间)和end_time(数据生效结束时间)，默认情况下start_time等于表中的创建时间，end_time初始化为一个无限大的日期9999-12-31</span><br><span class="line">将3月1号的订单数据导入到拉链表中。</span><br><span class="line">此时拉链表中数据如下：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061531144.png" alt="image-20230406153103346"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">2：在3月2号的时候，需要将订单表中发生了变化的数据和新增的订单数据 整合到之前的拉链表中</span><br><span class="line">此时需要先创建一个每日更新表，将每日新增和变化了的数据保存到里面</span><br><span class="line"></span><br><span class="line">然后基于拉链表和这个每日更新表进行left join，根据订单id进行关联，如果可以关联上，就说明这个订单的状态发生了变化，然后将订单状态发生了变化的数据的end_time改为2026-03-01(当天日期-1天)</span><br><span class="line">然后再和每日更新表中的数据执行union all操作，将结果重新insert到拉链表中</span><br><span class="line"></span><br><span class="line">最终拉链表中的数据如下：</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932%5Cimage-20230406153453757.png" alt="image-20230406153453757"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">解释：</span><br><span class="line">因为在3月2号的时候，订单id为001的数据的订单状态发生了变化，所以拉链表中订单id为001的原始数据的end_time需要修改为2026-03-01，</span><br><span class="line">然后需要新增一条订单id为001的数据，订单状态为已支付，start_time为2026-03-02，end_time为9999-12-31。</span><br><span class="line">还需要将3月2号新增的订单id为003的数据也添加进来。</span><br></pre></td></tr></table></figure>
+
+<h3 id="【实战】基于订单表的拉链表实现"><a href="#【实战】基于订单表的拉链表实现" class="headerlink" title="【实战】基于订单表的拉链表实现"></a>【实战】基于订单表的拉链表实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">下面我们开始实现：</span><br><span class="line">1：首先初始化2026-03-01、2026-03-02和2026-03-03的订单表新增和变化的数据，ods_user_order(直接将数据初始化到HDFS中)，这个表其实就是前面我们所说的每日更新表</span><br><span class="line"></span><br><span class="line">注意：这里模拟使用sqoop从mysql中抽取新增和变化的数据，根据order_date和update_time这两个字段获取这些数据，所以此时ods_user_order中的数据就是每日的新增和变化了的数据。</span><br><span class="line"></span><br><span class="line">执行代码生成数据：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ods_user_order在前面已经使用过，所以在这只需要将2026-03-01、2026-03-02和2026-03-03的数据加载进去即可</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061542631.png" alt="image-20230406154210239"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061543916.png" alt="image-20230406154346557"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061544315.png" alt="image-20230406154427193"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> dwd_mall.dwd_user_order <span class="keyword">partition</span>(dt=<span class="string">'20260301'</span>)  <span class="keyword">select</span> </span><br><span class="line">   order_id,</span><br><span class="line">   order_date,</span><br><span class="line">   user_id,</span><br><span class="line">   order_money,</span><br><span class="line">   order_type,</span><br><span class="line">   order_status,</span><br><span class="line">   pay_id,</span><br><span class="line">   update_time</span><br><span class="line"><span class="keyword">from</span> ods_mall.ods_user_order</span><br><span class="line"><span class="keyword">where</span> dt = <span class="string">'20260301'</span> <span class="keyword">and</span> order_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> dwd_mall.dwd_user_order <span class="keyword">partition</span>(dt=<span class="string">'20260302'</span>)  <span class="keyword">select</span> </span><br><span class="line">   order_id,</span><br><span class="line">   order_date,</span><br><span class="line">   user_id,</span><br><span class="line">   order_money,</span><br><span class="line">   order_type,</span><br><span class="line">   order_status,</span><br><span class="line">   pay_id,</span><br><span class="line">   update_time</span><br><span class="line"><span class="keyword">from</span> ods_mall.ods_user_order</span><br><span class="line"><span class="keyword">where</span> dt = <span class="string">'20260302'</span> <span class="keyword">and</span> order_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> dwd_mall.dwd_user_order <span class="keyword">partition</span>(dt=<span class="string">'20260303'</span>)  <span class="keyword">select</span> </span><br><span class="line">   order_id,</span><br><span class="line">   order_date,</span><br><span class="line">   user_id,</span><br><span class="line">   order_money,</span><br><span class="line">   order_type,</span><br><span class="line">   order_status,</span><br><span class="line">   pay_id,</span><br><span class="line">   update_time</span><br><span class="line"><span class="keyword">from</span> ods_mall.ods_user_order</span><br><span class="line"><span class="keyword">where</span> dt = <span class="string">'20260303'</span> <span class="keyword">and</span> order_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061552760.png" alt="image-20230406155251457"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061553441.png" alt="image-20230406155334317"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061553044.png" alt="image-20230406155350251"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2：创建拉链表，基于每日更新订单表构建拉链表中的数据</span><br><span class="line">创建拉链表：dws_user_order_zip</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> dws_mall.dws_user_order_zip(</span><br><span class="line">   order_id    <span class="built_in">bigint</span>,</span><br><span class="line">   order_date    <span class="keyword">string</span>,</span><br><span class="line">   user_id    <span class="built_in">bigint</span>,</span><br><span class="line">   order_money    <span class="keyword">double</span>,</span><br><span class="line">   order_type    <span class="built_in">int</span>,</span><br><span class="line">   order_status    <span class="built_in">int</span>,</span><br><span class="line">   pay_id    <span class="built_in">bigint</span>,</span><br><span class="line">   update_time    <span class="keyword">string</span>,</span><br><span class="line">   start_time    <span class="keyword">string</span>,</span><br><span class="line">   end_time    <span class="keyword">string</span></span><br><span class="line">)<span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span>  </span><br><span class="line"> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span></span><br><span class="line"> location <span class="string">'hdfs://bigdata01:9000/data/dws/user_order_zip/'</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> dws_mall.dws_user_order_zip</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">(</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">       duoz.order_id,</span><br><span class="line">       duoz.order_date,</span><br><span class="line">       duoz.user_id,</span><br><span class="line">       duoz.order_money,</span><br><span class="line">       duoz.order_type,</span><br><span class="line">       duoz.order_status,</span><br><span class="line">       duoz.pay_id,</span><br><span class="line">       duoz.update_time,</span><br><span class="line">       duoz.start_time,</span><br><span class="line">       <span class="keyword">case</span></span><br><span class="line">           <span class="keyword">when</span> duoz.end_time = <span class="string">'9999-12-31'</span> <span class="keyword">and</span> duo.order_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">then</span> <span class="keyword">date_add</span>(<span class="string">'2026-03-01'</span>,<span class="number">-1</span>)</span><br><span class="line">           <span class="keyword">else</span> duoz.end_time</span><br><span class="line">       <span class="keyword">end</span> <span class="keyword">as</span> end_time</span><br><span class="line">    <span class="keyword">from</span> dws_mall.dws_user_order_zip <span class="keyword">as</span> duoz</span><br><span class="line">    <span class="keyword">left</span> <span class="keyword">join</span></span><br><span class="line">    (</span><br><span class="line">        <span class="keyword">select</span> order_id <span class="keyword">from</span> dwd_mall.dwd_user_order</span><br><span class="line">        <span class="keyword">where</span> dt = <span class="string">'20260301'</span></span><br><span class="line">    ) <span class="keyword">as</span> duo</span><br><span class="line">    <span class="keyword">on</span> duoz.order_id = duo.order_id</span><br><span class="line"><span class="keyword">union</span> <span class="keyword">all</span></span><br><span class="line">   <span class="keyword">select</span></span><br><span class="line">       duo.order_id,</span><br><span class="line">       duo.order_date,</span><br><span class="line">       duo.user_id,</span><br><span class="line">       duo.order_money,</span><br><span class="line">       duo.order_type,</span><br><span class="line">       duo.order_status,</span><br><span class="line">       duo.pay_id,</span><br><span class="line">       duo.update_time,</span><br><span class="line">       <span class="string">'2026-03-01'</span> <span class="keyword">as</span> start_time,</span><br><span class="line">       <span class="string">'9999-12-31'</span> <span class="keyword">as</span> end_time</span><br><span class="line">   <span class="keyword">from</span> dwd_mall.dwd_user_order <span class="keyword">as</span> duo</span><br><span class="line">   <span class="keyword">where</span> duo.dt = <span class="string">'20260301'</span></span><br><span class="line">) <span class="keyword">as</span> t;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在windows中编写sql语句，回车时可能会有tab制表符，这样的sql复制到hive中执行会报错；对于复制到hive中连成一行无法解析的情况，可以在复制前给每一行的最后添加一个空格</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932%5Cimage-20230406163700653.png" alt="image-20230406163700653"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061642146.png" alt="image-20230406164241911"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sql语句里的时间改成20260302后再执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061641683.png" alt="image-20230406164129176"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061642440.png" alt="image-20230406164251390"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061645394.png" alt="image-20230406164509353"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sql语句里的时间改成20260303后再执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061648636.png" alt="image-20230406164804417"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061649776.png" alt="image-20230406164904719"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061710378.png" alt="image-20230406171011072"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061710744.png" alt="image-20230406171046707"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061711261.png" alt="image-20230406171146204"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">查询有效数据</span><br><span class="line">查询切片数据</span><br><span class="line">查询一条订单历史记录</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304061658975.png" alt="image-20230406165823692"></p>
+<h3 id="拉链表的性能问题-面试爱问"><a href="#拉链表的性能问题-面试爱问" class="headerlink" title="拉链表的性能问题(面试爱问)"></a>拉链表的性能问题(面试爱问)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">拉链表也会遇到查询性能的问题，假设我们存放了5年的拉链数据，那么这张表势必会比较大，当查询的时候性能就比较低了</span><br><span class="line">可以用以下思路来解决：</span><br><span class="line">1. 可以尝试对start_time和end_time做索引，这样可以提高一些性能。</span><br><span class="line">2. 保留部分历史数据，我们可以在一张表里面存放全量的拉链表数据，然后再对外暴露一张只提供近3个月数据的拉链表。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">还有什么是拉链表，如何制作拉链表也爱问</span><br></pre></td></tr></table></figure>
+
+<h2 id="商品订单数据数仓总结"><a href="#商品订单数据数仓总结" class="headerlink" title="商品订单数据数仓总结"></a>商品订单数据数仓总结</h2><h3 id="数据库和表梳理"><a href="#数据库和表梳理" class="headerlink" title="数据库和表梳理"></a>数据库和表梳理</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062102932.png" alt="image-20230406210206233"></p>
+<h3 id="任务脚本梳理"><a href="#任务脚本梳理" class="headerlink" title="任务脚本梳理"></a>任务脚本梳理</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062103230.png" alt="image-20230406210336400"></p>
+<h2 id="数据可视化和任务调度实现"><a href="#数据可视化和任务调度实现" class="headerlink" title="数据可视化和任务调度实现"></a>数据可视化和任务调度实现</h2><h3 id="数据可视化"><a href="#数据可视化" class="headerlink" title="数据可视化"></a>数据可视化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">数据可视化这块不是项目的重点，不过为了让大家能有一个更加直观的感受，我们可以选择一些现成的数据可视化工具实现。</span><br><span class="line">咱们前面分析过，想要查询hive中的数据可以使用hue，不过hue无法自动生成图表。</span><br><span class="line">所以我们可以考虑使用Zeppelin(还可以操作spark,flink)</span><br><span class="line">针对一些复杂的图表，可以选择定制开发，使用echarts等组件实现</span><br></pre></td></tr></table></figure>
+
+<h4 id="Zeppelin安装部署"><a href="#Zeppelin安装部署" class="headerlink" title="Zeppelin安装部署"></a>Zeppelin安装部署</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">注意：不要使用Zeppelin0.8.2版本，这个版本有bug，无法使用图形展现数据。</span><br><span class="line">在这我们使用zeppelin-0.9.0-preview1这个版本</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">把下载好的安装包上传到bigdata04的&#x2F;data&#x2F;soft目录中</span><br><span class="line">1：解压</span><br><span class="line"></span><br><span class="line">2：修改配置</span><br><span class="line">[root@bigdata04 soft]# cd zeppelin-0.9.0-preview1-bin-all&#x2F;conf</span><br><span class="line">[root@bigdata04 conf]# mv zeppelin-env.sh.template zeppelin-env.sh</span><br><span class="line">[root@bigdata04 conf]# mv zeppelin-site.xml.template zeppelin-site.xml</span><br><span class="line">[root@bigdata04 conf]# vi zeppelin-site.xml</span><br><span class="line"># 将默认的127.0.0.1改为0.0.0.0 否则默认情况下只能在本机访问zeppline</span><br><span class="line">&lt;property&gt;</span><br><span class="line"> &lt;name&gt;zeppelin.server.addr&lt;&#x2F;name&gt;</span><br><span class="line"> &lt;value&gt;0.0.0.0&lt;&#x2F;value&gt;</span><br><span class="line"> &lt;description&gt;Server binding address&lt;&#x2F;description&gt;</span><br><span class="line">&lt;&#x2F;property&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3：增加Hive依赖jar包</span><br><span class="line">由于我们需要使用Zepplien连接hive，它里面默认没有集成Hive的依赖jar包，所以最简单的方式就是将Hive的lib目录中的所有jar包全复制到Zeppline中的interpreter&#x2F;jdbc目录中</span><br><span class="line">[root@bigdata04 zeppelin-0.9.0-preview1-bin-all]# cd interpreter&#x2F;jdbc</span><br><span class="line">[root@bigdata04 jdbc]# cp &#x2F;data&#x2F;soft&#x2F;apache-hive-3.1.2-bin&#x2F;lib&#x2F;*.jar .</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">4：启动</span><br><span class="line">[root@bigdata04 zeppelin-0.9.0-preview1-bin-all]# bin&#x2F;zeppelin-daemon.sh start</span><br><span class="line">5：停止【需要停止的时候传递stop命令即可】</span><br><span class="line">[root@bigdata04 zeppelin-0.9.0-preview1-bin-all]# bin&#x2F;zeppelin-daemon.sh stop</span><br></pre></td></tr></table></figure>
+
+<h4 id="Zepplin的界面参数配置"><a href="#Zepplin的界面参数配置" class="headerlink" title="Zepplin的界面参数配置"></a>Zepplin的界面参数配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Zepplin启动之后可以通过8080端口进行访问</span><br><span class="line">http:&#x2F;&#x2F;bigdata04:8080&#x2F;</span><br><span class="line"></span><br><span class="line">在使用之前需要先配置hive的基本信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062115317.png" alt="image-20230406211509288"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">搜索jdbc</span><br><span class="line"></span><br><span class="line">点击edit修改里面的参数信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062115096.png" alt="image-20230406211538750"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">修改这四项的内容即可，这里的内容其实就是我们之前学习hive的jdbc操作时指定的参数</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062118908.png" alt="image-20230406211809935"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">注意：需要在192.168.182.103这台机器上启动hiveserver2服务，否则在zeppline中连不上hive</span><br><span class="line">最后点save按钮即可Zepplin的使用</span><br><span class="line">创建一个note，类似于工作台的概念</span><br><span class="line">[root@bigdata04 ~]# cd &#x2F;data&#x2F;soft&#x2F;apache-hive-3.1.2-bin</span><br><span class="line">[root@bigdata04 apache-hive-3.1.2-bin]# bin&#x2F;hiveserver2</span><br></pre></td></tr></table></figure>
+
+<h4 id="Zepplin的使用"><a href="#Zepplin的使用" class="headerlink" title="Zepplin的使用"></a>Zepplin的使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">创建一个note，类似于工作台的概念</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062119442.png" alt="image-20230406211917306"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">此时就可以在里面写SQL了。</span><br><span class="line">如果以图形的形式展示结果，则点击这里面对应图形的图标即可。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062121862.png" alt="image-20230406212125211"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062124210.png" alt="image-20230406212432043"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对于想制作一些复杂的图表，可以用sqoop导出到mysql，让前端的人去制作。这里当然也很方便直接与hive交互</span><br></pre></td></tr></table></figure>
+
+<h3 id="任务调度"><a href="#任务调度" class="headerlink" title="任务调度"></a>任务调度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">针对数据仓库中的任务脚本我们前面已经整理过了，任务脚本还是比较多的，针对初始化表的脚本只需要</span><br><span class="line">执行一次即可，其它的脚本需要每天都执行一次，这个时候就需要涉及到任务定时调度了。</span><br></pre></td></tr></table></figure>
+
+<h4 id="Crontab调度器的使用"><a href="#Crontab调度器的使用" class="headerlink" title="Crontab调度器的使用"></a>Crontab调度器的使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">咱们前面在学习Linux的时候学过一个crontab调度器，通过它可以实现定时执行指定的脚本。</span><br><span class="line">针对我们这个数据仓库中的这些脚本使用crontab进行调度是可以的</span><br><span class="line">但是需要注意一点：这些任务之间是有一些依赖关系的，从大的层面上来说，dwd层的任务需要等ods层的任务执行成功之后才能开始执行</span><br><span class="line"></span><br><span class="line">那crontab如何知道任务之间的依赖关系呢？</span><br><span class="line">crontab是无法知道任务之间的依赖关系的，我们只能间接实现</span><br><span class="line">举个例子：针对MapReduce任务和Spark任务，任务执行成功之后，在输出目录中会有一个success标记文件，这个文件表示这个任务成功的执行结束了。</span><br><span class="line"></span><br><span class="line">此时如果我们使用crontab调度两个job，一个jobA，一个jobB，先执行jobA，jobA成功执行结束之后才能执行jobB，这个时候我们就需要在脚本中添加一个判断，判断jobA的结果输出目录中是否存在success文件，如果存在则继续执行jobB，否则不执行，并且告警，提示jobA任务执行失败。</span><br><span class="line"></span><br><span class="line">那我们现在执行的是hive的sql任务，sql任务最终不会在输出目录中产生success文件，所以没有办法使用这个标记文件进行判断，不过sql任务会产生数据文件，数据文件的文件名是类似000000_0这样的，可能会有多个，具体的个数是由任务中的reduce的个数决定的，我们也可以选择判断这个数据文件是否存在来判断任务是否成功执行结束。</span><br><span class="line"></span><br><span class="line">注意了：针对SQL任务虽然可以通过判断数据文件来判定任务是否执行成功，不过这种方式不能保证100%的准确率，有可能会存在这种情况，任务确实执行成功了，但是在向结果目录中写数据文件的时候，写了一半，由于网络原因导致数据没有写完，但是我们过来判断000000_0这个文件肯定是存在的，那我们就误以为这个任务执行成功了，其实它的数据是缺失一部分的，不过这种情况的概率极低，可以忽略不计。</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">此时使用crontab调度两个有依赖关系的任务，脚本该如何实现呢？</span><br><span class="line">在bigdata04机器中创建 &#x2F;data&#x2F;soft&#x2F;warehouse_job 目录</span><br><span class="line">创建脚本： crontab_job_schedule.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认获取昨天的日期，也支持传参指定一个日期</span></span><br><span class="line">if [ "z$1" = "z" ]</span><br><span class="line">then</span><br><span class="line">dt=`date +%Y%m%d --date="1 days ago"`</span><br><span class="line">else</span><br><span class="line">dt=$1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行jobA</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 先删除jobA的输出目录</span></span><br><span class="line">hdfs dfs -rm -r hdfs://bigdata01:9000/data/dwd/user_addr/dt=$&#123;dt&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">hive -e "</span><br><span class="line">insert overwrite table dwd_mall.dwd_user_addr partition(dt='$&#123;dt&#125;')  select </span><br><span class="line">   addr_id,</span><br><span class="line">   user_id,</span><br><span class="line">   addr_name,</span><br><span class="line">   order_flag,</span><br><span class="line">   user_name,</span><br><span class="line">   mobile</span><br><span class="line">from ods_mall.ods_user_addr</span><br><span class="line">where dt = '$&#123;dt&#125;' and addr_id is not null;</span><br><span class="line">"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">如果jobA执行成功，这条查询命令就可以成功执行，否则在执行的时候会报错</span></span><br><span class="line">hdfs dfs -ls hdfs://bigdata01:9000/data/dwd/user_addr/dt=$&#123;dt&#125;/000000_0</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在这里通过$?来判断上一条命令是否成功执行，如果$?的返回值为0，则表示jobA执行成功，否则表示jobA执行失败</span></span><br><span class="line">if [ $? = 0 ]</span><br><span class="line">then</span><br><span class="line">    echo "执行jobB"</span><br><span class="line">else</span><br><span class="line">    # 可以在这里发短息或者发邮件</span><br><span class="line">    echo "jobA执行失败，请处理..."</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">如果jobA成功执行，则jobB也可以执行，如果jobA执行失败，则jobB不会执行，脚本会生成告警信息。</span><br><span class="line"></span><br><span class="line">这就是使用crontab调度器如何实现任务依赖的功能。</span><br><span class="line">如果项目中的定时任务有很多，使用crontab虽然可以实现任务依赖的功能，但是管理起来不方便，crontab没有提供图形化的界面，使用起来比较麻烦</span><br><span class="line">针对一些简单的定时任务的配置，并且任务比较少的情况下使用crontab是比较方便的。</span><br></pre></td></tr></table></figure>
+
+<h4 id="Azkaban调度器的使用"><a href="#Azkaban调度器的使用" class="headerlink" title="Azkaban调度器的使用"></a>Azkaban调度器的使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">对于定时执行的脚本很多，可以使用可视化管理界面的任务调度工具进行管理：azkaban(轻量级),Ooize(重量级)</span><br></pre></td></tr></table></figure>
+
+<h5 id="Azkaban介绍"><a href="#Azkaban介绍" class="headerlink" title="Azkaban介绍"></a>Azkaban介绍</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">在实际工作中如果需要配置很多的定时任务，一般会采用一些支持界面操作的调度器，例如：Azkaban、Ooize</span><br><span class="line">Azkaban是一个轻量级的调度器，使用起来比较简单，容易上手。</span><br><span class="line">Ooize是一个重量级的调度器，使用起来相对比较复杂。</span><br><span class="line">在这里我们主要考虑易用性，所以我们选择使用Azkaban。</span><br><span class="line">下面我们来快速了解一下Azkaban，以及它的用法。</span><br><span class="line">Azkaban是由Linkedin开源的一个批量工作流任务调度器。用于在一个工作流内以一个特定的顺序运行一组工作和流程。</span><br><span class="line">Azkaban定义了一种KV文件格式来建立任务之间的依赖关系，并提供一个易于使用的web用户界面维护和跟踪你的工作流。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">那我们首先把Azkaban安装部署起来</span><br><span class="line">官网下载的Azkaban是源码，需要编译，编译过程会非常慢，主要是由于国外网络原因导致的。</span><br><span class="line">在这我给大家直接提供一个编译好的Azkaban。</span><br><span class="line">为了简化Azakan的安装过程，不让大家在工具的安装上花费太多时间，在这里我们就使用Azkaban的solo模式部署。</span><br><span class="line"></span><br><span class="line">solo模式属于单机模式，那对应的Azkaban也支持在多台机器上运行。</span><br><span class="line">solo模式的优点：</span><br><span class="line">易于安装：无需MySQL示例。它将H2打包为主要的持久存储。</span><br><span class="line">易于启动：Web服务器和执行程序服务器都在同一个进程中运行。</span><br><span class="line">全功能：它包含所有Azkaban功能。</span><br></pre></td></tr></table></figure>
+
+<h5 id="Azkaban安装部署"><a href="#Azkaban安装部署" class="headerlink" title="Azkaban安装部署"></a>Azkaban安装部署</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">把编译后的Azkaban安装包 azkaban-solo-server-0.1.0-SNAPSHOT.tar.gz 上传到bigdata04的&#x2F;data&#x2F;soft目录下</span><br><span class="line">1：解压</span><br><span class="line"></span><br><span class="line">2：修改Azkaban的时区为上海时区</span><br><span class="line">我们的bigdata04机器在创建的时候已经指定了时区为上海时区</span><br><span class="line">要保证bigdata04机器的时区和Azkaban的时区是一致的。</span><br><span class="line">[root@bigdata04 azkaban-solo-server-0.1.0-SNAPSHOT]# cd conf&#x2F;</span><br><span class="line">[root@bigdata04 conf]# vi azkaban.properties</span><br><span class="line">......</span><br><span class="line">default.timezone.id&#x3D;Asia&#x2F;Shanghai</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">3：启动</span><br><span class="line">[root@bigdata04 azkaban-solo-server-0.1.0-SNAPSHOT]# bin&#x2F;azkaban-solo-start.sh</span><br><span class="line"></span><br><span class="line">4：停止</span><br><span class="line">[root@bigdata04 azkaban-solo-server-0.1.0-SNAPSHOT]# bin&#x2F;azkaban-solo-stop.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">启动成功之后，azkaban会启动一个web界面，监听的端口是8081</span><br><span class="line">http:&#x2F;&#x2F;bigdata04:8081&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062150906.png" alt="image-20230406215038265"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名和密码默认都是 azkaban</span><br></pre></td></tr></table></figure>
+
+<h5 id="提交独立任务"><a href="#提交独立任务" class="headerlink" title="提交独立任务"></a>提交独立任务</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">如何向Azkaban中提交任务呢？</span><br><span class="line">1：先创建一个Project</span><br><span class="line"></span><br><span class="line">2：向test项目中提交任务</span><br><span class="line">先演示一个独立的任务</span><br><span class="line">创建一个文件hello.job，文件内容如下：</span><br><span class="line"># hello.job</span><br><span class="line">type&#x3D;command</span><br><span class="line">command&#x3D;echo &quot;Hello World!</span><br><span class="line"></span><br><span class="line">这里面的#号开头表示是注释</span><br><span class="line">type：任务类型，这里的command表示这个任务执行的是一个命令</span><br><span class="line">command：这里的command是指具体的命令</span><br><span class="line">将hello.job文件添加到一个zip压缩文件中，hello.zip。</span><br><span class="line"></span><br><span class="line">将hello.zip压缩包提交到刚才创建的test项目中</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062155170.png" alt="image-20230406215538918"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时test项目中就包含hello这个任务，点击execute flow执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062156281.png" alt="image-20230406215604662"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062156394.png" alt="image-20230406215635048"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062156493.png" alt="image-20230406215648313"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">此时这个任务执行一次就结束了，如果想要让任务定时执行，可以在这配置。</span><br><span class="line">先进入test项目中</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062200802.png" alt="image-20230406220045801"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062201588.png" alt="image-20230406220101356"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">点击Schedule，进入配置定时信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062201092.png" alt="image-20230406220133705"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062201869.png" alt="image-20230406220150848"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">这就将test项目中的hello.job配置了定时任务。</span><br><span class="line">其实我们会发现这里面的定时任务的配置格式和crontab中的一样。</span><br><span class="line">后期如果想查看这个定时任务的执行情况可以点击hello</span><br><span class="line"></span><br><span class="line">点击executions查看任务的执行列表</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062202682.png" alt="image-20230406220233640"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062202551.png" alt="image-20230406220252870"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果想查看某一次任务的具体执行情况，可以点击execution id</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是一个基本的独立任务的执行，如果是有依赖的多个任务，如何配置呢？</span><br></pre></td></tr></table></figure>
+
+<h5 id="提交依赖任务"><a href="#提交依赖任务" class="headerlink" title="提交依赖任务"></a>提交依赖任务</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">下面再看一个例子：</span><br><span class="line">1：先创建一个project：depen_test</span><br><span class="line"></span><br><span class="line">2：向depen_test项目中提交任务</span><br><span class="line">先创建一个文件first.job</span><br><span class="line"># first.job</span><br><span class="line">type&#x3D;command</span><br><span class="line">command&#x3D;echo &quot;Hello First!&quot;</span><br><span class="line">再创建一个文件second.job</span><br><span class="line"># second.job</span><br><span class="line">type&#x3D;command</span><br><span class="line">dependencies&#x3D;first</span><br><span class="line">command&#x3D;echo &quot;Hello Second!&quot;</span><br><span class="line"></span><br><span class="line">这里面通过dependencies属性指定了任务的依赖关系，后面的first表示依赖的任务的文件名称</span><br><span class="line"></span><br><span class="line">最后将这两个job文件打成一个zip压缩包</span><br><span class="line">将这个压缩包上传到项目里面</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062206761.png" alt="image-20230406220617754"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">点击Execute Flow，也可以看到任务之间的依赖关系</span><br><span class="line">点击Execute</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062206575.png" alt="image-20230406220640754"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">最后查看jobList，可以看到这个项目中的两个任务的执行顺序</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062208908.png" alt="image-20230406220807410"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这就是带依赖的任务的任务调度。</span><br></pre></td></tr></table></figure>
+
+<h5 id="在数仓中使用Azkaban"><a href="#在数仓中使用Azkaban" class="headerlink" title="在数仓中使用Azkaban"></a>在数仓中使用Azkaban</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">下面我们来看一下针对数仓中的多级任务依赖，如何使用Azkaban实现</span><br><span class="line">以统计电商GMV为例：</span><br><span class="line">这个指标需要依赖于这个流程 MySQL--&gt;HDFS--&gt;ODS--&gt;DWD--&gt;APP</span><br><span class="line">MySQL–&gt;HDFS需要使用Sqoop脚本</span><br><span class="line">HDFS–&gt;ODS需要使用hive alter命令</span><br><span class="line">ODS–&gt;DWD需要使用hive的SQL</span><br><span class="line">DWD–&gt;APP需要使用hive的SQL</span><br><span class="line">接下来开发对应的azkaban job</span><br></pre></td></tr></table></figure>
+
+<h6 id="collect-job"><a href="#collect-job" class="headerlink" title="collect.job"></a>collect.job</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># collect.job</span><br><span class="line"># 采集MySQL中的数据至HDFS</span><br><span class="line">type&#x3D;command</span><br><span class="line">command&#x3D;sh &#x2F;data&#x2F;soft&#x2F;warehouse_job&#x2F;collect_mysql.sh</span><br></pre></td></tr></table></figure>
+
+<h6 id="ods-job"><a href="#ods-job" class="headerlink" title="ods.job"></a>ods.job</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># ods.job</span><br><span class="line"># 关联ods层的数据</span><br><span class="line">type&#x3D;command</span><br><span class="line">dependencies&#x3D;collect</span><br><span class="line">command&#x3D;sh &#x2F;data&#x2F;soft&#x2F;warehouse_job&#x2F;ods_mall_add_partition.sh</span><br></pre></td></tr></table></figure>
+
+<h6 id="dwd-job"><a href="#dwd-job" class="headerlink" title="dwd.job"></a>dwd.job</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># dwd.job</span><br><span class="line"># 生成dwd层的数据</span><br><span class="line">type&#x3D;command</span><br><span class="line">dependencies&#x3D;ods</span><br><span class="line">command&#x3D;sh &#x2F;data&#x2F;soft&#x2F;warehouse_job&#x2F;dwd_mall_add_partition.sh</span><br></pre></td></tr></table></figure>
+
+<h6 id="app-job"><a href="#app-job" class="headerlink" title="app.job"></a>app.job</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># app.job</span><br><span class="line"># 生成app层的数据</span><br><span class="line">type&#x3D;command</span><br><span class="line">dependencies&#x3D;dwd</span><br><span class="line">command&#x3D;sh &#x2F;data&#x2F;soft&#x2F;warehouse_job&#x2F;app_mall_add_partition_2.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304062218260.png" alt="image-20230406221808936"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">还要把job文件里涉及的sh脚本上传到linux上指定目录</span><br><span class="line"></span><br><span class="line">然后配置定时任务</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目优化"><a href="#项目优化" class="headerlink" title="项目优化"></a>项目优化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Sqoop数据采集参数调优，它只会生成一个map任务，性能较低</span><br><span class="line"></span><br><span class="line">集群Queue队列优化</span><br><span class="line"></span><br><span class="line">避免任务启动时间过于集中</span><br><span class="line"></span><br><span class="line">Hive on Tez</span><br><span class="line"></span><br><span class="line">Impala提供快速交互查询</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html">大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年04月05日 - 22:04</p>
+  <p><span>最后更新:</span>2023年04月07日 - 00:04</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html" title="大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%932.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%89%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E5%95%86%E5%93%81%E8%AE%A2%E5%8D%95%E6%95%B0%E4%BB%93.html" rel="next" title="大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十三周 综合项目:电商数据仓库之商品订单数仓
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">332</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">119</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十三周-综合项目-电商数据仓库之商品订单数仓2"><span class="nav-number">1.</span> <span class="nav-text">第十三周 综合项目:电商数据仓库之商品订单数仓2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#拉链表"><span class="nav-number">1.1.</span> <span class="nav-text">拉链表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是拉链表"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是拉链表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何制作拉链表"><span class="nav-number">1.1.2.</span> <span class="nav-text">如何制作拉链表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#【实战】基于订单表的拉链表实现"><span class="nav-number">1.1.3.</span> <span class="nav-text">【实战】基于订单表的拉链表实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拉链表的性能问题-面试爱问"><span class="nav-number">1.1.4.</span> <span class="nav-text">拉链表的性能问题(面试爱问)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#商品订单数据数仓总结"><span class="nav-number">1.2.</span> <span class="nav-text">商品订单数据数仓总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库和表梳理"><span class="nav-number">1.2.1.</span> <span class="nav-text">数据库和表梳理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#任务脚本梳理"><span class="nav-number">1.2.2.</span> <span class="nav-text">任务脚本梳理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据可视化和任务调度实现"><span class="nav-number">1.3.</span> <span class="nav-text">数据可视化和任务调度实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据可视化"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据可视化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Zeppelin安装部署"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">Zeppelin安装部署</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Zepplin的界面参数配置"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">Zepplin的界面参数配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Zepplin的使用"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">Zepplin的使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#任务调度"><span class="nav-number">1.3.2.</span> <span class="nav-text">任务调度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Crontab调度器的使用"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Crontab调度器的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Azkaban调度器的使用"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">Azkaban调度器的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Azkaban介绍"><span class="nav-number">1.3.2.2.1.</span> <span class="nav-text">Azkaban介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Azkaban安装部署"><span class="nav-number">1.3.2.2.2.</span> <span class="nav-text">Azkaban安装部署</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#提交独立任务"><span class="nav-number">1.3.2.2.3.</span> <span class="nav-text">提交独立任务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#提交依赖任务"><span class="nav-number">1.3.2.2.4.</span> <span class="nav-text">提交依赖任务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在数仓中使用Azkaban"><span class="nav-number">1.3.2.2.5.</span> <span class="nav-text">在数仓中使用Azkaban</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#collect-job"><span class="nav-number">1.3.2.2.5.1.</span> <span class="nav-text">collect.job</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#ods-job"><span class="nav-number">1.3.2.2.5.2.</span> <span class="nav-text">ods.job</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#dwd-job"><span class="nav-number">1.3.2.2.5.3.</span> <span class="nav-text">dwd.job</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#app-job"><span class="nav-number">1.3.2.2.5.4.</span> <span class="nav-text">app.job</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目优化"><span class="nav-number">1.4.</span> <span class="nav-text">项目优化</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">444.2k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
