@@ -108,7 +108,7 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302250229448.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202302251651696.png">
 <meta property="article:published_time" content="2023-02-23T19:03:02.000Z">
-<meta property="article:modified_time" content="2023-03-14T09:11:47.255Z">
+<meta property="article:modified_time" content="2023-04-07T17:04:22.167Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="林子雨">
 <meta name="twitter:card" content="summary">
@@ -557,7 +557,7 @@
 
 <h5 id="单机安装配置"><a href="#单机安装配置" class="headerlink" title="单机安装配置"></a>单机安装配置</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;dblab.xmu.edu.cn&#x2F;blog&#x2F;7&#x2F;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hadoop 默认模式为非分布式模式（本地模式），无需进行其他配置即可运行。非分布式即单 Java 进程，方便进行调试。</span><br><span class="line"></span><br><span class="line">现在我们可以执行例子来感受下 Hadoop 的运行。Hadoop 附带了丰富的例子（运行 ./bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar 可以看到所有例子），包括 wordcount、terasort、join、grep 等。</span><br><span class="line"></span><br><span class="line">在此我们选择运行 grep 例子，我们将 input 文件夹中的所有文件作为输入，筛选当中符合正则表达式 dfs[a-z.]+ 的单词并统计出现的次数，最后输出结果到 output 文件夹中。</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hadoop 默认模式为非分布式模式（本地模式），无需进行其他配置即可运行。非分布式即单Java进程，方便进行调试。</span><br><span class="line"></span><br><span class="line">现在我们可以执行例子来感受下 Hadoop 的运行。Hadoop 附带了丰富的例子（运行 ./bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.0.jar 可以看到所有例子），包括 wordcount、terasort、join、grep 等。</span><br><span class="line"></span><br><span class="line">在此我们选择运行grep例子，我们将input文件夹中的所有文件作为输入，筛选当中符合正则表达式 dfs[a-z.]+的单词并统计出现的次数，最后输出结果到output文件夹中。</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/hadoop</span><br><span class="line">mkdir ./input</span><br><span class="line">cp ./etc/hadoop/*.xml ./input   # 将配置文件作为输入文件</span><br><span class="line">./bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar grep ./input ./output 'dfs[a-z.]+'</span><br><span class="line">cat ./output/*          # 查看运行结果</span><br><span class="line"></span><br><span class="line">执行成功后如下所示，输出了作业的相关信息，输出的结果是符合正则的单词 dfsadmin 出现了1次</span><br></pre></td></tr></table></figure>
 
@@ -568,7 +568,7 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;dblab.xmu.edu.cn&#x2F;blog&#x2F;7&#x2F;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hadoop 可以在单节点上以伪分布式的方式运行，Hadoop 进程以分离的 Java 进程来运行，节点既作为 NameNode 也作为 DataNode，同时，读取的是 HDFS 中的文件。</span><br><span class="line"></span><br><span class="line">Hadoop 的配置文件位于 /usr/local/hadoop/etc/hadoop/ 中，伪分布式需要修改2个配置文件 core-site.xml 和 hdfs-site.xml 。Hadoop的配置文件是 xml 格式，每个配置以声明 property 的 name 和 value 的方式来实现。</span><br><span class="line"></span><br><span class="line">修改配置文件 core-site.xml (通过 gedit 编辑会比较方便: gedit ./etc/hadoop/core-site.xml)，将当中的</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hadoop可以在单节点上以伪分布式的方式运行，Hadoop进程以分离的Java进程来运行，节点既作为NameNode也作为 DataNode，同时，读取的是HDFS中的文件。</span><br><span class="line"></span><br><span class="line">Hadoop的配置文件位于/usr/local/hadoop/etc/hadoop/ 中，伪分布式需要修改2个配置文件 core-site.xml 和 hdfs-site.xml。Hadoop的配置文件是xml格式，每个配置以声明 property的name和value的方式来实现。</span><br><span class="line"></span><br><span class="line">修改配置文件core-site.xml(通过gedit编辑会比较方便: gedit ./etc/hadoop/core-site.xml)，将当中的</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br><span class="line"></span><br><span class="line">修改为下面配置：</span><br><span class="line"></span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hadoop.tmp.dir&lt;&#x2F;name&gt;</span><br><span class="line">        &lt;value&gt;file:&#x2F;usr&#x2F;local&#x2F;hadoop&#x2F;tmp&lt;&#x2F;value&gt;</span><br><span class="line">        &lt;description&gt;Abase for other temporary directories.&lt;&#x2F;description&gt;</span><br><span class="line">    &lt;&#x2F;property&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;fs.defaultFS&lt;&#x2F;name&gt;</span><br><span class="line">        &lt;value&gt;hdfs:&#x2F;&#x2F;localhost:9000&lt;&#x2F;value&gt;</span><br><span class="line">    &lt;&#x2F;property&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br><span class="line"></span><br><span class="line">•hadoop.tmp.dir表示存放临时数据的目录，即包括NameNode的数据，也</span><br><span class="line">包括DataNode的数据。该路径任意指定，只要实际存在该文件夹即可</span><br><span class="line">•name为fs.defaultFS的值，表示hdfs路径的逻辑名称</span><br></pre></td></tr></table></figure>
 
@@ -674,7 +674,7 @@
   <p><span>本文标题:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%A1%86%E6%9E%B6Hadoop.html">林子雨 大数据技术原理与应用-第二章 大数据处理框架Hadoop</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年02月24日 - 03:02</p>
-  <p><span>最后更新:</span>2023年03月14日 - 17:03</p>
+  <p><span>最后更新:</span>2023年04月08日 - 01:04</p>
   <p><span>原始链接:</span><a href="/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%A1%86%E6%9E%B6Hadoop.html" title="林子雨 大数据技术原理与应用-第二章 大数据处理框架Hadoop">http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%A1%86%E6%9E%B6Hadoop.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%9E%97%E5%AD%90%E9%9B%A8-%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%A1%86%E6%9E%B6Hadoop.html" aria-label="复制成功！"></i></span>
   </p>
@@ -840,7 +840,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">332</span>
+			  <span class="site-state-item-count">335</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -991,7 +991,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">444.2k</span>
+    <span title="Site words total count">446k</span>
   
 </div>
 
