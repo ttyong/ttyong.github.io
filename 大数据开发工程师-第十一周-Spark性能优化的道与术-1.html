@@ -89,12 +89,12 @@
 
 
 
-<meta name="description" content="第十一周 Spark性能优化的道与术宽依赖和窄依赖1234567先看一下什么是窄依赖：窄依赖(Narrow Dependency)：指父RDD的每个分区只被子RDD的一个分区所使用，例如map、filter等这些算子一个RDD，对它的父RDD只有简单的一对一的关系，也就是说，RDD的每个partition仅仅依赖于父RDD中的一个partition，父RDD和子RDD的partition">
+<meta name="description" content="第十一周 Spark性能优化的道与术-1宽依赖和窄依赖1234567先看一下什么是窄依赖：窄依赖(Narrow Dependency)：指父RDD的每个分区只被子RDD的一个分区所使用，例如map、filter等这些算子一个RDD，对它的父RDD只有简单的一对一的关系，也就是说，RDD的每个partition仅仅依赖于父RDD中的一个partition，父RDD和子RDD的partiti">
 <meta property="og:type" content="article">
-<meta property="og:title" content="大数据开发工程师-第十一周 Spark性能优化的道与术">
+<meta property="og:title" content="大数据开发工程师-第十一周 Spark性能优化的道与术-1">
 <meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
-<meta property="og:description" content="第十一周 Spark性能优化的道与术宽依赖和窄依赖1234567先看一下什么是窄依赖：窄依赖(Narrow Dependency)：指父RDD的每个分区只被子RDD的一个分区所使用，例如map、filter等这些算子一个RDD，对它的父RDD只有简单的一对一的关系，也就是说，RDD的每个partition仅仅依赖于父RDD中的一个partition，父RDD和子RDD的partition">
+<meta property="og:description" content="第十一周 Spark性能优化的道与术-1宽依赖和窄依赖1234567先看一下什么是窄依赖：窄依赖(Narrow Dependency)：指父RDD的每个分区只被子RDD的一个分区所使用，例如map、filter等这些算子一个RDD，对它的父RDD只有简单的一对一的关系，也就是说，RDD的每个partition仅仅依赖于父RDD中的一个partition，父RDD和子RDD的partiti">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271142255.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271146961.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271206035.png">
@@ -103,7 +103,7 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271226135.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271434463.png">
 <meta property="article:published_time" content="2023-03-27T03:33:38.000Z">
-<meta property="article:modified_time" content="2023-03-28T06:52:35.476Z">
+<meta property="article:modified_time" content="2023-04-08T13:45:03.471Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="Spark">
 <meta name="twitter:card" content="summary">
@@ -143,7 +143,7 @@
 
 
 
-  <title>大数据开发工程师-第十一周 Spark性能优化的道与术 | TianYong's Blog</title>
+  <title>大数据开发工程师-第十一周 Spark性能优化的道与术-1 | TianYong's Blog</title>
   
 
 
@@ -333,7 +333,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十一周 Spark性能优化的道与术</h2>
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十一周 Spark性能优化的道与术-1</h2>
         
 
         <div class="post-meta">
@@ -457,7 +457,7 @@
 
 
 
-<h1 id="第十一周-Spark性能优化的道与术"><a href="#第十一周-Spark性能优化的道与术" class="headerlink" title="第十一周 Spark性能优化的道与术"></a>第十一周 Spark性能优化的道与术</h1><h2 id="宽依赖和窄依赖"><a href="#宽依赖和窄依赖" class="headerlink" title="宽依赖和窄依赖"></a>宽依赖和窄依赖</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">先看一下什么是窄依赖：</span><br><span class="line">窄依赖(Narrow Dependency)：指父RDD的每个分区只被子RDD的一个分区所使用，例如map、filter等这些算子</span><br><span class="line">一个RDD，对它的父RDD只有简单的一对一的关系，也就是说，RDD的每个partition仅仅依赖于父RDD中的一个partition，父RDD和子RDD的partition之间的对应关系，是一对一的。</span><br><span class="line"></span><br><span class="line">宽依赖(Shuffle Dependency)：父RDD的每个分区都可能被子RDD的多个分区使用，例如groupByKey、</span><br><span class="line">reduceByKey，sortBykey等算子，这些算子其实都会产生shuffle操作</span><br><span class="line">也就是说，每一个父RDD的partition中的数据都可能会传输一部分到下一个RDD的每个partition中。此时就会出现，父RDD和子RDD的partition之间，具有错综复杂的关系，那么，这种情况就叫做两个RDD之间是宽依赖，同时，他们之间会发生shuffle操作。</span><br></pre></td></tr></table></figure>
+<h1 id="第十一周-Spark性能优化的道与术-1"><a href="#第十一周-Spark性能优化的道与术-1" class="headerlink" title="第十一周 Spark性能优化的道与术-1"></a>第十一周 Spark性能优化的道与术-1</h1><h2 id="宽依赖和窄依赖"><a href="#宽依赖和窄依赖" class="headerlink" title="宽依赖和窄依赖"></a>宽依赖和窄依赖</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">先看一下什么是窄依赖：</span><br><span class="line">窄依赖(Narrow Dependency)：指父RDD的每个分区只被子RDD的一个分区所使用，例如map、filter等这些算子</span><br><span class="line">一个RDD，对它的父RDD只有简单的一对一的关系，也就是说，RDD的每个partition仅仅依赖于父RDD中的一个partition，父RDD和子RDD的partition之间的对应关系，是一对一的。</span><br><span class="line"></span><br><span class="line">宽依赖(Shuffle Dependency)：父RDD的每个分区都可能被子RDD的多个分区使用，例如groupByKey、</span><br><span class="line">reduceByKey，sortBykey等算子，这些算子其实都会产生shuffle操作</span><br><span class="line">也就是说，每一个父RDD的partition中的数据都可能会传输一部分到下一个RDD的每个partition中。此时就会出现，父RDD和子RDD的partition之间，具有错综复杂的关系，那么，这种情况就叫做两个RDD之间是宽依赖，同时，他们之间会发生shuffle操作。</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">下面来看图具体分析一个案例</span><br><span class="line">以单词计数案例来分析</span><br></pre></td></tr></table></figure>
 
@@ -507,11 +507,11 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html">大数据开发工程师-第十一周 Spark性能优化的道与术</a></p>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html">大数据开发工程师-第十一周 Spark性能优化的道与术-1</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年03月27日 - 11:03</p>
-  <p><span>最后更新:</span>2023年03月28日 - 14:03</p>
-  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html</a>
+  <p><span>最后更新:</span>2023年04月08日 - 21:04</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-1">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-1.html" aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
@@ -599,7 +599,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint.html" rel="prev" title="大数据开发工程师-第十一周 Spark性能优化的道与术-2">
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint-2.html" rel="prev" title="大数据开发工程师-第十一周 Spark性能优化的道与术-2">
                 大数据开发工程师-第十一周 Spark性能优化的道与术-2 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -676,7 +676,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">335</span>
+			  <span class="site-state-item-count">337</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -792,7 +792,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十一周-Spark性能优化的道与术"><span class="nav-number">1.</span> <span class="nav-text">第十一周 Spark性能优化的道与术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#宽依赖和窄依赖"><span class="nav-number">1.1.</span> <span class="nav-text">宽依赖和窄依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stage"><span class="nav-number">1.2.</span> <span class="nav-text">Stage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark-Job的三种提交模式"><span class="nav-number">1.3.</span> <span class="nav-text">Spark Job的三种提交模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shuffle"><span class="nav-number">1.4.</span> <span class="nav-text">Shuffle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#未优化的Hash-Based-Shuffle"><span class="nav-number">1.4.1.</span> <span class="nav-text">未优化的Hash Based Shuffle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化后的Hash-Based-Shuffle"><span class="nav-number">1.4.2.</span> <span class="nav-text">优化后的Hash Based Shuffle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sort-Based-Shuffle"><span class="nav-number">1.4.3.</span> <span class="nav-text">Sort-Based Shuffle</span></a></li></ol></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十一周-Spark性能优化的道与术-1"><span class="nav-number">1.</span> <span class="nav-text">第十一周 Spark性能优化的道与术-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#宽依赖和窄依赖"><span class="nav-number">1.1.</span> <span class="nav-text">宽依赖和窄依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stage"><span class="nav-number">1.2.</span> <span class="nav-text">Stage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark-Job的三种提交模式"><span class="nav-number">1.3.</span> <span class="nav-text">Spark Job的三种提交模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shuffle"><span class="nav-number">1.4.</span> <span class="nav-text">Shuffle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#未优化的Hash-Based-Shuffle"><span class="nav-number">1.4.1.</span> <span class="nav-text">未优化的Hash Based Shuffle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化后的Hash-Based-Shuffle"><span class="nav-number">1.4.2.</span> <span class="nav-text">优化后的Hash Based Shuffle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sort-Based-Shuffle"><span class="nav-number">1.4.3.</span> <span class="nav-text">Sort-Based Shuffle</span></a></li></ol></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -827,7 +827,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">446k</span>
+    <span title="Site words total count">451k</span>
   
 </div>
 
