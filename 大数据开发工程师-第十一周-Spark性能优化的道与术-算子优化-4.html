@@ -89,17 +89,17 @@
 
 
 
-<meta name="description" content="第十一周 Spark性能优化的道与术-算子优化-4map vs mapPartitions12345678910map操作：对RDD 中的每个元素进行操作，一次处理一条数据mapPartitions操作(transformation操作)：对RDD中每个partition进行操作，一次处理一个分区的数据所以：map操作：执行1次map算子只处理1个元素，如果partition中元素较多，">
+<meta name="description" content="第十一周 Spark性能优化的道与术-算子优化-4map vs mapPartitions12345678map操作：对RDD 中的每个元素进行操作，一次处理一条数据mapPartitions操作(transformation操作)：对RDD中每个partition进行操作，一次处理一个分区的数据所以：map操作：执行1次map算子只处理1个元素，如果partition中元素较多，假设当">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大数据开发工程师-第十一周 Spark性能优化的道与术-4">
 <meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E7%AE%97%E5%AD%90%E4%BC%98%E5%8C%96-4.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
-<meta property="og:description" content="第十一周 Spark性能优化的道与术-算子优化-4map vs mapPartitions12345678910map操作：对RDD 中的每个元素进行操作，一次处理一条数据mapPartitions操作(transformation操作)：对RDD中每个partition进行操作，一次处理一个分区的数据所以：map操作：执行1次map算子只处理1个元素，如果partition中元素较多，">
+<meta property="og:description" content="第十一周 Spark性能优化的道与术-算子优化-4map vs mapPartitions12345678map操作：对RDD 中的每个元素进行操作，一次处理一条数据mapPartitions操作(transformation操作)：对RDD中每个partition进行操作，一次处理一个分区的数据所以：map操作：执行1次map算子只处理1个元素，如果partition中元素较多，假设当">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281441692.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281440127.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281513504.png">
 <meta property="article:published_time" content="2023-03-27T17:50:58.000Z">
-<meta property="article:modified_time" content="2023-04-08T13:45:13.433Z">
+<meta property="article:modified_time" content="2023-04-13T06:52:22.180Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="Spark">
 <meta name="twitter:card" content="summary">
@@ -453,7 +453,7 @@
 
 
 
-<h1 id="第十一周-Spark性能优化的道与术-算子优化-4"><a href="#第十一周-Spark性能优化的道与术-算子优化-4" class="headerlink" title="第十一周 Spark性能优化的道与术-算子优化-4"></a>第十一周 Spark性能优化的道与术-算子优化-4</h1><h2 id="map-vs-mapPartitions"><a href="#map-vs-mapPartitions" class="headerlink" title="map vs mapPartitions"></a>map vs mapPartitions</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">map操作：对RDD 中的每个元素进行操作，一次处理一条数据</span><br><span class="line"></span><br><span class="line">mapPartitions操作(transformation操作)：对RDD中每个partition进行操作，一次处理一个分区的数据</span><br><span class="line"></span><br><span class="line">所以：</span><br><span class="line">map操作：执行1次map算子只处理1个元素，如果partition中元素较多，假设当前已经处理了1000个元素，在内存不足的情况下，Spark可以通过GC等方法回收内存（比如将已处理掉的</span><br><span class="line">1000个元素从内存中回收）。因此，map操作通常不会导致OOM异常；</span><br><span class="line"></span><br><span class="line">mapPartitions操作：执行1次map算子需要接收该partition 中的所有元素，因此一旦元素很多而内存不足，就容易导致OOM的异常，也不是说一定就会产生OOM异常，只是和map算子对比的话，</span><br><span class="line">相对来说容易产生OOM异常(OOM，java.lang.OutOfMemoryError 错误，也就是java内存溢出错误。)</span><br></pre></td></tr></table></figure>
+<h1 id="第十一周-Spark性能优化的道与术-算子优化-4"><a href="#第十一周-Spark性能优化的道与术-算子优化-4" class="headerlink" title="第十一周 Spark性能优化的道与术-算子优化-4"></a>第十一周 Spark性能优化的道与术-算子优化-4</h1><h2 id="map-vs-mapPartitions"><a href="#map-vs-mapPartitions" class="headerlink" title="map vs mapPartitions"></a>map vs mapPartitions</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">map操作：对RDD 中的每个元素进行操作，一次处理一条数据</span><br><span class="line"></span><br><span class="line">mapPartitions操作(transformation操作)：对RDD中每个partition进行操作，一次处理一个分区的数据</span><br><span class="line"></span><br><span class="line">所以：</span><br><span class="line">map操作：执行1次map算子只处理1个元素，如果partition中元素较多，假设当前已经处理了1000个元素，在内存不足的情况下，Spark可以通过GC等方法回收内存（比如将已处理掉的1000个元素从内存中回收）。因此，map操作通常不会导致OOM异常；</span><br><span class="line"></span><br><span class="line">mapPartitions操作：执行1次map算子需要接收该partition中的所有元素，因此一旦元素很多而内存不足，就容易导致OOM的异常，也不是说一定就会产生OOM异常，只是和map算子对比的话，相对来说容易产生OOM异常(OOM，java.lang.OutOfMemoryError 错误，也就是java内存溢出错误。)</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">不过一般情况下，mapPartitions的性能更高；初始化操作、数据库链接等操作适合使用mapPartitions操作</span><br><span class="line"></span><br><span class="line">这是因为：</span><br><span class="line">假设需要将RDD中的每个元素写入数据库中，这时候就应该把创建数据库链接的操作放置在mapPartitions中，创建数据库链接这个操作本身就是个比较耗时的，如果该操作放在map中执行，将会频繁执行，比较耗时且影响数据库的稳定性。</span><br></pre></td></tr></table></figure>
 
@@ -502,7 +502,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E7%AE%97%E5%AD%90%E4%BC%98%E5%8C%96-4.html">大数据开发工程师-第十一周 Spark性能优化的道与术-4</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年03月28日 - 01:03</p>
-  <p><span>最后更新:</span>2023年04月08日 - 21:04</p>
+  <p><span>最后更新:</span>2023年04月13日 - 14:04</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E7%AE%97%E5%AD%90%E4%BC%98%E5%8C%96-4.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-4">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E7%AE%97%E5%AD%90%E4%BC%98%E5%8C%96-4.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E7%AE%97%E5%AD%90%E4%BC%98%E5%8C%96-4.html" aria-label="复制成功！"></i></span>
   </p>
@@ -819,7 +819,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">456.9k</span>
+    <span title="Site words total count">465.2k</span>
   
 </div>
 

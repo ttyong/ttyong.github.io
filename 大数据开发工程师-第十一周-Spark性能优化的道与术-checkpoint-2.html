@@ -116,7 +116,7 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271953796.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271954921.png">
 <meta property="article:published_time" content="2023-03-27T06:42:14.000Z">
-<meta property="article:modified_time" content="2023-04-08T13:43:16.383Z">
+<meta property="article:modified_time" content="2023-04-13T03:59:01.800Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="Spark">
 <meta name="twitter:card" content="summary">
@@ -495,7 +495,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将打包的jar包上传到bigdata04的&#x2F;data&#x2F;soft&#x2F;sparkjars目录，创建一个新的spark-submit脚本</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271519124.png" alt="image-20230327151903625"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行成功之后可以到 setCheckpointDir 指定的目录中查看一下，可以看到目录中会生成对应的文件保存rdd中的数据，只不过生成的文件不是普通文本文件，直接查看文件中的内容显示为乱码。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行成功之后可以到setCheckpointDir指定的目录中查看一下，可以看到目录中会生成对应的文件保存rdd中的数据，只不过生成的文件不是普通文本文件，直接查看文件中的内容显示为乱码。</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271523654.png" alt="image-20230327152317696"></p>
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303271523426.png" alt="image-20230327152338046"></p>
@@ -586,12 +586,6 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">这样经过几次迭代之后就可以获取到RDD中所有分区的数据了，因为这个compute是一次获取一个分区</span><br><span class="line">的数据。获取到之后checkpoint就可以把这个RDD的数据存储到HDFS上了。</span><br><span class="line">这就是checkpoint的写操作</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
 <h3 id="checkpoint的读操作"><a href="#checkpoint的读操作" class="headerlink" title="checkpoint的读操作"></a>checkpoint的读操作</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">那接下来我们来分析一下checkpoint读数据这个操作</span><br><span class="line">当RDD中的数据丢失了以后，需要通过checkpoint读取存储在hdfs上的数据，</span><br><span class="line">2.1：这个时候还是会执行RDD中的iterator方法</span><br><span class="line">由于我们没有做持久化，只做了checkpoint，所以还是会走 else</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">final def iterator(split: Partition, context: TaskContext): Iterator[T] &#x3D; &#123;</span><br><span class="line"> &#x2F;&#x2F;如果StorageLevel不为空，表示该RDD已经持久化过了,可能是在内存，也有可能是在磁盘</span><br><span class="line"> if (storageLevel !&#x3D; StorageLevel.NONE) &#123;</span><br><span class="line"> &#x2F;&#x2F;直接从持久化存储中读取或者计算(如果数据丢失)</span><br><span class="line"> getOrCompute(split, context)</span><br><span class="line"> &#125; else &#123;</span><br><span class="line"> &#x2F;&#x2F;进行rdd partition的计算或者从checkpoint中读取数据</span><br><span class="line"> computeOrReadCheckpoint(split, context)</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -642,7 +636,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint-2.html">大数据开发工程师-第十一周 Spark性能优化的道与术-2</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年03月27日 - 14:03</p>
-  <p><span>最后更新:</span>2023年04月08日 - 21:04</p>
+  <p><span>最后更新:</span>2023年04月13日 - 11:04</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint-2.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint-2.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-checkpoint-2.html" aria-label="复制成功！"></i></span>
   </p>
@@ -959,7 +953,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">456.9k</span>
+    <span title="Site words total count">465.2k</span>
   
 </div>
 
