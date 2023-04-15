@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2Kafka使用初体验Kafka中Topic的操作123kafka集群安装好了以后我们就想向kafka中添加一些数据想要添加数据首先需要创建topic那接下来看一下针对topic的一些操作  新增Topic1234567指定2个分区，2个副本，注意：副本数不能大于集群中Broker的数量因为每个partition的副本必须保存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2Kafka使用初体验Kafka中Topic的操作123kafka集群安装好了以后我们就想向kafka中添加一些数据想要添加数据首先需要创建topic那接下来看一下针对topic的一些操作  新增Topic1234567指定2个分区，2个副本，注意：副本数不能大于集群中Broker的数量因为每个partition的副本必须保存">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152231741.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152234654.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304160022785.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152350669.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304160000840.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304160016235.png">
+<meta property="og:image" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2%5C202304160022785.png">
+<meta property="article:published_time" content="2023-04-15T14:13:26.000Z">
+<meta property="article:modified_time" content="2023-04-15T16:28:48.527Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152231741.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十四周-消息队列之Kafka从入门到小牛-2.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-15T22:13:26+08:00">
+                2023-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="大数据开发工程师-第十四周-消息队列之Kafka从入门到小牛-2"><a href="#大数据开发工程师-第十四周-消息队列之Kafka从入门到小牛-2" class="headerlink" title="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2"></a>大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2</h1><h2 id="Kafka使用初体验"><a href="#Kafka使用初体验" class="headerlink" title="Kafka使用初体验"></a>Kafka使用初体验</h2><h3 id="Kafka中Topic的操作"><a href="#Kafka中Topic的操作" class="headerlink" title="Kafka中Topic的操作"></a>Kafka中Topic的操作</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kafka集群安装好了以后我们就想向kafka中添加一些数据</span><br><span class="line">想要添加数据首先需要创建topic</span><br><span class="line">那接下来看一下针对topic的一些操作</span><br></pre></td></tr></table></figure>
+
+<h4 id="新增Topic"><a href="#新增Topic" class="headerlink" title="新增Topic"></a>新增Topic</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">指定2个分区，2个副本，注意：副本数不能大于集群中Broker的数量</span><br><span class="line"></span><br><span class="line">因为每个partition的副本必须保存在不同的broker，否则没有意义，如果partition的副本都保存在同一个broker，那么这个broker挂了，则partition数据依然会丢失</span><br><span class="line"></span><br><span class="line">在这里我使用的是3个节点的kafka集群，所以副本数我就暂时设置为2，最大可以设置为3</span><br><span class="line"></span><br><span class="line">如果你们用的是单机kafka的话，这里的副本数就只能设置为1了，这个需要注意一下</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --create --zookeeper localhost:2181 --partitions 2 --replication-factor 2</span><br><span class="line">--topic hello</span><br><span class="line">Created topic hello.</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询Topic"><a href="#查询Topic" class="headerlink" title="查询Topic"></a>查询Topic</h4><h5 id="查询Kafka中的所有Topic列表"><a href="#查询Kafka中的所有Topic列表" class="headerlink" title="查询Kafka中的所有Topic列表"></a>查询Kafka中的所有Topic列表</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">查询Kafka中的所有Topic列表以及查看指定Topic的详细信息</span><br><span class="line">查询kafka中所有的topic列表</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --list --zookeeper localhost:2181</span><br><span class="line">hello</span><br><span class="line"></span><br><span class="line">topic数据是存在zookeeper中，所以直接指定zookeeper地址就可以了(有些地方需要指定kafka地址)</span><br></pre></td></tr></table></figure>
+
+<h5 id="查看指定Topic的详细信息"><a href="#查看指定Topic的详细信息" class="headerlink" title="查看指定Topic的详细信息"></a>查看指定Topic的详细信息</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">查看指定topic的详细信息</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --describe --zookeeper localhost:2181 --topic hello</span><br><span class="line">Topic: hello PartitionCount: 2 ReplicationFactor: 2 Configs: </span><br><span class="line">Topic: hello Partition: 0 Leader: 2 Replicas: 2,0 Is</span><br><span class="line">Topic: hello Partition: 1 Leader: 0 Replicas: 0,1 Is</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152231741.png" alt="image-20230415223043384"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">第一个行显示指定topic所有partitions的一个总结</span><br><span class="line">PartitionCount：表示这个Topic一共有多少个partition</span><br><span class="line">ReplicationFactor：表示这个topic中partition的副本因子是几个</span><br><span class="line">Config：这个表示创建Topic时动态指定的配置信息，在这我们没有额外指定配置信息</span><br><span class="line"></span><br><span class="line">下面每一行给出的是一个partition的信息，如果只有一个partition，则只显示一行。</span><br><span class="line">Topic：显示当前的topic名称</span><br><span class="line">Partition：显示当前topic的partition编号</span><br><span class="line">Leader：Leader partition所在的节点编号，这个编号其实就是broker.id的值，</span><br><span class="line">来看这个图：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152234654.png" alt="image-20230415223420514"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">这个图里面的hello这个topic有两个partition，其中partition1的leader所在的节点是broker1，partition2的leader所在的节点是broker2</span><br><span class="line"></span><br><span class="line">Replicas：当前partition所有副本所在的节点编号【包含Leader所在的节点】，如果设置多个副本的话，这里会显示多个，不管该节点是否是Leader以及是否存活。</span><br><span class="line"></span><br><span class="line">Isr：当前partition处于同步状态的所有节点，这里显示的所有节点都是存活状态的，并且跟Leader同步的(包含Leader所在的节点)</span><br><span class="line"></span><br><span class="line">所以说Replicas和Isr的区别就是</span><br><span class="line">如果某个partition的副本所在的节点宕机了，在Replicas中还是会显示那个节点，但是在Isr中就不会显示了，Isr中显示的都是处于正常状态的节点。</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改Topic"><a href="#修改Topic" class="headerlink" title="修改Topic"></a>修改Topic</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">修改一般是修改Topic的partition数量，只能增加</span><br><span class="line"></span><br><span class="line">为什么partition只能增加？</span><br><span class="line">因为数据是存储在partition中的，如果可以减少partition的话，那么partition中的数据就丢了</span><br><span class="line"></span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --alter --zookeeper localhost:2181 --partitions 5 --topic hello </span><br><span class="line">WARNING: If partitions are increased for a topic that has a key, the partitio</span><br><span class="line">Adding partitions succeeded!</span><br><span class="line"></span><br><span class="line">修改之后再来查看一下topic的详细信息</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --describe --zookeeper </span><br><span class="line">Topic: hello PartitionCount: 5 ReplicationFactor: 2 Configs: </span><br><span class="line"> Topic: hello Partition: 0 Leader: 2 Replicas: 2,0 I</span><br><span class="line"> Topic: hello Partition: 1 Leader: 0 Replicas: 0,1 I</span><br><span class="line"> Topic: hello Partition: 2 Leader: 1 Replicas: 1,2 I</span><br><span class="line"> Topic: hello Partition: 3 Leader: 2 Replicas: 2,1 I</span><br><span class="line"> Topic: hello Partition: 4 Leader: 0 Replicas: 0,2</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="删除Topic"><a href="#删除Topic" class="headerlink" title="删除Topic"></a>删除Topic</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">删除Kafka中的指定Topic</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --delete --zookeeper localhost 2181 --topic hello</span><br><span class="line">Topic hello is marked for deletion.</span><br><span class="line">Note: This will have no impact if delete.topic.enable is not set to true.</span><br><span class="line"></span><br><span class="line">删除操作是不可逆的，删除Topic会删除它里面的所有数据</span><br><span class="line"></span><br><span class="line">注意：Kafka从1.0.0开始默认开启了删除操作，之前的版本只会把Topic标记为删除状态，需要设置delete.topic.enable为true才可以真正删除</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果不想开启删除功能，可以设置delete.topic.enable为false，这样删除topic的时候只会把它标记为删除状态，此时这个topic依然可以正常使用。</span><br><span class="line">delete.topic.enable可以配置在server.properties文件中</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kafka中的生产者和消费者"><a href="#Kafka中的生产者和消费者" class="headerlink" title="Kafka中的生产者和消费者"></a>Kafka中的生产者和消费者</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">前面我们学习了Kafka中的topic的创建方式，下面我们可以向topic中生产数据以及消费数据了</span><br><span class="line">生产数据需要用到生产者</span><br><span class="line">消费数据需要用到消费者</span><br><span class="line"></span><br><span class="line">kafka默认提供了基于控制台的生产者和消费者，方便测试使用</span><br><span class="line">生产者： bin&#x2F;kafka-console-producer.sh</span><br><span class="line">消费者： bin&#x2F;kafka-console-consumer.sh</span><br></pre></td></tr></table></figure>
+
+<h4 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">先来看一下如何向里面生产数据</span><br><span class="line">直接使用kafka提供的基于控制台的生产者</span><br><span class="line">先创建一个topic【5个分区，2个副本】：</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --create --zookeeper localhost 2181 --partitions 5 --replication-factor 2 --topic hello</span><br><span class="line">Created topic hello.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">向这个topic中生产数据</span><br><span class="line">broker-list：kafka的服务地址[多个用逗号隔开](这里需要用到kafka地址，上面创建topic时指定的是zookeeper，这里用本地地址和使用bigdata01:9092,bigdata02:9092,bigdata03:9092是一样的)</span><br><span class="line">topic：topic名称</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-console-producer.sh --broker-list localhost:9092 --topic hello</span><br><span class="line">&gt;hehe</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="消费者"><a href="#消费者" class="headerlink" title="消费者"></a>消费者</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">下面来创建一个消费者消费topic中的数据</span><br><span class="line">bootstrap-server：kafka的服务地址</span><br><span class="line">topic:具体的topic下面来创建一个消费者消费topic中的数据</span><br><span class="line">1 [root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic hello</span><br><span class="line"></span><br><span class="line">发现消费不到刚才生产的数据，为什么呢？</span><br><span class="line">因为kafka的消费者默认是消费最新生产的数据，如果想消费之前生产的数据需要添加一个参数--from-beginning，表示从头消费的意思</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic hello --from-beginning</span><br><span class="line"></span><br><span class="line">hehe</span><br><span class="line"></span><br><span class="line">这里创建消费者的机器01、02、03都可以</span><br></pre></td></tr></table></figure>
+
+<h4 id="案例：QQ群聊天"><a href="#案例：QQ群聊天" class="headerlink" title="案例：QQ群聊天"></a>案例：QQ群聊天</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">通过kafka可以模拟QQ群聊天的功能，我们来看一下</span><br><span class="line">首先在kafka中创建一个新的topic，可以认为是我们在QQ里面创建了一个群，群号是88888888</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --create --zookeeper localhost 2181 --partitions 5 --replication-factor 2 --topic 88888888</span><br><span class="line">Created topic 88888888.</span><br><span class="line"></span><br><span class="line">然后我把你们都拉到这个群里面，这样我在群里面发消息你们就都能收到了</span><br><span class="line">在bigdata02和bigdata03上开启消费者，可以认为是把这两个人拉到群里面了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata02 kafka_2.12-2.4.1]# bin&#x2F;kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic 88888888</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata03 kafka_2.12-2.4.1]# bin&#x2F;kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic 88888888</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">然后我在bigdata01上开启生产者发消息，这样bigdata02和bigdata03都是可以收到的。</span><br><span class="line">这样就可以认为在群里的人都能收到我发的消息，类似于发广播。</span><br><span class="line">这个其实主要利用了kafka中的多消费者的特性，每个消费者都可以消费到相同的数据</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-console-producer.sh --broker-list localhost:9092 --topic 88888888 </span><br><span class="line">&gt;hello everyone</span><br></pre></td></tr></table></figure>
+
+<h2 id="Kafka核心扩展内容"><a href="#Kafka核心扩展内容" class="headerlink" title="Kafka核心扩展内容"></a>Kafka核心扩展内容</h2><h3 id="Broker扩展"><a href="#Broker扩展" class="headerlink" title="Broker扩展"></a>Broker扩展</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Broker的参数可以配置在server.properties这个配置文件中，Broker中支持的完整参数在官方文档中有体现</span><br><span class="line">具体链接为：</span><br><span class="line">http:&#x2F;&#x2F;kafka.apache.org&#x2F;24&#x2F;documentation.html#brokerconfigs</span><br><span class="line">针对Broker的参数，我们主要分析两块</span><br></pre></td></tr></table></figure>
+
+<h4 id="Log-Flush-Policy"><a href="#Log-Flush-Policy" class="headerlink" title="Log Flush Policy"></a>Log Flush Policy</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">1：Log Flush Policy：设置数据flush到磁盘的时机</span><br><span class="line">为了减少磁盘写入的次数,broker会将消息暂时缓存起来,当消息的个数达到一定阀值或者过了一定的时间间隔后,再flush到磁盘,这样可以减少磁盘IO调用的次数。</span><br><span class="line"></span><br><span class="line">这块主要通过两个参数控制</span><br><span class="line">log.flush.interval.messages 一个分区的消息数阀值，达到该阈值则将该分区的数据flush到磁盘，注意这里是针对分区，因为topic是一个逻辑概念，分区是真实存在的，每个分区会在磁盘上产生一个目录</span><br><span class="line">[root@bigdata01 kafka-logs]# ll</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:12 88888888-0</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:12 88888888-3</span><br><span class="line">-rw-r--r--. 1 root root 4 Jun 8 15:23 cleaner-offset-checkpoint</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-0</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-12</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-15</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-18</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-21</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-24</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-27</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-3</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-30</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-33</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-36</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-39</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-42</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-45</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-48</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-6</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:08 __consumer_offsets-9</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:04 hello-0</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:04 hello-1</span><br><span class="line">drwxr-xr-x. 2 root root 141 Jun 8 17:04 hello-4 </span><br><span class="line">hello topic有5个分区，但这里只有2个目录的原因是：没写几条数据</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304160022785.png" alt="image-20230416002248398"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这个参数的默认值为9223372036854775807，long的最大值</span><br><span class="line">默认值太大了，所以建议修改，可以使用server.properties中针对这个参数指定的值10000，需要去掉注释之后这个参数才生效。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log.flush.interval.ms间隔指定时间</span><br><span class="line">默认间隔指定的时间将内存中缓存的数据flush到磁盘中，由文档可知，这个参数的默认值为null，此时会使用log.flush.scheduler.interval.ms参数的值， log.flush.scheduler.interval.ms参数的值默认是 9223372036854775807，long的最大值</span><br><span class="line"></span><br><span class="line">所以这个值也建议修改，可以使用server.properties中针对这个参数指定的值1000，单位是毫秒，表示每1秒写一次磁盘，这个参数也需要去掉注释之后才生效</span><br></pre></td></tr></table></figure>
+
+<h4 id="Log-Retention-Policy"><a href="#Log-Retention-Policy" class="headerlink" title="Log Retention Policy"></a>Log Retention Policy</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">设置数据保存周期，默认7天</span><br><span class="line">kafka中的数据默认会保存7天，如果kafka每天接收的数据量过大，这样是很占磁盘空间的，建议修改数据保存周期，我们之前在实际工作中是将数据保存周期改为了1天。</span><br><span class="line"></span><br><span class="line">数据保存周期主要通过这几个参数控制</span><br><span class="line">log.retention.hours，这个参数默认值为168，单位是小时，就是7天，可以在这调整数据保存的时间，超过这个时间数据会被自动删除</span><br><span class="line">log.retention.bytes，这个参数表示当分区的文件达到一定大小的时候会删除它，如果设置了按照指定周期删除数据文件，这个参数不设置也可以，这个参数默认是没有开启的</span><br><span class="line">log.retention.check.interval.ms，这个参数表示检测的间隔时间，单位是毫秒，默认值是300000，就是5分钟，表示每5分钟检测一次文件看是否满足删除的时机</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">默认根据时间就行了，后期在时间范围内还可以从kafka中恢复数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="Producer扩展"><a href="#Producer扩展" class="headerlink" title="Producer扩展"></a>Producer扩展</h3><h4 id="producer发送数据到partition的方式"><a href="#producer发送数据到partition的方式" class="headerlink" title="producer发送数据到partition的方式"></a>producer发送数据到partition的方式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Producer默认是随机将数据发送到topic的不同分区中，也可以根据用户设置的算法来根据消息的key来计算输入到哪个partition里面</span><br><span class="line"></span><br><span class="line">此时需要通过partitioner来控制，这个知道就行了，因为在实际工作中一般在向kafka中生产数据的都是不带key的，只有数据内容，所以一般都是使用随机的方式发送数据</span><br></pre></td></tr></table></figure>
+
+<h4 id="producer的数据通讯方式"><a href="#producer的数据通讯方式" class="headerlink" title="producer的数据通讯方式"></a>producer的数据通讯方式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">在这里有一个需要注意的内容就是</span><br><span class="line">针对producer的数据通讯方式：同步发送和异步发送</span><br><span class="line"></span><br><span class="line">同步是指：生产者发出数据后，等接收方发回响应以后再发送下个数据的通讯方式。</span><br><span class="line">异步是指：生产者发出数据后，不等接收方发回响应，接着发送下个数据的通讯方式。</span><br><span class="line"></span><br><span class="line">具体的数据通讯策略是由acks参数控制的</span><br><span class="line">acks默认为1，表示需要Leader节点回复收到消息，这样生产者才会发送下一条数据</span><br><span class="line">acks：all，表示需要所有Leader+副本节点回复收到消息（acks&#x3D;-1），这样生产者才会发送下一条数据</span><br><span class="line">acks：0，表示不需要任何节点回复，生产者会继续发送下一条数据</span><br><span class="line">再来看一下这个图：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304152350669.png" alt="image-20230415235025189"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">我们在向hello这个topic生产数据的时候，可以在生产者中设置acks参数，</span><br><span class="line">acks设置为1，表示我们在向hello这个topic的partition1这个分区写数据的时候，只需要让leader所在的broker1这个节点回复确认收到的消息就可以了，这样生产者就可以发送下一条数据了</span><br><span class="line"></span><br><span class="line">如果acks设置为all，则需要partition1的这两个副本所在的节点(包含Leader)都回复收到消息，生产者才会发送下一条数据</span><br><span class="line"></span><br><span class="line">如果acks设置为0，表示生产者不会等待任何partition所在节点的回复，它只管发送数据，不管你有没有收到，所以这种情况丢失数据的概率比较高。</span><br></pre></td></tr></table></figure>
+
+<h5 id="面试"><a href="#面试" class="headerlink" title="面试"></a>面试</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">针对这块在面试的时候会有一个面试题：Kafka如何保证数据不丢？</span><br><span class="line">其实就是通过acks机制保证的，如果设置acks为all，则可以保证数据不丢，因为此时把数据发送给kafka之后，会等待对应partition所在的所有leader和副本节点都确认收到消息之后才会认为数据发送成功了，所以在这种策略下，只要把数据发送给kafka之后就不会丢了。</span><br><span class="line"></span><br><span class="line">如果acks设置为1，则当我们把数据发送给partition之后，partition的leader节点也确认收到了，但是leader回复完确认消息之后，leader对应的节点就宕机了，副本partition还没来得及将数据同步过去，所以会存在丢失的可能性。</span><br><span class="line">不过如果宕机的是副本partition所在的节点，则数据是不会丢的</span><br><span class="line"></span><br><span class="line">如果acks设置为0的话就表示是顺其自然了，只管发送，不管kafka有没有收到，这种情况表示对数据丢不丢都无所谓了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Consumer扩展"><a href="#Consumer扩展" class="headerlink" title="Consumer扩展"></a>Consumer扩展</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">在消费者中还有一个消费者组的概念</span><br><span class="line">每个consumer属于一个消费者组，通过group.id指定消费者组</span><br><span class="line"></span><br><span class="line">那组内消费和组间消费有什么区别吗？</span><br><span class="line">组内：消费者组内的所有消费者消费同一份数据；</span><br><span class="line"></span><br><span class="line">注意：在同一个消费者组中，一个partition同时只能有一个消费者消费数据</span><br><span class="line">如果消费者的个数小于分区的个数，一个消费者会消费多个分区的数据。</span><br><span class="line">如果消费者的个数大于分区的个数，则多余的消费者不消费数据</span><br><span class="line">所以，对于一个topic,同一个消费者组中推荐不能有多于分区个数的消费者,否则将意味着某些消费者将无法获得消息。</span><br><span class="line"></span><br><span class="line">组间：多个消费者组消费相同的数据，互不影响。</span><br><span class="line">来看下面这个图，加深一下理解</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304160000840.png" alt="image-20230416000001364"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Kafka集群有两个节点，Broker1和Broker2</span><br><span class="line">集群内有一个topic，这个topic有4个分区，P0,P1,P2,P3</span><br><span class="line"></span><br><span class="line">下面有两个消费者组</span><br><span class="line">Consumer Group A和Consumer Group B</span><br><span class="line">其中Consumer Group A中有两个消费者C1和C2，由于这个topic有4个分区，所以，C1负责消费两个分区的数据，C2负责消费两个分区的数据，这个属于组内消费</span><br><span class="line">Consumer Group B有5个消费者，C3~C7，其中C3,C4,C5,C6分别消费一个分区的数据，而C7就是多余出来的了，因为现在这个消费者组内的消费者的数量比对应的topic的分区数量还多，但是一个分区同时只能被一个消费者消费，所以就会有一个消费者处于空闲状态。这个也属于组内消费</span><br><span class="line">Consumer Group A和Consumer Group B这两个消费者组属于组间消费，互不影响。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Topic、Partition扩展"><a href="#Topic、Partition扩展" class="headerlink" title="Topic、Partition扩展"></a>Topic、Partition扩展</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">每个partition在存储层面是append log文件。</span><br><span class="line">新消息都会被直接追加到log文件的尾部，每条消息在log文件中的位置称为offset(偏移量)。</span><br><span class="line">越多partitions可以容纳更多的consumer,有效提升并发消费的能力。</span><br><span class="line"></span><br><span class="line">具体什么时候增加topic的数量？什么时候增加partition的数量呢？</span><br><span class="line"></span><br><span class="line">业务类型增加需要增加topic、数据量大需要增加partition</span><br></pre></td></tr></table></figure>
+
+<h3 id="Message扩展"><a href="#Message扩展" class="headerlink" title="Message扩展"></a>Message扩展</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">每条Message包含了以下三个属性：</span><br><span class="line">1. offset对应类型：long，表示此消息在一个partition中的起始的位置。可以认为offset是partition中Message的id，自增的</span><br><span class="line">2. MessageSize 对应类型：int32 此消息的字节大小。</span><br><span class="line">3. data，类型为bytes,是message的具体内容。</span><br><span class="line">看这个图，加深对Topic、Partition、Message的理解</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304160016235.png" alt="image-20230416001618719"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里也体现了kafka高吞吐量的原因：磁盘顺序读写由于内存随机访问</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2%5C202304160022785.png" alt></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.html">大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年04月15日 - 22:04</p>
+  <p><span>最后更新:</span>2023年04月16日 - 00:04</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.html" title="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-2.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AD%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%A0%B8%E5%BF%83API%E4%B9%8BTableAPI%E5%92%8CSQL-5.html" rel="next" title="大数据开发工程师-第十六周 Flink极速上手篇-Flink核心API之TableAPI和SQL-5">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十六周 Flink极速上手篇-Flink核心API之TableAPI和SQL-5
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-3.html" rel="prev" title="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-3">
+                大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">341</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">119</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大数据开发工程师-第十四周-消息队列之Kafka从入门到小牛-2"><span class="nav-number">1.</span> <span class="nav-text">大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka使用初体验"><span class="nav-number">1.1.</span> <span class="nav-text">Kafka使用初体验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka中Topic的操作"><span class="nav-number">1.1.1.</span> <span class="nav-text">Kafka中Topic的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#新增Topic"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">新增Topic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询Topic"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">查询Topic</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#查询Kafka中的所有Topic列表"><span class="nav-number">1.1.1.2.1.</span> <span class="nav-text">查询Kafka中的所有Topic列表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#查看指定Topic的详细信息"><span class="nav-number">1.1.1.2.2.</span> <span class="nav-text">查看指定Topic的详细信息</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改Topic"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">修改Topic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除Topic"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">删除Topic</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka中的生产者和消费者"><span class="nav-number">1.1.2.</span> <span class="nav-text">Kafka中的生产者和消费者</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生产者"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">生产者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消费者"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">消费者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例：QQ群聊天"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">案例：QQ群聊天</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka核心扩展内容"><span class="nav-number">1.2.</span> <span class="nav-text">Kafka核心扩展内容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Broker扩展"><span class="nav-number">1.2.1.</span> <span class="nav-text">Broker扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Log-Flush-Policy"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">Log Flush Policy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Log-Retention-Policy"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">Log Retention Policy</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer扩展"><span class="nav-number">1.2.2.</span> <span class="nav-text">Producer扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#producer发送数据到partition的方式"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">producer发送数据到partition的方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#producer的数据通讯方式"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">producer的数据通讯方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#面试"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">面试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer扩展"><span class="nav-number">1.2.3.</span> <span class="nav-text">Consumer扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Topic、Partition扩展"><span class="nav-number">1.2.4.</span> <span class="nav-text">Topic、Partition扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message扩展"><span class="nav-number">1.2.5.</span> <span class="nav-text">Message扩展</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">476.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
