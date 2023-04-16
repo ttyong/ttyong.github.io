@@ -89,14 +89,33 @@
 
 
 
+<meta name="description" content="Kafka技巧篇Kafka集群参数调忧JVM参数调忧1234默认启动的Broker进程只会使用1G内存，在实际使用中会导致进程频繁GC，影响Kafka集群的性能和稳定性通过 jstat -gcutil &lt;pid&gt; 1000 查看到kafka进程GC情况主要看 YGC,YGCT,FGC,FGCT 这几个参数，如果这几个值不是很大，就没什么问题  1234YGC：young gc发生">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-4">
 <meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="Kafka技巧篇Kafka集群参数调忧JVM参数调忧1234默认启动的Broker进程只会使用1G内存，在实际使用中会导致进程频繁GC，影响Kafka集群的性能和稳定性通过 jstat -gcutil &lt;pid&gt; 1000 查看到kafka进程GC情况主要看 YGC,YGCT,FGC,FGCT 这几个参数，如果这几个值不是很大，就没什么问题  1234YGC：young gc发生">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162304926.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162330282.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162330225.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162331098.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162331745.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162356804.png">
+<meta property="og:image" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4%5C202304162355045.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162355502.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170003610.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170003829.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170008382.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170007471.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170007023.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170016794.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170016835.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170017969.png">
 <meta property="article:published_time" content="2023-04-15T16:08:29.000Z">
-<meta property="article:modified_time" content="2023-04-15T16:08:29.215Z">
+<meta property="article:modified_time" content="2023-04-16T16:21:23.023Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162304926.png">
 
 
 
@@ -345,6 +364,39 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -371,7 +423,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  2.3k
                 </span>
               
 
@@ -387,7 +439,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  9
                 </span>
               
             </div>
@@ -411,15 +463,79 @@
         <hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
+<h1 id="Kafka技巧篇"><a href="#Kafka技巧篇" class="headerlink" title="Kafka技巧篇"></a>Kafka技巧篇</h1><h2 id="Kafka集群参数调忧"><a href="#Kafka集群参数调忧" class="headerlink" title="Kafka集群参数调忧"></a>Kafka集群参数调忧</h2><h3 id="JVM参数调忧"><a href="#JVM参数调忧" class="headerlink" title="JVM参数调忧"></a>JVM参数调忧</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">默认启动的Broker进程只会使用1G内存，在实际使用中会导致进程频繁GC，影响Kafka集群的性能和稳</span><br><span class="line">定性</span><br><span class="line">通过 jstat -gcutil &lt;pid&gt; 1000 查看到kafka进程GC情况</span><br><span class="line">主要看 YGC,YGCT,FGC,FGCT 这几个参数，如果这几个值不是很大，就没什么问题</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">YGC：young gc发生的次数</span><br><span class="line">YGCT：young gc消耗的时间</span><br><span class="line">FGC：full gc发生的次数</span><br><span class="line">FGCT：full gc消耗的时间</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# jps</span><br><span class="line">13248 Kafka</span><br><span class="line">18087 Jps</span><br><span class="line">1679 QuorumPeerMain</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# jstat -gcutil 13248 1000</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162304926.png" alt="image-20230416230418172"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果你发现YGC很频繁，或者FGC很频繁，就说明内存分配的少了</span><br><span class="line">此时需要修改kafka-server-start.sh中的KAFKA_HEAP_OPTS</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">export KAFKA_HEAP_OPTS&#x3D;&quot;-Xmx10g -Xms10g -XX:MetaspaceSize&#x3D;96m -XX:+UseG1GC -XX</span><br><span class="line"></span><br><span class="line">xms:初始化内存</span><br><span class="line">xmx:最大内存</span><br><span class="line">建议设置成一样大，否则可能进行内存交换</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这个配置表示给kafka分配了10G内存</span><br></pre></td></tr></table></figure>
 
+<h3 id="Replication参数调忧"><a href="#Replication参数调忧" class="headerlink" title="Replication参数调忧"></a>Replication参数调忧</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">replica.socket.timeout.ms&#x3D;60000</span><br><span class="line">这个参数的默认值是30秒，它是控制partiton副本之间socket通信的超时时间，如果设置的太小，有可能会由于网络原因导致造成误判，认为某一个partition副本连不上了。</span><br><span class="line"></span><br><span class="line">replica.lag.time.max.ms&#x3D;50000</span><br><span class="line">如果一个副本在指定的时间内没有向leader节点发送任何请求，或者在指定的时间内没有同步完leader中的数据，则leader会将这个节点从Isr列表中移除。</span><br><span class="line"></span><br><span class="line">这个参数的值默认为10秒</span><br><span class="line">如果网络不好，或者kafka压力较大，建议调大该值，否则可能会频繁出现副本丢失，进而导致集群需要频繁复制副本，导致集群压力更大，会陷入一个恶性循环</span><br></pre></td></tr></table></figure>
 
+<h3 id="Log参数调优"><a href="#Log参数调优" class="headerlink" title="Log参数调优"></a>Log参数调优</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">这块是针对Kafka中数据文件的删除时机进行设置，不是对kafka本身的日志参数配置</span><br><span class="line">log.retention.hours&#x3D;24</span><br><span class="line">这个参数默认值为168，单位是小时，就是7天，默认对数据保存7天，可以在这调整数据保存的时间，我们在实际工作中改为了只保存1天，因为kafka中的数据我们会在hdfs中进行备份，保存一份，所以就没有必要在kafka中保留太长时间了。</span><br><span class="line"></span><br><span class="line">在kafka中保留只是为了能够让你在指定的时间内恢复数据，或者重新消费数据，如果没有这种需求，那就没有必要设置太长时间。</span><br><span class="line"></span><br><span class="line">这里分析的Replication的参数和Log参数都是在 server.properties文件中进行配置</span><br><span class="line"></span><br><span class="line">JVM参数是在kafka-server-start.sh脚本中配置</span><br><span class="line"></span><br><span class="line">broker参数调优更多在开发文档里有</span><br></pre></td></tr></table></figure>
 
+<h2 id="Kafka-Topic命名小技巧"><a href="#Kafka-Topic命名小技巧" class="headerlink" title="Kafka Topic命名小技巧"></a>Kafka Topic命名小技巧</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">针对Kafka中Topic命名的小技巧</span><br><span class="line">建议在给topic命名的时候在后面跟上r2p10之类的内容</span><br><span class="line">r2：表示Partition的副本因子是2</span><br><span class="line">p10：表示这个Topic的分区数是10</span><br><span class="line"></span><br><span class="line">这样的好处是后期我们如果要写消费者消费指定topic的数据，通过topic的名称我们就知道应该设置多少个消费者消费数据效率最高。</span><br><span class="line">因为一个partition同时只能被一个消费者消费，所以效率最高的情况就是消费者的数量和topic的分区数量保持一致。在这里通过topic的名称就可以直接看到，一目了然。</span><br><span class="line"></span><br><span class="line">但是也有一个缺点，就是后期如果我们动态调整了topic的partiton，那么这个topic名称上的partition数量就不准了，针对这个topic，建议大家一开始的时候就提前预估一下，可以多设置一些partition，我们</span><br><span class="line">在工作中的时候针对一些数据量比较大的topic一般会设置40-50个partition，数据量少的topic一般设置5-10个partition，这样后期调整topic partiton数量的场景就比较少了。</span><br></pre></td></tr></table></figure>
 
+<h2 id="Kafka集群监控管理工具"><a href="#Kafka集群监控管理工具" class="headerlink" title="Kafka集群监控管理工具"></a>Kafka集群监控管理工具</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">现在我们操作Kafka都是在命令行界面中通过脚本操作的，后面需要传很多参数，用起来还是比较麻烦的，那kafka没有提供web界面的支持吗？</span><br><span class="line">很遗憾的告诉你，Apache官方并没有提供，不过好消息是有一个由雅虎开源的一个工具，目前用起来还是不错的。</span><br><span class="line"></span><br><span class="line">它之前的名字叫KafkaManager，后来改名字了，叫CMAK</span><br><span class="line">CMAK是目前最受欢迎的Kafka集群管理工具，最早由雅虎开源，用户可以在Web界面上操作Kafka集群</span><br><span class="line">可以轻松检查集群状态(Topic、Consumer、Offset、Brokers、Replica、Partition)</span><br><span class="line"></span><br><span class="line">那下面我们先去下载这个CMAK</span><br><span class="line">需要到github上面去下载</span><br><span class="line">在github里面搜索CMAK即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载CMAK"><a href="#下载CMAK" class="headerlink" title="下载CMAK"></a>下载CMAK</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162330282.png" alt="image-20230416233039880"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162330225.png" alt="image-20230416233050053"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162331098.png" alt="image-20230416233123771"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162331745.png" alt="image-20230416233141274"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：由于cmak-3.0.0.4.zip版本是在java11这个版本下编译的，所以在运行的时候也需要使用java11这个版本，我们目前服务器上使用的是java8这个版本</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我们为什么不使用java11版本呢？因为自2019年1月1日1起，java8之后的更新版本在商业用途的时候就需要收费授权了。</span><br><span class="line">在这针对cmak-3.0.0.4这个版本，如果我们想要使用的话有两种解决办法</span><br><span class="line">1：下载cmak的源码，使用jdk8编译</span><br><span class="line">2：额外安装一个jdk11(自己用不属于商业用途，现实公司很少有用java8以后的)</span><br><span class="line">如果想要编译的话需要安装sbt这个工具对源码进行编译，sbt是Scala 的构建工具, 类似于Maven。</span><br><span class="line"></span><br><span class="line">由于我们在这使用不属于商业用途，所以使用jdk11是没有问题的，那就不用重新编译了。</span><br><span class="line">下载jdk11，jdk-11.0.7_linux-x64_bin.tar.gz</span><br><span class="line">将jdk11的安装包上传到bigdata01的&#x2F;data&#x2F;soft目录下</span><br><span class="line">只需要解压即可，不需要配置环境变量，因为只有cmak这个工具才需要使用jdk11</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 soft]# tar -zxvf jdk-11.0.7_linux-x64_bin.tar.gz</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">接下来把 cmak-3.0.0.4.zip 上传到bigdata01的&#x2F;data&#x2F;soft目录下</span><br><span class="line">1：解压</span><br><span class="line">[root@bigdata01 soft]# unzip cmak-3.0.0.4.zip </span><br><span class="line">-bash: unzip: command not found</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">注意：如果提示-bash: unzip: command not found，则说明目前不支持unzip命令，可以使用yum在线安装</span><br><span class="line">建议先清空一下yum缓存，否则使用yum可能无法安装unzip</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 soft]# yum clean all </span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line">Cleaning repos: base extras updates</span><br><span class="line">Cleaning up list of fastest mirrors</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# yum install -y unzip</span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line">.....</span><br><span class="line">Running transaction</span><br><span class="line"> Installing : unzip-6.0-21.el7.x86_64 1&#x2F;1 </span><br><span class="line"> Verifying : unzip-6.0-21.el7.x86_64 1&#x2F;1 </span><br><span class="line">Installed:</span><br><span class="line"> unzip.x86_64 0:6.0-21.el7 </span><br><span class="line">Complete!</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">再重新解压</span><br><span class="line">[root@bigdata01 soft]# unzip cmak-3.0.0.4.zip</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置CMAK"><a href="#配置CMAK" class="headerlink" title="配置CMAK"></a>配置CMAK</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">2：修改CMAK配置</span><br><span class="line">首先修改bin目录下的cmak脚本</span><br><span class="line">在里面配置JAVA_HOME指向jdk11的安装目录，否则默认会使用jdk8</span><br><span class="line">[root@bigdata01 soft]# cd cmak-3.0.0.4</span><br><span class="line">[root@bigdata01 cmak-3.0.0.4]# cd bin&#x2F;</span><br><span class="line">[root@bigdata01 bin]# vi cmak</span><br><span class="line">....</span><br><span class="line">JAVA_HOME&#x3D;&#x2F;data&#x2F;soft&#x2F;jdk-11.0.7</span><br><span class="line">.....</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">然后修改conf目录下的application.conf文件</span><br><span class="line">只需要在里面增加一行cmak.zkhosts参数的配置即可，指定zookeeper的地址</span><br><span class="line"></span><br><span class="line">注意：在这里指定zookeeper地址主要是为了让CMAK在里面保存数据，这个zookeeper地址不一定是kafka集群使用的那个zookeeper集群，随便哪个zookeeper集群都可以。(cmak需要报错它自己的东西)</span><br><span class="line">[root@bigdata01 cmak-3.0.0.4]# cd conf&#x2F;</span><br><span class="line">[root@bigdata01 conf]# vi application.conf </span><br><span class="line">....</span><br><span class="line">cmak.zkhosts&#x3D;&quot;bigdata01:2181,bigdata02:2181,bigdata03:2181&quot;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">3：修改kafka启动配置</span><br><span class="line">想要在CMAK中查看kafka的一些指标信息，在启动kafka的时候需要指定JMX_PORT</span><br><span class="line"></span><br><span class="line">停止kafka集群</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-server-stop.sh </span><br><span class="line">[root@bigdata02 kafka_2.12-2.4.1]# bin&#x2F;kafka-server-stop.sh </span><br><span class="line">[root@bigdata03 kafka_2.12-2.4.1]# bin&#x2F;kafka-server-stop.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">重新启动kafka集群，指定JXM_PORT</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# JMX_PORT&#x3D;9988 bin&#x2F;kafka-server-start.sh -d</span><br><span class="line">[root@bigdata02 kafka_2.12-2.4.1]# JMX_PORT&#x3D;9988 bin&#x2F;kafka-server-start.sh -d</span><br><span class="line">[root@bigdata03 kafka_2.12-2.4.1]# JMX_PORT&#x3D;9988 bin&#x2F;kafka-server-start.sh -d</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动CMAK"><a href="#启动CMAK" class="headerlink" title="启动CMAK"></a>启动CMAK</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">4：启动cmak</span><br><span class="line">[root@bigdata01 cmak-3.0.0.4]# bin&#x2F;cmak -Dconfig.file&#x3D;conf&#x2F;application.conf -</span><br><span class="line"></span><br><span class="line">如果想把cmak放在后台执行的话需要添加上nohup和&amp;</span><br><span class="line">1 [root@bigdata01 cmak-3.0.0.4]# nohup bin&#x2F;cmak -Dconfig.file&#x3D;conf&#x2F;application.conf -Dhttp.port&#x3D;9001 &amp;</span><br><span class="line"></span><br><span class="line">cmak默认监听端口9000，但这样和hdfs的端口重复了</span><br></pre></td></tr></table></figure>
+
+<h3 id="访问CMAK"><a href="#访问CMAK" class="headerlink" title="访问CMAK"></a>访问CMAK</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">5：访问cmak</span><br><span class="line">http:&#x2F;&#x2F;bigdata01:9001&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162356804.png" alt="image-20230416235630637"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6：操作CMAK</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.htm/D:%5CGitHub%5Cmyblog%5Csource_posts%5C%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4%5C202304162355045.png" alt="image-20230416235520700"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304162355502.png" alt="image-20230416235548395"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这几个参数配置好了以后还需要配置以下几个线程池相关的参数，这几个参数默认值是1，在保存的时候会提示需要大于1，所以可以都改为10</span><br><span class="line">最后点击Save按钮保存即可</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brokerViewThreadPoolSize：10</span><br><span class="line">offsetCacheThreadPoolSize：10</span><br><span class="line">kafkaAdminClientThreadPoolSize：10</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">最后进来是这样的</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170003610.png" alt="image-20230417000304032"></p>
+<h4 id="查看kafak集群的所有broker信息"><a href="#查看kafak集群的所有broker信息" class="headerlink" title="查看kafak集群的所有broker信息"></a>查看kafak集群的所有broker信息</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170003829.png" alt="image-20230417000358325"></p>
+<h4 id="查看kafak集群的所有topic信息"><a href="#查看kafak集群的所有topic信息" class="headerlink" title="查看kafak集群的所有topic信息"></a>查看kafak集群的所有topic信息</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170008382.png" alt="image-20230417000847024"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170007471.png" alt="image-20230417000718104"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170007023.png" alt="image-20230417000734624"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">点击topic的消费者信息是可以进来查看的</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170016794.png" alt="image-20230417001617419"></p>
+<h4 id="创建一个topic"><a href="#创建一个topic" class="headerlink" title="创建一个topic"></a>创建一个topic</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170016835.png" alt="image-20230417001657421"></p>
+<h4 id="给topic增加分区"><a href="#给topic增加分区" class="headerlink" title="给topic增加分区"></a>给topic增加分区</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304170017969.png" alt="image-20230417001716328"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这是CMAK中常见的功能，当然了这里面还要一些我们没有说到的功能就留给大家以后来发掘了。</span><br></pre></td></tr></table></figure>
 
 
 
@@ -449,7 +565,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.html">大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-4</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年04月16日 - 00:04</p>
-  <p><span>最后更新:</span>2023年04月16日 - 00:04</p>
+  <p><span>最后更新:</span>2023年04月17日 - 00:04</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.html" title="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-4">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-4.html" aria-label="复制成功！"></i></span>
   </p>
@@ -585,9 +701,18 @@
       
       
         
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
       
 
-	<section class="site-overview sidebar-panel sidebar-panel-active">
+	<section class="site-overview sidebar-panel">
 	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
 		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
 		<p class="site-author-name" itemprop="name">TTYONG</p>
@@ -707,6 +832,22 @@
 	</section>
 	
 	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka技巧篇"><span class="nav-number">1.</span> <span class="nav-text">Kafka技巧篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka集群参数调忧"><span class="nav-number">1.1.</span> <span class="nav-text">Kafka集群参数调忧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM参数调忧"><span class="nav-number">1.1.1.</span> <span class="nav-text">JVM参数调忧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replication参数调忧"><span class="nav-number">1.1.2.</span> <span class="nav-text">Replication参数调忧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Log参数调优"><span class="nav-number">1.1.3.</span> <span class="nav-text">Log参数调优</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-Topic命名小技巧"><span class="nav-number">1.2.</span> <span class="nav-text">Kafka Topic命名小技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka集群监控管理工具"><span class="nav-number">1.3.</span> <span class="nav-text">Kafka集群监控管理工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载CMAK"><span class="nav-number">1.3.1.</span> <span class="nav-text">下载CMAK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置CMAK"><span class="nav-number">1.3.2.</span> <span class="nav-text">配置CMAK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动CMAK"><span class="nav-number">1.3.3.</span> <span class="nav-text">启动CMAK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问CMAK"><span class="nav-number">1.3.4.</span> <span class="nav-text">访问CMAK</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看kafak集群的所有broker信息"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">查看kafak集群的所有broker信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看kafak集群的所有topic信息"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">查看kafak集群的所有topic信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建一个topic"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">创建一个topic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#给topic增加分区"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">给topic增加分区</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
 	
 
 	
@@ -735,7 +876,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">476.4k</span>
+    <span title="Site words total count">480.3k</span>
   
 </div>
 
