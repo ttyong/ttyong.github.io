@@ -101,7 +101,7 @@
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/17/HITpqK.md.png">
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/17/HITCVO.md.png">
 <meta property="article:published_time" content="2022-02-18T04:18:46.000Z">
-<meta property="article:modified_time" content="2022-02-22T04:18:01.302Z">
+<meta property="article:modified_time" content="2023-04-17T08:53:14.854Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="Flume">
 <meta name="twitter:card" content="summary">
@@ -470,9 +470,9 @@
 <h3 id="HDFS"><a href="#HDFS" class="headerlink" title="HDFS"></a>HDFS</h3><p><a href="https://imgtu.com/i/HIozKx" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/17/HIozKx.md.png" alt="HIozKx.md.png"></a></p>
 <p><a href="https://imgtu.com/i/HITpqK" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/17/HITpqK.md.png" alt="HITpqK.md.png"></a></p>
 <p><a href="https://imgtu.com/i/HITCVO" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/17/HITCVO.md.png" alt="HITCVO.md.png"></a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hdfs.path是必填项，指定hdfs上的存储目录</span><br><span class="line">看这里例子中还指定了filePrefix参数，这个是一个文件前缀，会在hdfs上生成的文件前面加上这个前缀，这个属于可选项，有需求的话可以加上</span><br><span class="line">一般在这我们需要设置writeFormat和fileType这两个参数</span><br><span class="line">默认情况下writeFormat的值是Writable，建议改为Text，看后面的解释，如果后期想使用hive或者impala操作这份数据的话，必须在生成数据之前设置为Text，Text表示是普通文本数据</span><br><span class="line">fileType默认是SequenceFile，还支持DataStream 和 CompressedStream ，DataStream 不会对输出数据进行压缩，CompressedStream 会对输出数据进行压缩，在这里我们先不使用压缩格式的，所以选择DataStream</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hdfs.path是必填项，指定hdfs上的存储目录</span><br><span class="line">看这里例子中还指定了filePrefix参数，这个是一个文件前缀，会在hdfs上生成的文件前面加上这个前缀，这个属于可选项，有需求的话可以加上</span><br><span class="line">一般在这我们需要设置writeFormat和fileType这两个参数</span><br><span class="line"></span><br><span class="line">默认情况下writeFormat的值是Writable，建议改为Text，看后面的解释，如果后期想使用hive或者impala操作这份数据的话，必须在生成数据之前设置为Text，Text表示是普通文本数据</span><br><span class="line">fileType默认是SequenceFile，还支持DataStream 和CompressedStream，DataStream不会对输出数据进行压缩，CompressedStream会对输出数据进行压缩，在这里我们先不使用压缩格式的，所以选择DataStream</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">除了这些参数以外，还有三个也比较重要</span><br><span class="line">hdfs.rollInterval、hdfs.rollSize和hdfs.rollCount</span><br><span class="line">hdfs.rollInterval默认值是30，单位是秒，表示hdfs多长时间切分一个文件，因为这个采集程序是一直运行的，只要有新数据，就会被采集到hdfs上面，hdfs默认30秒钟切分出来一个文件，如果设置为0表示不按时间切文件</span><br><span class="line">hdfs.rollSize默认是1024，单位是字节，最终hdfs上切出来的文件大小都是1024字节，如果设置为0表示不按大小切文件</span><br><span class="line">hdfs.rollCount默认设置为10，表示每隔10条数据切出来一个文件，如果设置为0表示不按数据条数切文件</span><br><span class="line">这三个参数，如果都设置的有值，哪个条件先满足就按照哪个条件都会执行。</span><br><span class="line">在实际工作中一般会根据时间或者文件大小来切分文件，我们之前在工作中是设置的时间和文件大小相结合，时间设置的是一小时，文件大小设置的128M，这两个哪个满足执行哪个</span><br><span class="line">所以针对hdfssink的配置最终是这样的</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">除了这些参数以外，还有三个也比较重要</span><br><span class="line">hdfs.rollInterval、hdfs.rollSize和hdfs.rollCount</span><br><span class="line">hdfs.rollInterval默认值是30，单位是秒，表示hdfs多长时间切分一个文件，因为这个采集程序是一直运行的，只要有新数据，就会被采集到hdfs上面，hdfs默认30秒钟切分出来一个文件，如果设置为0表示不按时间切文件</span><br><span class="line">hdfs.rollSize默认是1024，单位是字节，最终hdfs上切出来的文件大小都是1024字节，如果设置为0表示不按大小切文件</span><br><span class="line">hdfs.rollCount默认设置为10，表示每隔10条数据切出来一个文件，如果设置为0表示不按数据条数切文件</span><br><span class="line"></span><br><span class="line">这三个参数，如果都设置的有值，哪个条件先满足就按照哪个条件都会执行。</span><br><span class="line">在实际工作中一般会根据时间或者文件大小来切分文件，我们之前在工作中是设置的时间和文件大小相结合，时间设置的是一小时，文件大小设置的128M，这两个哪个满足执行哪个</span><br><span class="line">所以针对hdfssink的配置最终是这样的</span><br></pre></td></tr></table></figure>
 
 <h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"># Name the components on this agent</span><br><span class="line">a1.sources &#x3D; r1</span><br><span class="line">a1.sinks &#x3D; k1</span><br><span class="line">a1.channels &#x3D; c1</span><br><span class="line"></span><br><span class="line"># Describe&#x2F;configure the source</span><br><span class="line">a1.sources.r1.type &#x3D; spooldir</span><br><span class="line">a1.sources.r1.spoolDir &#x3D; &#x2F;data&#x2F;log&#x2F;studentDir</span><br><span class="line"></span><br><span class="line"># Use a channel which buffers events in memory</span><br><span class="line">a1.channels.c1.type &#x3D; file</span><br><span class="line">a1.channels.c1.checkpointDir &#x3D; &#x2F;data&#x2F;soft&#x2F;apache-flume-1.9.0-bin&#x2F;data&#x2F;studentDir&#x2F;chec</span><br><span class="line">kpoint</span><br><span class="line">a1.channels.c1.dataDirs &#x3D; &#x2F;data&#x2F;soft&#x2F;apache-flume-1.9.0-bin&#x2F;data&#x2F;studentDir&#x2F;data</span><br><span class="line"></span><br><span class="line"># Describe the sink</span><br><span class="line">a1.sinks.k1.type &#x3D; hdfs</span><br><span class="line">a1.sinks.k1.hdfs.path &#x3D; hdfs:&#x2F;&#x2F;192.168.206.129:9000&#x2F;flume&#x2F;studentDir</span><br><span class="line">a1.sinks.k1.hdfs.filePrefix &#x3D; stu-</span><br><span class="line">a1.sinks.k1.hdfs.fileType &#x3D; DataStream</span><br><span class="line">a1.sinks.k1.hdfs.writeFormat &#x3D; Text</span><br><span class="line">a1.sinks.k1.hdfs.rollInterval &#x3D; 3600</span><br><span class="line">a1.sinks.k1.hdfs.rollSize &#x3D; 134217728</span><br><span class="line">a1.sinks.k1.hdfs.rollCount &#x3D; 0</span><br><span class="line"></span><br><span class="line"># Bind the source and sink to the channel</span><br><span class="line">a1.sources.r1.channels &#x3D; c1</span><br><span class="line">a1.sinks.k1.channel &#x3D; c1</span><br></pre></td></tr></table></figure>
 
@@ -525,7 +525,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC2%E7%AB%A0-%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8BFlume%E4%BD%BF%E7%94%A8-%E9%87%87%E9%9B%86%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%88%B0HDFS.html">大数据开发工程师-第七周 第2章 极速上手Flume使用 采集文件内容到HDFS</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月18日 - 12:02</p>
-  <p><span>最后更新:</span>2022年02月22日 - 12:02</p>
+  <p><span>最后更新:</span>2023年04月17日 - 16:04</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC2%E7%AB%A0-%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8BFlume%E4%BD%BF%E7%94%A8-%E9%87%87%E9%9B%86%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%88%B0HDFS.html" title="大数据开发工程师-第七周 第2章 极速上手Flume使用 采集文件内容到HDFS">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC2%E7%AB%A0-%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8BFlume%E4%BD%BF%E7%94%A8-%E9%87%87%E9%9B%86%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%88%B0HDFS.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E4%B8%83%E5%91%A8-%E7%AC%AC2%E7%AB%A0-%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8BFlume%E4%BD%BF%E7%94%A8-%E9%87%87%E9%9B%86%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%88%B0HDFS.html" aria-label="复制成功！"></i></span>
   </p>
@@ -691,7 +691,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">341</span>
+			  <span class="site-state-item-count">346</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -702,7 +702,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-count">50</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -842,7 +842,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">480.3k</span>
+    <span title="Site words total count">488k</span>
   
 </div>
 

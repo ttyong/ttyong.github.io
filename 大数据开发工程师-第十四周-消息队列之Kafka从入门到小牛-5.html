@@ -89,14 +89,22 @@
 
 
 
+<meta name="description" content="第十四周 消息队列之Kafka从入门到小牛-5实战：Flume集成Kafka12345678在实际工作中flume和kafka会深度结合使用1：flume采集数据，将数据实时写入kafka2：flume从kafka中消费数据，保存到hdfs，做数据备份下面我们就来看一个综合案例使用flume采集日志文件中产生的实时数据，写入到kafka中，然后再使用flume从kafka中将数据消费出来，保">
 <meta property="og:type" content="article">
 <meta property="og:title" content="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-5">
 <meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-5.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十四周 消息队列之Kafka从入门到小牛-5实战：Flume集成Kafka12345678在实际工作中flume和kafka会深度结合使用1：flume采集数据，将数据实时写入kafka2：flume从kafka中消费数据，保存到hdfs，做数据备份下面我们就来看一个综合案例使用flume采集日志文件中产生的实时数据，写入到kafka中，然后再使用flume从kafka中将数据消费出来，保">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171406839.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171529822.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171531285.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171533475.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171534542.png">
 <meta property="article:published_time" content="2023-04-15T17:08:43.000Z">
-<meta property="article:modified_time" content="2023-04-16T03:02:56.604Z">
+<meta property="article:modified_time" content="2023-04-17T07:37:40.431Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171406839.png">
 
 
 
@@ -404,7 +412,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  2.6k
                 </span>
               
 
@@ -420,7 +428,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  11
                 </span>
               
             </div>
@@ -444,15 +452,42 @@
         <hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
+<h1 id="第十四周-消息队列之Kafka从入门到小牛-5"><a href="#第十四周-消息队列之Kafka从入门到小牛-5" class="headerlink" title="第十四周 消息队列之Kafka从入门到小牛-5"></a>第十四周 消息队列之Kafka从入门到小牛-5</h1><h2 id="实战：Flume集成Kafka"><a href="#实战：Flume集成Kafka" class="headerlink" title="实战：Flume集成Kafka"></a>实战：Flume集成Kafka</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在实际工作中flume和kafka会深度结合使用</span><br><span class="line">1：flume采集数据，将数据实时写入kafka</span><br><span class="line">2：flume从kafka中消费数据，保存到hdfs，做数据备份</span><br><span class="line"></span><br><span class="line">下面我们就来看一个综合案例</span><br><span class="line">使用flume采集日志文件中产生的实时数据，写入到kafka中，然后再使用flume从kafka中将数据消费出来，保存到hdfs上面</span><br><span class="line">那为什么不直接使用flume将采集到的日志数据保存到hdfs上面呢？</span><br><span class="line">因为中间使用kafka进行缓冲之后，后面既可以实现实时计算，又可以实现离线数据备份，最终实现离线计算，所以这一份数据就可以实现两种需求，使用起来很方便，所以在工作中一般都会这样做。</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171406839.png" alt="image-20230417140517700"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">下面我们来实现一下这个功能</span><br><span class="line">其实在Flume中，针对Kafka提供的有KafkaSource和KafkaSink</span><br><span class="line">KafkaSource是从kafka中读取数据</span><br><span class="line">KafkaSink是向kafka中写入数据</span><br><span class="line"></span><br><span class="line">所以针对我们目前这个架构，主要就是配置Flume的Agent。</span><br><span class="line">需要配置两个Agent：</span><br><span class="line">第一个Agent负责实时采集日志文件，将采集到的数据写入Kafka中</span><br><span class="line">第二个Agent负责从Kafka中读取数据，将数据写入HDFS中进行备份(落盘)</span><br><span class="line">针对第一个Agent：</span><br><span class="line">source：ExecSource，使用tail -F监控日志文件即可</span><br><span class="line">channel：MemoryChannel</span><br><span class="line">sink：KafkaSink</span><br><span class="line"></span><br><span class="line">针对第二个Agent</span><br><span class="line">Source：KafkaSource</span><br><span class="line">channel：MemoryChannel</span><br><span class="line">sink：HdfsSink</span><br><span class="line"></span><br><span class="line">这里面这些组件其实只有KafkaSource和KafkaSink我们没有使用过，其它的组件都已经用过了。</span><br></pre></td></tr></table></figure>
 
+<h3 id="配置Agent"><a href="#配置Agent" class="headerlink" title="配置Agent"></a>配置Agent</h3><h4 id="file-to-kafka-conf"><a href="#file-to-kafka-conf" class="headerlink" title="file-to-kafka.conf"></a>file-to-kafka.conf</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">下面来配置第一个Agent：</span><br><span class="line">文件名为： file-to-kafka.conf</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"># Name the components on this agent</span><br><span class="line">a1.sources &#x3D; r1</span><br><span class="line">a1.sinks &#x3D; k1</span><br><span class="line">a1.channels &#x3D; c1</span><br><span class="line"></span><br><span class="line"># Describe&#x2F;configure the source</span><br><span class="line">a1.sources.r1.type &#x3D; exec</span><br><span class="line">a1.sources.r1.command &#x3D; tail -F &#x2F;data&#x2F;log&#x2F;test.log</span><br><span class="line"></span><br><span class="line"># Use a channel which buffers events in memory</span><br><span class="line">a1.channels.c1.type &#x3D; memory</span><br><span class="line">a1.channels.c1.capacity &#x3D; 1000</span><br><span class="line">a1.channels.c1.transactionCapacity &#x3D; 100</span><br><span class="line"></span><br><span class="line"># Describe the sink</span><br><span class="line">a1.sinks.k1.type &#x3D; org.apache.flume.sink.kafka.KafkaSink</span><br><span class="line"></span><br><span class="line"># 指定topic名称</span><br><span class="line">a1.sinks.k1.kafka.topic &#x3D; test_r2p5</span><br><span class="line"># 指定kafka地址，多个节点地址使用逗号分割</span><br><span class="line">a1.sinks.k1.kafka.bootstrap.servers &#x3D; bigdata01:9092,bigdata02:9092,bigdata03</span><br><span class="line"># 一次向kafka中写多少条数据，默认值为100，在这里为了演示方便，改为1</span><br><span class="line"># 在实际工作中这个值具体设置多少需要在传输效率和数据延迟上进行取舍</span><br><span class="line"># 如果kafka后面的实时计算程序对数据的要求是低延迟，那么这个值小一点比较好</span><br><span class="line"># 如果kafka后面的实时计算程序对数据延迟没什么要求，那么就考虑传输性能，一次多传输一些</span><br><span class="line"># 建议这个值的大小和ExecSource每秒钟采集的数据量大致相等，这样不会频繁向kafka中写数</span><br><span class="line">a1.sinks.k1.kafka.flumeBatchSize &#x3D; 1</span><br><span class="line">a1.sinks.k1.kafka.producer.acks &#x3D; 1</span><br><span class="line"># 一个Batch被创建之后，最多过多久，不管这个Batch有没有写满，都必须发送出去</span><br><span class="line"># linger.ms和flumeBatchSize(不积到设置的条数，则一直不写入到topic)，哪个先满足先按哪个规则执行，这个值默认是0，在这设置为1</span><br><span class="line">a1.sinks.k1.kafka.producer.linger.ms &#x3D; 1</span><br><span class="line"># 指定数据传输时的压缩格式，对数据进行压缩，提高传输效率</span><br><span class="line">a1.sinks.k1.kafka.producer.compression.type &#x3D; snappy</span><br><span class="line"># Bind the source and sink to the channel</span><br><span class="line">a1.sources.r1.channels &#x3D; c1</span><br><span class="line">a1.sinks.k1.channel &#x3D; c1</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka的producer的相关参数，可以直接在这里设置：a1.sinks.k1.kafka.producer.+。。。</span><br></pre></td></tr></table></figure>
 
+<h4 id="kafka-to-hdfs-conf"><a href="#kafka-to-hdfs-conf" class="headerlink" title="kafka-to-hdfs.conf"></a>kafka-to-hdfs.conf</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">下面来配置第二个Agent：</span><br><span class="line">文件名为： kafka-to-hdfs.conf</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"># Name the components on this agent</span><br><span class="line">a1.sources &#x3D; r1</span><br><span class="line">a1.sinks &#x3D; k1</span><br><span class="line">a1.channels &#x3D; c1</span><br><span class="line"></span><br><span class="line"># Describe&#x2F;configure the source</span><br><span class="line">a1.sources.r1.type &#x3D; org.apache.flume.source.kafka.KafkaSource</span><br><span class="line"># 一次性向channel中写入的最大数据量，在这为了演示方便，设置为1</span><br><span class="line"># 这个参数的值不要大于MemoryChannel中transactionCapacity的值</span><br><span class="line">a1.sources.r1.batchSize &#x3D; 1</span><br><span class="line"># 最大多长时间向channel写一次数据</span><br><span class="line">a1.sources.r1.batchDurationMillis &#x3D; 2000</span><br><span class="line"># kafka地址</span><br><span class="line">a1.sources.r1.kafka.bootstrap.servers &#x3D; bigdata01:9092,bigdata02:9092,bigdata</span><br><span class="line"># topic名称，可以指定一个或者多个，多个topic之间使用逗号隔开</span><br><span class="line"># 也可以使用正则表达式指定一个topic名称规则</span><br><span class="line">a1.sources.r1.kafka.topics &#x3D; test_r2p5</span><br><span class="line"># 指定消费者组id</span><br><span class="line">a1.sources.r1.kafka.consumer.group.id &#x3D; flume-con1</span><br><span class="line"></span><br><span class="line"># Use a channel which buffers events in memory</span><br><span class="line">a1.channels.c1.type &#x3D; memory</span><br><span class="line">a1.channels.c1.capacity &#x3D; 1000</span><br><span class="line">a1.channels.c1.transactionCapacity &#x3D; 100</span><br><span class="line"></span><br><span class="line"># Describe the sink</span><br><span class="line">a1.sinks.k1.type &#x3D; hdfs</span><br><span class="line">a1.sinks.k1.hdfs.path &#x3D; hdfs:&#x2F;&#x2F;bigdata01:9000&#x2F;kafkaout</span><br><span class="line">a1.sinks.k1.hdfs.filePrefix &#x3D; data-</span><br><span class="line">a1.sinks.k1.hdfs.fileType &#x3D; DataStream</span><br><span class="line">a1.sinks.k1.hdfs.writeFormat &#x3D; Text</span><br><span class="line">a1.sinks.k1.hdfs.rollInterval &#x3D; 3600</span><br><span class="line">a1.sinks.k1.hdfs.rollSize &#x3D; 134217728</span><br><span class="line">a1.sinks.k1.hdfs.rollCount &#x3D; 0</span><br><span class="line"># Bind the source and sink to the channel</span><br><span class="line">a1.sources.r1.channels &#x3D; c1</span><br><span class="line">a1.sinks.k1.channel &#x3D; c1</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">在bigdata04机器的flume目录下复制两个目录</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd &#x2F;data&#x2F;soft&#x2F;apache-flume-1.9.0-bin</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cp -r conf conf-file-to-kafka</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cp -r conf conf-kafka-to-hdfs</span><br><span class="line"></span><br><span class="line">修改 conf_file_to_kafka和conf_kafka_to_hdfs中log4j的配置</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd conf-file-to-kafka</span><br><span class="line">[root@bigdata04 conf_file_to_kafka]# vi log4j.properties </span><br><span class="line">flume.root.logger&#x3D;ERROR,LOGFILE</span><br><span class="line">flume.log.file&#x3D;flume-file-to-kafka.log</span><br><span class="line"></span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd conf-kafka-to-hdfs</span><br><span class="line">[root@bigdata04 conf_kafka_to_hdfs]# vi log4j.properties </span><br><span class="line">flume.root.logger&#x3D;ERROR,LOGFILE</span><br><span class="line">flume.log.file&#x3D;flume-kafka-to-hdfs.log</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">把刚才配置的两个Agent的配置文件复制到这两个目录下</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd conf-file-to-kafka</span><br><span class="line">[root@bigdata04 conf-file-to-kafka]# vi file-to-kafka.conf</span><br><span class="line">.....把file-to-kafka.conf文件中的内容复制进来即可</span><br><span class="line"></span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# cd conf-kafka-to-hdfs&#x2F;</span><br><span class="line">[root@bigdata04 conf-kafka-to-hdfs]# vi kafka-to-hdfs.conf</span><br><span class="line">.....把kafka-to-hdfs.conf文件中的内容复制进来即可</span><br></pre></td></tr></table></figure>
 
+<h3 id="启动Flume-Agent"><a href="#启动Flume-Agent" class="headerlink" title="启动Flume Agent"></a>启动Flume Agent</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">启动这两个Flume Agent</span><br><span class="line">确保zookeeper集群、kafka集群和Hadoop集群是正常运行的</span><br><span class="line">以及Kafka中的topic需要提前创建好</span><br><span class="line"></span><br><span class="line">创建topic</span><br><span class="line">[root@bigdata01 kafka_2.12-2.4.1]# bin&#x2F;kafka-topics.sh --create --zookeeper localhost:2181 -partions 5 --replication-factor 2 --topic test_r2p5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">先启动第二个Agent，再启动第一个Agent</span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# bin&#x2F;flume-ng agent --name a1 --conf conf-kafka-to-hdfs --conf-file conf-kafka-to-hdfs&#x2F;kafka-to-hdfs.conf</span><br><span class="line"></span><br><span class="line">[root@bigdata04 apache-flume-1.9.0-bin]# bin&#x2F;flume-ng agent --name a1 --conf conf-file-to-kafka --conf-file conf-file-to-kafka&#x2F;file-to-kafka.conf</span><br><span class="line"></span><br><span class="line">模拟产生日志数据</span><br><span class="line">[root@bigdata04 ~]# cd &#x2F;data&#x2F;log&#x2F;</span><br><span class="line">[root@bigdata04 log]# echo hello world &gt;&gt; &#x2F;data&#x2F;log&#x2F;test.log</span><br><span class="line"></span><br><span class="line">到HDFS上查看数据，验证结果：</span><br><span class="line">[root@bigdata04 ~]# hdfs dfs -ls &#x2F;kafkaout</span><br><span class="line">Found 1 items</span><br><span class="line">-rw-r--r-- 2 root supergroup 12 2020-06-09 22:59 &#x2F;kafkaout&#x2F;data-.15</span><br><span class="line">[root@bigdata04 ~]# hdfs dfs -cat &#x2F;kafkaout&#x2F;data-.1591714755267.tmp</span><br><span class="line">hello world</span><br><span class="line"></span><br><span class="line">此时Flume可以通过tail -F命令实时监控文件中的新增数据，发现有新数据就写入kafka，然后kafka后面的flume落盘程序，以及kafka后面的实时计算程序就可以使用这份数据了。</span><br></pre></td></tr></table></figure>
+
+<h2 id="实战：Kafka集群平滑升级"><a href="#实战：Kafka集群平滑升级" class="headerlink" title="实战：Kafka集群平滑升级"></a>实战：Kafka集群平滑升级</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">之前我们在使用 Kafka 0.9.0.0版本的时候，遇到一个比较诡异的问题</span><br><span class="line">（背景：这个版本他们遇到一个问题，官方通过升级kafka版本解决了，但他们之前的版本工作中运用于直播平台，所以不可能将集群停了重新部署一套）</span><br><span class="line">针对消费者组增加消费者的时候可能会导致rebalance，进而导致部分consumer不能再消费分区数据</span><br><span class="line">意思就是之前针对这个topic的5个分区只有2个消费者消费数据，后期我动态的把消费者调整为了5个，这样可能会导致部分消费者无法消费分区中的数据。</span><br><span class="line"></span><br><span class="line">针对这个bug这里有一份详细描述：</span><br><span class="line">https:&#x2F;&#x2F;issues.apache.org&#x2F;jira&#x2F;browse&#x2F;KAFKA-2978</span><br><span class="line">此bug官方在0.9.0.1版本中进行了修复</span><br><span class="line">当时我们的线上集群使用的就是0.9.0.0的版本。</span><br><span class="line"></span><br><span class="line">所以我们需要对线上集群在不影响线上业务的情况下进行升级，称为平滑升级(滚动升级)，也就是升级的时候不影响线上的正常业务运行(但还是要选择在业务低峰期时进行升级)。</span><br><span class="line"></span><br><span class="line">接下来我们就查看了官网文档(0.9.0.0)，上面有针对集群平滑升级的一些信息</span><br><span class="line">http:&#x2F;&#x2F;kafka.apache.org&#x2F;090&#x2F;documentation.html#upgrade</span><br><span class="line">在验证这个升级流程的时候我们是在测试环境下，先模拟线上的集群环境，进行充分测试，可千万不能简单测试一下就直接搞到测试环境去做，这样是很危险的。</span><br><span class="line">由于当时这个kafka集群我们还没有移交给运维负责，并且运维当时对这个框架也不是很熟悉，所以才由我们开发人员来进行平滑升级，否则这种框架升级的事情肯定是交给运维去做的。</span><br><span class="line"></span><br><span class="line">那接下来看一下具体的平滑升级步骤</span><br><span class="line">小版本之间集群升级不需要额外修改集群的配置文件。只需要按照下面步骤去执行即可。</span><br><span class="line">假设kafka0.9.0.0集群在三台服务器上，需要把这三台服务器上的kafka集群升级到0.9.0.1版本</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：提前在集群的三台机器上把0.9.0.1的安装包，解压、配置好。</span><br><span class="line">主要是log.dirs这个参数，0.9.0.1中的这个参数和0.9.0.0的这个参数一定要保持一致，这样新版本的kafka才可以识别之前的kakfa中的数据。</span><br><span class="line">在集群升级的过程当中建议通过CMAK(kafkamanager)查看集群的状态信息，比较方便</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171529822.png" alt="image-20230417152957587"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1：先stop掉0.9.0.0集群中的第一个节点，然后去CMAK上查看集群的broker信息，确认节点确实已停掉。并且再查看一下，节点的副本下线状态。确认集群是否识别到副本下线状态。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171531285.png" alt="image-20230417153133889"></p>
+<p> <img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171533475.png" alt="image-20230417153328093"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后在当前节点把kafka0.9.0.1启动起来。再回到CMAK中查看broker信息，确认刚启动的节点是否已正确显示，并且还要确认这个节点是否可以正常接收和发送数据。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304171534542.png" alt="image-20230417153455185"></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2：按照第一步的流程去依次操作剩余节点即可，就是先把0.9.0.0版本的kafka停掉，再把0.9.0.1版本的kafka启动即可。</span><br><span class="line"></span><br><span class="line">注意：每操作一个节点，需要稍等一下，确认这个节点可以正常接收和发送数据之后，再处理下一个节点。</span><br></pre></td></tr></table></figure>
 
 
 
@@ -482,7 +517,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-5.html">大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-5</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年04月16日 - 01:04</p>
-  <p><span>最后更新:</span>2023年04月16日 - 11:04</p>
+  <p><span>最后更新:</span>2023年04月17日 - 15:04</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-5.html" title="大数据开发工程师-第十四周 消息队列之Kafka从入门到小牛-5">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-5.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%9B%9B%E5%91%A8-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%B9%8BKafka%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%B0%8F%E7%89%9B-5.html" aria-label="复制成功！"></i></span>
   </p>
@@ -565,6 +600,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-1.html" rel="prev" title="分布式数据库原理与应用-1">
+                分布式数据库原理与应用-1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -614,9 +653,18 @@
       
       
         
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
       
 
-	<section class="site-overview sidebar-panel sidebar-panel-active">
+	<section class="site-overview sidebar-panel">
 	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
 		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
 		<p class="site-author-name" itemprop="name">TTYONG</p>
@@ -629,7 +677,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">341</span>
+			  <span class="site-state-item-count">346</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -640,7 +688,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">49</span>
+			  <span class="site-state-item-count">50</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -736,6 +784,22 @@
 	</section>
 	
 	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十四周-消息队列之Kafka从入门到小牛-5"><span class="nav-number">1.</span> <span class="nav-text">第十四周 消息队列之Kafka从入门到小牛-5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实战：Flume集成Kafka"><span class="nav-number">1.1.</span> <span class="nav-text">实战：Flume集成Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Agent"><span class="nav-number">1.1.1.</span> <span class="nav-text">配置Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#file-to-kafka-conf"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">file-to-kafka.conf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kafka-to-hdfs-conf"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">kafka-to-hdfs.conf</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动Flume-Agent"><span class="nav-number">1.1.2.</span> <span class="nav-text">启动Flume Agent</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实战：Kafka集群平滑升级"><span class="nav-number">1.2.</span> <span class="nav-text">实战：Kafka集群平滑升级</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
 	
 
 	
@@ -764,7 +828,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">480.3k</span>
+    <span title="Site words total count">488k</span>
   
 </div>
 
