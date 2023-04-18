@@ -89,14 +89,24 @@
 
 
 
+<meta name="description" content="第四章 Hbase01 Hbase基本原理Region定位–region 123456在HBase中，表的所有行都是按照RowKey的字典序排列的，表在行的方向上分割为多个分区（Region）。如图1所示。每张表一开始只有一个Region，但是随着数据的插入，HBase会根据一定的规则将表进行水平拆分，形成两个Region，当表中的行越来越多时，就会产生越来越多的Region，而这些Re">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式数据库原理与应用-5">
 <meta property="og:url" content="http://tianyong.fun/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-5.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第四章 Hbase01 Hbase基本原理Region定位–region 123456在HBase中，表的所有行都是按照RowKey的字典序排列的，表在行的方向上分割为多个分区（Region）。如图1所示。每张表一开始只有一个Region，但是随着数据的插入，HBase会根据一定的规则将表进行水平拆分，形成两个Region，当表中的行越来越多时，就会产生越来越多的Region，而这些Re">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182307738.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182308191.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182309337.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182338403.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182339676.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182340842.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182340877.png">
 <meta property="article:published_time" content="2023-04-17T08:47:07.000Z">
-<meta property="article:modified_time" content="2023-04-17T10:25:28.414Z">
+<meta property="article:modified_time" content="2023-04-18T15:47:25.069Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182307738.png">
 
 
 
@@ -393,7 +403,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  1.7k
                 </span>
               
 
@@ -409,7 +419,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  5
                 </span>
               
             </div>
@@ -435,21 +445,36 @@
 
 
 
+<h1 id="第四章-Hbase"><a href="#第四章-Hbase" class="headerlink" title="第四章 Hbase"></a>第四章 Hbase</h1><h2 id="01-Hbase基本原理"><a href="#01-Hbase基本原理" class="headerlink" title="01 Hbase基本原理"></a>01 Hbase基本原理</h2><h3 id="Region定位–region"><a href="#Region定位–region" class="headerlink" title="Region定位–region"></a>Region定位–region</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182307738.png" alt="image-20230418230749193"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在HBase中，表的所有行都是按照RowKey的字典序排列的，表在行的方向上分割为多个分区（Region）。如图1所示。</span><br><span class="line">每张表一开始只有一个Region，但是随着数据的插入，HBase会根据一定的规则将表进行水平拆分，形成两个Region，当表中的行越来越多时，就会产生越来越多的Region，而这些Region无法存储到一台机器上时，需要分布存储到多台机器上。每个Region服务器负责管理一个Region，通常在每个Region服务器上会放置10~1000个Region，HBase中Region的物理存储如图2所示。</span><br><span class="line"></span><br><span class="line">客户端在插入，删除，查询数据时需要知道哪个Region服务器上存有自己所需的数据，这个查找Region的过程称之为Region定位。</span><br><span class="line"></span><br><span class="line">HBase中每个Region由三个主要要素组成，包括Region所属的表、包含的第一行和包含的最后一行。</span><br></pre></td></tr></table></figure>
 
+<h3 id="Region定位–META表"><a href="#Region定位–META表" class="headerlink" title="Region定位–META表"></a>Region定位–META表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">有了Region标识符，就可以唯一标识每个Region。为了定位每个Region所在的位置，就可以构建一张映射表，映射表的每个条目包含两项内容，一个是Region标识符，另一个是Region服务器标识，这个条目就表示Region和Region服务器之间的对应关系，从而就可以知道某个Region被保存在哪个Region服务器中。</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182308191.png" alt="image-20230418230821649"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">映射表包含了关于Region的元数据，因此也被称为“元数据表”，又名“meta表”。可以scan命令查看meta</span><br><span class="line"></span><br><span class="line">表的结构如图3所示。</span><br><span class="line">Meta表中每一行记录了一个Region的信息。</span><br><span class="line">首先RowKey包含表名、起始行键和时间戳信息。</span><br><span class="line">中间用逗号隔开，第一个Region的起始行键为空。</span><br><span class="line">时间戳只有用.隔开的为分区名称的编码字符串，该信息是由前面的表名、起始行键和时间戳进行字符串编码后形成。</span><br><span class="line">Meta表里有一个列族info。info包含了三个列，分别为regionInfo、server和serverstartcode。</span><br><span class="line">Regioninfo中记录了Region的详细信息，包括行键范围StartKey和EndKey、列族列表和属性。</span><br><span class="line">Server记录了管理该Region的Region服务器的地址，如localhost:16201。</span><br><span class="line">Serverstartcode记录了Region服务器开始托管该Region的时间。</span><br></pre></td></tr></table></figure>
 
+<h3 id="Region定位–Region定位"><a href="#Region定位–Region定位" class="headerlink" title="Region定位–Region定位"></a>Region定位–Region定位</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182309337.png" alt="image-20230418230932193"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在HBase的早期设计中，Region的查找是通过三层架构来进行查询的，即在集群中有一个总入口ROOT表，记录了meta表分区信息及各个入口地址，这个ROOT表存放在某个Region服务器上，但是在Zookeeper中保存有它的地址。这种早期的三层架构通过先找到ROOT表，从中获取分区meta表位置，然后再获取分区meta表信息，得到Region所在的Region服务器。</span><br><span class="line">从0.96版本以后，三层架构被改为二层架构，去掉了ROOT表，同时Zookeeper中的&#x2F;hbase&#x2F;root-region-server也被去掉。meta表所在的RegionServer信息直接存储在Zookeeper中的&#x2F;hbase&#x2F;meta-region-server中。如图所示</span><br><span class="line">当客户端进行数据操作时，根据操作的表名和行键通过一定的顺序寻找对应的分区数据。</span><br><span class="line">客户端通过Zookeeper获取到Meta表分区存储的地址，然后在对应Region服务器上获取meta表的信息，得到所需表和行键所在的Region信息，然后在从Region服务器上找到所需的数据。一般客户端获取到Region信息后会进行缓存，下次再查询不必从Zookeeper开始寻址。</span><br></pre></td></tr></table></figure>
 
+<h3 id="数据存储与读取"><a href="#数据存储与读取" class="headerlink" title="数据存储与读取"></a>数据存储与读取</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HBase集群数据的构成如图所示</span><br><span class="line">HBase的核心模块是Region服务器。</span><br><span class="line">Region服务器由多个Region块构成，Region块中存储的一系列连续的数据集。</span><br><span class="line">Region服务器主要构成部分是：HLog和Region块。</span><br><span class="line">HLog记录该Region的操作日志。</span><br><span class="line">Region对象由多个Store组成，每个Store对应当前分区中的一个列族，每个Store管理一块内存，即MemStore。</span><br><span class="line">当MemStore中的数据达到一定条件时会写入到StoreFile文件中，因此每个Store包含若干个StoreFile文件。StoreFile文件对应HDFS中的HFile文件。</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182338403.png" alt="image-20230418233830777"></p>
+<h4 id="MemStore"><a href="#MemStore" class="headerlink" title="MemStore"></a>MemStore</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当Region服务器收到写请求的时候，Region服务器会将请求转至相应的Region。数据首先写入到Memstore，然后当到达一定的阀值的时候，Memstore中的数据会被刷到HFile中进行持久性存储。</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HBase将最近接收到的数据缓存在MemStore中，在持久化到HDFS之前完成排序，再顺序写入HDFS，为后续数据的检索做了优化。因为MemStore缓存的是最近增加的数据，所以也提高了对近期数据的操作速度。在持久化写入之前，在内存中对行键或单元格做些优化。</span><br></pre></td></tr></table></figure>
 
+<h4 id="Store"><a href="#Store" class="headerlink" title="Store"></a>Store</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Store是Region服务器的核心，存储的是同一个列族下的数据，每个Store包含有一块MemStore和0个或多个StoreFile。StoreFile是HBase中最小的数据存储单元。</span><br><span class="line"></span><br><span class="line">  Store存储是HBase存储的核心，其中由两部分组成，一部分是MemStore，一部分是StoreFiles。MemStore是Sorted Memory Buffer（内存写缓存），用户写入的数据首先会放入MemStore，当MemStore满了以后会Flush成一个StoreFile(底层实现是HFile)， 当StoreFile文件数量增长到一定阈值，会触发Compaction合并操作。</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HBase将最近接收到的数据缓存在MemStore中，在持久化到HDFS之前完成排序，再顺序写入HDFS，为后续数据的检索做了优化。因为MemStore缓存的是最近增加的数据，所以也提高了对近期数据的操作速度。在持久化写入之前，在内存中对行键或单元格做些优化。</span><br></pre></td></tr></table></figure>
 
+<h4 id="Store的合并分裂"><a href="#Store的合并分裂" class="headerlink" title="Store的合并分裂"></a>Store的合并分裂</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182339676.png" alt="image-20230418233949215"></p>
+<h4 id="HFile"><a href="#HFile" class="headerlink" title="HFile"></a>HFile</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182340842.png" alt="image-20230418234015451"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MemStore内存中的数据写到StoreFile文件中，StoreFile底层是以HFile的格式保存。</span><br><span class="line">HFile的存储格式如图7所示</span><br><span class="line">HFile文件是不定长的，长度固定的只有其中的两块：Trailer和FileInfo。</span><br><span class="line">Trailer中有指针指向其他数据块的起始点，FileInfo记录了文件的一些meta信息。</span><br><span class="line">每个Data块的大小可以在创建一个Table的时候通过参数指定（默认块大小64KB）。</span><br><span class="line">每个Data块除了开头的Magic以外就是一个键值对拼接而成，Magic内容就是一些随机数字，目的是防止数据损坏。</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HFile里面的每个键值对就是一个简单的byte数组。但是这个byte数组里面包含了很多项，并且有固定的结构。</span><br></pre></td></tr></table></figure>
 
-
-
-
-<hr>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304182340877.png" alt="image-20230418234045908"></p>
+<h3 id="HBase写文件流程"><a href="#HBase写文件流程" class="headerlink" title="HBase写文件流程"></a>HBase写文件流程</h3><h2 id="02-Hbase-Region管理"><a href="#02-Hbase-Region管理" class="headerlink" title="02 Hbase Region管理"></a>02 Hbase Region管理</h2><h2 id="03-Hbase集群管理"><a href="#03-Hbase集群管理" class="headerlink" title="03 Hbase集群管理"></a>03 Hbase集群管理</h2><hr>
 <blockquote>
 </blockquote>
 
@@ -471,7 +496,7 @@
   <p><span>本文标题:</span><a href="/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-5.html">分布式数据库原理与应用-5</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年04月17日 - 16:04</p>
-  <p><span>最后更新:</span>2023年04月17日 - 18:04</p>
+  <p><span>最后更新:</span>2023年04月18日 - 23:04</p>
   <p><span>原始链接:</span><a href="/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-5.html" title="分布式数据库原理与应用-5">http://tianyong.fun/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-5.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8-5.html" aria-label="复制成功！"></i></span>
   </p>
@@ -603,9 +628,18 @@
       
       
         
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
       
 
-	<section class="site-overview sidebar-panel sidebar-panel-active">
+	<section class="site-overview sidebar-panel">
 	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
 		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
 		<p class="site-author-name" itemprop="name">TTYONG</p>
@@ -618,7 +652,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">346</span>
+			  <span class="site-state-item-count">345</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -725,6 +759,22 @@
 	</section>
 	
 	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第四章-Hbase"><span class="nav-number">1.</span> <span class="nav-text">第四章 Hbase</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#01-Hbase基本原理"><span class="nav-number">1.1.</span> <span class="nav-text">01 Hbase基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Region定位–region"><span class="nav-number">1.1.1.</span> <span class="nav-text">Region定位–region</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Region定位–META表"><span class="nav-number">1.1.2.</span> <span class="nav-text">Region定位–META表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Region定位–Region定位"><span class="nav-number">1.1.3.</span> <span class="nav-text">Region定位–Region定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据存储与读取"><span class="nav-number">1.1.4.</span> <span class="nav-text">数据存储与读取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MemStore"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">MemStore</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Store"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">Store</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Store的合并分裂"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">Store的合并分裂</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HFile"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">HFile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HBase写文件流程"><span class="nav-number">1.1.5.</span> <span class="nav-text">HBase写文件流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#02-Hbase-Region管理"><span class="nav-number">1.2.</span> <span class="nav-text">02 Hbase Region管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#03-Hbase集群管理"><span class="nav-number">1.3.</span> <span class="nav-text">03 Hbase集群管理</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
 	
 
 	
@@ -753,7 +803,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">488k</span>
+    <span title="Site words total count">493.9k</span>
   
 </div>
 

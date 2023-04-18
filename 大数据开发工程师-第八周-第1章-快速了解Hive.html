@@ -97,7 +97,7 @@
 <meta property="og:description" content="第八周 第1章 快速了解Hive什么是Hive1234Hive是建立在Hadoop上的数据仓库基础构架。它提供了一系列的工具，可以用来进行数据提取转化加载，可以简称为ETL。Hive 定义了简单的类SQL查询语言，称为HQL，它允许熟悉SQL的用户直接查询Hadoop中的数据，同时，这个语言也允许熟悉MapReduce的开发者开发自定义的mapreduce任务来处理内建的SQL函数无法完成的">
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/20/HLJa4O.md.png">
 <meta property="article:published_time" content="2022-02-20T04:00:28.000Z">
-<meta property="article:modified_time" content="2023-03-19T07:11:49.057Z">
+<meta property="article:modified_time" content="2023-04-18T09:48:28.463Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="Hive">
 <meta name="twitter:card" content="summary">
@@ -451,7 +451,7 @@
 
 <h1 id="第八周-第1章-快速了解Hive"><a href="#第八周-第1章-快速了解Hive" class="headerlink" title="第八周 第1章 快速了解Hive"></a>第八周 第1章 快速了解Hive</h1><h2 id="什么是Hive"><a href="#什么是Hive" class="headerlink" title="什么是Hive"></a>什么是Hive</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Hive是建立在Hadoop上的数据仓库基础构架。它提供了一系列的工具，可以用来进行数据提取转化加载，可以简称为ETL。</span><br><span class="line">Hive 定义了简单的类SQL查询语言，称为HQL，它允许熟悉SQL的用户直接查询Hadoop中的数据，同时，这个语言也允许熟悉MapReduce的开发者开发自定义的mapreduce任务来处理内建的SQL函数无法完成的复杂的分析任务。</span><br><span class="line">Hive中包含的有SQL解析引擎，它会将SQL语句转译成M&#x2F;R Job,然后在Hadoop中执行。</span><br><span class="line">通过这里的分析我们可以了解到Hive可以通过sql查询Hadoop中的数据，并且sql底层也会转化成mapreduce任务，所以hive是基于hadoop的。</span><br></pre></td></tr></table></figure>
 
-<h2 id="Hive的数据存储"><a href="#Hive的数据存储" class="headerlink" title="Hive的数据存储"></a>Hive的数据存储</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Hive的数据存储基于Hadoop的 HDFS</span><br><span class="line"></span><br><span class="line">Hive没有专门的数据存储格式</span><br><span class="line"></span><br><span class="line">Hive默认可以直接加载文本文件（TextFile），还支持SequenceFile、RCFile等文件格式</span><br><span class="line"></span><br><span class="line">针对普通文本数据，我们在创建表时，只需要指定数据的列分隔符与行分隔符，Hive即可解析里面的数据</span><br></pre></td></tr></table></figure>
+<h2 id="Hive的数据存储"><a href="#Hive的数据存储" class="headerlink" title="Hive的数据存储"></a>Hive的数据存储</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Hive的数据存储基于Hadoop的HDFS</span><br><span class="line"></span><br><span class="line">Hive没有专门的数据存储格式</span><br><span class="line"></span><br><span class="line">Hive默认可以直接加载文本文件（TextFile），还支持SequenceFile、RCFile等文件格式</span><br><span class="line"></span><br><span class="line">针对普通文本数据，我们在创建表时，只需要指定数据的列分隔符与行分隔符，Hive即可解析里面的数据</span><br></pre></td></tr></table></figure>
 
 <h2 id="Hive的系统架构"><a href="#Hive的系统架构" class="headerlink" title="Hive的系统架构"></a>Hive的系统架构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">下面我们来分析一下Hive的系统架构</span><br><span class="line">看这个图，下面表示是Hadoop集群，上面是Hive，从这也可以看出来Hive是基于Hadoop的。</span><br></pre></td></tr></table></figure>
 
@@ -469,7 +469,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">所以发现没有，MapReduce、Tez、Spark、Flink这些计算引擎都是支持在yarn上执行的，所以说Hdoop2中对架构的拆分是非常明智的。</span><br><span class="line">解释完这些名词之后其实我们就对这个架构有了一个基本理解，</span><br><span class="line"></span><br><span class="line">再看来这个图</span><br><span class="line"></span><br><span class="line">用户通过接口传递Hive SQL，然后经过Driver对SQL进行分析、编译，生成查询计划，查询计划会存储在HDFS中，然后再通过MapReduce进行计算出结果，这就是整个大的流程。</span><br><span class="line"></span><br><span class="line">其实在这里我们可以发现，Hive这个哥们是既不存储数据，也不计算数据，这些活都给了Hadoop来干，Hive底层最核心的东西其实就是Driver这一块，将SQL语句解析为最终的查询计划。</span><br></pre></td></tr></table></figure>
 
 
-<h3 id="Metastore"><a href="#Metastore" class="headerlink" title="Metastore"></a>Metastore</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">接着来看一下Hive中的元数据存储</span><br><span class="line">Metastore是Hive元数据的集中存放地。</span><br><span class="line">Hive中的元数据包括表的名字，表的列和分区及其属性，表的属性（是否为外部表等），表的数据所在的hdfs目录等</span><br><span class="line"></span><br><span class="line">Metastore默认使用内嵌的derby数据库</span><br><span class="line">Derby数据库的缺点：在同一个目录下一次只能打开一个会话</span><br><span class="line">使用derby存储方式时，Hive会在当前目录生成一个derby.log文 件和一个 metastore_db目录，metastore_db里面会存储具体的元数据信息</span><br><span class="line"></span><br><span class="line">如果下次切换到一个另一个新目录访问Hive，则会重新生成derby.log文件metastore_db目录，这样就没有办法使用之前的元数据信息了。</span><br><span class="line"></span><br><span class="line">推荐使用MySQL作为外置存储引擎，可以支持多用户同时访问以及元数据共享。</span><br></pre></td></tr></table></figure>
+<h3 id="Metastore"><a href="#Metastore" class="headerlink" title="Metastore"></a>Metastore</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">接着来看一下Hive中的元数据存储</span><br><span class="line">Metastore是Hive元数据的集中存放地。</span><br><span class="line">Hive中的元数据包括表的名字，表的列和分区及其属性，表的属性（是否为外部表等），表的数据所在的hdfs目录等</span><br><span class="line"></span><br><span class="line">Metastore默认使用内嵌的derby数据库</span><br><span class="line">Derby数据库的缺点：在同一个目录下一次只能打开一个会话</span><br><span class="line">使用derby存储方式时，Hive会在当前目录生成一个derby.log文件和一个metastore_db目录，metastore_db里面会存储具体的元数据信息</span><br><span class="line"></span><br><span class="line">如果下次切换到一个另一个新目录访问Hive，则会重新生成derby.log文件metastore_db目录，这样就没有办法使用之前的元数据信息了。</span><br><span class="line"></span><br><span class="line">推荐使用MySQL作为外置存储引擎，可以支持多用户同时访问以及元数据共享。</span><br></pre></td></tr></table></figure>
 
 
 
@@ -495,7 +495,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC1%E7%AB%A0-%E5%BF%AB%E9%80%9F%E4%BA%86%E8%A7%A3Hive.html">大数据开发工程师-第八周 第1章 快速了解Hive</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月20日 - 12:02</p>
-  <p><span>最后更新:</span>2023年03月19日 - 15:03</p>
+  <p><span>最后更新:</span>2023年04月18日 - 17:04</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC1%E7%AB%A0-%E5%BF%AB%E9%80%9F%E4%BA%86%E8%A7%A3Hive.html" title="大数据开发工程师-第八周 第1章 快速了解Hive">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC1%E7%AB%A0-%E5%BF%AB%E9%80%9F%E4%BA%86%E8%A7%A3Hive.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AB%E5%91%A8-%E7%AC%AC1%E7%AB%A0-%E5%BF%AB%E9%80%9F%E4%BA%86%E8%A7%A3Hive.html" aria-label="复制成功！"></i></span>
   </p>
@@ -661,7 +661,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">346</span>
+			  <span class="site-state-item-count">345</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -812,7 +812,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">488k</span>
+    <span title="Site words total count">493.9k</span>
   
 </div>
 
