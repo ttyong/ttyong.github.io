@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第十七周 Flink极速上手篇-Flink高级进阶之路-2Kafka Consumer的使用123大家好，下面呢，我们来看一下flink中针对kafka connect的专题，提供了很多的connect组件，其中应用比较广泛的就是kafka这个connect。我们就针对kafka在flink的应用做详细的分析。针对flink流处里啊，最常用的组件就是kafka。原始日志数据产生后，会被日">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-2">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-2.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十七周 Flink极速上手篇-Flink高级进阶之路-2Kafka Consumer的使用123大家好，下面呢，我们来看一下flink中针对kafka connect的专题，提供了很多的connect组件，其中应用比较广泛的就是kafka这个connect。我们就针对kafka在flink的应用做详细的分析。针对flink流处里啊，最常用的组件就是kafka。原始日志数据产生后，会被日">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304231050885.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304231057297.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232106563.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232106374.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232106556.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232107250.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232113418.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232135912.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232137221.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232138202.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232144712.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232152824.png">
+<meta property="article:published_time" content="2023-04-20T08:46:43.000Z">
+<meta property="article:modified_time" content="2023-04-23T14:21:05.429Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304231050885.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十七周-Flink极速上手篇-Flink高级进阶之路-2.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-2 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-20T16:46:43+08:00">
+                2023-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  24
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第十七周-Flink极速上手篇-Flink高级进阶之路-2"><a href="#第十七周-Flink极速上手篇-Flink高级进阶之路-2" class="headerlink" title="第十七周 Flink极速上手篇-Flink高级进阶之路-2"></a>第十七周 Flink极速上手篇-Flink高级进阶之路-2</h1><h2 id="Kafka-Consumer的使用"><a href="#Kafka-Consumer的使用" class="headerlink" title="Kafka Consumer的使用"></a>Kafka Consumer的使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">大家好，下面呢，我们来看一下flink中针对kafka connect的专题，提供了很多的connect组件，其中应用比较广泛的就是kafka这个connect。我们就针对kafka在flink的应用做详细的分析。针对flink流处里啊，最常用的组件就是kafka。原始日志数据产生后，会被日志采集工具采集到kafka中，让flink去处理。处理之后的数据可能也会继续写入到kafka中。kafka可以作为flink的datasource和datasink来使用。并且kafka中的partition机制和flink的并行度机制可以深度结合，提高数据的读取效率和写入效率。那我们想要在flink中使用kafka，需要添加对应的依赖。(先在flink官网中找到依赖的名字，再到maven中去找符合的版本)</span><br><span class="line"></span><br><span class="line">那在具体执行这个代码之前啊，我们先需要把那个zookeeper集群，还有kafka集群给他起来。我这些相关的服务呢，已经起来了。这是入K班了，这是卡不卡都已经起来啊。好，那下面注意，我们还需要做一件事情。因为我们在这里面呢，用到了一个T1这个topic，所以说在这我们需要去创建这个topic。找一下之前的命令。嗯。其一。这个分区设置为五，后面因子是为二。发现一个T。好，创建成功。那下面呢，我们就可以去启动代码。启动电板之后，那我们需要往那个卡夫卡里面模拟产生数据。这个时候呢，我们可以启动一个基于控制台的一个生产者来模拟产生数据。嗯。使用这个卡不卡console producer。把这个复制一下。好，这个套背上就是T1。那这个时候呢，我们接着就来模拟产生数据。hello。看到没有消费到。再加一个。hello。没问题吧，是可以的，这样的话我们就可以消费卡夫卡中的数据了。好，这个是代码实践，接下来我们使用这个Java代码来实现一下。先创建一个package。嗯。stream。搞不搞？SS。把这个复制过来。嗯。嗯嗯。嗯。好，首先呢，还是获取一个连环应。execution。因为第2GET。因为。下面的env.S。嗯。在这儿，我们需要去利用这个。Li。卡不卡？three。那这里面啊，传一个topic。嗯。第一，嗯。第二个，你有一个simple。视频，game。第三个pop。嗯嗯。有一个薄。嗯。嗯嗯嗯。首先呢，我们在里面set property。我可以把这个呢直接拿过来。嗯。好，下面呢，said。格布利。卡不卡星本。把它拿过来。嗯。感注释，这个就是指定卡夫卡作为S。嗯。这是指令。普林格卡夫卡consumer的相关配置。接下来呢，我们将读取到的数据啊，一到控制台。嗯。嗯。嗯嗯。嗯。嗯。包的异常。嗯。来把这个启动起来。好，那我们在这边呢，再模拟产生的数据。哈哈哈。没问题吧，是可以的。好，这就是Java代码的一个实现。</span><br></pre></td></tr></table></figure>
+
+<h3 id="scala"><a href="#scala" class="headerlink" title="scala"></a>scala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.scala.kafkaconnector</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.<span class="type">Properties</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.serialization.<span class="type">SimpleStringSchema</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.contrib.streaming.state.<span class="type">RocksDBStateBackend</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.<span class="type">CheckpointingMode</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.<span class="type">CheckpointConfig</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.scala.<span class="type">StreamExecutionEnvironment</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.<span class="type">FlinkKafkaConsumer</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Flink从kafka中消费数据</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StreamKafkaSourceScala</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">StreamExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line">    <span class="comment">//每隔5000 ms执行一次checkpoint(设置checkpoint的周期)</span></span><br><span class="line">    env.enableCheckpointing(<span class="number">5000</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//针对checkpoint的相关配置</span></span><br><span class="line">    <span class="comment">//设置模式为.EXACTLY_ONCE (这是默认值) ,还可以设置为AT_LEAST_ONCE</span></span><br><span class="line">      env.getCheckpointConfig.setCheckpointingMode(<span class="type">CheckpointingMode</span>.<span class="type">EXACTLY_ONCE</span>)</span><br><span class="line">    <span class="comment">//确保两次Checkpoint之间有至少多少 ms的间隔(checkpoint最小间隔)</span></span><br><span class="line">    env.getCheckpointConfig.setMinPauseBetweenCheckpoints(<span class="number">500</span>)</span><br><span class="line">    <span class="comment">//Checkpoint必须在一分钟内完成，或者被丢弃(checkpoint的超时时间)</span></span><br><span class="line">    env.getCheckpointConfig.setCheckpointTimeout(<span class="number">60000</span>)</span><br><span class="line">    <span class="comment">//同一时间只允许执行一个Checkpoint</span></span><br><span class="line">    env.getCheckpointConfig.setMaxConcurrentCheckpoints(<span class="number">1</span>)</span><br><span class="line">    <span class="comment">//表示一旦Flink处理程序被cancel后，会保留Checkpoint数据，以便根据实际需要恢复到指定的Checkpoint</span></span><br><span class="line">    env.getCheckpointConfig.enableExternalizedCheckpoints(<span class="type">CheckpointConfig</span>.<span class="type">ExternalizedCheckpointCleanup</span>.<span class="type">RETAIN_ON_CANCELLATION</span>)</span><br><span class="line">    <span class="comment">//设置状态数据存储的位置</span></span><br><span class="line">    env.setStateBackend(<span class="keyword">new</span> <span class="type">RocksDBStateBackend</span>(<span class="string">"hdfs://bigdata01:9000/flink/checkpoints"</span>,<span class="literal">true</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定FlinkKafkaConsumer相关配置</span></span><br><span class="line">    <span class="keyword">val</span> topic = <span class="string">"t1"</span></span><br><span class="line">    <span class="keyword">val</span> prop = <span class="keyword">new</span> <span class="type">Properties</span>() prop.setProperty(<span class="string">"bootstrap.servers"</span>,<span class="string">"bigdata01:9092,bigdata02:9092,bigdata03:9092"</span>)</span><br><span class="line">    prop.setProperty(<span class="string">"group.id"</span>,<span class="string">"con1"</span>)</span><br><span class="line">    <span class="keyword">val</span> kafkaConsumer = <span class="keyword">new</span> <span class="type">FlinkKafkaConsumer</span>[<span class="type">String</span>](topic, <span class="keyword">new</span> <span class="type">SimpleStringSchema</span>(), prop)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//kafka consumer的消费策略设置</span></span><br><span class="line">    <span class="comment">//默认策略，读取group.id对应保存的offset开始消费数据，读取不到则根据kafka中auto.offset.reset参数的值开始消费数据</span></span><br><span class="line">    kafkaConsumer.setStartFromGroupOffsets()</span><br><span class="line">    <span class="comment">//从最早的记录开始消费数据，忽略已提交的offset信息</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromEarliest()</span></span><br><span class="line">    <span class="comment">//从最新的记录开始消费数据，忽略已提交的offset信息</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromLatest()</span></span><br><span class="line">    <span class="comment">//从指定的时间戳开始消费数据，对于每个分区，其时间戳大于或等于指定时间戳的记录将被作为起始位置</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromTimestamp(176288819)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定kafka作为source</span></span><br><span class="line">    <span class="keyword">import</span> org.apache.flink.api.scala._</span><br><span class="line">    <span class="keyword">val</span> text = env.addSource(kafkaConsumer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将读取到的数据打印到控制台上</span></span><br><span class="line">    text.print()</span><br><span class="line">    env.execute(<span class="string">"StreamKafkaSourceScala"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304231050885.png" alt="image-20230423105004127"></p>
+<h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.java.kafkaconnector;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.serialization.SimpleStringSchema;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStreamSource;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Flink从kafka中消费数据</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StreamKafkaSourceJava</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指定FlinkKafkaConsumer相关配置</span></span><br><span class="line">        String topic = <span class="string">"t1"</span>;</span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        prop.setProperty(<span class="string">"bootstrap.servers"</span>,<span class="string">"bigdata01:9092,bigdata02:9092,bigdata03:9092"</span>);</span><br><span class="line">        prop.setProperty(<span class="string">"group.id"</span>,<span class="string">"con1"</span>);</span><br><span class="line">        FlinkKafkaConsumer&lt;String&gt; kafkaConsumer = <span class="keyword">new</span> FlinkKafkaConsumer&lt;&gt;(topic, <span class="keyword">new</span> SimpleStringSchema(), prop);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指定kafka作为source</span></span><br><span class="line">        DataStreamSource&lt;String&gt; text = env.addSource(kafkaConsumer);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将读取到的数据打印到控制台</span></span><br><span class="line">        text.print();</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"StreamKafkaSourceJava"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="KafkaConsumer消费策略设置"><a href="#KafkaConsumer消费策略设置" class="headerlink" title="KafkaConsumer消费策略设置"></a>KafkaConsumer消费策略设置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">针对卡夫卡康消费数据的时候会有一些策略，我们来看一下。首先这个是默认的消费策略。下面还有一个ear，从最早的开始消费，latest，从最新的开始消费。已经呢，现在要出来一个C呢。按照指定的时间戳往后面开始消费。下面呢，我们来演示一下。我直接在这里面来设置一下。嗯。卡夫卡consumer。的消费策略设置。这个其实我们在讲卡不卡的时候也详细分解过啊，其实是类似的。首先我们看下这个默认策略。嗯。直接使用它来设置点带。start from group of，注意这个呢，其实就默认你不设置它默就类。它是什么意思呢？它会读取。group ID。对应。保存的outside。开始消费数据。那读取不到的话呢。则根据卡夫卡中。这个参数auto点。reite。参数的值开始。消费数据。因为如果说你是第一次使用这个消费者，那么他之前肯定是没有保存这个对应的office的信息，那这样的话呢，他就会根据这个参数的值来开始进行消费。那这个值的话，它那要么是early latest对吧，要么是从最新的，要么是从最近的。那下一次的话呢，他就会根据你之前指定的这个global ID对应的保存的那个开始往下面继续消费数据。那既然下面这个呢，是从那个最早的记录开始，消费主义啊，不搞consumer there that。from earliest。从最早的记录。开始消费。独具。忽略。你提交。信息。这样的话，他就不管你有没有提交，都会每次都从那个最早的数据开始消费。那对了，还有一个从。最新的记录开始消费。也是忽略这个已提交的奥赛的信息。嗯。start。home latest。嗯。那还有一个是从指定的时间戳开始消费数据。对于每个分区。其时间戳大于或等于指定时间戳的记录。江北。作为70位。嗯。that。大的from。这里面你给他传一个时间戳就行了啊，我这边随便写一个行吗？这就是这几种测量啊。其实我们在讲卡不卡的时候，也详细分析过这几种词，那在那就把这个默认的给它打开吧。就你这个呢，你在这儿设置不设置，它其实都是一个默认的策略。这个呢，就是针对这里面这个卡夫卡抗性板，它这个消费策略的一个设置。其实咱们在工作中啊，一般最常见的，那其实就是一种默认的技术。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304231057297.png" alt="image-20230423105719815"></p>
+<h3 id="scala-1"><a href="#scala-1" class="headerlink" title="scala"></a>scala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.scala.kafkaconnector</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.<span class="type">Properties</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.serialization.<span class="type">SimpleStringSchema</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.contrib.streaming.state.<span class="type">RocksDBStateBackend</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.<span class="type">CheckpointingMode</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.<span class="type">CheckpointConfig</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.scala.<span class="type">StreamExecutionEnvironment</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.<span class="type">FlinkKafkaConsumer</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Flink从kafka中消费数据</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StreamKafkaSourceScala</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">StreamExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line"></span><br><span class="line">    <span class="comment">//每隔5000 ms执行一次checkpoint(设置checkpoint的周期)</span></span><br><span class="line">    env.enableCheckpointing(<span class="number">5000</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//针对checkpoint的相关配置</span></span><br><span class="line">    <span class="comment">//设置模式为.EXACTLY_ONCE (这是默认值) ,还可以设置为AT_LEAST_ONCE</span></span><br><span class="line">    env.getCheckpointConfig.setCheckpointingMode(<span class="type">CheckpointingMode</span>.<span class="type">EXACTLY_ONCE</span>)</span><br><span class="line">    <span class="comment">//确保两次Checkpoint之间有至少多少 ms的间隔(checkpoint最小间隔)</span></span><br><span class="line">    env.getCheckpointConfig.setMinPauseBetweenCheckpoints(<span class="number">500</span>)</span><br><span class="line">    <span class="comment">//Checkpoint必须在一分钟内完成，或者被丢弃(checkpoint的超时时间)</span></span><br><span class="line">    env.getCheckpointConfig.setCheckpointTimeout(<span class="number">60000</span>)</span><br><span class="line">    <span class="comment">//同一时间只允许执行一个Checkpoint</span></span><br><span class="line">    env.getCheckpointConfig.setMaxConcurrentCheckpoints(<span class="number">1</span>)</span><br><span class="line">    <span class="comment">//表示一旦Flink处理程序被cancel后，会保留Checkpoint数据，以便根据实际需要恢复到指定的Checkpoint</span></span><br><span class="line">    env.getCheckpointConfig.enableExternalizedCheckpoints(<span class="type">CheckpointConfig</span>.<span class="type">ExternalizedCheckpointCleanup</span>.<span class="type">RETAIN_ON_CANCELLATION</span>)</span><br><span class="line">    <span class="comment">//设置状态数据存储的位置</span></span><br><span class="line">    env.setStateBackend(<span class="keyword">new</span> <span class="type">RocksDBStateBackend</span>(<span class="string">"hdfs://bigdata01:9000/flink/checkpoints"</span>,<span class="literal">true</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定FlinkKafkaConsumer相关配置</span></span><br><span class="line">    <span class="keyword">val</span> topic = <span class="string">"t1"</span></span><br><span class="line">    <span class="keyword">val</span> prop = <span class="keyword">new</span> <span class="type">Properties</span>()</span><br><span class="line">    prop.setProperty(<span class="string">"bootstrap.servers"</span>,<span class="string">"bigdata01:9092,bigdata02:9092,bigdata03:9092"</span>)</span><br><span class="line">    prop.setProperty(<span class="string">"group.id"</span>,<span class="string">"con1"</span>)</span><br><span class="line">    <span class="keyword">val</span> kafkaConsumer = <span class="keyword">new</span> <span class="type">FlinkKafkaConsumer</span>[<span class="type">String</span>](topic, <span class="keyword">new</span> <span class="type">SimpleStringSchema</span>(), prop)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//kafka consumer的消费策略设置</span></span><br><span class="line">    <span class="comment">//默认策略，读取group.id对应保存的offset开始消费数据，读取不到则根据kafka中auto.offset.reset参数的值开始消费数据</span></span><br><span class="line">    kafkaConsumer.setStartFromGroupOffsets()</span><br><span class="line">    <span class="comment">//从最早的记录开始消费数据，忽略已提交的offset信息</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromEarliest()</span></span><br><span class="line">    <span class="comment">//从最新的记录开始消费数据，忽略已提交的offset信息</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromLatest()</span></span><br><span class="line">    <span class="comment">//从指定的时间戳开始消费数据，对于每个分区，其时间戳大于或等于指定时间戳的记录将被作为起始位置</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromTimestamp(176288819)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定kafka作为source</span></span><br><span class="line">    <span class="keyword">import</span> org.apache.flink.api.scala._</span><br><span class="line">    <span class="keyword">val</span> text = env.addSource(kafkaConsumer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将读取到的数据打印到控制台上</span></span><br><span class="line">    text.print()</span><br><span class="line"></span><br><span class="line">    env.execute(<span class="string">"StreamKafkaSourceScala"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="KafkaConsumer的容错"><a href="#KafkaConsumer的容错" class="headerlink" title="KafkaConsumer的容错"></a>KafkaConsumer的容错</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">下面我们来看一下kafka consumer的容错。flink中呢也有这个checkpoint机制，checkpoint呢是flink实现容错机制的核心功能，它能够根据配置周期性的基于流中各个算子任务的state来生成快照。从而将这些state的数据定期持久化存储下来。当flink的程序一旦意外崩溃时，重新运行程序时，可以有选择的从这些快照进行恢复。从而修正因为故障带来的程序数据异常。</span><br><span class="line"></span><br><span class="line">当这个checkpoint机制开启的时候。consumer呢？它会定期把kafka的offset的信息，还有其他算子任务的信息一块保存起来。当job失败重启的时候，弗会从最近一次的checkpoint中进行恢复数据。重新消费kafka中的数据。那为了能够使用支持容错的kafka，我们需要开启checkpoint，那如何开启呢？很简单。直接呢，就env.enableCheckpointing，指定一个周期就行。这个5000呢，表示五秒，就是每隔五秒执行一次checkpoint。他会周期性的执行。</span><br><span class="line">来，我们来看一下。我呢，就直接在这儿。来配置啊。en enable check。这毫秒啊。每隔5000毫秒。执行一次checkpoint。这个呢，其实就是设置。这个point的周期啊。那针对这个呢，它还有一些相关的配置。那我接着呢，把这个配置拿过来。把这个复制一下。搞一下包。这个是。针对checkpoint的相关配置。下面这个参数的意思呢？表示设置一下checkpoint的一个语义，它可以提供这种锦一词的语义。下面这个呢，表示两次切之间它的一个时间间隔。这个呢，表示呢，必须要在指定时间之内完成one。其实就是给这个check呢，设置一个超时时间，超过这个时间了就被丢弃了。下面这个呢，表示呢，同一时间只允许执行一个checkpoint。下面这个三注意。他呢表示呀，当我们对这个link程序执行一个cancel之后，就是把这个link程序停掉之后，我们呢，会保留这个这个波段数据，这样的话，我们可以根据实际需要，后期呢来恢复这些数据。这是它相关的一些配置啊，</span><br><span class="line"></span><br><span class="line">那其实呢，在这块还有一个配置。设置这个state数据存储的位置，默认情况下的数据会保存在task manager内存中。当我们执行checkpoint的时候呢，会将这个实际的数据存储到jobmanager内存中。这个具体的存储位置呢，取决于StateBackend的配置。FLink呢，一共提供了三种存储方式，第一种是MemoryStateBackend，第二种呢是FsStateBackend，第三种是RocksSBStateBackend。</span><br><span class="line"></span><br><span class="line">我们先分析一下第一种基于内存的。这个时候呢，state数据保存在这个Java堆内存中，当我们执行checkpoint的时候，它呢会把state快照数据啊保存到job manager的内存中。基于内存的呢，在生产环境下面不建议使用。对吧，因为你重启之后，它内存里面数据就没了，所以说是没有意义的。</span><br><span class="line"></span><br><span class="line">第二种呢，FsStateBackend。数据呢？保存在task measure内存中，当我们执行check point的时候，会把的快照数据保存到配置的文件系统中。我们可以使用hdfs等分布式文件系统。这个呢是可以用的。</span><br><span class="line"></span><br><span class="line">当然还有一种叫RocksSBStateBackend啊，它跟上面的都略有不同，它会在本地文件系统中维护这个state。state的会直接写入本地的RocksDB中。同时它需要配置一个远端的文件系统，一般呢是Hdfs。那我们在做checkpoint的时候。会把本地的数据直接复制到远端的文件系统中。故障切换的时候，直接从远端的文件系统中恢复数据到本地。RocksDB克服了state的受内存限制的缺点，同时又能够持久化到远端文件系统中。推荐在生产环境中使用。</span><br><span class="line"></span><br><span class="line">所以在这里我们使用第三种RocksSBStateBackend</span><br><span class="line">maven添加依赖flink-statebackend-rocksdb</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.scala.kafkaconnector</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.<span class="type">Properties</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.serialization.<span class="type">SimpleStringSchema</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.contrib.streaming.state.<span class="type">RocksDBStateBackend</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.<span class="type">CheckpointingMode</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.<span class="type">CheckpointConfig</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.scala.<span class="type">StreamExecutionEnvironment</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.<span class="type">FlinkKafkaConsumer</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Flink从kafka中消费数据</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StreamKafkaSourceScala</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">StreamExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line"></span><br><span class="line">    <span class="comment">//每隔5000 ms执行一次checkpoint(设置checkpoint的周期)</span></span><br><span class="line">    env.enableCheckpointing(<span class="number">5000</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//针对checkpoint的相关配置</span></span><br><span class="line">    <span class="comment">//设置模式为.EXACTLY_ONCE (这是默认值) ,还可以设置为AT_LEAST_ONCE</span></span><br><span class="line">    env.getCheckpointConfig.setCheckpointingMode(<span class="type">CheckpointingMode</span>.<span class="type">EXACTLY_ONCE</span>)</span><br><span class="line">    <span class="comment">//确保两次Checkpoint之间有至少多少 ms的间隔(checkpoint最小间隔)</span></span><br><span class="line">    env.getCheckpointConfig.setMinPauseBetweenCheckpoints(<span class="number">500</span>)</span><br><span class="line">    <span class="comment">//Checkpoint必须在一分钟内完成，或者被丢弃(checkpoint的超时时间)</span></span><br><span class="line">    env.getCheckpointConfig.setCheckpointTimeout(<span class="number">60000</span>)</span><br><span class="line">    <span class="comment">//同一时间只允许执行一个Checkpoint</span></span><br><span class="line">    env.getCheckpointConfig.setMaxConcurrentCheckpoints(<span class="number">1</span>)</span><br><span class="line">    <span class="comment">//表示一旦Flink处理程序被cancel后，会保留Checkpoint数据，以便根据实际需要恢复到指定的Checkpoint</span></span><br><span class="line">      env.getCheckpointConfig.enableExternalizedCheckpoints(<span class="type">CheckpointConfig</span>.<span class="type">ExternalizedCheckpointCleanup</span>.<span class="type">RETAIN_ON_CANCELLATION</span>)</span><br><span class="line">    <span class="comment">//设置状态数据存储的位置</span></span><br><span class="line">    env.setStateBackend(<span class="keyword">new</span> <span class="type">RocksDBStateBackend</span>(<span class="string">"hdfs://bigdata01:9000/flink/checkpoints"</span>,<span class="literal">true</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定FlinkKafkaConsumer相关配置</span></span><br><span class="line">    <span class="keyword">val</span> topic = <span class="string">"t1"</span></span><br><span class="line">    <span class="keyword">val</span> prop = <span class="keyword">new</span> <span class="type">Properties</span>()</span><br><span class="line">    prop.setProperty(<span class="string">"bootstrap.servers"</span>,<span class="string">"bigdata01:9092,bigdata02:9092,bigdata03:9092"</span>)</span><br><span class="line">    prop.setProperty(<span class="string">"group.id"</span>,<span class="string">"con1"</span>)</span><br><span class="line">    <span class="keyword">val</span> kafkaConsumer = <span class="keyword">new</span> <span class="type">FlinkKafkaConsumer</span>[<span class="type">String</span>](topic, <span class="keyword">new</span> <span class="type">SimpleStringSchema</span>(), prop)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//kafka consumer的消费策略设置</span></span><br><span class="line">    <span class="comment">//默认策略，读取group.id对应保存的offset开始消费数据，读取不到则根据kafka中auto.offset.reset参数的值开始消费数据</span></span><br><span class="line">    kafkaConsumer.setStartFromGroupOffsets()</span><br><span class="line">    <span class="comment">//从最早的记录开始消费数据，忽略已提交的offset信息</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromEarliest()</span></span><br><span class="line">    <span class="comment">//从最新的记录开始消费数据，忽略已提交的offset信息</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromLatest()</span></span><br><span class="line">    <span class="comment">//从指定的时间戳开始消费数据，对于每个分区，其时间戳大于或等于指定时间戳的记录将被作为起始位置</span></span><br><span class="line">    <span class="comment">//kafkaConsumer.setStartFromTimestamp(176288819)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定kafka作为source</span></span><br><span class="line">    <span class="keyword">import</span> org.apache.flink.api.scala._</span><br><span class="line">    <span class="keyword">val</span> text = env.addSource(kafkaConsumer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将读取到的数据打印到控制台上</span></span><br><span class="line">    text.print()</span><br><span class="line"></span><br><span class="line">    env.execute(<span class="string">"StreamKafkaSourceScala"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232106563.png" alt="image-20230423210612299"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232106374.png" alt="image-20230423210628262"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232106556.png" alt="image-20230423210654942"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232107250.png" alt="image-20230423210749485"></p>
+<h3 id="Kafka-Consumers-Offset自动提交"><a href="#Kafka-Consumers-Offset自动提交" class="headerlink" title="Kafka Consumers Offset自动提交"></a>Kafka Consumers Offset自动提交</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flink没有开启checkpoint时，offset的提交由之前的enable.auto.commit和auto.commit.interval.ms决定</span><br><span class="line"></span><br><span class="line">当开启了，由checkpoint每次执行时提交</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232113418.png" alt="image-20230423211307520"></p>
+<h2 id="KafkaProducer的使用"><a href="#KafkaProducer的使用" class="headerlink" title="KafkaProducer的使用"></a>KafkaProducer的使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">下面我们来看一下在flink中如何向kafka中写数据，此时需要用到kafka producer。</span><br><span class="line"></span><br><span class="line">所有的数据都写入指定topic的一个分区里面。注意，他会把所有数据写到这个topic的一个分区。那这样的话，其实呢，在我们实习当中，这样是不合适的啊。我们使用操作的肯定是要使用多个分区，你要把数据分别写到不同的分区里面，这样的话后期我们去消费也可以并行消费，提高消费能力，对吧？那你如果都搞一个分区里面，那其实相当于我这个topic卡就一个分区。这样后期我这个处理能力是有限制的，所以说呢，如果不想自定义分具体。也不想使用默认的可以直接。使用一个null即可。</span><br></pre></td></tr></table></figure>
+
+<h3 id="scala-2"><a href="#scala-2" class="headerlink" title="scala"></a>scala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.scala.kafkaconnector</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.<span class="type">Properties</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.serialization.<span class="type">SimpleStringSchema</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.scala.<span class="type">StreamExecutionEnvironment</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.<span class="type">FlinkKafkaProducer</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.internals.<span class="type">KafkaSerializationSchemaWrapper</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.partitioner.<span class="type">FlinkFixedPartitioner</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Flink向Kafka中生产数据 </span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">StreamKafkaSinkScala</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">StreamExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line"></span><br><span class="line">    <span class="comment">//开启checkpoint</span></span><br><span class="line">    <span class="comment">//env.enableCheckpointing(5000)</span></span><br><span class="line">      </span><br><span class="line">    <span class="keyword">val</span> text = env.socketTextStream(<span class="string">"bigdata04"</span>, <span class="number">9001</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定FlinkKafkaProducer的相关配置</span></span><br><span class="line">    <span class="keyword">val</span> topic = <span class="string">"t2"</span></span><br><span class="line">    <span class="keyword">val</span> prop = <span class="keyword">new</span> <span class="type">Properties</span>()</span><br><span class="line">    prop.setProperty(<span class="string">"bootstrap.servers"</span>,<span class="string">"bigdata01:9092,bigdata02:9092,bigdata03:9092"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//指定kafka作为sink</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     KafkaSerializationSchemaWrapper的几个参数</span></span><br><span class="line"><span class="comment">     1：topic：指定需要写入的topic名称即可</span></span><br><span class="line"><span class="comment">     2：partitioner，通过自定义分区器实现将数据写入到指定topic的具体分区中</span></span><br><span class="line"><span class="comment">     默认会使用FlinkFixedPartitioner，它表示会将所有的数据都写入指定topic的一个分区里面</span></span><br><span class="line"><span class="comment">     如果不想自定义分区器，也不想使用默认的，可以直接使用null即可</span></span><br><span class="line"><span class="comment">     3：writeTimeStamp，向topic中写入数据的时候，是否写入时间戳</span></span><br><span class="line"><span class="comment">     如果写入了，那么在watermark的案例中，使用extractTimestamp()提起时间戳的时候</span></span><br><span class="line"><span class="comment">     就可以直接使用recordTimestamp即可，它表示的就是我们在这里写入的数据对应的timestamp</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">val</span> kafkaProducer = <span class="keyword">new</span> <span class="type">FlinkKafkaProducer</span>[<span class="type">String</span>](topic, <span class="keyword">new</span> <span class="type">KafkaSerializationSchemaWrapper</span>[<span class="type">String</span>](topic, <span class="literal">null</span>, <span class="literal">false</span>, <span class="keyword">new</span> <span class="type">SimpleStringSchema</span>()), prop, <span class="type">FlinkKafkaProducer</span>.<span class="type">Semantic</span>.<span class="type">EXACTLY_ONCE</span>)</span><br><span class="line">    text.addSink(kafkaProducer)</span><br><span class="line"></span><br><span class="line">    env.execute(<span class="string">"StreamKafkaSinkScala"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232135912.png" alt="image-20230423213547295"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232137221.png" alt="image-20230423213734278"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232138202.png" alt="image-20230423213834818"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmak里查看</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232144712.png" alt="image-20230423214449177"></p>
+<h3 id="java-1"><a href="#java-1" class="headerlink" title="java"></a>java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.java.kafkaconnector;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.serialization.SimpleStringSchema;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStreamSource;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.connectors.kafka.internals.KafkaSerializationSchemaWrapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Flink向Kafka中生产数据</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StreamKafkaSinkJava</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line"></span><br><span class="line">        DataStreamSource&lt;String&gt; text = env.socketTextStream(<span class="string">"bigdata04"</span>, <span class="number">9001</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指定FlinkKafkaProducer相关配置</span></span><br><span class="line">        String topic = <span class="string">"t2"</span>;</span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        prop.setProperty(<span class="string">"bootstrap.servers"</span>,<span class="string">"bigdata01:9092,bigdata02:9092,bigdata03:9092"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指定kafak作为sink</span></span><br><span class="line">        FlinkKafkaProducer&lt;String&gt; kafkaProducer = <span class="keyword">new</span> FlinkKafkaProducer&lt;&gt;(topic, <span class="keyword">new</span> KafkaSerializationSchemaWrapper&lt;String&gt;(topic, <span class="keyword">null</span>, <span class="keyword">false</span>, <span class="keyword">new</span> SimpleStringSchema()), prop, FlinkKafkaProducer.Semantic.EXACTLY_ONCE);</span><br><span class="line">        text.addSink(kafkaProducer);</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"StreamKafkaSinkJava"</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="KafkaProducer的容错"><a href="#KafkaProducer的容错" class="headerlink" title="KafkaProducer的容错"></a>KafkaProducer的容错</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">下面我们来看一下kafkaProducer的容错。如果flink开启了checkpoint，那针对flink kafka producer可以提供仅一次予以保证。我们可以通过这个参数来指定三种不同的语义。</span><br><span class="line">点就是不支持任何语音，这个呢是至少一次，这个呢仅一次，那more呢是至少一次。好，那在代码里面怎么体现呢？来看一下。注意看到没有，我们刚才指的就是一个锦一四啊。但是这个时候注意你还要开启这个table。开启这个了。下面那些参数我暂时就先不指定了，行吗？好，那下面呢，我们来执行一下。来开启这个稍的。好注意这时候呢，给大家看一个比较神奇的现象。你看刚才我们把这个搜下打开啊，结果它停了，你再把它打开。他还会请。看没有？什么原因呢？那时候我这块也没有报错呀。注意这个呢，是因为这个原因。我们之前啊，在这加了一个logo的配置文件，对吧。注意这个日级别，我之前给它改成error。我们把这个调一下。调成那个警告级别。因为这个时候有一些日他没有打出来警告信息看不到啊。来再启动把这个打开。对，他这个其实应该是error级别的，但是他写的什么写的不太好，他把这个日志写成那种warning级别，警告级别的，所以说呢，我们之前使用那个error级别的，监控不到这些日志信息啊。啊，停一下吧。</span><br><span class="line"></span><br><span class="line">来分析一下啊。不要往后面看这。还有什么呀，这个事物时间比这个博客里面配置的这个时间还要大。就是说，生产者中设置的事物超时时间大于卡夫卡博客中设置的事物超时时间。因为卡夫卡服务中默认事物的超时时间是15分钟，但是呢，弗林格卡夫卡保留它里面设置的事物超时间默认是一小时，这个仅一次语义啊，它需要依赖这个事物。如果从Li应用程序崩溃到完全重启的时间超过了卡夫卡的事物超时时间，那么将会有数据丢失，所以我们需要合理的配置事物超时时间。因此，在使用这个仅一次语义之前，建议增加卡夫卡博克中这个transaction.max.timeout.ms的值。把这个值啊给它调大。那下面呢，我们就来修改一下卡夫卡里面这个配置，这个配置在哪啊，其实就那个server.properties里面啊。买那个可以试一下。它里面是没有这个参数的，你直接在这把它拿过来。给它做个值。我们也给它改成一小时吧。这个你转换成毫秒是3600000。那么是五个零啊，这样的话就一小时。把这个复制一下。对，这个集群里面所有机器都要改啊。嗯。好，可以了，注意改完之后我们需要重写。那你先把这个卡夫卡集群停掉。好停掉之后再去启动，启动的话，我们使用它这个命令啊。前面加了一个GMX，这样的话我们可以使那个CMA来减轻它里面一些信息啊。嗯。好，这个起来了。嗯。嗯。这个呢也可以啊。好，这个也可以了。那接下来我们重新再执行这个样本，对吧，把这个再看一下。嗯。看到没有，此时他就不报错了啊，我们可以在这来验证一下，先确一下里面的数据对吧。是这样。5211。这个停了，因为刚才我们把那个卡夫卡停掉之后啊，这个c map哎，就停掉了。把它起来。所以这个没不对。嗯。嗯。第三。对吧，这里面是这了来。我们输点作业。好变了吧，对吧。说明这个数据写进来了，并且这块呢也没报错啊。OK，这样就可以了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304232152824.png" alt="image-20230423215255115"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">package com.imooc.scala.kafkaconnector</span><br><span class="line"></span><br><span class="line">import java.util.Properties</span><br><span class="line"></span><br><span class="line">import org.apache.flink.api.common.serialization.SimpleStringSchema</span><br><span class="line">import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment</span><br><span class="line">import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer</span><br><span class="line">import org.apache.flink.streaming.connectors.kafka.internals.KafkaSerializationSchemaWrapper</span><br><span class="line">import org.apache.flink.streaming.connectors.kafka.partitioner.FlinkFixedPartitioner</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * Flink向Kafka中生产数据 </span><br><span class="line"> * Created by xuwei</span><br><span class="line"> *&#x2F;</span><br><span class="line">object StreamKafkaSinkScala &#123;</span><br><span class="line">  def main(args: Array[String]): Unit &#x3D; &#123;</span><br><span class="line">    val env &#x3D; StreamExecutionEnvironment.getExecutionEnvironment</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;开启checkpoint</span><br><span class="line">    env.enableCheckpointing(5000)</span><br><span class="line">      </span><br><span class="line">    val text &#x3D; env.socketTextStream(&quot;bigdata04&quot;, 9001)</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;指定FlinkKafkaProducer的相关配置</span><br><span class="line">    val topic &#x3D; &quot;t2&quot;</span><br><span class="line">    val prop &#x3D; new Properties()</span><br><span class="line">    prop.setProperty(&quot;bootstrap.servers&quot;,&quot;bigdata01:9092,bigdata02:9092,bigdata03:9092&quot;)</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;指定kafka作为sink</span><br><span class="line">    &#x2F;*</span><br><span class="line">     KafkaSerializationSchemaWrapper的几个参数</span><br><span class="line">     1：topic：指定需要写入的topic名称即可</span><br><span class="line">     2：partitioner，通过自定义分区器实现将数据写入到指定topic的具体分区中</span><br><span class="line">     默认会使用FlinkFixedPartitioner，它表示会将所有的数据都写入指定topic的一个分区里面</span><br><span class="line">     如果不想自定义分区器，也不想使用默认的，可以直接使用null即可</span><br><span class="line">     3：writeTimeStamp，向topic中写入数据的时候，是否写入时间戳</span><br><span class="line">     如果写入了，那么在watermark的案例中，使用extractTimestamp()提起时间戳的时候</span><br><span class="line">     就可以直接使用recordTimestamp即可，它表示的就是我们在这里写入的数据对应的timestamp</span><br><span class="line">     *&#x2F;</span><br><span class="line">    val kafkaProducer &#x3D; new FlinkKafkaProducer[String](topic, new KafkaSerializationSchemaWrapper[String](topic, null, false, new SimpleStringSchema()), prop, FlinkKafkaProducer.Semantic.EXACTLY_ONCE)</span><br><span class="line">    text.addSink(kafkaProducer)</span><br><span class="line"></span><br><span class="line">    env.execute(&quot;StreamKafkaSinkScala&quot;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Spark-Streaming"><a href="#Spark-Streaming" class="headerlink" title="Spark Streaming"></a>Spark Streaming</h2><hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-2.html">大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-2</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年04月20日 - 16:04</p>
+  <p><span>最后更新:</span>2023年04月23日 - 22:04</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-2.html" title="大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-2.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-2.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-1.html" rel="next" title="大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-1">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E9%AB%98%E7%BA%A7%E8%BF%9B%E9%98%B6%E4%B9%8B%E8%B7%AF-3.html" rel="prev" title="大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-3">
+                大数据开发工程师-第十七周 Flink极速上手篇-Flink高级进阶之路-3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">349</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">50</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">119</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十七周-Flink极速上手篇-Flink高级进阶之路-2"><span class="nav-number">1.</span> <span class="nav-text">第十七周 Flink极速上手篇-Flink高级进阶之路-2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-Consumer的使用"><span class="nav-number">1.1.</span> <span class="nav-text">Kafka Consumer的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala"><span class="nav-number">1.1.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java"><span class="nav-number">1.1.2.</span> <span class="nav-text">java</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KafkaConsumer消费策略设置"><span class="nav-number">1.2.</span> <span class="nav-text">KafkaConsumer消费策略设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">scala</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KafkaConsumer的容错"><span class="nav-number">1.3.</span> <span class="nav-text">KafkaConsumer的容错</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-Consumers-Offset自动提交"><span class="nav-number">1.3.1.</span> <span class="nav-text">Kafka Consumers Offset自动提交</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KafkaProducer的使用"><span class="nav-number">1.4.</span> <span class="nav-text">KafkaProducer的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">scala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java-1"><span class="nav-number">1.4.2.</span> <span class="nav-text">java</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KafkaProducer的容错"><span class="nav-number">1.5.</span> <span class="nav-text">KafkaProducer的容错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark-Streaming"><span class="nav-number">1.6.</span> <span class="nav-text">Spark Streaming</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">523.7k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
