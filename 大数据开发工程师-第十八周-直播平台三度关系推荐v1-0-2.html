@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第十八周 直播平台三度关系推荐v1.0-2数据采集架构详细设计 1大家好，下面呢，我们就从我们整体架构里面的第一个模块数据采集模块开始。注意，在实际过程中，数据采集模块不是只针对某一个项目而言的，而是一个公共的采集平台，所有项目依赖的数据全部都来源于数据采集模块，所以在设计采集模块的时候要考虑通用性。不能仅仅是为了这一个项目而服务。咱们前面在分析整体架构的时候说过，filebeat采集的数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-2">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-2.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十八周 直播平台三度关系推荐v1.0-2数据采集架构详细设计 1大家好，下面呢，我们就从我们整体架构里面的第一个模块数据采集模块开始。注意，在实际过程中，数据采集模块不是只针对某一个项目而言的，而是一个公共的采集平台，所有项目依赖的数据全部都来源于数据采集模块，所以在设计采集模块的时候要考虑通用性。不能仅仅是为了这一个项目而服务。咱们前面在分析整体架构的时候说过，filebeat采集的数据">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304242348422.png">
+<meta property="article:published_time" content="2023-04-24T07:37:28.000Z">
+<meta property="article:modified_time" content="2023-04-24T17:09:14.401Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304242348422.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十八周-直播平台三度关系推荐v1-0-2.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-2 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-24T15:37:28+08:00">
+                2023-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+<h1 id="第十八周-直播平台三度关系推荐v1-0-2"><a href="#第十八周-直播平台三度关系推荐v1-0-2" class="headerlink" title="第十八周 直播平台三度关系推荐v1.0-2"></a>第十八周 直播平台三度关系推荐v1.0-2</h1><h2 id="数据采集架构详细设计"><a href="#数据采集架构详细设计" class="headerlink" title="数据采集架构详细设计"></a>数据采集架构详细设计</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202304242348422.png" alt="image-20230424234832289"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">大家好，下面呢，我们就从我们整体架构里面的第一个模块数据采集模块开始。注意，在实际过程中，数据采集模块不是只针对某一个项目而言的，而是一个公共的采集平台，所有项目依赖的数据全部都来源于数据采集模块，所以在设计采集模块的时候要考虑通用性。不能仅仅是为了这一个项目而服务。咱们前面在分析整体架构的时候说过，filebeat采集的数据到达kafka以后，会通过flume 再做一下分发，为什么要有这个分发这个过程呢？这个分发过程实现了什么功能呢？我们来看一下这张图。这个图里面呢，针对数据采集模块做了详细的分析，把数据采集模块呢，又划分了三层，数据采集聚合层，数据分发省数据落盘层。在这个数据采集聚合层，我们为了保证采集程序的通用性，不至于每次新增一个业务指标的数据，就去重新增加一个采集进程，或者修改采集程序的配置文件。所以呢，我们定义了一个规则。所有的日志数据全部保存在服务器的一个特定的目录下面。我会让filebeat的监控这个目录下面的所有文件。如果后期有新增业务日志，那么就会在这个目录下新增一种日志文件，filebeat就可以自动识别。但是这个时候会有一个问题。filebeat的输出只有一个。多种类型的日志数据会被filebeat采集到同一个topic中。如果各种类型的日志数据全部混到一块儿，会导致后期处理数据的时候比较麻烦。本来呢，我只想计算一种数据，但是这个时候我就需要读取这个大的topic。它里面呢，包含了很多种数据类型。这里面的一个数据量也很大，那我计算的时候呢，我就需要把它里面所有数据全部都读出来，然后再过滤。这样在计算的时候就会影响计算效率，也间接的浪费了计算资源。所以针对这个问题，我们又定义了一个规则，所有的日志数据全部使用json格式，并且呢，在json中增加一个type字段，标识数据的类型，这样每一条数据都有自己的类型标识，然后汇聚到kafka中的一个大的topic中。为了后面使用方便，我们就需要把这个大的topic中的数据啊，根据业务类型进行拆分，把不同类型的数据啊分发到不同的topic中。那这块的话，其实就是我们这个数据分发层要干的事情，相当于filebeat呢，它呢会把这个数据啊，全部都采集到kafka里面这个大topic里面。所有业务类型的日全部都采集到这一个topic里面。然后呢，我们接着就可以使用这个flume，对kafka中这个大topic中的数据进行分发。利用flume中的拦截器解析数据中的那个type字段的值，把type字段的值作为输出topic的一个名称。这样就可以把相同类型的数据分发到同一个topic中了。当然了，这些topic呢，我们需要提前创建。如果想要提高这个数据分发的能力，我们还可以在这儿启动多个flume进程。只需要保证多个flume中指定相同的group.id就可以了。这样就可以并行执行这个数据分发操作。那把这个数据分发到对应的topic里面以后呀，后面的实施计算程序就可以直接消费这个topic进行计算了。不需要再去读取那个大的topic，这样就可以提高计算性能。并且呢，我们还可以把需要备份的topic里面的数据啊，使用flume进行落盘，把它保存到Hdfs里面。这个呢，就是数据采集架构的详细设计。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="数据来源分析"><a href="#数据来源分析" class="headerlink" title="数据来源分析"></a>数据来源分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">下面我们来分析一下，针对这个项目，我们需要采集哪些业务类型的数据，以及这些数据来源于什么地方。首先是服务端日志数据。什么是辅佐之志呢？可以这样理解。就是我们在APP中点击一些按钮的时候，例如我们要关注一个主播，这个时候当我们点击这个关注按钮之后。APP呢，它会去请求对应的接口。接口中的代码逻辑就是将我们关注的数据保存到数据库里面。同时，这个接口也会记录一份日志。因为这个接口呢，是为APP提供后台服务的，所以它记录的日志我们称之为服务端日志。接着我们来简单画一个图来看一下。这个呢，是隔壁老王。那是我们的一个用户。画的形象一点。这是我们的一个APP。我们这个APP里面呢，它有一个关注功能。这时候呢，你看老王啊，他会点击这个关注功能。要关注某一个主播。当他点击这个关注功能之后，这个APP里面这个关注功能，它对应的它会调用一个接口。那我们这块呢，有一个后台服务器。这个服务器里面呢，部署的有一个接口服务，就是这种HTTP接口。那对应的这个关注功能，其实呢，还会调那个接口。所以你在这呢，点击APP里面这个关注按钮。它底层啊，其实会调这个接口。这个接口呢，其实呢，它会操作一个数据库。相遇老王在这儿呢，关注了一个主播，最终啊调这个接口。接口呢去操作这个数据库，最终把老王关注了，谁把这个数据呢存到数据库里面。就是这个逻辑啊。那这个时候注意我们在这个接入服务里面呢，因为它俩现在也是一个外部项目，所以什么它里面可以记录日志，那这里面记录的日志呢。我们就把它称为是无端日志。称之为无端。那在我们这个项目里面，针对服安日制。主要包含实时粉丝、观众数据以及视频数据。这个实时粉丝关注数据啊，是因为用户呢，在点击关注以及取消关注的时候，都需要调用服务端接口。所以这个数据呢，会在服务端通过日志记录。还有就是这个视频数据。下面这个视频啊，其实就是直播。当主播关闭直播的时候，会调用服务端接口上报本次直播的相关指标数据。其实服务端记录的还有很多其他类型的数据，只不过说呢，我们这个项目目前呢，只需要这两种数据。那接下来我们来看一下服完数据库中的数据。注意服务端数据库中的数据啊，其实啊，就是我们刚才图里面这个数据库里面的数据。来看一下。就这块儿。就相当于啊，我们AB某一些功能呢，它会调用这个后台的接口，然后调用这个接口之后呢，最终啊，其实操作的是这个数据库。我们所说的这个服务端数据库的数据，其实说的就是这块它里面的数据。那在这个项目里面，我们主要获取历史粉丝关注数据，以及呢主播等级数据。这里面我们需要历史粉丝关注数据，因为我们在做这个项目的时候，我们的直播平台已经运营了两三年了。所以说，我们需要把历史粉丝关注数据初始化到图数据库中。这些历史数据服务端存储在数据库中，所以说我们需要从数据库里面去取。还有就是这个主播的等级数据。其实这个数据呢，在服务端日志中也有，但是我们考虑到服务端数据库中的数据是最准确的。特别是针对用户相关的数据，最好是以服务端数据库中的为准。所以说呢，我们就从那个服务端数据库中，每天凌晨啊，定时把昨天等级发生了变化的这个主播等级数据呢，导入到HS，方便我们后面的离线计算时。最后呢，我们来看一下客户端日志数据。刚才我们分析了服端日志。那什么是后端日志呢？其实啊，就是用户在APP客户端操作的时候。直接通过买点上报的日日数据，这种数据称之为客户端日志数据。我们在这再画一下这个图。如果说呀，你在这做了一些操作，你说呢，我不调用这个后台这个接口。我呢通过买点直接上报用户这个行为说你关注了谁对吧，直接通过买点上报。这个时候的话，在这呢，我们会有一个。这个日日金融服务器。他这个呢，就是直接通过这个买一点。上报日。那最终啊，可以把这个用户的行为数据啊，直接上报到这个日志汽车服务器里面。然后就没有，然后。他不会去操作数据库啊。心志里面啊，一般上报的都是一些用户的行为。咱们刚才你看服务端日志呢，现在这啊，我们是要调这个接口，最终呢，是要操作数据库的，要把我们这个关注行为。就是谁关注，谁要把这个数据给它保存到数据库里面。而这种呢，通过买点上报呢，其实呢，他就不会和那个数据库打交道。所以说这种话一般称之为是后端日志。是通过客户端直接上报的，不需要和这个服务端这个接口去交互的。这里记录的日志，我们称之为后端日志。好，那这个服务端日志和客端日志有什么区别吗？为什么再分成两种日志呢？以及说为什么有的地方我们使用客户端日志，为什么有的地方我们使用服务端日志呢。针对我们这个APP里面啊，它这个关注功能服务端记录的这个日志啊，会更加准确。因为服务端接口里面，它会涉及到对于数据库的一个操作里面会有事故。只有这条数据真正保存成功的时候，才会记录日志，如果说你在操作数据库保存失败了。现在你会回滚，这时候就不需要去记录这个操作日志了。你顶多记住一条失败的日志。但是呢，你这种客观日志，只要用户在APP里面剪辑了一次关注功能，他就会上报一次日志。最终啊，这个日志接收服务器啊，就会接收到这个日志，并且呢，把它记录下来。他可能呢，会由于网络等原因啊，导致最终关注失败，但是呢，你这条日志。你是发过来了，并且呢，这块啊也记录下来。所以相对来说，服务端数据的准确性是比这个客端日这个准确性高的。如果说一份数据在服务端日志中和客户端日志中同时都有。那我们肯定要优先选择服务端中的日知数据。一般啊，我们在客户端通过买点上报的数据啊，都是一些用户行为数据，这些数据啊，就算有一些误差也没有多大影响，所以说呢，客观日中大部分呢，都是一些用户行为数据。它不涉及到一些和数据库交互的一些操作。那在我们这个项目中，针对客户端日志，我们只要获取用户活跃数据。活跃呢表示啊，只要用户每天打开APP就认为用户活跃，用户的这些行为数据呢，会在客户端通过买点上报管。那这些呢，就是我们项目中需要的一些基础数据，主要是这五份儿数据。那刚才我们分析到服务端日志，服务端数据库数据，以及客户端日志，那这个这个图里面啊，其实这样这个呢，就是服务端日志数据。这块呢，就是服务端数据库里面的数据。那这块呢，其实就是客户端的一些日志数据。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="模拟产生数据"><a href="#模拟产生数据" class="headerlink" title="模拟产生数据"></a>模拟产生数据</h2><hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-2.html">大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-2</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年04月24日 - 15:04</p>
+  <p><span>最后更新:</span>2023年04月25日 - 01:04</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-2.html" title="大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-2.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-2.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-1.html" rel="next" title="大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-1">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v1-0-3.html" rel="prev" title="大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-3">
+                大数据开发工程师-第十八周 直播平台三度关系推荐v1.0-3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">353</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">50</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">119</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十八周-直播平台三度关系推荐v1-0-2"><span class="nav-number">1.</span> <span class="nav-text">第十八周 直播平台三度关系推荐v1.0-2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据采集架构详细设计"><span class="nav-number">1.1.</span> <span class="nav-text">数据采集架构详细设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据来源分析"><span class="nav-number">1.2.</span> <span class="nav-text">数据来源分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟产生数据"><span class="nav-number">1.3.</span> <span class="nav-text">模拟产生数据</span></a></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">545.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
