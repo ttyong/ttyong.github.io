@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="直播平台三度关系推荐v2.0,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第十八周 直播平台三度关系推荐v2.0-2每周一计算最近一周内主活主播的三度关系列表(任务六)12345使用Flink程序实现每周一计算最近一周内主活主播的三度关系列表创建子module项目：get_recommend_list在项目中创建scala目录，引入scala2.12版本的SDK创建package：com.imooc.flink在pom.xml中添加依赖  子项目pom1234">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-2">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-2.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="第十八周 直播平台三度关系推荐v2.0-2每周一计算最近一周内主活主播的三度关系列表(任务六)12345使用Flink程序实现每周一计算最近一周内主活主播的三度关系列表创建子module项目：get_recommend_list在项目中创建scala目录，引入scala2.12版本的SDK创建package：com.imooc.flink在pom.xml中添加依赖  子项目pom1234">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161459949.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161504206.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161647908.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161638708.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161649565.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161701517.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161716013.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161726656.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161730743.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161754559.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305162119832.png">
+<meta property="article:published_time" content="2023-05-03T09:32:38.000Z">
+<meta property="article:modified_time" content="2023-05-20T12:50:47.753Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="直播平台三度关系推荐v2.0">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161459949.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十八周-直播平台三度关系推荐v2-0-2.html">
+
+
+
+
+
+  <title>大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-2 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-2</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-05-03T17:32:38+08:00">
+                2023-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="第十八周-直播平台三度关系推荐v2-0-2"><a href="#第十八周-直播平台三度关系推荐v2-0-2" class="headerlink" title="第十八周 直播平台三度关系推荐v2.0-2"></a>第十八周 直播平台三度关系推荐v2.0-2</h1><h2 id="每周一计算最近一周内主活主播的三度关系列表-任务六"><a href="#每周一计算最近一周内主活主播的三度关系列表-任务六" class="headerlink" title="每周一计算最近一周内主活主播的三度关系列表(任务六)"></a>每周一计算最近一周内主活主播的三度关系列表(任务六)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">使用Flink程序实现每周一计算最近一周内主活主播的三度关系列表</span><br><span class="line">创建子module项目：get_recommend_list</span><br><span class="line">在项目中创建scala目录，引入scala2.12版本的SDK</span><br><span class="line">创建package：com.imooc.flink</span><br><span class="line">在pom.xml中添加依赖</span><br></pre></td></tr></table></figure>
+
+<h3 id="子项目pom"><a href="#子项目pom" class="headerlink" title="子项目pom"></a>子项目pom</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0&quot;</span><br><span class="line">         xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0 http:&#x2F;&#x2F;maven.apache.org&#x2F;xsd&#x2F;maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;artifactId&gt;db_video_recommend_v2&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;groupId&gt;org.example&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;version&gt;1.0-SNAPSHOT&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;&#x2F;parent&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;&#x2F;modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;artifactId&gt;get_recommend_list&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;slf4j-api&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;slf4j-log4j12&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-java&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-scala_2.12&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-clients_2.12&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.neo4j.driver&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;neo4j-java-driver&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.hadoop&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;hadoop-client&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">    &lt;&#x2F;dependencies&gt;</span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;!-- 编译插件 --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;maven-compiler-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;3.6.0&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;source&gt;1.8&lt;&#x2F;source&gt;</span><br><span class="line">                    &lt;target&gt;1.8&lt;&#x2F;target&gt;</span><br><span class="line">                    &lt;encoding&gt;UTF-8&lt;&#x2F;encoding&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">            &lt;!-- scala编译插件 --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;net.alchim31.maven&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;scala-maven-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;3.1.6&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;scalaCompatVersion&gt;2.12&lt;&#x2F;scalaCompatVersion&gt;</span><br><span class="line">                    &lt;scalaVersion&gt;2.12.11&lt;&#x2F;scalaVersion&gt;</span><br><span class="line">                    &lt;encoding&gt;UTF-8&lt;&#x2F;encoding&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;compile-scala&lt;&#x2F;id&gt;</span><br><span class="line">                        &lt;phase&gt;compile&lt;&#x2F;phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;add-source&lt;&#x2F;goal&gt;</span><br><span class="line">                            &lt;goal&gt;compile&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;test-compile-scala&lt;&#x2F;id&gt;</span><br><span class="line">                        &lt;phase&gt;test-compile&lt;&#x2F;phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;add-source&lt;&#x2F;goal&gt;</span><br><span class="line">                            &lt;goal&gt;testCompile&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                &lt;&#x2F;executions&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">            &lt;!-- 打jar包插件(会包含所有依赖) --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;maven-assembly-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;2.6&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;descriptorRefs&gt;</span><br><span class="line">                        &lt;descriptorRef&gt;jar-with-dependencies&lt;&#x2F;descriptorRef&gt;</span><br><span class="line">                    &lt;&#x2F;descriptorRefs&gt;</span><br><span class="line">                    &lt;archive&gt;</span><br><span class="line">                        &lt;manifest&gt;</span><br><span class="line">                            &lt;!-- 可以设置jar包的入口类(可选) --&gt;</span><br><span class="line">                            &lt;mainClass&gt;&lt;&#x2F;mainClass&gt;</span><br><span class="line">                        &lt;&#x2F;manifest&gt;</span><br><span class="line">                    &lt;&#x2F;archive&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;make-assembly&lt;&#x2F;id&gt;</span><br><span class="line">                        &lt;phase&gt;package&lt;&#x2F;phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;single&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                &lt;&#x2F;executions&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">        &lt;&#x2F;plugins&gt;</span><br><span class="line">    &lt;&#x2F;build&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;project&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在resources目录中添加log4j.properties配置文件</span><br><span class="line"></span><br><span class="line">注意：此时需要通过flink读取neo4j中的数据，但是针对DataSet是不支持addSource方法的，但是它里面有一个createInput，可以接收一个自定义的InputFormat，所以我就需要定义一个Neo4jInputFormat了</span><br></pre></td></tr></table></figure>
+
+<h3 id="Neo4jInputFormat-scala"><a href="#Neo4jInputFormat-scala" class="headerlink" title="Neo4jInputFormat.scala"></a>Neo4jInputFormat.scala</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建类：Neo4jInputFormat</span><br><span class="line">代码如下：</span><br><span class="line"></span><br><span class="line">注意：此代码中的输入组件只能使用单并行度执行，如果使用多并行度查询可能会出现重复数据</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.flink</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.io.statistics.<span class="type">BaseStatistics</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.io.&#123;<span class="type">DefaultInputSplitAssigner</span>, <span class="type">NonParallelInput</span>, <span class="type">RichInputFormat</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.configuration.<span class="type">Configuration</span></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.core.io.&#123;<span class="type">GenericInputSplit</span>, <span class="type">InputSplit</span>, <span class="type">InputSplitAssigner</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.neo4j.driver.&#123;<span class="type">AuthTokens</span>, <span class="type">Driver</span>, <span class="type">GraphDatabase</span>, <span class="type">Result</span>, <span class="type">Session</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 从Neo4j中查询满足条件的主播</span></span><br><span class="line"><span class="comment"> * 一周内活跃过，并且主播等级大于4</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Neo4jInputFormat</span> <span class="keyword">extends</span> <span class="title">RichInputFormat</span>[<span class="type">String</span>,<span class="type">InputSplit</span>] <span class="keyword">with</span> <span class="title">NonParallelInput</span></span>&#123; <span class="comment">// 这里是多继承</span></span><br><span class="line">  <span class="comment">//注意：with NonParallelInput 表示此组件不支持多并行度</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//保存neo4j相关的配置参数</span></span><br><span class="line">  <span class="keyword">var</span> param: <span class="type">Map</span>[<span class="type">String</span>,<span class="type">String</span>] = <span class="type">Map</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> driver: <span class="type">Driver</span> = _</span><br><span class="line">  <span class="keyword">var</span> session: <span class="type">Session</span> = _</span><br><span class="line">  <span class="keyword">var</span> result: <span class="type">Result</span> = _</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 构造函数</span></span><br><span class="line"><span class="comment">   * 接收neo4j相关的配置参数</span></span><br><span class="line"><span class="comment">   * @param param</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">this</span></span>(param: <span class="type">Map</span>[<span class="type">String</span>,<span class="type">String</span>])&#123;</span><br><span class="line">    <span class="keyword">this</span>()</span><br><span class="line">    <span class="keyword">this</span>.param = param</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 配置此输入格式</span></span><br><span class="line"><span class="comment">   * @param parameters</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">configure</span></span>(parameters: <span class="type">Configuration</span>): <span class="type">Unit</span> = &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 获取输入数据的基本统计信息</span></span><br><span class="line"><span class="comment">   * @param cachedStatistics</span></span><br><span class="line"><span class="comment">   * @return</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">getStatistics</span></span>(cachedStatistics: <span class="type">BaseStatistics</span>): <span class="type">BaseStatistics</span> = &#123;</span><br><span class="line">    cachedStatistics</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 对输入数据切分split</span></span><br><span class="line"><span class="comment">   * @param minNumSplits</span></span><br><span class="line"><span class="comment">   * @return</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">createInputSplits</span></span>(minNumSplits: <span class="type">Int</span>): <span class="type">Array</span>[<span class="type">InputSplit</span>] = &#123;</span><br><span class="line">    <span class="type">Array</span>(<span class="keyword">new</span> <span class="type">GenericInputSplit</span>(<span class="number">0</span>,<span class="number">1</span>))</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 获取切分的split</span></span><br><span class="line"><span class="comment">   * @param inputSplits</span></span><br><span class="line"><span class="comment">   * @return</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">getInputSplitAssigner</span></span>(inputSplits: <span class="type">Array</span>[<span class="type">InputSplit</span>]): <span class="type">InputSplitAssigner</span> = &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="type">DefaultInputSplitAssigner</span>(inputSplits)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 初始化方法：只执行一次</span></span><br><span class="line"><span class="comment">   * 获取neo4j连接，开启会话</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">openInputFormat</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="comment">//初始化Neo4j连接</span></span><br><span class="line">    <span class="keyword">this</span>.driver = <span class="type">GraphDatabase</span>.driver(param(<span class="string">"boltUrl"</span>), <span class="type">AuthTokens</span>.basic(param(<span class="string">"userName"</span>), param(<span class="string">"passWord"</span>)))</span><br><span class="line">    <span class="comment">//开启会话</span></span><br><span class="line">    <span class="keyword">this</span>.session = driver.session()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 关闭Neo4j连接</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">closeInputFormat</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span>(driver!=<span class="literal">null</span>)&#123;</span><br><span class="line">      driver.close()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 此方法也是只执行一次</span></span><br><span class="line"><span class="comment">   * @param split</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">open</span></span>(split: <span class="type">InputSplit</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">this</span>.result = session.run(<span class="string">"match (a:User) where a.timestamp &gt;="</span>+param(<span class="string">"timestamp"</span>)+<span class="string">" and a.level &gt;= "</span>+param(<span class="string">"level"</span>)+<span class="string">" return a.uid"</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 如果数据读取完毕号以后，需要返回true</span></span><br><span class="line"><span class="comment">   * @return</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">reachedEnd</span></span>(): <span class="type">Boolean</span> = &#123;</span><br><span class="line">    !result.hasNext</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 读取结果数据，一次读取一条</span></span><br><span class="line"><span class="comment">   * @param reuse</span></span><br><span class="line"><span class="comment">   * @return</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">nextRecord</span></span>(reuse: <span class="type">String</span>): <span class="type">String</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> record = result.next()</span><br><span class="line">    <span class="keyword">val</span> uid = record.get(<span class="number">0</span>).asString()</span><br><span class="line">    uid</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 关闭会话</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">close</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span>(session!=<span class="literal">null</span>)&#123;</span><br><span class="line">      session.close()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GetRecommendList-scala"><a href="#GetRecommendList-scala" class="headerlink" title="GetRecommendList.scala"></a>GetRecommendList.scala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.flink</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.scala.<span class="type">ExecutionEnvironment</span></span><br><span class="line"><span class="keyword">import</span> org.neo4j.driver.&#123;<span class="type">AuthTokens</span>, <span class="type">GraphDatabase</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> scala.collection.mutable.&#123;<span class="type">ArrayBuffer</span>, <span class="type">ListBuffer</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 任务6：</span></span><br><span class="line"><span class="comment"> * 每周一计算最近一周内主活主播的三度关系列表</span></span><br><span class="line"><span class="comment"> * 注意：</span></span><br><span class="line"><span class="comment"> * 1：待推荐主播最近一周内活跃过</span></span><br><span class="line"><span class="comment"> * 2：待推荐主播等级&gt;4</span></span><br><span class="line"><span class="comment"> * 3：待推荐主播最近1个月视频评级满足3B+或2A+(flag=1)</span></span><br><span class="line"><span class="comment"> * 4：待推荐主播的粉丝列表关注重合度&gt;2</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">GetRecommendListScala</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">var</span> appName = <span class="string">"GetRecommendListScala"</span></span><br><span class="line">    <span class="keyword">var</span> boltUrl = <span class="string">"bolt://bigdata04:7687"</span></span><br><span class="line">    <span class="keyword">var</span> userName = <span class="string">"neo4j"</span></span><br><span class="line">    <span class="keyword">var</span> passWord = <span class="string">"admin"</span></span><br><span class="line">    <span class="keyword">var</span> timestamp = <span class="number">0</span>L <span class="comment">//过滤最近一周内是否活跃过</span></span><br><span class="line">    <span class="keyword">var</span> dumplicateNum = <span class="number">2</span> <span class="comment">//粉丝列表关注重合度</span></span><br><span class="line">    <span class="keyword">var</span> level = <span class="number">4</span> <span class="comment">//主播等级</span></span><br><span class="line">    <span class="keyword">var</span> outputPath = <span class="string">"hdfs://bigdata01:9000/data/recommend_data/20260201"</span></span><br><span class="line">    <span class="keyword">if</span>(args.length&gt;<span class="number">0</span>)&#123;</span><br><span class="line">      appName = args(<span class="number">0</span>)</span><br><span class="line">      boltUrl = args(<span class="number">1</span>)</span><br><span class="line">      userName = args(<span class="number">2</span>)</span><br><span class="line">      passWord = args(<span class="number">3</span>)</span><br><span class="line">      timestamp = args(<span class="number">4</span>).toLong</span><br><span class="line">      dumplicateNum = args(<span class="number">5</span>).toInt</span><br><span class="line">      level = args(<span class="number">6</span>).toInt</span><br><span class="line">      outputPath = args(<span class="number">7</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">ExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line">    <span class="comment">//添加隐式转换代码</span></span><br><span class="line">    <span class="keyword">import</span>  org.apache.flink.api.scala._</span><br><span class="line">    <span class="keyword">val</span> param = <span class="type">Map</span>(<span class="string">"boltUrl"</span>-&gt;boltUrl,<span class="string">"userName"</span>-&gt;userName,<span class="string">"passWord"</span>-&gt;passWord,<span class="string">"timestamp"</span>-&gt;timestamp.toString,<span class="string">"level"</span>-&gt;level.toString)</span><br><span class="line">    <span class="comment">//获取一周内主活的主播 并且主播等级大于4的数据</span></span><br><span class="line">    <span class="keyword">val</span> uidSet = env.createInput(<span class="keyword">new</span> <span class="type">Neo4jInputFormat</span>(param))</span><br><span class="line"></span><br><span class="line">    <span class="comment">//一次处理一批</span></span><br><span class="line">    <span class="comment">//过滤出粉丝关注重合度&gt;2的数据，并且对关注重合度倒序排序</span></span><br><span class="line">    <span class="comment">//最终的数据格式是：主播id,待推荐的主播id</span></span><br><span class="line">    <span class="keyword">val</span> mapSet = uidSet.mapPartition(it=&gt;&#123;</span><br><span class="line">      <span class="comment">//获取neo4j的连接</span></span><br><span class="line">      <span class="keyword">val</span> driver = <span class="type">GraphDatabase</span>.driver(boltUrl, <span class="type">AuthTokens</span>.basic(userName, passWord))</span><br><span class="line">      <span class="comment">//开启一个会话</span></span><br><span class="line">      <span class="keyword">val</span> session = driver.session()</span><br><span class="line">      <span class="comment">//保存计算出来的结果</span></span><br><span class="line">      <span class="keyword">val</span> resultArr = <span class="type">ArrayBuffer</span>[<span class="type">String</span>]()</span><br><span class="line">      it.foreach(uid=&gt;&#123;</span><br><span class="line">        <span class="comment">//计算一个用户的三度关系(主播的三度关系)</span></span><br><span class="line">        <span class="comment">//注意：数据量打了之后，这个计算操作是非常耗时</span></span><br><span class="line">        <span class="keyword">val</span> result = session.run(<span class="string">"match (a:User &#123;uid:'"</span>+uid+<span class="string">"'&#125;) &lt;-[:follow]- (b:User) -[:follow]-&gt; (c:User) return a.uid as auid,c.uid as cuid,count(c.uid) as sum order by sum desc limit 30"</span>)</span><br><span class="line">        <span class="comment">//对b、c的主活时间进行过滤，以及对c的level和flag值进行过滤</span></span><br><span class="line">        <span class="comment">/*val result = session.run("match (a:User &#123;uid:'"+uid+"'&#125;) &lt;-[:follow]- (b:User) -[:follow]-&gt; (c:User)" +</span></span><br><span class="line"><span class="comment">          " where b.timestamp &gt;= "+timestamp+" and c.timestamp &gt;= "+timestamp+" and c.level &gt;= "+level +" and c.flag =1 " +</span></span><br><span class="line"><span class="comment">          " return a.uid as auid,c.uid as cuid,count(c.uid) as sum order by sum desc limit 30")*/</span></span><br><span class="line">        <span class="keyword">while</span>(result.hasNext)&#123;</span><br><span class="line">          <span class="keyword">val</span> record = result.next()</span><br><span class="line">          <span class="keyword">val</span> sum = record.get(<span class="string">"sum"</span>).asInt()</span><br><span class="line">          <span class="keyword">if</span>(sum &gt; dumplicateNum)&#123;</span><br><span class="line">            resultArr += record.get(<span class="string">"auid"</span>).asString()+<span class="string">"\t"</span>+record.get(<span class="string">"cuid"</span>).asString()</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="comment">//关闭会话</span></span><br><span class="line">      session.close()</span><br><span class="line">      <span class="comment">//关闭连接</span></span><br><span class="line">      driver.close()</span><br><span class="line">      resultArr.iterator</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//把数据转成tupl2的形式</span></span><br><span class="line">    <span class="keyword">val</span> tup2Set = mapSet.map(line =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> splits = line.split(<span class="string">"\t"</span>)</span><br><span class="line">      (splits(<span class="number">0</span>), splits(<span class="number">1</span>))</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据主播id进行分组，可以获取到这个主播的待推荐列表</span></span><br><span class="line">    <span class="keyword">val</span> reduceSet = tup2Set.groupBy(_._1).reduceGroup(it =&gt; &#123;</span><br><span class="line">      <span class="keyword">val</span> list = it.toList</span><br><span class="line">      <span class="keyword">val</span> tmpList = <span class="type">ListBuffer</span>[<span class="type">String</span>]()</span><br><span class="line">      <span class="keyword">for</span> (l &lt;- list) &#123;</span><br><span class="line">        tmpList += l._2</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//把结果组装成这种形式 1001   1002,1003,1004</span></span><br><span class="line">      (list.head._1, tmpList.toList.mkString(<span class="string">","</span>))</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//注意：writeAsCsv只能保存tuple类型的数据</span></span><br><span class="line">    <span class="comment">//writerAsText可以支持任何类型，如果是对象，会调用对象的toString方法写入到文件中</span></span><br><span class="line">    reduceSet.writeAsCsv(outputPath,<span class="string">"\n"</span>,<span class="string">"\t"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//执行任务</span></span><br><span class="line">    env.execute(appName)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">其实我们也可以直接在这里将结果输入写入到redis中，不过为了整体看起来更加规范，在这就先把数据临时写到hdfs上面。</span><br><span class="line"></span><br><span class="line">在本地执行代码，然后到hdfs上面确认结果</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161459949.png" alt="image-20230516145733981"></p>
+<h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">接下来对程序编译打包</span><br><span class="line">在pom.xml中添加编译打包配置</span><br></pre></td></tr></table></figure>
+
+<h3 id="startGetRecommendList-sh"><a href="#startGetRecommendList-sh" class="headerlink" title="startGetRecommendList.sh"></a>startGetRecommendList.sh</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash">默认获取上周一的时间</span></span><br><span class="line">dt=`date -d "7 days ago" +"%Y%m%d"`</span><br><span class="line">if [ "x$1" != "x" ]</span><br><span class="line">then</span><br><span class="line">    dt=`date -d "7 days ago $1" +"%Y%m%d"`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">masterUrl="yarn-cluster"</span><br><span class="line">appName="GetRecommendListScala"`date +%s`</span><br><span class="line">boltUrl="bolt://bigdata04:7687"</span><br><span class="line">userName="neo4j"</span><br><span class="line">passWord="admin"</span><br><span class="line"><span class="meta">#</span><span class="bash">获取上周一的时间戳(单位：毫秒)</span></span><br><span class="line">timestamp=`date --date="$&#123;dt&#125;" +%s`000</span><br><span class="line"><span class="meta">#</span><span class="bash">粉丝列表关注重合度</span></span><br><span class="line">dumplicateNum=2</span><br><span class="line"><span class="meta">#</span><span class="bash">主播等级</span></span><br><span class="line">level=4</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">输出结果数据路径</span></span><br><span class="line">outputPath="hdfs://bigdata01:9000/data/recommend_data/$&#123;dt&#125;"</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">注意：需要将flink脚本路径配置到linux的环境变量中</span></span><br><span class="line">flink run \</span><br><span class="line">-m $&#123;masterUrl&#125; \</span><br><span class="line">-ynm $&#123;appName&#125; \</span><br><span class="line">-yqu default \</span><br><span class="line">-yjm 1024 \</span><br><span class="line">-ytm 1024 \</span><br><span class="line">-ys 1 \</span><br><span class="line">-p 5 \</span><br><span class="line">-c com.imooc.flink.GetRecommendListScala \</span><br><span class="line">/data/soft/video_recommend_v2/jobs/get_recommend_list-1.0-SNAPSHOT-jar-with-dependencies.jar $&#123;appName&#125; $&#123;boltUrl&#125; $&#123;userName&#125; $&#123;passWord&#125; $&#123;timestamp&#125; $&#123;dumplicateNum&#125; $&#123;level&#125; $&#123;outputPath&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">验证任务执行状态</span></span><br><span class="line">appStatus=`yarn application -appStates FINISHED -list | grep $&#123;appName&#125; | awk '&#123;print $8&#125;'`</span><br><span class="line">if [ "$&#123;appStatus&#125;" != "SUCCEEDED" ]</span><br><span class="line">then</span><br><span class="line">    echo "任务执行失败"</span><br><span class="line">    # 发送短信或者邮件</span><br><span class="line">else</span><br><span class="line">    echo "任务执行成功"</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<h3 id="提交任务"><a href="#提交任务" class="headerlink" title="提交任务"></a>提交任务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -x startGetRecommendList.sh 20260201</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161504206.png" alt="image-20230516150429277"></p>
+<h2 id="三度关系列表数据导出到Redis-任务七"><a href="#三度关系列表数据导出到Redis-任务七" class="headerlink" title="三度关系列表数据导出到Redis(任务七)"></a>三度关系列表数据导出到Redis(任务七)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">使用Flink程序实现将三度关系列表数据导出到Redis</span><br><span class="line"></span><br><span class="line">注意：此任务每周执行一次，在任务6执行完毕以后执行这个。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建子module项目：export_data</span><br><span class="line">在项目中创建scala目录，引入scala2.12版本的SDK</span><br><span class="line">创建package：com.imooc.flink</span><br><span class="line">在pom.xml中添加依赖</span><br></pre></td></tr></table></figure>
+
+<h3 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0&quot;</span><br><span class="line">         xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0 http:&#x2F;&#x2F;maven.apache.org&#x2F;xsd&#x2F;maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;artifactId&gt;db_video_recommend_v2&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;groupId&gt;org.example&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;version&gt;1.0-SNAPSHOT&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;&#x2F;parent&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;&#x2F;modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;artifactId&gt;export_data&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;slf4j-api&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;slf4j-log4j12&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-java&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-scala_2.12&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-clients_2.12&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.hadoop&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;hadoop-client&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;scope&gt;provided&lt;&#x2F;scope&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;redis.clients&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;jedis&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">    &lt;&#x2F;dependencies&gt;</span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;!-- 编译插件 --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;maven-compiler-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;3.6.0&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;source&gt;1.8&lt;&#x2F;source&gt;</span><br><span class="line">                    &lt;target&gt;1.8&lt;&#x2F;target&gt;</span><br><span class="line">                    &lt;encoding&gt;UTF-8&lt;&#x2F;encoding&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">            &lt;!-- scala编译插件 --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;net.alchim31.maven&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;scala-maven-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;3.1.6&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;scalaCompatVersion&gt;2.12&lt;&#x2F;scalaCompatVersion&gt;</span><br><span class="line">                    &lt;scalaVersion&gt;2.12.11&lt;&#x2F;scalaVersion&gt;</span><br><span class="line">                    &lt;encoding&gt;UTF-8&lt;&#x2F;encoding&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;compile-scala&lt;&#x2F;id&gt;</span><br><span class="line">                        &lt;phase&gt;compile&lt;&#x2F;phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;add-source&lt;&#x2F;goal&gt;</span><br><span class="line">                            &lt;goal&gt;compile&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;test-compile-scala&lt;&#x2F;id&gt;</span><br><span class="line">                        &lt;phase&gt;test-compile&lt;&#x2F;phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;add-source&lt;&#x2F;goal&gt;</span><br><span class="line">                            &lt;goal&gt;testCompile&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                &lt;&#x2F;executions&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">            &lt;!-- 打jar包插件(会包含所有依赖) --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;maven-assembly-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;2.6&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;descriptorRefs&gt;</span><br><span class="line">                        &lt;descriptorRef&gt;jar-with-dependencies&lt;&#x2F;descriptorRef&gt;</span><br><span class="line">                    &lt;&#x2F;descriptorRefs&gt;</span><br><span class="line">                    &lt;archive&gt;</span><br><span class="line">                        &lt;manifest&gt;</span><br><span class="line">                            &lt;!-- 可以设置jar包的入口类(可选) --&gt;</span><br><span class="line">                            &lt;mainClass&gt;&lt;&#x2F;mainClass&gt;</span><br><span class="line">                        &lt;&#x2F;manifest&gt;</span><br><span class="line">                    &lt;&#x2F;archive&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;id&gt;make-assembly&lt;&#x2F;id&gt;</span><br><span class="line">                        &lt;phase&gt;package&lt;&#x2F;phase&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;single&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                &lt;&#x2F;executions&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">        &lt;&#x2F;plugins&gt;</span><br><span class="line">    &lt;&#x2F;build&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;project&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在resources目录中添加log4j.properties配置文件</span><br><span class="line">创建类：ExportDataScala</span><br><span class="line">代码如下：</span><br></pre></td></tr></table></figure>
+
+<h3 id="ExportDataScala"><a href="#ExportDataScala" class="headerlink" title="ExportDataScala"></a>ExportDataScala</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.flink</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.scala.<span class="type">ExecutionEnvironment</span></span><br><span class="line"><span class="keyword">import</span> redis.clients.jedis.<span class="type">Jedis</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 任务7：</span></span><br><span class="line"><span class="comment"> * 将三度列表关系数据导出到Redis</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ExportDataScala</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">var</span> filePath = <span class="string">"hdfs://bigdata01:9000/data/recommend_data/20260125"</span></span><br><span class="line">    <span class="keyword">var</span> redisHost = <span class="string">"bigdata04"</span></span><br><span class="line">    <span class="keyword">var</span> redisPort = <span class="number">6379</span></span><br><span class="line">    <span class="keyword">if</span>(args.length&gt;<span class="number">0</span>)&#123;</span><br><span class="line">      filePath = args(<span class="number">0</span>)</span><br><span class="line">      redisHost = args(<span class="number">1</span>)</span><br><span class="line">      redisPort = args(<span class="number">2</span>).toInt</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">ExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line">    <span class="comment">//读取hdfs中的数据</span></span><br><span class="line">    <span class="keyword">val</span> text = env.readTextFile(filePath)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加隐式转换代码</span></span><br><span class="line">    <span class="keyword">import</span> org.apache.flink.api.scala._</span><br><span class="line">    <span class="comment">//处理数据</span></span><br><span class="line">    text.mapPartition(it=&gt;&#123;</span><br><span class="line">      <span class="comment">//获取jedis连接</span></span><br><span class="line">      <span class="keyword">val</span> jedis = <span class="keyword">new</span> <span class="type">Jedis</span>(redisHost, redisPort)</span><br><span class="line">      <span class="comment">//开启管道(提高性能，不开启也没事)</span></span><br><span class="line">      <span class="keyword">val</span> pipeline = jedis.pipelined()</span><br><span class="line">      it.foreach(line=&gt;&#123;</span><br><span class="line">        <span class="keyword">val</span> fields = line.split(<span class="string">"\t"</span>)</span><br><span class="line">        <span class="comment">//获取uid</span></span><br><span class="line">        <span class="keyword">val</span> uid = fields(<span class="number">0</span>)</span><br><span class="line">        <span class="comment">//获取待推荐主播列表</span></span><br><span class="line">        <span class="keyword">val</span> recommend_uids = fields(<span class="number">1</span>).split(<span class="string">","</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment">//注意：在这里给key起一个有意义的名字，l表示list类型、rec是recommend的简写(简写是因为key要放内存)</span></span><br><span class="line">        <span class="keyword">val</span> key = <span class="string">"l_rec_"</span>+uid</span><br><span class="line"></span><br><span class="line">        <span class="comment">//先删除(保证每周更新一次),pipeline中的删除操作在scala语言下使用有问题</span></span><br><span class="line">        jedis.del(key)</span><br><span class="line">        <span class="keyword">for</span>(r_uid &lt;- recommend_uids)&#123;</span><br><span class="line">          pipeline.rpush(key,r_uid)</span><br><span class="line">          <span class="comment">//给key设置一个有效时间，30天，如果30天数据没有更新，则删除此key</span></span><br><span class="line">          pipeline.expire(key,<span class="number">30</span>*<span class="number">24</span>*<span class="number">60</span>*<span class="number">60</span>)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="comment">//提交管道中的命令</span></span><br><span class="line">      pipeline.sync()</span><br><span class="line">      <span class="comment">//关闭jedis连接</span></span><br><span class="line">      jedis.close()</span><br><span class="line">      <span class="string">""</span></span><br><span class="line">    &#125;).print()</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：在执行代码之前，需要先把redis服务启动起来</span><br></pre></td></tr></table></figure>
+
+<h3 id="本地执行"><a href="#本地执行" class="headerlink" title="本地执行"></a>本地执行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在本地执行代码，到redis中验证效果。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161647908.png" alt="image-20230516164750844"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161638708.png" alt="image-20230516163851685"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161649565.png" alt="image-20230516164936168"></p>
+<h3 id="打包-1"><a href="#打包-1" class="headerlink" title="打包"></a>打包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">接下来对程序编译打包</span><br><span class="line">在pom.xml中添加编译打包配置</span><br></pre></td></tr></table></figure>
+
+<h3 id="startExportData-sh"><a href="#startExportData-sh" class="headerlink" title="startExportData.sh"></a>startExportData.sh</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash">默认获取上周一的时间</span></span><br><span class="line">dt=`date -d "7 days ago" +"%Y%m%d"`</span><br><span class="line">if [ "x$1" != "x" ]</span><br><span class="line">then</span><br><span class="line">    dt=`date -d "7 days ago $1" +"%Y%m%d"`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">HDFS输入数据路径</span></span><br><span class="line">filePath="hdfs://bigdata01:9000/data/recommend_data/$&#123;dt&#125;"</span><br><span class="line"></span><br><span class="line">masterUrl="yarn-cluster"</span><br><span class="line">appName="ExportDataScala"`date +%s`</span><br><span class="line">redisHost="bigdata04"</span><br><span class="line">redisPort=6379</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">注意：需要将flink脚本路径配置到linux的环境变量中</span></span><br><span class="line">flink run \</span><br><span class="line">-m $&#123;masterUrl&#125; \</span><br><span class="line">-ynm $&#123;appName&#125; \</span><br><span class="line">-yqu default \</span><br><span class="line">-yjm 1024 \</span><br><span class="line">-ytm 1024 \</span><br><span class="line">-ys 1 \</span><br><span class="line">-p 5 \</span><br><span class="line">-c com.imooc.flink.ExportDataScala \</span><br><span class="line">/data/soft/video_recommend_v2/jobs/export_data-1.0-SNAPSHOT-jar-with-dependencies.jar $&#123;filePath&#125; $&#123;redisHost&#125; $&#123;redisPort&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">验证任务执行状态</span></span><br><span class="line">appStatus=`yarn application -appStates FINISHED -list | grep $&#123;appName&#125; | awk '&#123;print $8&#125;'`</span><br><span class="line">if [ "$&#123;appStatus&#125;" != "SUCCEEDED" ]</span><br><span class="line">then</span><br><span class="line">    echo "任务执行失败"</span><br><span class="line">    # 发送短信或者邮件</span><br><span class="line">else</span><br><span class="line">    echo "任务执行成功"</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<h3 id="提交任务-1"><a href="#提交任务-1" class="headerlink" title="提交任务"></a>提交任务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">向集群提交任务，先把redis中之前生成的数据删一下</span><br><span class="line"></span><br><span class="line">sh -x startExportData.sh 20260201</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">任务成功执行，验证redis中的结果也是正确的</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据接口定义及开发-java-web了解即可"><a href="#数据接口定义及开发-java-web了解即可" class="headerlink" title="数据接口定义及开发(java web了解即可)"></a>数据接口定义及开发(java web了解即可)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">前面我们把结果数据计算好了，那接下来我们需要开发数据接口，对外提供数据。</span><br><span class="line">首先定义接口文档</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据接口文档定义"><a href="#数据接口文档定义" class="headerlink" title="数据接口文档定义"></a>数据接口文档定义</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">为了方便跨部门数据使用，我们需要定义接口文档，便于其他部门的同事使用我们的数据</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161701517.png" alt="image-20230516170118438"></p>
+<h3 id="数据接口代码开发"><a href="#数据接口代码开发" class="headerlink" title="数据接口代码开发"></a>数据接口代码开发</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">开发数据接口需要用到javaweb项目，在这给大家演示一下如何基于spring-boot搭建一个javaweb项目</span><br><span class="line">创建子module项目：data_server</span><br><span class="line">在pom.xml中添加依赖</span><br><span class="line">首先添加spring-boot的依赖，还有fastjson依赖，因为我们后面在传输数据的时候需要使用json格式</span><br></pre></td></tr></table></figure>
+
+<h4 id="pom-xml-1"><a href="#pom-xml-1" class="headerlink" title="pom.xml"></a>pom.xml</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0&quot;</span><br><span class="line">         xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0 http:&#x2F;&#x2F;maven.apache.org&#x2F;xsd&#x2F;maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;artifactId&gt;db_video_recommend_v2&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;groupId&gt;org.example&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;version&gt;1.0-SNAPSHOT&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;&#x2F;parent&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;&#x2F;modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;artifactId&gt;data_server&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-web&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;redis.clients&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;jedis&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br><span class="line">    &lt;&#x2F;dependencies&gt;</span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;!-- java编译插件 --&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;maven-compiler-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;2.3.2&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;source&gt;1.8&lt;&#x2F;source&gt;</span><br><span class="line">                    &lt;target&gt;1.8&lt;&#x2F;target&gt;</span><br><span class="line">                    &lt;encoding&gt;UTF-8&lt;&#x2F;encoding&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">                &lt;version&gt;2.1.1.RELEASE&lt;&#x2F;version&gt;</span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line">                    &lt;mainClass&gt;com.imooc.Application&lt;&#x2F;mainClass&gt;</span><br><span class="line">                &lt;&#x2F;configuration&gt;</span><br><span class="line">                &lt;executions&gt;</span><br><span class="line">                    &lt;execution&gt;</span><br><span class="line">                        &lt;goals&gt;</span><br><span class="line">                            &lt;goal&gt;repackage&lt;&#x2F;goal&gt;</span><br><span class="line">                        &lt;&#x2F;goals&gt;</span><br><span class="line">                    &lt;&#x2F;execution&gt;</span><br><span class="line">                &lt;&#x2F;executions&gt;</span><br><span class="line">            &lt;&#x2F;plugin&gt;</span><br><span class="line">        &lt;&#x2F;plugins&gt;</span><br><span class="line">    &lt;&#x2F;build&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;project&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在项目的resource目录中添加这两个文件</span><br><span class="line"></span><br><span class="line">application.properties</span><br><span class="line">logback.xml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建包：com.imooc</span><br><span class="line">然后把下面这几个文件夹及文件拷贝到com.imooc包里面</span><br><span class="line">controller</span><br><span class="line">Application.java</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161716013.png" alt="image-20230516171622873"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">直接在Application类中右键执行，就可以启动这个javaweb项目，项目内部已经集成了tomcta容器，监听的端口是8085</span><br><span class="line">验证项目是否可以正常访问。</span><br><span class="line">在浏览器中访问</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161726656.png" alt="image-20230516172612542"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">能看到结果数据说明此项目的基础框架是ok的，接下来我们就来开发一个接口</span><br><span class="line">由于在这我们需要操作redis，所以需要到pom.xml中增加jedis的依赖，以及把我们之前开发的RedisUtils工具类也拷贝过来</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在com.imooc下创建utils目录，把RedisUtils拷贝到里面</span><br><span class="line"></span><br><span class="line">接下来到DataController类中增加一个方法：getRecommendList</span><br><span class="line">代码如下：</span><br></pre></td></tr></table></figure>
+
+<h4 id="DataController-java"><a href="#DataController-java" class="headerlink" title="DataController.java"></a>DataController.java</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSONObject;</span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.RedisUtils;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 数据接口V1.0</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span><span class="comment">//控制器类</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/v1"</span>)<span class="comment">//映射路径</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataController</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(DataController<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试接口</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> name</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value=<span class="string">"/t1"</span>,method = RequestMethod.GET)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">test</span><span class="params">(@RequestParam(<span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hello,"</span>+name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据主播uid查询三度关系推荐列表数据</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 返回数据格式：</span></span><br><span class="line"><span class="comment">     * &#123;"flag":"success/error","msg":"错误信息","rec_uids":["1005","1004"]&#125;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> uid</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value=<span class="string">"/get_recommend_list"</span>,method = RequestMethod.GET)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> JSONObject <span class="title">getRecommendList</span><span class="params">(@RequestParam(<span class="string">"uid"</span>)</span> String uid) </span>&#123;</span><br><span class="line">        JSONObject resobj = <span class="keyword">new</span> JSONObject();</span><br><span class="line">        String flag = <span class="string">"success"</span>;</span><br><span class="line">        String msg = <span class="string">"ok"</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            Jedis jedis = RedisUtils.getJedis();</span><br><span class="line">            <span class="comment">//获取待推荐列表数据</span></span><br><span class="line">            List&lt;String&gt; uidList = jedis.lrange(<span class="string">"l_rec_"</span> + uid, <span class="number">0</span>, -<span class="number">1</span>);</span><br><span class="line">            String[] uidArr = uidList.toArray(<span class="keyword">new</span> String[<span class="number">0</span>]);</span><br><span class="line">            resobj.put(<span class="string">"rec_uids"</span>,uidArr);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            flag = <span class="string">"error"</span>;</span><br><span class="line">            msg = e.getMessage();</span><br><span class="line">            logger.error(msg);</span><br><span class="line">        &#125;</span><br><span class="line">        resobj.put(<span class="string">"flag"</span>,flag);</span><br><span class="line">        resobj.put(<span class="string">"msg"</span>,msg);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> resobj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Application-java"><a href="#Application-java" class="headerlink" title="Application.java"></a>Application.java</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Spring boot 入口启动程序</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span> <span class="comment">//定义springboot入口程序</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application<span class="class">.<span class="keyword">class</span>,<span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">重新启动data_server项目</span><br><span class="line">然后在浏览器中访问刚才开发的接口，能看到正常输出结果则说明此接口是正常的。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161730743.png" alt="image-20230516173008401"></p>
+<h3 id="打包-2"><a href="#打包-2" class="headerlink" title="打包"></a>打包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup java -jar data_server-1.0-SNAPSHOT.jar &amp;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">这个命令相当于模拟浏览器的请求</span><br><span class="line">curl -XGET &#39;http:&#x2F;&#x2F;bigdata04:8085&#x2F;v1&#x2F;get_recommend_list?uid&#x3D;1000&#39;</span><br><span class="line">&#123;&quot;msg&quot;:&quot;ok&quot;,&quot;flag&quot;:&quot;success&quot;,&quot;rec_uids&quot;:[&quot;1005&quot;,&quot;1004&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305161754559.png" alt="image-20230516175456652"></p>
+<h2 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">略略略</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目扩展优化"><a href="#项目扩展优化" class="headerlink" title="项目扩展优化"></a>项目扩展优化</h2><h3 id="如何保证在Neo4j中维护平台全量粉丝关注数据"><a href="#如何保证在Neo4j中维护平台全量粉丝关注数据" class="headerlink" title="如何保证在Neo4j中维护平台全量粉丝关注数据"></a>如何保证在Neo4j中维护平台全量粉丝关注数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">针对粉丝关注数据我们有两份</span><br><span class="line">第一份是历史粉丝关注数据</span><br><span class="line">第二份是实时粉丝关注数据</span><br><span class="line"></span><br><span class="line">如何通过这两份数据实现维护平台全量粉丝关注数据呢？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">背景是这样的</span><br><span class="line">历史粉丝数据是由服务端每天晚上0点的时候定时同步到mysql数据库中的，因为之前平台是把粉丝的关注数据，存储到了redis中，每天晚上定时向mysql中同步一次。</span><br><span class="line">实时粉丝数据在准备做这个项目之前通过日志采集工具把这些数据采集到kafka里面了</span><br><span class="line"></span><br><span class="line">基于此，假设我们是在2026年2月1日那天上午10点开始将mysql中的历史数据导出来，然后批量导入到neo4j中，mysql中的粉丝数据其实是截止到2026年2月1日0点的。</span><br><span class="line">这个导入过程当时耗时将近2天。</span><br><span class="line">也就是在2026年2月3日上午10点左右导入完毕的，此时neo4j中的粉丝关注数据是截止到2026年2月1日0点的。</span><br><span class="line"></span><br><span class="line">接下来我们需要通过kafka来将这两天内的粉丝关注数据读取出来，补充到neo4j中，如何实现呢？</span><br><span class="line">因为我们的kafka当时是保存3天的数据，所以说这里面保存的还有2026-01-31 10点左右开始的数据，所以说当时我们开发好SparkStreaming程序之后，使用一个新的消费者groupid，然后将auto.offset.reset设置为earlist，读取最早的数据，这样就可以将这个topic中前3天的数据都读出来，然后在neo4j中进行维护，这样其实会重复执行2026-01-31 10点到2月1 日0点之间的数据，但是对最终的结果是没有影响的。</span><br><span class="line">这样就可以实现在neo4j中全量维护粉丝关注数据了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202305162119832.png" alt="image-20230516210302781"></p>
+<h3 id="如何解决数据乱序导致的粉丝关注关系不准确"><a href="#如何解决数据乱序导致的粉丝关注关系不准确" class="headerlink" title="如何解决数据乱序导致的粉丝关注关系不准确"></a>如何解决数据乱序导致的粉丝关注关系不准确</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">通过在sparkStreaming内部对读取到的一小批数据基于时间进行排序，按照时间顺序执行粉丝关注相关操作，这样可以从一定程度上解决数据乱序的问题</span><br><span class="line">在v2.0中，我们使用了Flink计算引擎，此时可以使用watermark+eventtime来解决数据乱序的问题。</span><br></pre></td></tr></table></figure>
+
+<h3 id="如何优化三度关系推荐列表数据计算程序"><a href="#如何优化三度关系推荐列表数据计算程序" class="headerlink" title="如何优化三度关系推荐列表数据计算程序"></a>如何优化三度关系推荐列表数据计算程序</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">针对三度关系推荐列表数据计算程序：GetRecommendListScala</span><br><span class="line">这个任务在执行的时候需要执行20个小时左右，因为这里面会先查询出来满足条件的主播，然后挨个计算这些主播的三度关系数据，这里面需要和neo4j进行交互，主要慢在了neo4j这里，因为三度关系查询是比较复杂的，所以会比较耗时。</span><br><span class="line">这个任务在执行的时候我们会发现它有时候无缘无故的提示task丢失，进而导致任务失败，还得重新计算，代价太大，所以这样不太靠谱。</span><br><span class="line">后来发现是由于spark离线任务执行时间过长的时候会出现这种task丢失的问题。</span><br><span class="line">所以后来我们对这个程序又做了优化。</span><br><span class="line">针对第一步计算出来的主播列表，分成20份保存到hdfs上面</span><br></pre></td></tr></table></figure>
+
+<h3 id="项目数据规模"><a href="#项目数据规模" class="headerlink" title="项目数据规模"></a>项目数据规模</h3><h3 id="集群资源规模-HDP集群"><a href="#集群资源规模-HDP集群" class="headerlink" title="集群资源规模(HDP集群)"></a>集群资源规模(HDP集群)</h3><h3 id="集群数据规模"><a href="#集群数据规模" class="headerlink" title="集群数据规模"></a>集群数据规模</h3><h3 id="Neo4j性能指标"><a href="#Neo4j性能指标" class="headerlink" title="Neo4j性能指标"></a>Neo4j性能指标</h3><h3 id="Neo4j核心参数修改"><a href="#Neo4j核心参数修改" class="headerlink" title="Neo4j核心参数修改"></a>Neo4j核心参数修改</h3><hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-2.html">大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-2</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年05月03日 - 17:05</p>
+  <p><span>最后更新:</span>2023年05月20日 - 20:05</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-2.html" title="大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-2.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-2.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0/" rel="tag"><i class="fa fa-tag"></i> 直播平台三度关系推荐v2.0</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-1.html" rel="next" title="大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-1">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AB%E5%91%A8-%E7%9B%B4%E6%92%AD%E5%B9%B3%E5%8F%B0%E4%B8%89%E5%BA%A6%E5%85%B3%E7%B3%BB%E6%8E%A8%E8%8D%90v2-0-3.html" rel="prev" title="大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-3">
+                大数据开发工程师-第十八周 直播平台三度关系推荐v2.0-3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">356</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">50</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">121</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第十八周-直播平台三度关系推荐v2-0-2"><span class="nav-number">1.</span> <span class="nav-text">第十八周 直播平台三度关系推荐v2.0-2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#每周一计算最近一周内主活主播的三度关系列表-任务六"><span class="nav-number">1.1.</span> <span class="nav-text">每周一计算最近一周内主活主播的三度关系列表(任务六)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#子项目pom"><span class="nav-number">1.1.1.</span> <span class="nav-text">子项目pom</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Neo4jInputFormat-scala"><span class="nav-number">1.1.2.</span> <span class="nav-text">Neo4jInputFormat.scala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GetRecommendList-scala"><span class="nav-number">1.1.3.</span> <span class="nav-text">GetRecommendList.scala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包"><span class="nav-number">1.1.4.</span> <span class="nav-text">打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#startGetRecommendList-sh"><span class="nav-number">1.1.5.</span> <span class="nav-text">startGetRecommendList.sh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提交任务"><span class="nav-number">1.1.6.</span> <span class="nav-text">提交任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三度关系列表数据导出到Redis-任务七"><span class="nav-number">1.2.</span> <span class="nav-text">三度关系列表数据导出到Redis(任务七)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pom-xml"><span class="nav-number">1.2.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ExportDataScala"><span class="nav-number">1.2.2.</span> <span class="nav-text">ExportDataScala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地执行"><span class="nav-number">1.2.3.</span> <span class="nav-text">本地执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包-1"><span class="nav-number">1.2.4.</span> <span class="nav-text">打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#startExportData-sh"><span class="nav-number">1.2.5.</span> <span class="nav-text">startExportData.sh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提交任务-1"><span class="nav-number">1.2.6.</span> <span class="nav-text">提交任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据接口定义及开发-java-web了解即可"><span class="nav-number">1.3.</span> <span class="nav-text">数据接口定义及开发(java web了解即可)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据接口文档定义"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据接口文档定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据接口代码开发"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据接口代码开发</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pom-xml-1"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DataController-java"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">DataController.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Application-java"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">Application.java</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包-2"><span class="nav-number">1.3.3.</span> <span class="nav-text">打包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据展示"><span class="nav-number">1.4.</span> <span class="nav-text">数据展示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目扩展优化"><span class="nav-number">1.5.</span> <span class="nav-text">项目扩展优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何保证在Neo4j中维护平台全量粉丝关注数据"><span class="nav-number">1.5.1.</span> <span class="nav-text">如何保证在Neo4j中维护平台全量粉丝关注数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解决数据乱序导致的粉丝关注关系不准确"><span class="nav-number">1.5.2.</span> <span class="nav-text">如何解决数据乱序导致的粉丝关注关系不准确</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何优化三度关系推荐列表数据计算程序"><span class="nav-number">1.5.3.</span> <span class="nav-text">如何优化三度关系推荐列表数据计算程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目数据规模"><span class="nav-number">1.5.4.</span> <span class="nav-text">项目数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群资源规模-HDP集群"><span class="nav-number">1.5.5.</span> <span class="nav-text">集群资源规模(HDP集群)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群数据规模"><span class="nav-number">1.5.6.</span> <span class="nav-text">集群数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Neo4j性能指标"><span class="nav-number">1.5.7.</span> <span class="nav-text">Neo4j性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Neo4j核心参数修改"><span class="nav-number">1.5.8.</span> <span class="nav-text">Neo4j核心参数修改</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">613.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
