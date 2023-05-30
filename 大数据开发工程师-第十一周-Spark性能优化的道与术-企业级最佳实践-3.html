@@ -115,7 +115,7 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281058668.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303281108354.png">
 <meta property="article:published_time" content="2023-03-27T11:31:29.000Z">
-<meta property="article:modified_time" content="2023-04-13T06:46:36.346Z">
+<meta property="article:modified_time" content="2023-05-29T06:19:44.085Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="Spark">
 <meta name="twitter:card" content="summary">
@@ -506,7 +506,7 @@
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272100115.png" alt="image-20230327210029655"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">那我们把kryo序列化设置去掉，使用默认的java序列化看一下效果</span><br><span class="line">修改代码，注释掉这两行代码即可</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;.set(&quot;spark.serializer&quot;,&quot;org.apache.spark.serializer.KryoSerializer&quot;)</span><br><span class="line">&#x2F;&#x2F;.registerKryoClasses(Array(classOf[Person]))</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">运行任务，再访问4040界面</span><br><span class="line">发现此时占用的内存空间是 138 字节，比使用kryo的方式内存空间多占用了将近5倍。</span><br><span class="line">所以从这可以看出来，使用kryo序列化方式对内存的占用会降低很多。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">运行任务，再访问4040界面</span><br><span class="line">发现此时占用的内存空间是138字节，比使用kryo的方式内存空间多占用了将近5倍。</span><br><span class="line">所以从这可以看出来，使用kryo序列化方式对内存的占用会降低很多。</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303272101635.png" alt="image-20230327210118413"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：如果我们只是将spark的序列化机制改为了kryo序列化，但是没有对使用到的自定义类型手工进行注册，那么此时内存的占用会介于前面两种情况之间</span><br></pre></td></tr></table></figure>
@@ -520,7 +520,7 @@
 
 <h3 id="持久化或者checkpoint"><a href="#持久化或者checkpoint" class="headerlink" title="持久化或者checkpoint"></a>持久化或者checkpoint</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">针对程序中多次被transformation或者action操作的RDD进行持久化操作，避免对一个RDD反复进行计算，再进一步优化，使用Kryo序列化的持久化级别，减少内存占用</span><br><span class="line">为了保证RDD持久化数据在可能丢失的情况下还能实现高可靠，则需要对RDD执行Checkpoint操作</span><br><span class="line">这两个操作我们前面讲过了，在这就不再演示了</span><br></pre></td></tr></table></figure>
 
-<h3 id="JVM垃圾回收调优"><a href="#JVM垃圾回收调优" class="headerlink" title="JVM垃圾回收调优"></a>JVM垃圾回收调优</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">由于Spark是基于内存的计算引擎，RDD缓存的数据，以及算子执行期间创建的对象都是放在内存中的，所以针对Spark任务如果内存设置不合理会导致大部分时间都消耗在垃圾回收上</span><br><span class="line"></span><br><span class="line">对于垃圾回收来说，最重要的就是调节RDD缓存占用的内存空间，和算子执行时创建的对象占用的内存空间的比例。</span><br><span class="line"></span><br><span class="line">默认情况下，Spark使用每个executor 60%的内存空间来缓存RDD，那么只有40%的内存空间来存放算子执行期间创建的对象</span><br><span class="line">在这种情况下，可能由于内存空间的不足，并且算子对应的task任务在运行时创建的对象过大，那么一旦发现40%的内存空间不够用了，就会触发Java虚拟机的垃圾回收操作。</span><br><span class="line"></span><br><span class="line">因此在极端情况下，垃圾回收操作可能会被频繁触发。</span><br><span class="line">在这种情况下，如果发现垃圾回收频繁发生。那么就需要对这个比例进行调优了， spark.storage.memoryFraction参数的值默认是0.6。</span><br><span class="line">使用SparkConf().set(&quot;spark.storage.memoryFraction&quot;, &quot;0.5&quot;) 可以进行修改，就是将RDD缓存占用内存空间的比例降低为50% ，从而提供更多的内存空间来保存task运行时创建的对象。</span><br></pre></td></tr></table></figure>
+<h3 id="JVM垃圾回收调优"><a href="#JVM垃圾回收调优" class="headerlink" title="JVM垃圾回收调优"></a>JVM垃圾回收调优</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">由于Spark是基于内存的计算引擎，RDD缓存的数据，以及算子执行期间创建的对象都是放在内存中的，所以针对Spark任务如果内存设置不合理会导致大部分时间都消耗在垃圾回收上</span><br><span class="line"></span><br><span class="line">对于垃圾回收来说，最重要的就是调节RDD缓存占用的内存空间，和算子执行时创建的对象占用的内存空间的比例。</span><br><span class="line"></span><br><span class="line">默认情况下，Spark使用每个executor 60%的内存空间来缓存RDD，那么只有40%的内存空间来存放算子执行期间创建的对象</span><br><span class="line">在这种情况下，可能由于内存空间的不足，并且算子对应的task任务在运行时创建的对象过大，那么一旦发现40%的内存空间不够用了，就会触发Java虚拟机的垃圾回收操作。</span><br><span class="line"></span><br><span class="line">因此在极端情况下，垃圾回收操作可能会被频繁触发。</span><br><span class="line">在这种情况下，如果发现垃圾回收频繁发生。那么就需要对这个比例进行调优了，spark.storage.memoryFraction参数的值默认是0.6。</span><br><span class="line">使用SparkConf().set(&quot;spark.storage.memoryFraction&quot;, &quot;0.5&quot;)可以进行修改，就是将RDD缓存占用内存空间的比例降低为50% ，从而提供更多的内存空间来保存task运行时创建的对象。</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">因此，对于RDD持久化而言，完全可以使用Kryo序列化，加上降低其executor内存占比的方式，来减少其内存消耗。给task提供更多的内存，从而避免task在执行时频繁触发垃圾回收。</span><br><span class="line">我们可以对task的垃圾回收进行监测，在spark的任务执行界面，可以查看每个task执行消耗的时间，以及task gc消耗的时间。</span><br><span class="line"></span><br><span class="line">重新向集群中提交checkpoint的代码，查看spark任务的task指标信息</span><br><span class="line">确保Hadoop集群、yarn的historyserver进程以及spark的historyserver进程是正常运行的</span><br></pre></td></tr></table></figure>
 
@@ -626,7 +626,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-3.html">大数据开发工程师-第十一周 Spark性能优化的道与术-3</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年03月27日 - 19:03</p>
-  <p><span>最后更新:</span>2023年04月13日 - 14:04</p>
+  <p><span>最后更新:</span>2023年05月29日 - 14:05</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-3.html" title="大数据开发工程师-第十一周 Spark性能优化的道与术-3">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-3.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%80%E5%91%A8-Spark%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E9%81%93%E4%B8%8E%E6%9C%AF-%E4%BC%81%E4%B8%9A%E7%BA%A7%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5-3.html" aria-label="复制成功！"></i></span>
   </p>
@@ -792,7 +792,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">356</span>
+			  <span class="site-state-item-count">357</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -943,7 +943,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">613.4k</span>
+    <span title="Site words total count">614k</span>
   
 </div>
 
