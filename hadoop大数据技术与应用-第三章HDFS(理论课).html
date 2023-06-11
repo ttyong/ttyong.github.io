@@ -76,7 +76,7 @@
 
 
 
-  <meta name="keywords" content="瑞翼教育,HDFS,">
+  <meta name="keywords" content="hadoop,瑞翼教育,">
 
 
 
@@ -132,10 +132,10 @@
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/04/Gw9fRH.md.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/04/04/GwC9e0.md.png">
 <meta property="article:published_time" content="2020-04-02T03:45:48.000Z">
-<meta property="article:modified_time" content="2023-03-15T08:23:30.934Z">
+<meta property="article:modified_time" content="2023-06-09T10:14:31.257Z">
 <meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="hadoop">
 <meta property="article:tag" content="瑞翼教育">
-<meta property="article:tag" content="HDFS">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s1.ax1x.com/2020/04/02/GGoFIJ.png">
 
@@ -398,18 +398,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
-                    <span itemprop="name">Hadoop</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hadoop/Hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
+                  <a href="/categories/Hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
                     <span itemprop="name">Hadoop大数据技术</span>
                   </a>
                 </span>
@@ -445,7 +434,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  649
+                  1.5k
                 </span>
               
 
@@ -461,7 +450,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  5
                 </span>
               
             </div>
@@ -557,11 +546,17 @@
 <p><a href="https://imgchr.com/i/GJIMWR" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/02/GJIMWR.md.png" alt="GJIMWR.png" border="0"></a></p>
 <p><a href="https://imgchr.com/i/GJ770f" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/02/GJ770f.png" alt="GJ770f.png" border="0"></a></p>
 <h3 id="HDFS工作原理"><a href="#HDFS工作原理" class="headerlink" title="HDFS工作原理"></a>HDFS工作原理</h3><h4 id="HDFS写文件流程"><a href="#HDFS写文件流程" class="headerlink" title="HDFS写文件流程"></a>HDFS写文件流程</h4><p><a href="https://imgchr.com/i/GdIN1e" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GdIN1e.md.png" alt="GdIN1e.md.png" border="0"></a><br><a href="https://imgchr.com/i/GdItpD" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GdItpD.md.png" alt="GdItpD.md.png" border="0"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Client客户端发送上传请求，通过RPC与NameNode建立通信，NameNode检查该用户是否有上传权限，以及上传的文件是否在HDFS对应的目录下重名，如果这两者有任意一个不满足，则直接报错，如果两者都满足，则返回给客户端一个可以上传的信息；</span><br><span class="line"></span><br><span class="line">Client根据文件的大小进行切分，默认128M一块，切分完成之后给NameNode发送请求第一个block块上传到哪些服务器上；</span><br><span class="line"></span><br><span class="line">NameNode收到请求之后，根据网络拓扑和机架感知以及副本机制进行文件分配，返回可用的DataNode的地址；</span><br><span class="line"></span><br><span class="line">注：Hadoop在设计时考虑到数据的安全与高效, 数据文件默认在HDFS上存放三份, 存储策略为本地一份，同机架内其它某一节点上一份, 不同机架的某一节点上一份。</span><br><span class="line"></span><br><span class="line">客户端收到地址之后与服务器地址列表中的一个节点如A进行通信，本质上就是RPC调用，建立pipeline，A收到请求后会继续调用B，B在调用C，将整个pipeline建立完成，逐级返回Client；</span><br><span class="line"></span><br><span class="line">Client开始向A上发送第一个block（先从磁盘读取数据然后放到本地内存缓存），以packet（数据包，64kb）为单位，A收到一个packet就会发送给B，然后B发送给C，A每传完一个packet就会放入一个应答队列等待应答；</span><br><span class="line"></span><br><span class="line">数据被分割成一个个的packet数据包在pipeline上依次传输，在pipeline反向传输中，逐个发送ack（命令正确应答），最终由pipeline中第一个DataNode节点A将pipelineack发送给Client；</span><br><span class="line"></span><br><span class="line">当一个block传输完成之后, Client再次请求NameNode上传第二个block，NameNode重新选择三台DataNode给Client。</span><br></pre></td></tr></table></figure>
+
 <h4 id="HDFS读文件流程"><a href="#HDFS读文件流程" class="headerlink" title="HDFS读文件流程"></a>HDFS读文件流程</h4><p><a href="https://imgchr.com/i/GdoSN6" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GdoSN6.md.png" alt="GdoSN6.md.png" border="0"></a></p>
 <h4 id="HDFS容错"><a href="#HDFS容错" class="headerlink" title="HDFS容错"></a>HDFS容错</h4><p><a href="https://imgchr.com/i/GdIzAx" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GdIzAx.md.png" alt="GdIzAx.md.png" border="0"></a></p>
 <h5 id="NameNode出错"><a href="#NameNode出错" class="headerlink" title="NameNode出错"></a>NameNode出错</h5><p><a href="https://imgchr.com/i/Gdojxg" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/Gdojxg.md.png" alt="Gdojxg.md.png" border="0"></a></p>
 <h5 id="DataNode出错"><a href="#DataNode出错" class="headerlink" title="DataNode出错"></a>DataNode出错</h5><p><a href="https://imgchr.com/i/GdoxMQ" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GdoxMQ.md.png" alt="GdoxMQ.md.png" border="0"></a></p>
 <h5 id="数据出错"><a href="#数据出错" class="headerlink" title="数据出错"></a>数据出错</h5><p><a href="https://imgchr.com/i/Gd7rA1" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/Gd7rA1.md.png" alt="Gd7rA1.png" border="0"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Client向NameNode发送RPC请求。请求文件block的位置；</span><br><span class="line"></span><br><span class="line">NameNode收到请求之后会检查用户权限以及是否有这个文件，如果都符合，则会视情况返回部分或全部的block列表，对于每个block，NameNode都会返回含有该block副本的DataNode地址；这些返回的DataNode地址，会按照集群拓扑结构得出DataNode与客户端的距离，然后进行排序，排序两个规则：网络拓扑结构中距离 Client 近的排靠前；心跳机制中超时汇报的DataNode状态为STALE，这样的排靠后；</span><br><span class="line"></span><br><span class="line">Client选取排序靠前的DataNode来读取block，如果客户端本身就是DataNode,那么将从本地直接获取数据(短路读取特性)；</span><br><span class="line"></span><br><span class="line">底层上本质是建立Socket Stream（FSDataInputStream），重复的调用父类DataInputStream的read方法，直到这个块上的数据读取完毕；</span><br><span class="line"></span><br><span class="line">当读完列表的block后，若文件读取还没有结束，客户端会继续向NameNode 获取下一批的block列表；</span><br><span class="line"></span><br><span class="line">读取完一个block都会进行checksum验证，如果读取DataNode时出现错误，客户端会通知NameNode，然后再从下一个拥有该block副本的DataNode 继续读；</span><br><span class="line"></span><br><span class="line">read方法是并行的读取block信息，不是一块一块的读取；NameNode只是返回Client请求包含块的DataNode地址，并不是返回请求块的数据；</span><br><span class="line"></span><br><span class="line">最终读取来所有的block会合并成一个完整的最终文件；</span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="HDFS的高级功能"><a href="#HDFS的高级功能" class="headerlink" title="HDFS的高级功能"></a>HDFS的高级功能</h3><h4 id="安全模式"><a href="#安全模式" class="headerlink" title="安全模式"></a>安全模式</h4><p><a href="https://imgchr.com/i/GwS9eK" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GwS9eK.md.png" alt="GwS9eK.png" border="0"></a></p>
 <h4 id="回收站"><a href="#回收站" class="headerlink" title="回收站"></a>回收站</h4><p><a href="https://imgchr.com/i/GwSVSA" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GwSVSA.md.png" alt="GwSVSA.png" border="0"></a></p>
 <h4 id="快照"><a href="#快照" class="headerlink" title="快照"></a>快照</h4><p><a href="https://imgchr.com/i/GwStO0" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/04/04/GwStO0.md.png" alt="GwStO0.png" border="0"></a></p>
@@ -595,7 +590,7 @@
   <p><span>本文标题:</span><a href="/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0HDFS(%E7%90%86%E8%AE%BA%E8%AF%BE).html">hadoop理论课-第三章HDFS</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2020年04月02日 - 11:04</p>
-  <p><span>最后更新:</span>2023年03月15日 - 16:03</p>
+  <p><span>最后更新:</span>2023年06月09日 - 18:06</p>
   <p><span>原始链接:</span><a href="/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0HDFS(%E7%90%86%E8%AE%BA%E8%AF%BE).html" title="hadoop理论课-第三章HDFS">http://tianyong.fun/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0HDFS(%E7%90%86%E8%AE%BA%E8%AF%BE).html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0HDFS(%E7%90%86%E8%AE%BA%E8%AF%BE).html" aria-label="复制成功！"></i></span>
   </p>
@@ -661,9 +656,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E7%91%9E%E7%BF%BC%E6%95%99%E8%82%B2/" rel="tag"><i class="fa fa-tag"></i> 瑞翼教育</a>
+            <a href="/tags/hadoop/" rel="tag"><i class="fa fa-tag"></i> hadoop</a>
           
-            <a href="/tags/HDFS/" rel="tag"><i class="fa fa-tag"></i> HDFS</a>
+            <a href="/tags/%E7%91%9E%E7%BF%BC%E6%95%99%E8%82%B2/" rel="tag"><i class="fa fa-tag"></i> 瑞翼教育</a>
           
         </div>
       
@@ -763,7 +758,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">357</span>
+			  <span class="site-state-item-count">364</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -774,7 +769,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">50</span>
+			  <span class="site-state-item-count">51</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -785,7 +780,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">121</span>
+			  <span class="site-state-item-count">115</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -914,7 +909,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">614k</span>
+    <span title="Site words total count">687.3k</span>
   
 </div>
 

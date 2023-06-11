@@ -76,7 +76,7 @@
 
 
 
-  <meta name="keywords" content="tianyong">
+  <meta name="keywords" content="hadoop,">
 
 
 
@@ -123,8 +123,9 @@
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HgMYtA.md.png">
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HWm7uT.png">
 <meta property="article:published_time" content="2022-02-13T06:05:27.000Z">
-<meta property="article:modified_time" content="2023-03-15T18:37:38.040Z">
+<meta property="article:modified_time" content="2023-06-06T12:20:51.498Z">
 <meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="hadoop">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s4.ax1x.com/2022/02/14/H660gK.png">
 
@@ -474,7 +475,7 @@
         <hr>
 <script type="text/javascript" src="/js/src/bai.js"></script>
 
-<h1 id="第六周-第二章-剖析数据倾向问题与企业级解决方案"><a href="#第六周-第二章-剖析数据倾向问题与企业级解决方案" class="headerlink" title="第六周 第二章 剖析数据倾向问题与企业级解决方案"></a>第六周 第二章 剖析数据倾向问题与企业级解决方案</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  在实际工作中，如果我们想提高MapReduce的执行效率，最直接的方法是什么呢？</span><br><span class="line">我们知道MapReduce是分为Map阶段和Reduce阶段，其实提高执行效率就是提高这两个阶段的执行效率默认情况下Map阶段中Map任务的个数是和数据的InputSplit相关的，InputSplit的个数一般是和Block块是有关联的，所以可以认为Map任务的个数和数据的block块个数有关系，针对Map任务的个数我们一般是不需要干预的，除非是前面我们说的海量小文件，那个时候可以考虑把小文件合并成大文件。其他情况是不需要调整的，那就剩下Reduce阶段了，咱们前面说过，默认情况下reduce的个数是<span class="number">1</span>个，所以现在MapReduce任务的压力就集中在Reduce阶段了，如果说数据量比较大的时候，一个reduce任务处理起来肯定是比较慢的，所以我们可以考虑增加reduce任务的个数，这样就可以实现数据分流了，提高计算效率了。</span><br><span class="line">但是注意了，如果增加Reduce的个数，那肯定是要对数据进行分区的，分区之后，每一个分区的数据会被一个reduce任务处理。</span><br><span class="line"></span><br><span class="line">      那如何增加分区呢？</span><br><span class="line">我们来看一下代码，进入WordCountJob中，其实我们可以通过job.setPartitionerClass 来设置分区类，不过目前我们是没有设置的，那框架中是不是有默认值啊，是有的，我们可以通过 job.getPartitionerClass 方法看到默认情况下会使用 HashPartitioner 这个分区类</span><br></pre></td></tr></table></figure>
+<h1 id="第六周-第二章-剖析数据倾向问题与企业级解决方案"><a href="#第六周-第二章-剖析数据倾向问题与企业级解决方案" class="headerlink" title="第六周 第二章 剖析数据倾向问题与企业级解决方案"></a>第六周 第二章 剖析数据倾向问题与企业级解决方案</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  在实际工作中，如果我们想提高MapReduce的执行效率，最直接的方法是什么呢？</span><br><span class="line">我们知道MapReduce是分为Map阶段和Reduce阶段，其实提高执行效率就是提高这两个阶段的执行效率默认情况下Map阶段中Map任务的个数是和数据的InputSplit相关的，InputSplit的个数一般是和Block块是有关联的，所以可以认为Map任务的个数和数据的block块个数有关系，针对Map任务的个数我们一般是不需要干预的，除非是前面我们说的海量小文件，那个时候可以考虑把小文件合并成大文件。其他情况是不需要调整的，那就剩下Reduce阶段了，咱们前面说过，默认情况下reduce的个数是<span class="number">1</span>个，所以现在MapReduce任务的压力就集中在Reduce阶段了，如果说数据量比较大的时候，一个reduce任务处理起来肯定是比较慢的，所以我们可以考虑增加reduce任务的个数，这样就可以实现数据分流了，提高计算效率了。</span><br><span class="line">但是注意了，如果增加Reduce的个数，那肯定是要对数据进行分区的，分区之后，每一个分区的数据会被一个reduce任务处理。</span><br><span class="line"></span><br><span class="line">      那如何增加分区呢？</span><br><span class="line">我们来看一下代码，进入WordCountJob中，其实我们可以通过job.setPartitionerClass 来设置分区类，不过目前我们是没有设置的，那框架中是不是有默认值啊，是有的，我们可以通过 job.getPartitionerClass方法看到默认情况下会使用HashPartitioner 这个分区类</span><br></pre></td></tr></table></figure>
 
 <h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">那我们来看一下HashPartitioner的实现是什么样子的</span><br><span class="line"></span><br><span class="line">&#x2F;** Partition keys by their &#123;@link Object#hashCode()&#125;. *&#x2F;</span><br><span class="line">@InterfaceAudience.Public</span><br><span class="line">@InterfaceStability.Stable</span><br><span class="line">public class HashPartitioner&lt;K, V&gt; extends Partitioner&lt;K, V&gt; &#123;</span><br><span class="line">    &#x2F;** Use &#123;@link Object#hashCode()&#125; to partition. *&#x2F;</span><br><span class="line">    public int getPartition(K key, V value,</span><br><span class="line">    int numReduceTasks) &#123;</span><br><span class="line">    	return (key.hashCode() &amp; Integer.MAX_VALUE) % numReduceTasks;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -488,7 +489,7 @@
 <p><a href="https://imgtu.com/i/H66w36" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s4.ax1x.com/2022/02/14/H66w36.png" alt="H66w36.png"></a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  我们来分析一下，刚才我们说了我们这份数据中，值为5的数据有910w条，这就占了整份数据的90%了，那这90%的数据会被一个reduce任务处理，在这里假设是让reduce5处理了，reduce5这个任务执行的是比较慢的，其他reduce任务都执行结束很长时间了，它还没执行结束，因为reduce5中处理的数据量和其他reduce中处理的数据量规模相差太大了，所以最终reduce5拖了后腿。咱们mapreduce任务执行消耗的时间是一直统计到最后一个执行结束的reduce任务，所以就算其他reduce任务早都执行结束了也没有用，整个mapreduce任务是没有执行结束的。</span><br><span class="line"></span><br><span class="line">那针对这种情况怎么办？</span><br><span class="line">  这个时候单纯的增加reduce任务的个数已经不起多大作用了，如果启动太多可能还会适得其反。</span><br><span class="line">其实这个时候最好的办法是把这个值为5的数据尽量打散，把这个倾斜的数据分配到其他reduce任务中去计算，这样才能从根本上解决问题。</span><br><span class="line">  </span><br><span class="line">  这就是我们要分析的一个数据倾斜的问题</span><br><span class="line">MapReduce程序执行时，Reduce节点大部分执行完毕，但是有一个或者几个Reduce节点运行很慢，导致整个程序处理时间变得很长</span><br><span class="line">  具体表现为：Ruduce阶段一直卡着不动</span><br><span class="line">根据刚才的分析，有两种方案</span><br><span class="line">1. 增加reduce任务个数，这个属于治标不治本，针对倾斜不是太严重的数据是可以解决问题的，针对倾斜严重的数据，这样是解决不了根本问题的</span><br><span class="line">2. 把倾斜的数据打散这种可以根治倾斜严重的数据。</span><br></pre></td></tr></table></figure>
 
-<h2 id="案例实操"><a href="#案例实操" class="headerlink" title="案例实操"></a>案例实操</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">现在呢我们通过理论层面分析完了，那接下来我们来具体进入一个实际案例上手操作一下</span><br><span class="line">还使用我们刚才说的那一份数据，1000w条的，其中值为5的大致有910w条左右</span><br><span class="line">其他的加起来一共90万条左右。</span><br><span class="line">这个数据文件我已经生成好了，直接上传到linux服务器上就可以，上传到&#x2F;data&#x2F;soft目录下</span><br><span class="line"></span><br><span class="line">这个文件有点大，在windows本地无法打开，在这里我们去一条数据看一下数据格式，前面是一个数</span><br><span class="line">字，后面是一行日志，这个数据是我自己造的，我们主要是使用前面的这个数字，后面的内容主要是为了</span><br><span class="line">充数的，要不然文件太小，测试不出来效果。后面我们解析数据的时候只获取前面这个数字即可，前面这</span><br><span class="line">个数字是1-10之间的数字</span><br><span class="line">接下来把这个文件上传到hdfs上</span><br><span class="line">[root@bigdata01 soft]# ll</span><br></pre></td></tr></table></figure>
+<h2 id="案例实操"><a href="#案例实操" class="headerlink" title="案例实操"></a>案例实操</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">现在呢我们通过理论层面分析完了，那接下来我们来具体进入一个实际案例上手操作一下</span><br><span class="line">还使用我们刚才说的那一份数据，1000w条的，其中值为5的大致有910w条左右</span><br><span class="line">其他的加起来一共90万条左右。</span><br><span class="line">这个数据文件我已经生成好了，直接上传到linux服务器上就可以，上传到&#x2F;data&#x2F;soft目录下</span><br><span class="line"></span><br><span class="line">这个文件有点大，在windows本地无法打开，在这里我们去一条数据看一下数据格式，前面是一个数字，后面是一行日志，这个数据是我自己造的，我们主要是使用前面的这个数字，后面的内容主要是为了充数的，要不然文件太小，测试不出来效果。后面我们解析数据的时候只获取前面这个数字即可，前面这个数字是1-10之间的数字</span><br><span class="line">接下来把这个文件上传到hdfs上</span><br><span class="line">[root@bigdata01 soft]# ll</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303160106731.png" alt="image-20230316010644262"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 soft]# tail -1 hello_10000000.dat</span><br></pre></td></tr></table></figure>
@@ -543,8 +544,6 @@
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303160214541.png" alt="image-20230316021422004"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">但是这个时候我们获取到的最终结果是一个半成品，还需要进行一次加工，其实我们前面把这个倾斜的数据打散之后相当于做了一个局部聚合，现在还需要再开发一个mapreduce任务再做一次全局聚合，其实也很简单，获取到上一个map任务的输出，在map端读取到数据之后，对数据先使用空格分割，然后对第一列的数据再使用下划线分割，分割之后总是取第一列，这样就可以把值为5的数据还原出来了，这个时候数据一共就这么十几条，怎么处理都很快了，这个代码就给大家留成作业了，我们刚才已经把详细的过程都分析过了，大家下去之后自己写一下，如果遇到了问题，可以在咱们的问答区一块讨论，或者直接找我都是可以的。</span><br><span class="line">这就是针对数据倾斜问题的处理方法，面试的时候经常问到，大家一定要能够把这个思路说明白。</span><br></pre></td></tr></table></figure>
-
-
 
 <h3 id="编写代码"><a href="#编写代码" class="headerlink" title="编写代码"></a>编写代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">主要设置:</span><br><span class="line">1.map对k1的处理，</span><br><span class="line">2.reduce阶段模拟复杂数据处理，</span><br><span class="line">3.job.setNumReduceTasks(num);</span><br></pre></td></tr></table></figure>
 
@@ -611,7 +610,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html">大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月13日 - 14:02</p>
-  <p><span>最后更新:</span>2023年03月16日 - 02:03</p>
+  <p><span>最后更新:</span>2023年06月06日 - 20:06</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" title="大数据开发工程师-第六周 第二章 剖析数据倾向问题与企业级解决方案">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%89%96%E6%9E%90%E6%95%B0%E6%8D%AE%E5%80%BE%E5%90%91%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.html" aria-label="复制成功！"></i></span>
   </p>
@@ -674,6 +673,12 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"><i class="fa fa-tag"></i> hadoop</a>
+          
+        </div>
       
 
       
@@ -771,7 +776,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">357</span>
+			  <span class="site-state-item-count">364</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -782,7 +787,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">50</span>
+			  <span class="site-state-item-count">51</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -793,7 +798,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">121</span>
+			  <span class="site-state-item-count">115</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -922,7 +927,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">614k</span>
+    <span title="Site words total count">687.3k</span>
   
 </div>
 

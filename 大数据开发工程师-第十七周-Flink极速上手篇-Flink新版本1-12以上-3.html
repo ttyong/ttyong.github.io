@@ -76,7 +76,7 @@
 
 
 
-  <meta name="keywords" content="瑞翼教育,">
+  <meta name="keywords" content="tianyong">
 
 
 
@@ -89,17 +89,25 @@
 
 
 
-<meta name="description" content="Hadoop环境配置三种安装方式单击模式使用一个独立java进程 hadoop运行在一个主机上。没有分布式文件系统，直接对本地操作系统文件进行读写 默认安装模式 一般用于本地mapreduce程序调试 伪分布模式运行在一台主机上；使用多个java进程 模仿完全分布式的各个节点；具有完全分布式的所有功能；常用于调试程序 完全分布式模式安装虚拟机安装Unbuntu安装配置关闭防火墙12sud">
+<meta name="description" content="Flink新版本1.12以上-3Checkpoint与State剖析123前面我们已经掌握了Checkpoint和State使用，下面我们来从底层原理层面深度分析一下Checkpoint和State的细节流程。首先是checkpoint的生成过程  Checkpoint的生成过程 12345678910111213141516171819202122232425262728我们先整体看一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hadoop大数据技术-第二章">
-<meta property="og:url" content="http://tianyong.fun/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html">
+<meta property="og:title" content="大数据开发工程师-第十七周-Flink极速上手篇-Flink新版本1.12以上-3">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%96%B0%E7%89%88%E6%9C%AC1-12%E4%BB%A5%E4%B8%8A-3.html">
 <meta property="og:site_name" content="TianYong&#39;s Blog">
-<meta property="og:description" content="Hadoop环境配置三种安装方式单击模式使用一个独立java进程 hadoop运行在一个主机上。没有分布式文件系统，直接对本地操作系统文件进行读写 默认安装模式 一般用于本地mapreduce程序调试 伪分布模式运行在一台主机上；使用多个java进程 模仿完全分布式的各个节点；具有完全分布式的所有功能；常用于调试程序 完全分布式模式安装虚拟机安装Unbuntu安装配置关闭防火墙12sud">
-<meta property="article:published_time" content="2020-06-21T06:30:11.000Z">
-<meta property="article:modified_time" content="2022-05-04T10:05:06.330Z">
+<meta property="og:description" content="Flink新版本1.12以上-3Checkpoint与State剖析123前面我们已经掌握了Checkpoint和State使用，下面我们来从底层原理层面深度分析一下Checkpoint和State的细节流程。首先是checkpoint的生成过程  Checkpoint的生成过程 12345678910111213141516171819202122232425262728我们先整体看一">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021740884.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021745635.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021746680.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021746670.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021746394.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021747611.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021748333.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021748577.png">
+<meta property="article:published_time" content="2023-06-02T09:40:07.000Z">
+<meta property="article:modified_time" content="2023-06-02T10:01:55.124Z">
 <meta property="article:author" content="TTYONG">
-<meta property="article:tag" content="瑞翼教育">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021740884.png">
 
 
 
@@ -129,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://tianyong.fun/hadoop大数据技术与应用-第二章.html">
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-第十七周-Flink极速上手篇-Flink新版本1-12以上-3.html">
 
 
 
 
 
-  <title>hadoop大数据技术-第二章 | TianYong's Blog</title>
+  <title>大数据开发工程师-第十七周-Flink极速上手篇-Flink新版本1.12以上-3 | TianYong's Blog</title>
   
 
 
@@ -304,7 +312,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%96%B0%E7%89%88%E6%9C%AC1-12%E4%BB%A5%E4%B8%8A-3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="TTYONG">
@@ -325,7 +333,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">hadoop大数据技术-第二章</h2>
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-第十七周-Flink极速上手篇-Flink新版本1.12以上-3</h2>
         
 
         <div class="post-meta">
@@ -337,8 +345,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-21T14:30:11+08:00">
-                2020-06-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-06-02T17:40:07+08:00">
+                2023-06-02
               </time>
             
 
@@ -347,39 +355,6 @@
             
           </span>
 
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
-                    <span itemprop="name">Hadoop</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hadoop/Hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index">
-                    <span itemprop="name">Hadoop大数据技术</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -407,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  463
+                  1.6k
                 </span>
               
 
@@ -423,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  6
                 </span>
               
             </div>
@@ -449,42 +424,41 @@
 
 
 
-<h1 id="Hadoop环境配置"><a href="#Hadoop环境配置" class="headerlink" title="Hadoop环境配置"></a>Hadoop环境配置</h1><h3 id="三种安装方式"><a href="#三种安装方式" class="headerlink" title="三种安装方式"></a>三种安装方式</h3><h3 id="单击模式"><a href="#单击模式" class="headerlink" title="单击模式"></a>单击模式</h3><p><em>使用一个独立java进程</em></p>
-<p><em>hadoop运行在一个主机上。没有分布式文件系统，直接对本地操作系统文件进行读写</em></p>
-<p><em>默认安装模式</em></p>
-<p><em>一般用于本地mapreduce程序调试</em></p>
-<h3 id="伪分布模式"><a href="#伪分布模式" class="headerlink" title="伪分布模式"></a>伪分布模式</h3><p><em>运行在一台主机上；使用多个java进程</em></p>
-<p><em>模仿完全分布式的各个节点；具有完全分布式的所有功能；常用于调试程序</em></p>
-<h3 id="完全分布式模式"><a href="#完全分布式模式" class="headerlink" title="完全分布式模式"></a>完全分布式模式</h3><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="虚拟机安装"><a href="#虚拟机安装" class="headerlink" title="虚拟机安装"></a>虚拟机安装</h3><h3 id="Unbuntu安装"><a href="#Unbuntu安装" class="headerlink" title="Unbuntu安装"></a>Unbuntu安装</h3><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ufw status</span><br><span class="line">sudo ufw disable</span><br></pre></td></tr></table></figure>
+<h1 id="Flink新版本1-12以上-3"><a href="#Flink新版本1-12以上-3" class="headerlink" title="Flink新版本1.12以上-3"></a>Flink新版本1.12以上-3</h1><h2 id="Checkpoint与State剖析"><a href="#Checkpoint与State剖析" class="headerlink" title="Checkpoint与State剖析"></a>Checkpoint与State剖析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">前面我们已经掌握了Checkpoint和State使用，下面我们来从底层原理层面深度分析一下Checkpoint和State的细节流程。</span><br><span class="line"></span><br><span class="line">首先是checkpoint的生成过程</span><br></pre></td></tr></table></figure>
 
+<h3 id="Checkpoint的生成过程"><a href="#Checkpoint的生成过程" class="headerlink" title="Checkpoint的生成过程"></a>Checkpoint的生成过程</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021740884.png" alt="image-20230602174046655"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">我们先整体看一下这个图：</span><br><span class="line"></span><br><span class="line">首先看图中左边的内容，这块内容表示是输入数据流中的数据以及对应的偏移量。</span><br><span class="line">其中里面的send、follow是具体的数据，下面的1、2、3、4、5、6是数据对应的偏移量。</span><br><span class="line">这个输入数据流表示是直播间内用户产生的实时行为数据，send表示送礼，follow表示关注</span><br><span class="line">在这里我们需要对这些用户行为数据实时统计，统计出每种行为出现的总次数。</span><br><span class="line"></span><br><span class="line">中间的[send ,4]表示目前消费者消费到的那条数据及对应的偏移量，这个信息会存储在基于内存的状态中。</span><br><span class="line"></span><br><span class="line">右边的[count(send), 3]、[count(follow) ,1],这些是实时汇总的结果，这些数据也会存储在基于内存的状态中。</span><br><span class="line"></span><br><span class="line">Flink触发执行Checkpoint之后会把内存中存储的状态数据写入到下面的持久化存储中。</span><br><span class="line"></span><br><span class="line">下面我们来详细看一下checkpoint的执行流程。</span><br><span class="line">1：当消费到[send，4]这条数据时，正好达到了checkpoint的执行时机，此时JobManager中的checkpoint coordinator会触发checkpoint开始执行。</span><br><span class="line">此时状态中存储的消费偏移量是4</span><br><span class="line"></span><br><span class="line">2-1：checkpoint真正开始执行的时候，他会先把状态中维护的消费偏移量写入到持久化存储中。</span><br><span class="line"></span><br><span class="line">2-2：写入结束后，DataSource组件会把状态的存储路径信息反馈给JobManager中的checkpoint coordinator。</span><br><span class="line"></span><br><span class="line">3-1、3-2、4-1、4-2：接着后面算子中的状态数据：[count(send), 3]、[count(follow) ,1]也会进行同样的步骤</span><br><span class="line"></span><br><span class="line">5：等所有的算子都完成了状态数据的持久化存储，也就是说 checkpoint coordinator 收集到了所有任务反馈给他的状态存储路径，这个时候就认为这一次的checkpoint真正执行成功了，最后他会向持久化存储中再备份一个 checkpoint metadata元数据文件，那么本次整个checkpoint流程就完成了。如果中间有任何一个阶段不成功，那么本次checkpoint就宣告失败。</span><br><span class="line"></span><br><span class="line">当达到下一次checkpoint执行时机的时候，会继续重复前面的执行流程。</span><br><span class="line"></span><br><span class="line">这就是checkpoint的生成过程。</span><br></pre></td></tr></table></figure>
 
+<h3 id="Checkpoint的恢复过程"><a href="#Checkpoint的恢复过程" class="headerlink" title="Checkpoint的恢复过程"></a>Checkpoint的恢复过程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">下面我们来分析一下Checkpoint的恢复过程。</span><br></pre></td></tr></table></figure>
 
-<h4 id="SSH安装"><a href="#SSH安装" class="headerlink" title="SSH安装"></a>SSH安装</h4><p><em>SSH 是 Secure Shell 的缩写，它是一种建立在应用层基础上的安全协议。 SSH 是目前较可靠，专为远程登录会话和其他网络服务提供安全性的协议。 利用 SSH 协议可以有效防止远程管理过程中的信息泄露。</em></p>
-<h5 id="安装SSH客户端软件"><a href="#安装SSH客户端软件" class="headerlink" title="安装SSH客户端软件"></a>安装SSH客户端软件</h5><p><em>Ubuntu 操作系统默认安装有 SSH 客户端软件，通过以下命令查看是否已安装，如果返回包含“openssh-client”的字样，说明已经安装 SSH 客户端软件</em></p>
-  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg -l | grep ssh // 查看</span><br><span class="line">sudo apt-get install openssh-client</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021745635.png" alt="image-20230602174549554"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">继续接着前面的业务流程，前面我们在消费完第4条数据的时候触发了一次checkpoint。</span><br><span class="line">checkpoint执行结束后，紧接着消费者开始消费第5条数据，当把第5条数据follow消费出来之后，在计算的时候由于资源问题导致出现了故障，此时任务异常结束了。</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021746680.png" alt="image-20230602174608348"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">任务结束后，Flink尝试重启任务，并恢复数据到之前的状态。</span><br><span class="line">在最开始重启任务的时候，任务中基于内存的状态都是空的。</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021746670.png" alt="image-20230602174632536"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当任务重新启动之后，会根据指定的快照数据进行恢复，此时上一次在快照时保存的偏移量4、[count(send), 3]、[count(follow) ,1]这些数据对应的都恢复到了正确的位置。</span><br></pre></td></tr></table></figure>
 
-<h5 id="安装SSH服务端软件"><a href="#安装SSH服务端软件" class="headerlink" title="安装SSH服务端软件"></a>安装SSH服务端软件</h5><p><em>Ubuntu 操作系统默认没有安装 SSH 服务端软件</em></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openssh-server</span><br><span class="line">sudo /etc/init.d/ssh restart // 重启ssh服务</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021746394.png" alt="image-20230602174650649"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">恢复成功之后，任务会基于之前的偏移量4继续往后面消费，所以又把[follow，5]这条数据消费出来了。</span><br><span class="line">此时算子中计算的结果，count(follow)就变成了2。</span><br><span class="line">这就是正常的数据处理流程了。</span><br></pre></td></tr></table></figure>
 
-<h4 id="安装Xshell及Xftp-secureCRT"><a href="#安装Xshell及Xftp-secureCRT" class="headerlink" title="安装Xshell及Xftp/secureCRT"></a>安装Xshell及Xftp/secureCRT</h4><h4 id="安装JDK"><a href="#安装JDK" class="headerlink" title="安装JDK"></a>安装JDK</h4><p><em>Hadoop 是基于 Java 语言开发的，运行 Hadoop 需要安装 JDK</em></p>
-<p><em>本地系统下载jdk，通过secureCRT上传至Uubuntu</em></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 解压</span><br><span class="line">tar -zxvf jdk-xxxxx.tar.gz  // 不同压缩格式，解压命名不同</span><br></pre></td></tr></table></figure>
+<h3 id="Checkpoint-Barrier"><a href="#Checkpoint-Barrier" class="headerlink" title="Checkpoint Barrier"></a>Checkpoint Barrier</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">在Checkpoint执行过程中，还有一个重要的角色，Barrier。</span><br><span class="line">可以将Barrier认为是一个标记或者说是一条特殊的数据。</span><br><span class="line"></span><br><span class="line">Flink任务在每次触发Checkpoint的时候都会由JobManager的Checkpoint Coordinator向Source端插入一个Barrier。</span><br><span class="line"></span><br><span class="line">Barrier中包含有一个Checkpoint ID，用于标识它属于哪一个Checkpoint。</span><br><span class="line"></span><br><span class="line">Barrier中的Checkpoint ID是严格单调递增的(自增ID)。</span><br><span class="line">看下面这个图</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 建立软链接，便于后续使用</span><br><span class="line">ln -s jdkxxxx jdk</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021747611.png" alt="image-20230602174724039"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">图里面的A\B\C\D这些属于数据流中的正常数据。</span><br><span class="line">其中1和2是checkpoint ID，这是特殊的Barrier标记数据。</span><br><span class="line">每次触发checkpoint的时候，JobManager的Checkpoint Coordinator都会向数据流中插入一个Barrier。</span><br><span class="line"></span><br><span class="line">这个Barrier标记在源码中对应的类是CheckpointBarrier</span><br><span class="line">可以大致看一下他的代码：</span><br></pre></td></tr></table></figure>
 
-<h5 id="配置jdk环境变量"><a href="#配置jdk环境变量" class="headerlink" title="配置jdk环境变量"></a>配置jdk环境变量</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc</span><br><span class="line">// 内容</span><br><span class="line">export JAVA_HOME=~/jdk</span><br><span class="line">export JRE_HOME=$&#123;JAVA_HOME&#125;/jre</span><br><span class="line">export CLASSPATH=$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:.</span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class CheckpointBarrier extends RuntimeEvent &#123;</span><br><span class="line"></span><br><span class="line">    private final long id;</span><br><span class="line">    private final long timestamp;</span><br><span class="line">    private final CheckpointOptions checkpointOptions;</span><br><span class="line"></span><br><span class="line">    public CheckpointBarrier(long id, long timestamp, CheckpointOptions checkpointOptions) &#123;</span><br><span class="line">        this.id &#x3D; id;</span><br><span class="line">        this.timestamp &#x3D; timestamp;</span><br><span class="line">        this.checkpointOptions &#x3D; checkNotNull(checkpointOptions);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="使配置生效并检验"><a href="#使配置生效并检验" class="headerlink" title="使配置生效并检验"></a>使配置生效并检验</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bashrc</span><br><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">从这可以看出来他里面除了包含一个自增的id字段，还有一个时间戳字段，以及保存checkpoint参数的字段。</span><br><span class="line"></span><br><span class="line">Barrier中的Checkpoint ID其实就是之前我们在任务界面中查看Checkpoint相关信息时显示的那个ID。</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021748333.png" alt="image-20230602174822221"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Checkpoint在执行的时候，Source在接收到Barrier，会把Barrier广播发送到下游算子，当下游算子A接收到了所有输入数据流的Barrier时，意味着算子A已经处理完了截止到当前Checkpoint的数据。</span><br><span class="line"></span><br><span class="line">然后算子A就可以执行Checkpoint，并将Barrier广播发送至下游算子。</span><br><span class="line"></span><br><span class="line">Barrier的最大作用是用于算子各个子任务之间对齐检查点，Barrier对齐之后才会保存状态数据，最终保持一致性语义。</span><br><span class="line"></span><br><span class="line">怎么理解呢？</span><br><span class="line"></span><br><span class="line">看下面这个图：</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306021748577.png" alt="image-20230602174840536"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Source会把Barrier广播发送到下游算子A。</span><br><span class="line"></span><br><span class="line">Source的并行度为2，所以Source的每个子任务都会给下游的算子广播发送Barrier。</span><br><span class="line"></span><br><span class="line">算子A在这里也产生了2个子任务，对应的是算子A-1和算子A-2，每个子任务负责处理一部分数据</span><br><span class="line"></span><br><span class="line">在这里Source-1这个子任务会给下游的算子A-1和算子A-2分别发送Barrier。</span><br><span class="line"></span><br><span class="line">Source-2这个子任务也会给下游的算子A-1和算子A-2分别发送Barrier。</span><br><span class="line"></span><br><span class="line">当算子A-1收到Source-1和Source-2这两个子任务发给他的Barrier标记时，他才会真正执行checkpoint，因为这个时候才实现了Barrier对齐，也就意味着这个子任务把本次checkpoint之前需要处理的数据都处理完了，这个时候执行checkpoint操作，才能保证数据的一致性。</span><br><span class="line"></span><br><span class="line">算子A-2也是这样的。</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-<hr>
+<h4 id="Kafka-Flink-Kafka实现端到端一致性"><a href="#Kafka-Flink-Kafka实现端到端一致性" class="headerlink" title="Kafka+Flink+Kafka实现端到端一致性"></a>Kafka+Flink+Kafka实现端到端一致性</h4><h3 id="Flink-Kafka相关源码分析"><a href="#Flink-Kafka相关源码分析" class="headerlink" title="Flink-Kafka相关源码分析"></a>Flink-Kafka相关源码分析</h3><h2 id="Kafka连接器新API的使用"><a href="#Kafka连接器新API的使用" class="headerlink" title="Kafka连接器新API的使用"></a>Kafka连接器新API的使用</h2><hr>
 <blockquote>
 </blockquote>
 
@@ -503,12 +477,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html">hadoop大数据技术-第二章</a></p>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%96%B0%E7%89%88%E6%9C%AC1-12%E4%BB%A5%E4%B8%8A-3.html">大数据开发工程师-第十七周-Flink极速上手篇-Flink新版本1.12以上-3</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
-  <p><span>发布时间:</span>2020年06月21日 - 14:06</p>
-  <p><span>最后更新:</span>2022年05月04日 - 18:05</p>
-  <p><span>原始链接:</span><a href="/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" title="hadoop大数据技术-第二章">http://tianyong.fun/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html</a>
-    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E7%AC%AC%E4%BA%8C%E7%AB%A0.html" aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2023年06月02日 - 17:06</p>
+  <p><span>最后更新:</span>2023年06月02日 - 18:06</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%96%B0%E7%89%88%E6%9C%AC1-12%E4%BB%A5%E4%B8%8A-3.html" title="大数据开发工程师-第十七周-Flink极速上手篇-Flink新版本1.12以上-3">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%96%B0%E7%89%88%E6%9C%AC1-12%E4%BB%A5%E4%B8%8A-3.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%B8%83%E5%91%A8-Flink%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E7%AF%87-Flink%E6%96%B0%E7%89%88%E6%9C%AC1-12%E4%BB%A5%E4%B8%8A-3.html" aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
 </div>
@@ -570,12 +544,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/%E7%91%9E%E7%BF%BC%E6%95%99%E8%82%B2/" rel="tag"><i class="fa fa-tag"></i> 瑞翼教育</a>
-          
-        </div>
-      
 
       
       
@@ -585,8 +553,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E7%AC%AC%E4%B8%80%E7%AB%A0.html" rel="next" title="计算机网络-第一章">
-                <i class="fa fa-chevron-left"></i> 计算机网络-第一章
+              <a href="/%E6%89%BE%E5%B7%A5%E4%BD%9C%E7%9F%A5%E8%AF%86%E5%A4%8D%E4%B9%A0.html" rel="next" title="找工作知识复习">
+                <i class="fa fa-chevron-left"></i> 找工作知识复习
               </a>
             
           </div>
@@ -595,8 +563,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%AE%BE%E7%BD%AE%E5%9B%BA%E5%AE%9AIP%E5%9C%B0%E5%9D%80.html" rel="prev" title="虚拟机设置固定IP地址">
-                虚拟机设置固定IP地址 <i class="fa fa-chevron-right"></i>
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-2.html" rel="prev" title="大数据开发工程师-全文检索引擎Elasticsearch-2">
+                大数据开发工程师-全文检索引擎Elasticsearch-2 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -672,7 +640,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">357</span>
+			  <span class="site-state-item-count">364</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -683,7 +651,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">50</span>
+			  <span class="site-state-item-count">51</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -694,7 +662,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">121</span>
+			  <span class="site-state-item-count">115</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -788,7 +756,7 @@
 			
 
 			
-			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hadoop环境配置"><span class="nav-number">1.</span> <span class="nav-text">Hadoop环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三种安装方式"><span class="nav-number">1.0.1.</span> <span class="nav-text">三种安装方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单击模式"><span class="nav-number">1.0.2.</span> <span class="nav-text">单击模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#伪分布模式"><span class="nav-number">1.0.3.</span> <span class="nav-text">伪分布模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完全分布式模式"><span class="nav-number">1.0.4.</span> <span class="nav-text">完全分布式模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.1.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机安装"><span class="nav-number">1.1.1.</span> <span class="nav-text">虚拟机安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unbuntu安装"><span class="nav-number">1.1.2.</span> <span class="nav-text">Unbuntu安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">1.1.3.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关闭防火墙"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">关闭防火墙</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSH安装"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">SSH安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装SSH客户端软件"><span class="nav-number">1.1.3.2.1.</span> <span class="nav-text">安装SSH客户端软件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装SSH服务端软件"><span class="nav-number">1.1.3.2.2.</span> <span class="nav-text">安装SSH服务端软件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装Xshell及Xftp-secureCRT"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">安装Xshell及Xftp&#x2F;secureCRT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装JDK"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">安装JDK</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置jdk环境变量"><span class="nav-number">1.1.3.4.1.</span> <span class="nav-text">配置jdk环境变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使配置生效并检验"><span class="nav-number">1.1.3.4.2.</span> <span class="nav-text">使配置生效并检验</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Flink新版本1-12以上-3"><span class="nav-number">1.</span> <span class="nav-text">Flink新版本1.12以上-3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Checkpoint与State剖析"><span class="nav-number">1.1.</span> <span class="nav-text">Checkpoint与State剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkpoint的生成过程"><span class="nav-number">1.1.1.</span> <span class="nav-text">Checkpoint的生成过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkpoint的恢复过程"><span class="nav-number">1.1.2.</span> <span class="nav-text">Checkpoint的恢复过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkpoint-Barrier"><span class="nav-number">1.1.3.</span> <span class="nav-text">Checkpoint Barrier</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka-Flink-Kafka实现端到端一致性"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">Kafka+Flink+Kafka实现端到端一致性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flink-Kafka相关源码分析"><span class="nav-number">1.1.4.</span> <span class="nav-text">Flink-Kafka相关源码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka连接器新API的使用"><span class="nav-number">1.2.</span> <span class="nav-text">Kafka连接器新API的使用</span></a></li></ol></li></ol></div>
 			
 
 		  </div>
@@ -823,7 +791,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">614k</span>
+    <span title="Site words total count">687.3k</span>
   
 </div>
 

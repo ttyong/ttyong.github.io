@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="全文检索引擎Elasticsearch-11 快速了解Elasticsearch为什么要学Elasticsearch？123456针对海量数据计算分析，前面我们学习了MapReduce、Hive、Spark、Flink这些计算引擎和分析工具，但是它们侧重的都是对数据的清洗、聚合之类的需求。如果想要在海量数据里面快速查询出一批满足条件的数据，这些计算引擎都需要生成一个任务，提交到集群中去执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-全文检索引擎Elasticsearch-1">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="全文检索引擎Elasticsearch-11 快速了解Elasticsearch为什么要学Elasticsearch？123456针对海量数据计算分析，前面我们学习了MapReduce、Hive、Spark、Flink这些计算引擎和分析工具，但是它们侧重的都是对数据的清洗、聚合之类的需求。如果想要在海量数据里面快速查询出一批满足条件的数据，这些计算引擎都需要生成一个任务，提交到集群中去执">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111104774.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111106927.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111111465.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111120893.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111121533.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111123514.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111139441.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111207382.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111208875.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111210790.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111211165.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111211190.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111212741.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111212780.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111213303.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111214032.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111214584.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111223294.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111225755.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111225521.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111230257.png">
+<meta property="article:published_time" content="2023-06-02T10:03:09.000Z">
+<meta property="article:modified_time" content="2023-06-11T06:51:18.760Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111104774.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-全文检索引擎Elasticsearch-1.html">
+
+
+
+
+
+  <title>大数据开发工程师-全文检索引擎Elasticsearch-1 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-全文检索引擎Elasticsearch-1</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-06-02T18:03:09+08:00">
+                2023-06-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  9.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  44
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="全文检索引擎Elasticsearch-1"><a href="#全文检索引擎Elasticsearch-1" class="headerlink" title="全文检索引擎Elasticsearch-1"></a>全文检索引擎Elasticsearch-1</h1><h2 id="1-快速了解Elasticsearch"><a href="#1-快速了解Elasticsearch" class="headerlink" title="1 快速了解Elasticsearch"></a>1 快速了解Elasticsearch</h2><h3 id="为什么要学Elasticsearch？"><a href="#为什么要学Elasticsearch？" class="headerlink" title="为什么要学Elasticsearch？"></a>为什么要学Elasticsearch？</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">针对海量数据计算分析，前面我们学习了MapReduce、Hive、Spark、Flink这些计算引擎和分析工具，但是它们侧重的都是对数据的清洗、聚合之类的需求。</span><br><span class="line">如果想要在海量数据里面快速查询出一批满足条件的数据，这些计算引擎都需要生成一个任务，提交到集群中去执行，这样中间消耗的时间就长了。</span><br><span class="line"></span><br><span class="line">并且针对多条件组合查询需求，这些计算引擎在查询的时候基本上都要实现全表扫描了，这样查询效率也是比较低的。</span><br><span class="line"></span><br><span class="line">所以，为了解决海量数据下的快速检索，以及多条件组合查询需求，Elasticsearch就应运而生了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Elasticsearch简介"><a href="#Elasticsearch简介" class="headerlink" title="Elasticsearch简介"></a>Elasticsearch简介</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Elasticsearch是一个分布式的全文检索引擎，它是对lucene的功能做了封装，能够达到实时搜索，稳定，可靠，快速等特点。</span><br><span class="line">如果大家对Lucene有所了解的话，那么针对Elasticsearch其实就好理解了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见的全文检索引擎"><a href="#常见的全文检索引擎" class="headerlink" title="常见的全文检索引擎"></a>常见的全文检索引擎</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Lucene</span><br><span class="line">Lucene是Java家族中最为出名的一个开源搜索引擎，在Java世界中属于标准的全文检索程序，它提供了完整的查询引擎和索引引擎。</span><br><span class="line">但是它也存在一些缺点</span><br><span class="line">1：不支持分布式，无法扩展，海量数据下会存在瓶颈。</span><br><span class="line">2：提供的都是低级API，使用繁琐。</span><br><span class="line">3：没有提供web界面，不便于管理。</span><br><span class="line"></span><br><span class="line">Solr</span><br><span class="line">Solr是一个用java开发的独立的企业级搜索应用服务器，它是基于Lucene的。</span><br><span class="line">它解决了Lucene的一些痛点，提供了web界面，以及高级API接口。</span><br><span class="line">并且从Solr4.0版本开始，Solr开始支持分布式，称之为Solrcloud。</span><br><span class="line"></span><br><span class="line">Elasticsearch</span><br><span class="line">Elasticsearch是一个采用Java语言开发的，基于Lucene的开源、分布式的搜索引擎,能够实现实时搜索。</span><br><span class="line">它最重要的一个特点是天生支持分布式，可以这样说，Elasticsearch就是为了分布式而生的。</span><br><span class="line">它对外提供REST API接口，便于使用，通过外部插件实现web界面支持，便于管理集群。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Solr-vs-Elasticsearch"><a href="#Solr-vs-Elasticsearch" class="headerlink" title="Solr vs Elasticsearch"></a>Solr vs Elasticsearch</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Elasticsearch一般我们会简称为ES。</span><br><span class="line"></span><br><span class="line">从这里可以看出来，Solr和ES的功能基本是类似的，那在工作中该如何选择呢？</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111104774.png" alt="image-20230611110351736"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Solr从2007年就出现了，在传统企业中应用的还是比较广泛的，并且在2013年的时候，Solr推出了4.0版本，提供了Solrcloud，开始正式支持分布式集群。</span><br><span class="line">ES在2014年的时候才正式推出1.0版本，所以它的出现要比Solr晚很多年。</span><br><span class="line">但是ES从一开始就是为了解决海量数据下的全文检索，所以在分布式集群相关特性层面，ES会优于Solrcloud。</span><br><span class="line">建议：</span><br><span class="line"></span><br><span class="line">如果之前公司里面已经深度使用了Solr，现在为了解决海量数据检索问题，建议优先考虑使用Solrcloud。</span><br><span class="line">如果之前没有使用过Solr，那么在海量数据的场景下，建议优先考虑使用ES。</span><br></pre></td></tr></table></figure>
+
+<h3 id="MySQL-VS-Elasticsearch"><a href="#MySQL-VS-Elasticsearch" class="headerlink" title="MySQL VS Elasticsearch"></a>MySQL VS Elasticsearch</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">为了便于理解ES，在这里我们拿MySQL和ES做一个对比分析：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111106927.png" alt="image-20230611110616238"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">解释：</span><br><span class="line">1： MySQL中有Database（数据库）的概念，对应的在ES中有Index（索引库）的概念。</span><br><span class="line">2：MySQL中有Table（表）的概念，对应的在ES中有Type（类型）的概念，不过需要注意，ES在1.x~5.x版本中是正常支持Type的，每一个Index下面可以有多个Type。</span><br><span class="line"></span><br><span class="line">从6.0版本开始，每一个Index中只支持1个Type，属于过渡阶段。</span><br><span class="line">从7.0版本开始，取消了Type，也就意味着每一个Index中存储的数据类型可以认为都是同一种，不再区分类型了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">为何要取消Type？</span><br><span class="line"></span><br><span class="line">主要还是基于性能方面的考虑。</span><br><span class="line">因为ES设计初期，是直接参考了关系型数据库的设计模型，存在了 Type（表）的概念。</span><br><span class="line">但是，ES的搜索引擎是基于 Lucene 的，这种基因决定了 Type 是多余的。</span><br><span class="line">在关系型数据库中Table是独立的，但是在ES中同一个Index中不同Type的数据在底层是存储在同一个Lucene的索引文件中的。</span><br><span class="line">如果在同一个Index中的不同Type中都有一个id字段，那么ES会认为这两个id字段是同一个字段，你必须在不同的Type中给这个id字段定义相同的字段类型，否则，不同Type中的相同字段名称就会在处理的时候出现冲突，导致Lucene处理效率下降。</span><br><span class="line">除此之外，在同一个Index的不同Type下，存储字段个数不一样的数据，会导致存储中出现稀疏数据，影响Lucene压缩文档的能力，最终导致ES查询效率降低。</span><br><span class="line"></span><br><span class="line">3：MySQL中有Row（行）的概念，表示一条数据，在ES中对应的有Document（文档）。</span><br><span class="line">4：MySQL中有Column（列）的概念，表示一条数据中的某个列，在ES中对应的有Field（字段）。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Elasticsearch核心概念"><a href="#Elasticsearch核心概念" class="headerlink" title="Elasticsearch核心概念"></a>Elasticsearch核心概念</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111111465.png" alt="image-20230611111149099"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ES中几个比较核心的概念：</span><br><span class="line">Cluster：集群</span><br><span class="line">Shard：分片</span><br><span class="line">Replica：副本</span><br><span class="line">Recovery：数据恢复</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">接下来具体分析一下这几个概念：</span><br><span class="line"></span><br><span class="line">Cluster</span><br><span class="line">代表ES集群，集群中有多个节点，其中有一个为主节点，这个主节点是通过选举产生的。</span><br><span class="line"></span><br><span class="line">主从节点是对于集群内部来说的，ES的一个核心特性就是去中心化，字面上理解就是无中心节点，这是对于集群外部来说的，因为从外部来看ES集群，在逻辑上是一个整体，我们与任何一个节点的通信和与整个ES集群通信是等价的。</span><br><span class="line"></span><br><span class="line">主节点的职责是负责管理集群状态，包括管理分片的状态和副本的状态，以及节点的发现和删除。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Shard</span><br><span class="line">代表索引库分片，ES集群可以把一个索引库分成多个分片。</span><br><span class="line"></span><br><span class="line">这样的好处是可以把一个大的索引库水平拆分成多个分片，分布到不同的节点上，构成分布式搜索，进而提高性能和吞吐量。</span><br><span class="line"></span><br><span class="line">注意：分片的数量只能在创建索引库的时候指定，索引库创建后不能更改。</span><br><span class="line"></span><br><span class="line">默认情况下一个索引库有1个分片。</span><br><span class="line"></span><br><span class="line">每个分片中最多存储2,147,483,519条数据，其实就是Integer.MAX_VALUE-128。</span><br><span class="line">因为每一个ES的分片底层对应的都是Lucene索引文件，单个Lucene索引文件最多存储Integer.MAX_VALUE-128个文档（数据）。</span><br><span class="line"></span><br><span class="line">注意：在ES7.0版本之前，每一个索引库默认是有5个分片的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Replica</span><br><span class="line">代表分片的副本，ES集群可以给分片设置副本。</span><br><span class="line"></span><br><span class="line">副本的第一个作用是提高系统的容错性，当某个分片损坏或丢失时可以从副本中恢复。第二个作用是提高ES的查询效率，ES会自动对搜索请求进行负载均衡。</span><br><span class="line"></span><br><span class="line">注意：分片的副本数量可以随时修改。</span><br><span class="line">默认情况下，每一个索引库只有1个主分片和1个副本分片（前提是ES集群有2个及以上节点，如果ES集群只有1个节点，那么索引库就只有1个主分片，不会产生副本分片，因为主分片和副本分片在一个节点里面是没有意义的）。</span><br><span class="line">为了保证数据安全，以及提高查询效率，建议副本数量设置为2或者3。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Recovery</span><br><span class="line">代表数据恢复或者数据重新分布。</span><br><span class="line"></span><br><span class="line">ES集群在有节点加入或退出时会根据机器的负载对分片进行重新分配，挂掉的节点重新启动时也会进行数据恢复。</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-快速上手使用Elasticsearch"><a href="#2-快速上手使用Elasticsearch" class="headerlink" title="2 快速上手使用Elasticsearch"></a>2 快速上手使用Elasticsearch</h2><h3 id="ES安装部署"><a href="#ES安装部署" class="headerlink" title="ES安装部署"></a>ES安装部署</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ES支持单机和集群，在使用层面是完全一样的。</span><br><span class="line">首先下载ES的安装包，目前ES最新版本是7.x，在这使用7.13.4版本。</span><br><span class="line"></span><br><span class="line">下载地址：</span><br><span class="line">https:&#x2F;&#x2F;www.elastic.co&#x2F;cn&#x2F;downloads&#x2F;past-releases#elasticsearch</span><br><span class="line">选择ES的对应版本。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111120893.png" alt="image-20230611112053604"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111121533.png" alt="image-20230611112108886"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：目前ES中自带的有open JDK，不用单独安装部署Oracle JDK。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111123514.png" alt="image-20230611112339787"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在具体安装集群之前，先来分析一下ES中的核心配置文件：</span><br><span class="line">在ES_HOME的config目录下有一个elasticsearch.yml配置文件，这个文件是一个yaml格式的文件。</span><br><span class="line">elasticsearch.yml文件内容如下：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"># &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; Elasticsearch Configuration &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</span><br><span class="line">#</span><br><span class="line"># NOTE: Elasticsearch comes with reasonable defaults for most settings.</span><br><span class="line">#       Before you set out to tweak and tune the configuration, make sure you</span><br><span class="line">#       understand what are you trying to accomplish and the consequences.</span><br><span class="line">#</span><br><span class="line"># The primary way of configuring a node is via this file. This template lists</span><br><span class="line"># the most important settings you may want to configure for a production cluster.</span><br><span class="line">#</span><br><span class="line"># Please consult the documentation for further information on configuration options:</span><br><span class="line"># https:&#x2F;&#x2F;www.elastic.co&#x2F;guide&#x2F;en&#x2F;elasticsearch&#x2F;reference&#x2F;index.html</span><br><span class="line">#</span><br><span class="line"># ---------------------------------- Cluster -----------------------------------</span><br><span class="line">#</span><br><span class="line"># Use a descriptive name for your cluster:</span><br><span class="line"># 集群名称，默认是elasticsearch，如果想要将多个ES实例组成一个集群，那么它们的cluster.name必须一致</span><br><span class="line">#cluster.name: my-application</span><br><span class="line">#</span><br><span class="line"># ------------------------------------ Node ------------------------------------</span><br><span class="line">#</span><br><span class="line"># Use a descriptive name for the node:</span><br><span class="line"># 节点名称，可以手工指定，默认也会自动生成</span><br><span class="line">#node.name: node-1</span><br><span class="line">#</span><br><span class="line"># Add custom attributes to the node:</span><br><span class="line"># 给节点指定一些自定义的参数信息</span><br><span class="line">#node.attr.rack: r1</span><br><span class="line">#</span><br><span class="line"># ----------------------------------- Paths ------------------------------------</span><br><span class="line">#</span><br><span class="line"># Path to directory where to store the data (separate multiple locations by comma):</span><br><span class="line"># 可以指定ES的数据存储目录，默认存储在ES_HOME&#x2F;data目录下</span><br><span class="line">#path.data: &#x2F;path&#x2F;to&#x2F;data</span><br><span class="line">#</span><br><span class="line"># Path to log files:</span><br><span class="line"># 可以指定ES的日志存储目录，默认存储在ES_HOME&#x2F;logs目录下</span><br><span class="line">#path.logs: &#x2F;path&#x2F;to&#x2F;logs</span><br><span class="line">#</span><br><span class="line"># ----------------------------------- Memory -----------------------------------</span><br><span class="line">#</span><br><span class="line"># Lock the memory on startup:</span><br><span class="line"># 锁定物理内存地址，防止ES内存被交换出去,也就是避免ES使用swap交换分区中的内存</span><br><span class="line">#bootstrap.memory_lock: true</span><br><span class="line"># 确保ES_HEAP_SIZE参数设置为系统可用内存的一半左右</span><br><span class="line"># Make sure that the heap size is set to about half the memory available</span><br><span class="line"># on the system and that the owner of the process is allowed to use this</span><br><span class="line"># limit.</span><br><span class="line"># 当系统进行内存交换的时候，会导致ES的性能变的很差</span><br><span class="line"># Elasticsearch performs poorly when the system is swapping the memory.</span><br><span class="line">#</span><br><span class="line"># ---------------------------------- Network -----------------------------------</span><br><span class="line">#</span><br><span class="line"># By default Elasticsearch is only accessible on localhost. Set a different</span><br><span class="line"># address here to expose this node on the network:</span><br><span class="line"># 为ES设置绑定的IP，默认是127.0.0.1，也就是默认只能通过127.0.0.1 或者localhost才能访问</span><br><span class="line"># ES 1.x版本默认绑定的是0.0.0.0，但是从ES 2.x版本之后默认绑定的是127.0.0.1</span><br><span class="line">#network.host: 192.168.0.1</span><br><span class="line">#</span><br><span class="line"># By default Elasticsearch listens for HTTP traffic on the first free port it</span><br><span class="line"># finds starting at 9200. Set a specific HTTP port here:</span><br><span class="line"># 为ES服务设置监听的端口，默认是9200</span><br><span class="line"># 如果想要在一台机器上启动多个ES实例，需要修改此处的端口号</span><br><span class="line">#http.port: 9200</span><br><span class="line">#</span><br><span class="line"># For more information, consult the network module documentation.</span><br><span class="line">#</span><br><span class="line"># --------------------------------- Discovery ----------------------------------</span><br><span class="line"># </span><br><span class="line"># Pass an initial list of hosts to perform discovery when this node is started:</span><br><span class="line"># The default list of hosts is [&quot;127.0.0.1&quot;, &quot;[::1]&quot;]</span><br><span class="line"># </span><br><span class="line"># 当启动新节点时，通过这个ip列表进行节点发现，组建集群</span><br><span class="line"># 默认ip列表：</span><br><span class="line"># 	127.0.0.1，表示ipv4的本地回环地址。</span><br><span class="line">#	[::1]，表示ipv6的本地回环地址。</span><br><span class="line"># 在ES 1.x中默认使用的是组播(multicast)协议，默认会自动发现同一网段的ES节点组建集群。</span><br><span class="line"># 从ES 2.x开始默认使用的是单播(unicast)协议，想要组建集群的话就需要在这指定要发现的节点信息了。</span><br><span class="line"># </span><br><span class="line"># 指定想要组装成一个ES集群的多个节点信息</span><br><span class="line">#discovery.seed_hosts: [&quot;host1&quot;, &quot;host2&quot;]</span><br><span class="line">#</span><br><span class="line"># Bootstrap the cluster using an initial set of master-eligible nodes:</span><br><span class="line"># 初始化一批具备成为主节点资格的节点【在选择主节点的时候会优先在这一批列表中进行选择】</span><br><span class="line">#cluster.initial_master_nodes: [&quot;node-1&quot;, &quot;node-2&quot;]</span><br><span class="line">#</span><br><span class="line"># For more information, consult the discovery and cluster formation module documentation.</span><br><span class="line">#</span><br><span class="line"># ---------------------------------- Various -----------------------------------</span><br><span class="line">#</span><br><span class="line"># Require explicit names when deleting indices:</span><br><span class="line"># 禁止使用通配符或_all删除索引, 必须使用名称或别名才能删除该索引。</span><br><span class="line">#action.destructive_requires_name: true</span><br></pre></td></tr></table></figure>
+
+<h4 id="ES单机"><a href="#ES单机" class="headerlink" title="ES单机"></a>ES单机</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1：将ES的安装包上传到bigdata01的&#x2F;data&#x2F;soft目录下</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">2：在Linux中添加一个普通用户：es。</span><br><span class="line">因为ES目前不支持root用户启动。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# useradd -d &#x2F;home&#x2F;es -m es</span><br><span class="line">[root@bigdata01 soft]# passwd es</span><br><span class="line">Changing password for user es.</span><br><span class="line">New password: bigdata1234</span><br><span class="line">Retype new password: bigdata1234</span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">3：修改Linux中最大文件描述符以及最大虚拟内存的参数</span><br><span class="line">因为ES对Linux的最大文件描述符以及最大虚拟内存有一定要求，所以需要修改，否则ES无法正常启动。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# vi &#x2F;etc&#x2F;security&#x2F;limits.conf </span><br><span class="line">* soft nofile 65536</span><br><span class="line">* hard nofile 131072</span><br><span class="line">* soft nproc 2048</span><br><span class="line">* hard nproc 4096</span><br><span class="line">[root@bigdata01 soft]# vi &#x2F;etc&#x2F;sysctl.conf</span><br><span class="line">vm.max_map_count&#x3D;262144</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">4：重启Linux系统。</span><br><span class="line">前面修改的参数需要重启系统才会生效。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# reboot -h now</span><br><span class="line"></span><br><span class="line">5：解压ES安装包。</span><br><span class="line">[root@bigdata01 soft]# tar -zxvf elasticsearch-7.13.4-linux-x86_64.tar.gz</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">6：配置ES_JAVA_HOME环境变量，指向ES中内置的JDK。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# vi &#x2F;etc&#x2F;profile</span><br><span class="line">......</span><br><span class="line">export ES_JAVA_HOME&#x3D;&#x2F;data&#x2F;soft&#x2F;elasticsearch-7.13.4&#x2F;jdk</span><br><span class="line">......</span><br><span class="line">[root@bigdata01 soft]# source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">7：修改elasticsearch-7.13.4目录的权限</span><br><span class="line">因为前面是使用root用户解压的，elasticsearch-7.13.4目录下的文件es用户是没有权限的。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# chmod 777 -R &#x2F;data&#x2F;soft&#x2F;elasticsearch-7.13.4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">8：切换到es用户</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# su es</span><br><span class="line"></span><br><span class="line">9：修改elasticsearch.yml配置文件内容</span><br><span class="line">主要修改network.host、discovery.seed_hosts这两个参数。</span><br><span class="line"></span><br><span class="line">注意：yaml文件的格式，参数和值之间需要有一个空格。</span><br><span class="line"></span><br><span class="line">例如：network.host: bigdata01</span><br><span class="line">bigdata01前面必须要有一个空格，否则会报错。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[es@bigdata01 soft]$ cd elasticsearch-7.13.4</span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ vi config&#x2F;elasticsearch.yml </span><br><span class="line">......</span><br><span class="line">network.host: bigdata01</span><br><span class="line">discovery.seed_hosts: [&quot;bigdata01&quot;]</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">10：启动ES服务【前台启动】</span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ bin&#x2F;elasticsearch</span><br><span class="line"></span><br><span class="line">按ctrl+c停止服务。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">11：启动ES服务【后台启动】</span><br><span class="line">在实际工作中需要将ES放在后台运行。</span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ bin&#x2F;elasticsearch -d</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">12：验证ES服务。</span><br><span class="line">通过jps命令验证进程是否存在。</span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ jps</span><br><span class="line">1849 Elasticsearch</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">通过web界面验证服务是否可以正常访问，端口为9200。</span><br><span class="line">http:&#x2F;&#x2F;bigdata01:9200&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111139441.png" alt="image-20230611113938806"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：需要关闭防火墙。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">13：停止ES服务。</span><br><span class="line">使用kill命令停止。</span><br><span class="line"></span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ jps</span><br><span class="line">1849 Elasticsearch</span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ kill</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">14：日志排查方式。</span><br><span class="line">如果发现ES服务启动有问题，需要查看ES的日志。</span><br><span class="line">ES的相关日志都在ES_HOME的logs目录下，ES服务的核心日志在elasticsearch.log日志文件中。</span><br></pre></td></tr></table></figure>
+
+<h4 id="ES集群"><a href="#ES集群" class="headerlink" title="ES集群"></a>ES集群</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ES集群规划：</span><br><span class="line">bigdata01</span><br><span class="line">bigdata02</span><br><span class="line">bigdata03</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1：在bigdata01、bigdata02、bigdata03中创建普通用户：es。</span><br><span class="line">具体创建步骤参考ES单机中的操作。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# useradd -d &#x2F;home&#x2F;es -m es</span><br><span class="line">[root@bigdata01 soft]# passwd es</span><br><span class="line">Changing password for user es.</span><br><span class="line">New password: bigdata1234</span><br><span class="line">Retype new password: bigdata1234</span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">useradd es和useradd -d &#x2F;home&#x2F;es -m es的区别是，前者会创建一个名为es的用户，但不会指定或创建它的家目录，后者会创建一个名为es的用户，并指定它的家目录为&#x2F;home&#x2F;es，并且使用-m选项来创建这个目录¹。如果你想修改一个已经存在的用户的家目录，你可以使用usermod -d命令¹。</span><br><span class="line"></span><br><span class="line">不一定。useradd es的默认家目录取决于&#x2F;etc&#x2F;default&#x2F;useradd文件中的HOME参数³。如果没有指定或修改这个参数，那么默认家目录就是&#x2F;home&#x2F;es⁴。但是，如果你没有使用-m或--create-home选项，那么useradd es不会创建这个家目录⁵。你需要手动创建或者使用usermod -m -d命令来移动已有的内容到新的家目录¹。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">2：在bigdata01、bigdata02、bigdata03中修改Linux中最大文件描述符以及最大虚拟内存的参数。</span><br><span class="line">具体修改步骤参考ES单机中的操作。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# vi &#x2F;etc&#x2F;security&#x2F;limits.conf </span><br><span class="line">* soft nofile 65536</span><br><span class="line">* hard nofile 131072</span><br><span class="line">* soft nproc 2048</span><br><span class="line">* hard nproc 4096</span><br><span class="line">[root@bigdata01 soft]# vi &#x2F;etc&#x2F;sysctl.conf</span><br><span class="line">vm.max_map_count&#x3D;262144</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">3：重启bigdata01、bigdata02、bigdata03，让前面修改的参数生效。</span><br><span class="line">具体操作步骤参考ES单机中的操作。</span><br><span class="line">4：在bigdata01、bigdata02、bigdata03中配置ES_JAVA_HOME环境变量，指向ES中内置的JDK。</span><br><span class="line">具体配置步骤参考ES单机中的操作。</span><br><span class="line">5：在bigdata01中重新解压ES的安装包以及修改目录权限</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# tar -zxvf elasticsearch-7.13.4-linux-x86_64.tar.gz</span><br><span class="line">[root@bigdata01 soft]# chmod 777 -R &#x2F;data&#x2F;soft&#x2F;elasticsearch-7.13.4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">6：修改elasticsearch.yml配置文件</span><br><span class="line">主要修改network.host、discovery.seed_hosts和cluster.initial_master_nodes这三个参数。</span><br><span class="line"></span><br><span class="line">7：将bigdata01中修改好配置的elasticsearch-7.13.4目录远程拷贝到bigdata02和bigdata03。</span><br><span class="line">[root@bigdata01 soft]# scp -rq elasticsearch-7.13.4 bigdata02:&#x2F;data&#x2F;soft&#x2F;</span><br><span class="line">[root@bigdata01 soft]# scp -rq elasticsearch-7.13.4 bigdata03:&#x2F;data&#x2F;soft&#x2F;</span><br><span class="line"></span><br><span class="line">8：分别修改bigdata02和bigdata03中ES的elasticsearch.yml配置文件。</span><br><span class="line">修改bigdata02中的elasticsearch.yml配置文件，主要修改network.host参数的值为当前节点主机名。</span><br><span class="line">[root@bigdata02 elasticsearch-7.13.4]# vi config&#x2F;elasticsearch.yml </span><br><span class="line">......</span><br><span class="line">network.host: bigdata02</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">修改bigdata03中的elasticsearch.yml配置文件，主要修改network.host参数的值为当前节点主机名。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">9：在bigdata01、bigdata02、bigdata03中分别启动ES。</span><br><span class="line">在bigdata01上启动。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 elasticsearch-7.13.4]# su es</span><br><span class="line">[es@bigdata01 elasticsearch-7.13.4]$ bin&#x2F;elasticsearch -d</span><br><span class="line"></span><br><span class="line">在bigdata02上启动。</span><br><span class="line">在bigdata03上启动。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">10：验证集群中的进程。</span><br><span class="line">分别在bigdata01、bigdata02、bigdata03中验证进程是否存在。</span><br><span class="line"></span><br><span class="line">11：验证这几个节点是否组成一个集群。</span><br><span class="line">通过ES的REST API可以很方便的查看集群中的节点信息。</span><br><span class="line">http:&#x2F;&#x2F;bigdata01:9200&#x2F;_nodes&#x2F;_all?pretty</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111207382.png" alt="image-20230611120738840"></p>
+<h3 id="ES集群监控管理工具-cerebro"><a href="#ES集群监控管理工具-cerebro" class="headerlink" title="ES集群监控管理工具-cerebro"></a>ES集群监控管理工具-cerebro</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">为了便于我们管理监控ES集群，推荐使用cerebro这个工具。</span><br><span class="line">1：首先到github上下载cerebro的安装包。</span><br><span class="line">https:&#x2F;&#x2F;github.com&#x2F;lmenezes&#x2F;cerebro&#x2F;releases</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111208875.png" alt="image-20230611120816538"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">2：将下载好的cerebro-0.9.4.zip安装包上传到bigdata01的&#x2F;data&#x2F;soft目录中并且解压。</span><br><span class="line"></span><br><span class="line">注意：cerebro部署在任意节点上都可以，只要能和ES集群通信即可。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# ll cerebro-0.9.4.zip </span><br><span class="line">-rw-r--r--. 1 root root 57251010 Sep 11  2021 cerebro-0.9.4.zip</span><br><span class="line">[root@bigdata01 soft]# unzip cerebro-0.9.4.zip</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3：启动cerebro。</span><br><span class="line">将cerebro放在后台启动。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 cerebro-0.9.4]# nohup bin&#x2F;cerebro 2&gt;&amp;1 &gt;&#x2F;dev&#x2F;null &amp;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">注意：默认cerebro监听的端口是9000，如果出现端口冲突，需要修改cerebro监控的端口</span><br><span class="line"></span><br><span class="line">在启动cerebro的时候可以通过http.port参数指定端口号，如下命令：</span><br><span class="line">bin&#x2F;cerebro -Dhttp.port&#x3D;1234</span><br><span class="line"></span><br><span class="line">默认通过9000端口可以访问cerebro的web界面。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111210790.png" alt="image-20230611121030491"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4：使用cerebro。</span><br><span class="line">在Node address中输入ES集群任意一个节点的连接信息即可。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111211165.png" alt="image-20230611121101515"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5：使用cerebro监控管理ES集群。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111211190.png" alt="image-20230611121121089"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">注意：集群有三种状态，green、yellow、red。</span><br><span class="line"></span><br><span class="line">green：表示集群处于健康状态，可以正常使用。</span><br><span class="line">yellow：表示集群处于风险状态，可以正常使用，可能是分片的副本个数不完整。例如：分片的副本数为2，但是现在分片的副本只有1份。</span><br><span class="line">red：表示集群处于故障状态，无法正常使用，可能是集群分片不完整。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6：cerebro的所有功能。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111212741.png" alt="image-20230611121226272"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6.1：查看节点信息</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111212780.png" alt="image-20230611121253312"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">6.2：rest功能。</span><br><span class="line">便于在页面中操作REST API接口</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111213303.png" alt="image-20230611121329984"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">6.3：更多功能。</span><br><span class="line">包括创建索引、集群参数、别名、分词功能、索引模板等。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111214032.png" alt="image-20230611121359073"></p>
+<h3 id="ES的基本操作"><a href="#ES的基本操作" class="headerlink" title="ES的基本操作"></a>ES的基本操作</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">针对ES的操作，官方提供了很多种操作方式。</span><br><span class="line">https:&#x2F;&#x2F;www.elastic.co&#x2F;guide&#x2F;index.html</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111214584.png" alt="image-20230611121434249"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在实际工作中使用ES的时候，如果想屏蔽语言的差异，建议使用REST API，这种兼容性比较好，但是个人感觉有的操作使用起来比较麻烦，需要拼接组装各种数据字符串。</span><br><span class="line"></span><br><span class="line">针对Java程序员而言，还有一种选择是使用Java API，这种方式相对于REST API而言，代码量会大一些，但是代码层面看起来是比较清晰的。</span><br><span class="line"></span><br><span class="line">下面在操作ES的时候，分别使用一下这两种方式。</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用REST-API的方式操作ES"><a href="#使用REST-API的方式操作ES" class="headerlink" title="使用REST API的方式操作ES"></a>使用REST API的方式操作ES</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">如果想要在Linux命令行中使用REST API操作ES，需要借助于CURL工具。</span><br><span class="line">CURL是利用URL语法在命令行下工作的开源文件传输工具，使用CURL可以简单实现常见的get&#x2F;post请求。</span><br><span class="line"></span><br><span class="line">curl后面通过-X参数指定请求类型，通过-d指定要传递的参数。</span><br></pre></td></tr></table></figure>
+
+<h5 id="索引库的操作（创建、删除）"><a href="#索引库的操作（创建、删除）" class="headerlink" title="索引库的操作（创建、删除）"></a>索引库的操作（创建、删除）</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">创建索引库：</span><br><span class="line">curl -XPUT &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;test&#x2F;&#39;</span><br><span class="line">这里使用PUT或者POST都可以。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl  -XPUT &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;test&#x2F;&#39;</span><br><span class="line">&#123;&quot;acknowledged&quot;:true,&quot;shards_acknowledged&quot;:true,&quot;index&quot;:&quot;test&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：索引库名称必须要全部小写，不能以_、 -、 +开头，也不能包含逗号。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 soft]# curl  -XDELETE &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;test&#x2F;&#39;</span><br><span class="line">&#123;&quot;acknowledged&quot;:true&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：索引库可以提前创建，也可以在后期添加数据的时候直接指定一个不存在的索引库，ES默认会自动创建这个索引库。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">手工创建索引库和自动创建索引库的区别就是，手工创建可以自定义索引库的分片数量。</span><br><span class="line">下面创建一个具有3个分片的索引库。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XPUT &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;test&#x2F;&#39; -d&#39;&#123;&quot;settings&quot;:&#123;&quot;index.number_of_shards&quot;:3&#125;&#125;&#39;</span><br><span class="line">&#123;&quot;acknowledged&quot;:true,&quot;shards_acknowledged&quot;:true,&quot;index&quot;:&quot;test&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111223294.png" alt="image-20230611122310001"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">其中实线的框表示是主分片，虚线框是副本分片。</span><br><span class="line">索引分片编号是从0开始的，并且索引分片在物理层面是存在的，可以到集群中查看一下，从界面中也看到test索引库的1号和2号分片是在bigdata01节点上的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">到bigdata01节点中看一下，ES中的所有数据都在ES的数据存储目录中，默认是在ES_HOME下的data目录里面：</span><br><span class="line">[root@bigdata01 1IQ2r-vqRxSsicd8BzWPtg]# pwd</span><br><span class="line">&#x2F;data&#x2F;soft&#x2F;elasticsearch-7.13.4&#x2F;data&#x2F;nodes&#x2F;0&#x2F;indices&#x2F;1IQ2r-vqRxSsicd8BzWPtg</span><br><span class="line">[root@bigdata01 1IQ2r-vqRxSsicd8BzWPtg]# ll</span><br><span class="line">total 0</span><br><span class="line">drwxrwxr-x. 5 es es 49 Feb 26 18:01 1</span><br><span class="line">drwxrwxr-x. 5 es es 49 Feb 26 18:01 2</span><br><span class="line">drwxrwxr-x. 2 es es 24 Feb 26 18:01 _state</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里面的1IQ2r-vqRxSsicd8BzWPtg表示的是索引库的UUID。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111225755.png" alt="image-20230611122533512"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111225521.png" alt="image-20230611122545144"></p>
+<h5 id="索引的操作（增、删、改、查）"><a href="#索引的操作（增、删、改、查）" class="headerlink" title="索引的操作（增、删、改、查）"></a>索引的操作（增、删、改、查）</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">添加索引</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XPOST &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1&#39; -d &#39;&#123;&quot;name&quot;:&quot;tom&quot;,&quot;age&quot;:20&#125;&#39;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;emp&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:1,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:0,&quot;_primary_term&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：</span><br><span class="line"></span><br><span class="line">1.这里emp索引库是不存在的，在使用的时候ES会自动创建，只不过索引分片数量默认是1。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306111230257.png" alt="image-20230611123003969"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2.为了兼容之前的API，虽然ES现在取消了Type，但是API中Type的位置还是预留出来了，官方建议统一使用_doc 。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">注意：在添加索引的时候，如果没有指定数据的ID，那么ES会自动生成一个随机的唯一ID。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XPOST &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#39; -d &#39;&#123;&quot;name&quot;:&quot;jack&quot;,&quot;age&quot;:30&#125;&#39; </span><br><span class="line">&#123;&quot;_index&quot;:&quot;emp&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;EFND8aMBpApLBooiIWda&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:1,&quot;_primary_term&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">查询索引：</span><br><span class="line">查看id&#x3D;1的索引数据。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1?pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;emp&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;_seq_no&quot; : 0,</span><br><span class="line">  &quot;_primary_term&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;name&quot; : &quot;tom&quot;,</span><br><span class="line">    &quot;age&quot; : 20</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">只获取部分字段内容。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1?_source&#x3D;name&amp;pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;emp&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;_seq_no&quot; : 0,</span><br><span class="line">  &quot;_primary_term&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;name&quot; : &quot;tom&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">[root@bigdata01 soft]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1?_source&#x3D;name,age&amp;pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;emp&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;_seq_no&quot; : 0,</span><br><span class="line">  &quot;_primary_term&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true,</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;name&quot; : &quot;tom&quot;,</span><br><span class="line">    &quot;age&quot; : 20</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">查询指定索引库中所有数据。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_search?pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;took&quot; : 2,</span><br><span class="line">  &quot;timed_out&quot; : false,</span><br><span class="line">  &quot;_shards&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : 1,</span><br><span class="line">    &quot;successful&quot; : 1,</span><br><span class="line">    &quot;skipped&quot; : 0,</span><br><span class="line">    &quot;failed&quot; : 0</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;hits&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : &#123;</span><br><span class="line">      &quot;value&quot; : 2,</span><br><span class="line">      &quot;relation&quot; : &quot;eq&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;max_score&quot; : 1.0,</span><br><span class="line">    &quot;hits&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;emp&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">        &quot;_score&quot; : 1.0,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;name&quot; : &quot;tom&quot;,</span><br><span class="line">          &quot;age&quot; : 20</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;emp&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;EVPO8aMBpApLBooib2e7&quot;,</span><br><span class="line">        &quot;_score&quot; : 1.0,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;name&quot; : &quot;jack&quot;,</span><br><span class="line">          &quot;age&quot; : 30</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：针对这种查询操作，可以在浏览器里面执行，或者在cerebo中查询都是可以的，看起来更加清晰。</span><br></pre></td></tr></table></figure>
+
+<h5 id="更新索引"><a href="#更新索引" class="headerlink" title="更新索引"></a>更新索引</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">可以分为全部更新和局部更新</span><br><span class="line">全部更新：同添加索引，如果指定id的索引数据（文档）已经存在，则执行更新操作。</span><br><span class="line"></span><br><span class="line">注意：执行更新操作的时候，ES首先将旧的文标记为删除状态，然后添加新的文档</span><br><span class="line"></span><br><span class="line">旧的文档不会立即消失，但是你也无法访问，ES会在你继续添加更多数据的时候在后台清理已经标记为删除状态的文档。</span><br><span class="line"></span><br><span class="line">局部更新：可以添加新字段或者更新已有字段，必须使用POST请求。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 soft]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XPOST &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1&#x2F;_update&#39; -d &#39;&#123;&quot;doc&quot;:&#123;&quot;age&quot;:25&#125;&#125;&#39;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;emp&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:2,&quot;result&quot;:&quot;updated&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:2,&quot;_primary_term&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="删除索引"><a href="#删除索引" class="headerlink" title="删除索引"></a>删除索引</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">删除id&#x3D;1的索引数据。</span><br><span class="line"></span><br><span class="line">[root@bigdata01 soft]# curl -XDELETE &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1&#39;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;emp&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:3,&quot;result&quot;:&quot;deleted&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:3,&quot;_primary_term&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 soft]# curl -XDELETE &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;emp&#x2F;_doc&#x2F;1&#39;</span><br><span class="line">&#123;&quot;_index&quot;:&quot;emp&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:4,&quot;result&quot;:&quot;not_found&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:4,&quot;_primary_term&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">如果索引数据（文档）存在，ES返回的数据中，result属性值为deleted，_version（版本）属性的值+1。</span><br><span class="line"></span><br><span class="line">如果索引数据不存在，ES返回的数据中，result属性值为not_found，但是_version属性的值依然会+1，这属于ES的版本控制系统，它保证了我们在多个节点间的不同操作的顺序都被正确标记了。</span><br><span class="line">对于索引数据的每次写操作，无论是index，update还是delete，ES都会将_version增加 1。该增加是原子的，并且保证在操作成功返回时会发生。</span><br><span class="line"></span><br><span class="line">注意：删除一条索引数据（文档）也不会立即生效，它只是被标记成已删除状态。ES将会在你之后添加更多索引数据的时候才会在后台清理标记为删除状态的内容。</span><br></pre></td></tr></table></figure>
+
+<h5 id="Bulk批量操作"><a href="#Bulk批量操作" class="headerlink" title="Bulk批量操作"></a>Bulk批量操作</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Bulk API可以帮助我们同时执行多个请求，提高效率。</span><br><span class="line">格式：</span><br><span class="line">&#123; action: &#123; metadata &#125;&#125;</span><br><span class="line">&#123; request body &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">解释：</span><br><span class="line"></span><br><span class="line">action：index&#x2F;create&#x2F;update&#x2F;delete</span><br><span class="line">metadata：_index,_type,_id</span><br><span class="line">request body：_source(删除操作不需要)</span><br><span class="line"></span><br><span class="line">create 和index的区别：如果数据存在，使用create操作失败，会提示文档已经存在，使用index则可以成功执行。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">下面来看一个案例，假设在MySQL中有一批数据，首先需要从MySQL中把数据读取出来，然后将数据转化为Bulk需要的数据格式。</span><br><span class="line"></span><br><span class="line">在这直接手工生成Bulk需要的数据格式。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 elasticsearch-7.13.4]# vi request </span><br><span class="line">&#123; &quot;index&quot; : &#123; &quot;_index&quot; : &quot;test&quot;, &quot;_type&quot; : &quot;_doc&quot;, &quot;_id&quot; : &quot;1&quot; &#125; &#125;</span><br><span class="line">&#123; &quot;field1&quot; : &quot;value1&quot; &#125;</span><br><span class="line">&#123; &quot;index&quot; : &#123; &quot;_index&quot; : &quot;test&quot;, &quot;_type&quot; : &quot;_doc&quot;, &quot;_id&quot; : &quot;2&quot; &#125; &#125;</span><br><span class="line">&#123; &quot;field1&quot; : &quot;value1&quot; &#125;</span><br><span class="line">&#123; &quot;delete&quot; : &#123; &quot;_index&quot; : &quot;test&quot;, &quot;_type&quot; : &quot;_doc&quot;, &quot;_id&quot; : &quot;2&quot; &#125; &#125;</span><br><span class="line">&#123; &quot;create&quot; : &#123; &quot;_index&quot; : &quot;test&quot;, &quot;_type&quot; : &quot;_doc&quot;, &quot;_id&quot; : &quot;3&quot; &#125; &#125;</span><br><span class="line">&#123; &quot;field1&quot; : &quot;value1&quot; &#125;</span><br><span class="line">&#123; &quot;update&quot; : &#123;&quot;_index&quot; : &quot;test&quot;, &quot;_type&quot; : &quot;_doc&quot;,&quot;_id&quot; : &quot;1&quot; &#125; &#125;</span><br><span class="line">&#123; &quot;doc&quot; : &#123;&quot;field2&quot; : &quot;value2&quot;&#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">执行Bulk API</span><br><span class="line"></span><br><span class="line">[root@bigdata01 elasticsearch-7.13.4]# curl -H &quot;Content-Type: application&#x2F;json&quot;  -XPUT &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;test&#x2F;_doc&#x2F;_bulk&#39; --data-binary @request</span><br><span class="line">&#123;&quot;took&quot;:167,&quot;errors&quot;:false,&quot;items&quot;:[&#123;&quot;index&quot;:&#123;&quot;_index&quot;:&quot;test&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:0,&quot;_primary_term&quot;:1,&quot;status&quot;:201&#125;&#125;,&#123;&quot;index&quot;:&#123;&quot;_index&quot;:&quot;test&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:0,&quot;_primary_term&quot;:1,&quot;status&quot;:201&#125;&#125;,&#123;&quot;delete&quot;:&#123;&quot;_index&quot;:&quot;test&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;2&quot;,&quot;_version&quot;:2,&quot;result&quot;:&quot;deleted&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:1,&quot;_primary_term&quot;:1,&quot;status&quot;:200&#125;&#125;,&#123;&quot;create&quot;:&#123;&quot;_index&quot;:&quot;test&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;3&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:2,&quot;_primary_term&quot;:1,&quot;status&quot;:201&#125;&#125;,&#123;&quot;update&quot;:&#123;&quot;_index&quot;:&quot;test&quot;,&quot;_type&quot;:&quot;_doc&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:2,&quot;result&quot;:&quot;updated&quot;,&quot;_shards&quot;:&#123;&quot;total&quot;:2,&quot;successful&quot;:2,&quot;failed&quot;:0&#125;,&quot;_seq_no&quot;:1,&quot;_primary_term&quot;:1,&quot;status&quot;:200&#125;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 elasticsearch-7.13.4]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;test&#x2F;_search?pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;took&quot; : 6,</span><br><span class="line">  &quot;timed_out&quot; : false,</span><br><span class="line">  &quot;_shards&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : 3,</span><br><span class="line">    &quot;successful&quot; : 3,</span><br><span class="line">    &quot;skipped&quot; : 0,</span><br><span class="line">    &quot;failed&quot; : 0</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;hits&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : &#123;</span><br><span class="line">      &quot;value&quot; : 2,</span><br><span class="line">      &quot;relation&quot; : &quot;eq&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;max_score&quot; : 1.0,</span><br><span class="line">    &quot;hits&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;test&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;3&quot;,</span><br><span class="line">        &quot;_score&quot; : 1.0,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;field1&quot; : &quot;value1&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;test&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">        &quot;_score&quot; : 1.0,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;field1&quot; : &quot;value1&quot;,</span><br><span class="line">          &quot;field2&quot; : &quot;value2&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Bulk一次最大可以处理多少数据量？</span><br><span class="line"></span><br><span class="line">Bulk会把将要处理的数据加载到内存中，所以数据量是有限制的，最佳的数据量不是一个确定的数值，它取决于集群硬件，文档大小、文档复杂性，索引以及ES集群的负载。</span><br><span class="line"></span><br><span class="line">一般建议是1000-5000个文档，如果文档很大，可以适当减少，文档总大小建议是5-15MB，默认不能超过100M。</span><br><span class="line">如果想要修改最大限制大小，可以在ES的配置文件中修改http.max_content_length: 100mb，但是不建议，因为太大的话Bulk操作也会慢。</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用Java-API的方式操作ES"><a href="#使用Java-API的方式操作ES" class="headerlink" title="使用Java API的方式操作ES"></a>使用Java API的方式操作ES</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">针对Java API，目前ES提供了两个Java REST Client版本:</span><br><span class="line"></span><br><span class="line">1.Java Low Level REST Client：</span><br><span class="line">低级别的REST客户端，通过HTTP与集群交互，用户需自己组装请求JSON串，以及解析响应JSON串。兼容所有Elasticsearch版本。</span><br><span class="line">这种方式其实就相当于使用Java对前面讲的REST API做了一层简单的封装，前面我们是使用的CURL这个工具执行的，现在是使用Java代码模拟执行HTTP请求了。</span><br><span class="line"></span><br><span class="line">2.Java High Level REST Client：</span><br><span class="line">高级别的REST客户端，基于低级别的REST客户端进行了封装，增加了组装请求JSON串、解析响应JSON串等相关API，开发代码使用的ES版本需要和集群中的ES版本一致，否则会有版本冲突问题。</span><br><span class="line">这种方式是从ES 6.0版本开始加入的，目的是以Java面向对象的方式进行请求、响应处理。</span><br><span class="line">高级别的REST客户端会兼容高版本的ES集群，例如：使用ES7.0版本开发的代码可以和任何7.x版本的ES集群交互。</span><br><span class="line">如果ES集群后期升级到了8.x版本，那么也要升级之前基于ES 7.0版本开发的代码。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">如果考虑到代码后期的兼容性，建议使用Java Low Level REST Client。</span><br><span class="line">如果考虑到易用性，建议使用Java High Level REST Client。</span><br><span class="line">在这我们使用Java High Level REST Client。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">创建maven项目：db_elasticsearch</span><br><span class="line">创建包：com.imooc.es</span><br><span class="line">在pom.xml文件中添加ES的依赖和日志的依赖。</span><br><span class="line"></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.elasticsearch.client&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;elasticsearch-rest-high-level-client&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;version&gt;7.13.4&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.logging.log4j&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;log4j-core&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.14.1&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">在resources目录下添加log4j2.properties。</span><br><span class="line"></span><br><span class="line">appender.console.type &#x3D; Console</span><br><span class="line">appender.console.name &#x3D; console</span><br><span class="line">appender.console.layout.type &#x3D; PatternLayout</span><br><span class="line">appender.console.layout.pattern &#x3D; [%d&#123;ISO8601&#125;][%-5p][%-25c] %marker%m%n</span><br><span class="line"></span><br><span class="line">rootLogger.level &#x3D; info</span><br><span class="line">rootLogger.appenderRef.console.ref &#x3D; console</span><br></pre></td></tr></table></figure>
+
+<h5 id="索引库的操作（创建、删除）-1"><a href="#索引库的操作（创建、删除）-1" class="headerlink" title="索引库的操作（创建、删除）"></a>索引库的操作（创建、删除）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.es;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.http.HttpHost;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RequestOptions;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestClient;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestHighLevelClient;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.indices.CreateIndexRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.common.settings.Settings;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 针对ES中索引库的操作</span></span><br><span class="line"><span class="comment"> * 1：创建索引库</span></span><br><span class="line"><span class="comment"> * 2：删除索引库</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsIndexOp</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//获取RestClient连接</span></span><br><span class="line">        RestHighLevelClient client = <span class="keyword">new</span> RestHighLevelClient(</span><br><span class="line">                RestClient.builder(</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata01"</span>, <span class="number">9200</span>, <span class="string">"http"</span>),</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata02"</span>, <span class="number">9200</span>, <span class="string">"http"</span>),</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata03"</span>, <span class="number">9200</span>, <span class="string">"http"</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建索引库</span></span><br><span class="line">        <span class="comment">//createIndex(client);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//删除索引库</span></span><br><span class="line">        <span class="comment">//deleteIndex(client);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭连接</span></span><br><span class="line">        client.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteIndex</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        DeleteIndexRequest deleteRequest = <span class="keyword">new</span> DeleteIndexRequest(<span class="string">"java_test"</span>);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.indices().delete(deleteRequest, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createIndex</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        CreateIndexRequest createRequest = <span class="keyword">new</span> CreateIndexRequest(<span class="string">"java_test"</span>);</span><br><span class="line">        <span class="comment">//指定索引库的配置信息</span></span><br><span class="line">        createRequest.settings(Settings.builder()</span><br><span class="line">                .put(<span class="string">"index.number_of_shards"</span>, <span class="number">3</span>)<span class="comment">//指定分片个数</span></span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.indices().create(createRequest, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">执行代码的时候会有一个警告信息，提示ES集群没有开启权限校验机制，其实在企业中只要在运维层面控制好了ES集群IP和端口的访问其实就足够了。</span><br></pre></td></tr></table></figure>
+
+<h5 id="索引的操作（增、删、改、查、Bulk批量操作）"><a href="#索引的操作（增、删、改、查、Bulk批量操作）" class="headerlink" title="索引的操作（增、删、改、查、Bulk批量操作）"></a>索引的操作（增、删、改、查、Bulk批量操作）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.es;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.logging.LogFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.HttpHost;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.LogManager;</span><br><span class="line"><span class="keyword">import</span> org.apache.logging.log4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.bulk.BulkItemResponse;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.bulk.BulkRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.bulk.BulkResponse;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.delete.DeleteRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.get.GetRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.get.GetResponse;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.index.IndexRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.update.UpdateRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RequestOptions;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestClient;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestHighLevelClient;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.common.Strings;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.common.xcontent.XContentType;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.search.fetch.subphase.FetchSourceContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 针对ES中索引数据的操作</span></span><br><span class="line"><span class="comment"> * 增删改查</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsDataOp</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger logger = LogManager.getLogger(EsDataOp<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//获取RestClient连接</span></span><br><span class="line">        RestHighLevelClient client = <span class="keyword">new</span> RestHighLevelClient(</span><br><span class="line">                RestClient.builder(</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata01"</span>, <span class="number">9200</span>, <span class="string">"http"</span>),</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata02"</span>, <span class="number">9200</span>, <span class="string">"http"</span>),</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata03"</span>, <span class="number">9200</span>, <span class="string">"http"</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建索引</span></span><br><span class="line">        <span class="comment">//addIndexByJson(client);</span></span><br><span class="line">        <span class="comment">//addIndexByMap(client);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//查询索引</span></span><br><span class="line">        <span class="comment">//getIndex(client);</span></span><br><span class="line">        <span class="comment">//getIndexByFiled(client);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//更新索引</span></span><br><span class="line">        <span class="comment">//注意：可以使用创建索引直接完整更新已存在的数据</span></span><br><span class="line">        <span class="comment">//updateIndexByPart(client);//局部更新</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//删除索引</span></span><br><span class="line">        <span class="comment">//deleteIndex(client);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//Bulk批量操作</span></span><br><span class="line">        <span class="comment">//bulkIndex(client);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭连接</span></span><br><span class="line">        client.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bulkIndex</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        BulkRequest request = <span class="keyword">new</span> BulkRequest();</span><br><span class="line">        request.add(<span class="keyword">new</span> IndexRequest(<span class="string">"emp"</span>).id(<span class="string">"20"</span>)</span><br><span class="line">                .source(XContentType.JSON,<span class="string">"field1"</span>, <span class="string">"value1"</span>,<span class="string">"field2"</span>,<span class="string">"value2"</span>));</span><br><span class="line">        request.add(<span class="keyword">new</span> DeleteRequest(<span class="string">"emp"</span>, <span class="string">"10"</span>));<span class="comment">//id为10的数据不存在，但是执行删除是不会报错的</span></span><br><span class="line">        request.add(<span class="keyword">new</span> UpdateRequest(<span class="string">"emp"</span>, <span class="string">"11"</span>)</span><br><span class="line">                .doc(XContentType.JSON,<span class="string">"age"</span>, <span class="number">19</span>));</span><br><span class="line">        request.add(<span class="keyword">new</span> UpdateRequest(<span class="string">"emp"</span>, <span class="string">"12"</span>)<span class="comment">//id为12的数据不存在，这一条命令在执行的时候会失败</span></span><br><span class="line">                .doc(XContentType.JSON,<span class="string">"age"</span>, <span class="number">19</span>));</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        BulkResponse bulkResponse = client.bulk(request, RequestOptions.DEFAULT);</span><br><span class="line">        <span class="comment">//如果Bulk中的个别语句出错不会导致整个Bulk执行失败，所以可以在这里判断一下是否有返回执行失败的信息</span></span><br><span class="line">        <span class="keyword">for</span> (BulkItemResponse bulkItemResponse : bulkResponse) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bulkItemResponse.isFailed()) &#123;</span><br><span class="line">                BulkItemResponse.Failure failure = bulkItemResponse.getFailure();</span><br><span class="line">                logger.error(<span class="string">"Bulk中出现了异常："</span>+failure);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteIndex</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        DeleteRequest request = <span class="keyword">new</span> DeleteRequest(<span class="string">"emp"</span>, <span class="string">"10"</span>);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.delete(request, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">updateIndexByPart</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        UpdateRequest request = <span class="keyword">new</span> UpdateRequest(<span class="string">"emp"</span>, <span class="string">"10"</span>);</span><br><span class="line">        String jsonString = <span class="string">"&#123;\"age\":23&#125;"</span>;</span><br><span class="line">        request.doc(jsonString, XContentType.JSON);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.update(request, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getIndexByFiled</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        GetRequest request = <span class="keyword">new</span> GetRequest(<span class="string">"emp"</span>, <span class="string">"10"</span>);</span><br><span class="line">        <span class="comment">//只查询部分字段</span></span><br><span class="line">        String[] includes = <span class="keyword">new</span> String[]&#123;<span class="string">"name"</span>&#125;;<span class="comment">//指定包含哪些字段</span></span><br><span class="line">        String[] excludes = Strings.EMPTY_ARRAY;<span class="comment">//指定多滤掉哪些字段</span></span><br><span class="line">        FetchSourceContext fetchSourceContext = <span class="keyword">new</span> FetchSourceContext(<span class="keyword">true</span>, includes, excludes);</span><br><span class="line">        request.fetchSourceContext(fetchSourceContext);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        GetResponse response = client.get(request, RequestOptions.DEFAULT);</span><br><span class="line">        <span class="comment">//通过response获取index、id、文档详细内容（source）</span></span><br><span class="line">        String index = response.getIndex();</span><br><span class="line">        String id = response.getId();</span><br><span class="line">        <span class="keyword">if</span>(response.isExists())&#123;<span class="comment">//如果没有查询到文档数据，则isExists返回false</span></span><br><span class="line">            <span class="comment">//获取json字符串格式的文档结果</span></span><br><span class="line">            String sourceAsString = response.getSourceAsString();</span><br><span class="line">            System.out.println(sourceAsString);</span><br><span class="line">            <span class="comment">//获取map格式的文档结果</span></span><br><span class="line">            Map&lt;String, Object&gt; sourceAsMap = response.getSourceAsMap();</span><br><span class="line">            System.out.println(sourceAsMap);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            logger.warn(<span class="string">"没有查询到索引库&#123;&#125;中id为&#123;&#125;的文档!"</span>,index,id);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getIndex</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        GetRequest request = <span class="keyword">new</span> GetRequest(<span class="string">"emp"</span>, <span class="string">"10"</span>);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        GetResponse response = client.get(request, RequestOptions.DEFAULT);</span><br><span class="line">        <span class="comment">//通过response获取index、id、文档详细内容（source）</span></span><br><span class="line">        String index = response.getIndex();</span><br><span class="line">        String id = response.getId();</span><br><span class="line">        <span class="keyword">if</span>(response.isExists())&#123;<span class="comment">//如果没有查询到文档数据，则isExists返回false</span></span><br><span class="line">            <span class="comment">//获取json字符串格式的文档结果</span></span><br><span class="line">            String sourceAsString = response.getSourceAsString();</span><br><span class="line">            System.out.println(sourceAsString);</span><br><span class="line">            <span class="comment">//获取map格式的文档结果</span></span><br><span class="line">            Map&lt;String, Object&gt; sourceAsMap = response.getSourceAsMap();</span><br><span class="line">            System.out.println(sourceAsMap);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            logger.warn(<span class="string">"没有查询到索引库&#123;&#125;中id为&#123;&#125;的文档!"</span>,index,id);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addIndexByMap</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        IndexRequest request = <span class="keyword">new</span> IndexRequest(<span class="string">"emp"</span>);</span><br><span class="line">        request.id(<span class="string">"11"</span>);</span><br><span class="line">        HashMap&lt;String, Object&gt; jsonMap = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">        jsonMap.put(<span class="string">"name"</span>, <span class="string">"tom"</span>);</span><br><span class="line">        jsonMap.put(<span class="string">"age"</span>, <span class="number">17</span>);</span><br><span class="line">        request.source(jsonMap);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.index(request, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addIndexByJson</span><span class="params">(RestHighLevelClient client)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        IndexRequest request = <span class="keyword">new</span> IndexRequest(<span class="string">"emp"</span>);</span><br><span class="line">        request.id(<span class="string">"10"</span>);</span><br><span class="line">        String jsonString = <span class="string">"&#123;"</span> +</span><br><span class="line">                <span class="string">"\"name\":\"jessic\","</span> +</span><br><span class="line">                <span class="string">"\"age\":20"</span> +</span><br><span class="line">                <span class="string">"&#125;"</span>;</span><br><span class="line">        request.source(jsonString, XContentType.JSON);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.index(request, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html">大数据开发工程师-全文检索引擎Elasticsearch-1</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年06月02日 - 18:06</p>
+  <p><span>最后更新:</span>2023年06月11日 - 14:06</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html" title="大数据开发工程师-全文检索引擎Elasticsearch-1">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-2.html" rel="next" title="大数据开发工程师-全文检索引擎Elasticsearch-2">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-全文检索引擎Elasticsearch-2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E5%85%AD%E5%91%A8-Flink1.15%E4%B9%8BFlink%20SQL%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%202.html" rel="prev" title="大数据开发工程师-第十七周-">
+                大数据开发工程师-第十七周- <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">364</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">51</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">115</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#全文检索引擎Elasticsearch-1"><span class="nav-number">1.</span> <span class="nav-text">全文检索引擎Elasticsearch-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-快速了解Elasticsearch"><span class="nav-number">1.1.</span> <span class="nav-text">1 快速了解Elasticsearch</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要学Elasticsearch？"><span class="nav-number">1.1.1.</span> <span class="nav-text">为什么要学Elasticsearch？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Elasticsearch简介"><span class="nav-number">1.1.2.</span> <span class="nav-text">Elasticsearch简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见的全文检索引擎"><span class="nav-number">1.1.3.</span> <span class="nav-text">常见的全文检索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr-vs-Elasticsearch"><span class="nav-number">1.1.4.</span> <span class="nav-text">Solr vs Elasticsearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-VS-Elasticsearch"><span class="nav-number">1.1.5.</span> <span class="nav-text">MySQL VS Elasticsearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Elasticsearch核心概念"><span class="nav-number">1.1.6.</span> <span class="nav-text">Elasticsearch核心概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-快速上手使用Elasticsearch"><span class="nav-number">1.2.</span> <span class="nav-text">2 快速上手使用Elasticsearch</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ES安装部署"><span class="nav-number">1.2.1.</span> <span class="nav-text">ES安装部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ES单机"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">ES单机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ES集群"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">ES集群</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES集群监控管理工具-cerebro"><span class="nav-number">1.2.2.</span> <span class="nav-text">ES集群监控管理工具-cerebro</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES的基本操作"><span class="nav-number">1.2.3.</span> <span class="nav-text">ES的基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用REST-API的方式操作ES"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">使用REST API的方式操作ES</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#索引库的操作（创建、删除）"><span class="nav-number">1.2.3.1.1.</span> <span class="nav-text">索引库的操作（创建、删除）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#索引的操作（增、删、改、查）"><span class="nav-number">1.2.3.1.2.</span> <span class="nav-text">索引的操作（增、删、改、查）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#更新索引"><span class="nav-number">1.2.3.1.3.</span> <span class="nav-text">更新索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除索引"><span class="nav-number">1.2.3.1.4.</span> <span class="nav-text">删除索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Bulk批量操作"><span class="nav-number">1.2.3.1.5.</span> <span class="nav-text">Bulk批量操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用Java-API的方式操作ES"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">使用Java API的方式操作ES</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#索引库的操作（创建、删除）-1"><span class="nav-number">1.2.3.2.1.</span> <span class="nav-text">索引库的操作（创建、删除）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#索引的操作（增、删、改、查、Bulk批量操作）"><span class="nav-number">1.2.3.2.2.</span> <span class="nav-text">索引的操作（增、删、改、查、Bulk批量操作）</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">687.3k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
