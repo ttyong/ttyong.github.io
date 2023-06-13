@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="tianyong">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="ES+HBase实现仿百度搜索引擎-11 企业中快速复杂查询痛点分析大数据领域海量数据存储现状1首先来分析一下目前大数据领域中的一些数据存储系统：HDFS、HBase、Kudu   12345-HDFS：是一个分布式文件系统，适合文本类型数据存储，不支持修改删除，适合一次写入，多次读取的场景。借助于Hive可以实现基于SQL的海量数据分析。HDFS在实际工作中是最常见的。-HBase：是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-ES+HBase实现仿百度搜索引擎-1">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-ES+HBase%E5%AE%9E%E7%8E%B0%E4%BB%BF%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-1.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="ES+HBase实现仿百度搜索引擎-11 企业中快速复杂查询痛点分析大数据领域海量数据存储现状1首先来分析一下目前大数据领域中的一些数据存储系统：HDFS、HBase、Kudu   12345-HDFS：是一个分布式文件系统，适合文本类型数据存储，不支持修改删除，适合一次写入，多次读取的场景。借助于Hive可以实现基于SQL的海量数据分析。HDFS在实际工作中是最常见的。-HBase：是">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120911703.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120911441.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120912169.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120916581.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120918935.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120919094.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120920136.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120927744.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120927645.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120928386.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120931503.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120936278.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121015221.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121050949.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121052050.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121053192.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121321626.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121511613.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121511028.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121512497.png">
+<meta property="article:published_time" content="2023-06-02T10:03:09.000Z">
+<meta property="article:modified_time" content="2023-06-13T04:14:59.133Z">
+<meta property="article:author" content="TTYONG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120911703.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-ES+HBase实现仿百度搜索引擎-1.html">
+
+
+
+
+
+  <title>大数据开发工程师-ES+HBase实现仿百度搜索引擎-1 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-ES+HBase%E5%AE%9E%E7%8E%B0%E4%BB%BF%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-ES+HBase实现仿百度搜索引擎-1</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-06-02T18:03:09+08:00">
+                2023-06-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  11.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  49
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="ES-HBase实现仿百度搜索引擎-1"><a href="#ES-HBase实现仿百度搜索引擎-1" class="headerlink" title="ES+HBase实现仿百度搜索引擎-1"></a>ES+HBase实现仿百度搜索引擎-1</h1><h2 id="1-企业中快速复杂查询痛点分析"><a href="#1-企业中快速复杂查询痛点分析" class="headerlink" title="1 企业中快速复杂查询痛点分析"></a>1 企业中快速复杂查询痛点分析</h2><h3 id="大数据领域海量数据存储现状"><a href="#大数据领域海量数据存储现状" class="headerlink" title="大数据领域海量数据存储现状"></a>大数据领域海量数据存储现状</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首先来分析一下目前大数据领域中的一些数据存储系统：HDFS、HBase、Kudu</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120911703.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-HDFS：是一个分布式文件系统，适合文本类型数据存储，不支持修改删除，适合一次写入，多次读取的场景。借助于Hive可以实现基于SQL的海量数据分析。HDFS在实际工作中是最常见的。</span><br><span class="line"></span><br><span class="line">-HBase：是一个NoSQL类型的数据库，支持海量数据的增删改查，基于Rowkey查询效率高，针对普通字段查询效率非常低。HBase不支持传统的SQL语法，不适合做数据分析。在企业中的应用场景有限，仅适用于有修改删除需求的场景。</span><br><span class="line"></span><br><span class="line">-Kudu：介于HDFS和HBase之间，专门为了应对快速变化的数据进行快速的分析，既支持增删改查，也支持基于SQL的海量数据分析。它定位于OLAP和少量的OLTP场景，如果有大量的随机查询，还是建议使用HBase最为合适。Kudu没有HDFS批处理速度快，也没有HBase随机读写能力强，所以它属于一个折中的方案，应用场景也是有限的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="大数据领域常见的SQL分析引擎"><a href="#大数据领域常见的SQL分析引擎" class="headerlink" title="大数据领域常见的SQL分析引擎"></a>大数据领域常见的SQL分析引擎</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目前大数据领域常见的SQL分析引擎有以下这些：Hive、Impala、Kylin。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120911441.png" alt="image-20230612091102908"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hive：Hive是一个支持SQL的数据查询引擎，适合通过SQL对HDFS中的海量文本数据进行分析，不适合单条数据的随机查询，因为每一次查询底层都需要执行MapReduce任务，单条数据查询效率比较低。</span><br><span class="line"></span><br><span class="line">Impala：Impala是类似于Hive的一个SQL查询引擎，由于Hive底层需要走MapReduce，效率较低，所以Impala自己实现了底层的计算引擎，充分利用了内存的优势，计算性能可以达到Hive的几十倍。虽然性能提高了，但是Impala也不适合快速复杂查询，因为每次查询还是需要加载表中的所有数据，然后过滤出满足条件的数据。</span><br><span class="line"></span><br><span class="line">Kylin：kylin是一个可以支持海量数据亚秒级查询的引擎，它最核心的思想就是预聚合，kylin中可以提前创建一些Cube，其实就是一些数据聚合规则，可以在每天凌晨的时候对数据按照指定的规则进行聚合，这样后期在使用的时候，就可以直接查询聚合之后的数据，提高查询效率，所以Kylin适合一些查询条件固定的需求，不适合灵活多变的查询需求。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">目前大数据领域中这几个数据分析引擎都是不擅长快速复杂查询的，因为他们侧重的其实都是数据分析，而不是快速复杂查询。</span><br><span class="line"></span><br><span class="line">想要实现海量数据的快速复杂查询，其实最常见的解决方案是利用全文检索引擎，因为全文检索引擎工具会对数据分词建立索引，可以支持快速复杂查询。</span><br></pre></td></tr></table></figure>
+
+<h3 id="目前常见的全文检索引擎"><a href="#目前常见的全文检索引擎" class="headerlink" title="目前常见的全文检索引擎"></a>目前常见的全文检索引擎</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目前常见的全文检索引擎主要是这几个：Lucene、Solr、Elasticsearch</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120912169.png" alt="image-20230612091235678"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lucene：Lucene是Java家族中最为出名的一个开源搜索引擎，缺点是使用起来比较繁琐，并且不支持分布式，无法应用在海量数据场景下。</span><br><span class="line"></span><br><span class="line">Solr：Solr是对Lucene进行了封装，并且提供了界面操作，使用起来更加友好，从solr4.0版本开始支持分布式，也就是支持集群架构。</span><br><span class="line"></span><br><span class="line">Elasticsearch：Elasticsearch也是对Lucene进行了封装，它从一开始就支持分布式，专门为大数据而生，所以在大数据领域使用的还是比较多的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="海量数据存储-快速复杂查询需求"><a href="#海量数据存储-快速复杂查询需求" class="headerlink" title="海量数据存储+快速复杂查询需求"></a>海量数据存储+快速复杂查询需求</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">假设现在遇到一个需求，企业里面有一套爬虫程序，每天都会到互联网上抓取海量的文章数据，针对这些文章数据：</span><br><span class="line">1：首先要实现海量文章数据存储，支持数据更新需求</span><br><span class="line">2：还需要提供针对文章数据的快速复杂查询</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120916581.png" alt="image-20230612091639190"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">在这里能不能直接使用Elasticsearch实现海量数据存储和快速复杂查询呢？</span><br><span class="line">Elasticsearch最擅长的是快速复杂查询，虽然它支持分布式，也可以存储海量数据，但是这并不是它最擅长的功能，因为数据存储多了之后肯定会影响ES的性能。</span><br><span class="line"></span><br><span class="line">所以单纯使用Elasticsearch来实现这个需求是不太合适的。</span><br><span class="line"></span><br><span class="line">那针对海量数据存储可以考虑HDFS、HBase、Kudu这几个存储系统，首先要把HDFS排除掉，因为HDFS不支持更新操作，剩下的是HBase和Kudu，这两个都支持更新操作，但是Kudu随机查询性能是不如HBase的，所以针对存储这块考虑使用HBase。</span><br><span class="line"></span><br><span class="line">单纯使用HBase也是无法满足需求的，HBase只有根据Rowkey查询效率才高，根据其他字段查询效率是比较差的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="海量数据存储-快速复杂查询的解决方案"><a href="#海量数据存储-快速复杂查询的解决方案" class="headerlink" title="海量数据存储+快速复杂查询的解决方案"></a>海量数据存储+快速复杂查询的解决方案</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">所以这个需求只使用一个技术组件是无法完美解决的，最好的解决方案是将HBase和Elasticsearch整合到一起，利用HBase适合海量数据存储、基于Rowkey查询效率高的特性，以及Elasticsearch适合快速复杂查询的特性。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120918935.png" alt="image-20230612091806749"></p>
+<h2 id="2-仿百度搜索引擎项目架构设计"><a href="#2-仿百度搜索引擎项目架构设计" class="headerlink" title="2 仿百度搜索引擎项目架构设计"></a>2 仿百度搜索引擎项目架构设计</h2><h3 id="项目概览"><a href="#项目概览" class="headerlink" title="项目概览"></a>项目概览</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首先看一下项目最终的界面效果</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120919094.png" alt="image-20230612091858736"></p>
+<h3 id="项目整体架构流程"><a href="#项目整体架构流程" class="headerlink" title="项目整体架构流程"></a>项目整体架构流程</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120920136.png" alt="image-20230612092004096"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1：项目的数据来源可以是通过爬虫到互联网上采集的数据，也可以是企业数据库中的内部数据</span><br><span class="line">2：根据数据的来源不同，使用不同的程序将数据入库到HBase，实现海量数据存储</span><br><span class="line">3：针对HBase中的数据在ES中建立索引。</span><br><span class="line">4：在数据展现模块中提供仿百度搜索功能。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">注意：并不是把HBase中数据的完整内容全部在ES中建立索引，只需要将检索用到的那些字段在ES中建立索引即可。例如：HBase存储的原始数据有20个字段，在ES可能只需要存储5个字段即可，具体的存储细节在后面会详细分析。</span><br></pre></td></tr></table></figure>
+
+<h3 id="ES和HBase数据同步的三种方案"><a href="#ES和HBase数据同步的三种方案" class="headerlink" title="ES和HBase数据同步的三种方案"></a>ES和HBase数据同步的三种方案</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">针对此项目，有一个核心功能点，如何在ES中同步对HBase中的数据建立索引？</span><br><span class="line">大致有下面这几种方案：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120927744.png" alt="image-20230612092710497"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1：方案1，在将原始数据入库HBase的时候，同时在ES中对数据建立索引，此时可以把入库HBase和ES的代码放在一个事务中，保证HBase和ES的数据一致性。</span><br><span class="line">这种方案的优点是操作方便，缺点是入库HBase和ES的代码绑定到一起了，耦合性太高，如果遇到ES出现故障，会导致入库HBase的操作也会失败，或者是ES集群压力过大的时候，会导致数据入库HBase的效率降低。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120927645.png" alt="image-20230612092739473"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2：方案2，在将原始数据入库HBase的时候，通过HBase中的协处理器实现数据同步，让协处理器监听HBase中的新增和删除操作，在协处理器内部操作ES，实现对数据建立索引的功能。</span><br><span class="line">HBase中的协处理器其实类似于MySQL中的触发器。</span><br><span class="line">这种方案的优点是通过协处理器可以很方便的获取到HBase中新增和变化的数据，如果入库HBase的程序是之前已经开发好的，此时不需要对之前的代码进行任何改动，影响程度比较低。缺点是过于依赖HBase了，如果后期涉及到HBase集群版本升级，无法保证协处理器功能的可用性。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120928386.png" alt="image-20230612092821245"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">3：方案3，在将原始数据入库HBase的时候，同时在Redis中使用list数据类型模拟一个队列，存储数据的Rowkey。此时将入库HBase和Redis的操作放在一个事务里面，保证数据的一致性。然后再通过另外一个同步程序，从Redis的list队列中读取Rowkey，根据Rowkey到HBase中获取数据的详细信息，在ES中建立索引，将HBase中数据的Rowkey作为ES中数据的ID。</span><br><span class="line">在这个方案里面是将入库HBase和在ES中建立索引这两个功能解耦了，借助于中间层的Redis实现的。</span><br><span class="line">这种方案的缺点是把入库HBase和Redis的功能耦合在一起了，但是Redis是轻量级的，出现问题的概率是比较低的，对性能损耗也不高，所以是可以接受的。</span><br><span class="line">此时就算ES出现问题，只需要在同步程序内部实现正常的异常处理即可，将建立索引失败数据的Rowkey重新添加到Redis的list列表里面即可，不会导致HBase和ES数据不一致的问题。</span><br><span class="line"></span><br><span class="line">其实第2种方案和第3种方案都可以使用，个人推荐使用第3种方案，可控性高一些，在项目中也会使用第3种方案实现。</span><br></pre></td></tr></table></figure>
+
+<h3 id="项目整体执行流程"><a href="#项目整体执行流程" class="headerlink" title="项目整体执行流程"></a>项目整体执行流程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">接下来分析一下项目底层细节流程</span><br><span class="line">如下图所示</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120931503.png" alt="image-20230612093116446"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1：通过入库程序向HBase中入库数据，同时在Redis中存储数据的Rowkey。</span><br><span class="line">2：从Redis中获取数据的Rowkey，根据Rowkey到HBase中查询数据的详细信息，然后在ES中建立索引。</span><br><span class="line">此时我们的海量数据已经存储到HBase中，并且将需要查询的字段在ES中建立索引了。</span><br><span class="line">3：用户向ES发送查询请求</span><br><span class="line">4：ES返回符合条件的数据的ID，其实就是HBase中数据的Rowkey。在这里也可以根据需求额外再返回一些字段信息都是可以的。</span><br><span class="line">5：当用户想要查看数据完整详细信息的时候，需要根据Rowkey到HBase中查询</span><br><span class="line">6：HBase会给用户返回Rowkey对应数据的详细信息。</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-ES高级特性扩展"><a href="#3-ES高级特性扩展" class="headerlink" title="3 ES高级特性扩展"></a>3 ES高级特性扩展</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在具体开发项目之前，先来了解一下ES中的几个特性：</span><br></pre></td></tr></table></figure>
+
+<h3 id="ES中的-source字段"><a href="#ES中的-source字段" class="headerlink" title="ES中的_source字段"></a>ES中的_source字段</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306120936278.png" alt="image-20230612093604097"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在ES中包含一个特殊的字段：_source</span><br><span class="line">当我们在ES中对数据建立索引的时候，在ES底层其实会存储两份数据，一份是原始文档的内容，还有一份是对原始文档分词产生的倒排索引内容。</span><br><span class="line"></span><br><span class="line">其中原始文档内容会存储到_source这个字段里面，咱们前面在学习JavaAPI操作ES的时候，通过search查询的结果数据，最终在解析的时候其实就是从_source字段中解析的。</span><br><span class="line"></span><br><span class="line">_source字段中默认会包含原始文档中所有字段的内容。</span><br></pre></td></tr></table></figure>
+
+<h3 id="ES中字段的index和store特性"><a href="#ES中字段的index和store特性" class="headerlink" title="ES中字段的index和store特性"></a>ES中字段的index和store特性</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">我们在向ES中添加数据的时候，ES底层针对每个字段其实还会涉及到index和store这两个属性：</span><br><span class="line"></span><br><span class="line">index：表示是否在ES中建立索引，默认为true。</span><br><span class="line">store：表示是否在ES中存储，默认为false。</span><br><span class="line"></span><br><span class="line">这里的store属性其实是Lucene中的语法，表示是否存储字段内容，ES对它做了优化，默认会使用_source字段存储原始文档所有字段的内容，这样可以提高数据解析性能，所以这里的store属性其实就不需要设置了，它的默认值就是false，表示不存储。</span><br><span class="line"></span><br><span class="line">注意：如果这里的store也设置为true，此时ES会重复存储对应字段的内容。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">下面来看一个例子：</span><br><span class="line">假设我要向ES中添加一批学生数据，包括姓名、年龄、性别、家庭住址这些字段。</span><br><span class="line">针对这批数据，我的需求是需要根据学生的姓名、家庭住址进行查询，最终在返回结果数据的时候，只需要把学生的姓名、年龄、性别返回过来即可，不需要返回家庭住址。</span><br><span class="line"></span><br><span class="line">针对这个需求而言</span><br><span class="line">1：需要根据学生的姓名、家庭住址进行查询，所以这两个字段必须在ES中建立索引，否则无法根据姓名和家庭住址进行查询。</span><br><span class="line">2：还需要在返回结果数据的时候把学生的姓名、年龄、性别返回过来，那也就意味着姓名、年龄、性别字段需要在ES中进行存储，否则ES是无法返回这些字段内容的。</span><br><span class="line">所以针对这个需求总结一下：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">		是否建立索引	是否存储</span><br><span class="line">姓名		是			是</span><br><span class="line">年龄		否			是</span><br><span class="line">性别		否			是</span><br><span class="line">家庭住址   是		   否</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">解释：</span><br><span class="line"></span><br><span class="line">判断一个字段是否需要建立索引，唯一的依据就是是否需要根据这个字段进行查询，如果需要，则建立索引，否则不建立索引。</span><br><span class="line">判断一个字段是否需要存储，唯一的依据就是是否需要从ES中获取这个字段的值，如果需要，则存储，否则不存储。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：在实际工作中，针对某个字段来说，需要建立索引，但是不需要存储，这种场景也是存在的，因为某一些字段内容如果比较大，并且没有必要从ES中返回，其实就没必要在ES中存储了，否则会额外占用ES的存储空间，也会影响ES的查询效率。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">由于默认情况下_source字段会存储所有字段的内容，所以需要在_source字段中过滤掉不需要存储的字段。</span><br><span class="line">在mapping中设置:&quot;_source&quot;:&#123;&quot;excludes&quot;:[&quot;address&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">针对这个案例，创建一个索引库：stuinfo</span><br><span class="line"></span><br><span class="line">[root@bigdata01 ~] curl -H &quot;Content-Type: application&#x2F;json&quot; -XPUT &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;stuinfo&#39; -d&#39;&#123;&quot;mappings&quot;:&#123;&quot;_source&quot;:&#123;&quot;excludes&quot;:[&quot;address&quot;]&#125;,&quot;properties&quot;:&#123;&quot;name&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;index&quot;:true&#125;,&quot;age&quot;:&#123;&quot;type&quot;:&quot;integer&quot;,&quot;index&quot;:false&#125;,&quot;sex&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;index&quot;:false&#125;,&quot;address&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;index&quot;:true&#125;&#125;&#125;&#125;&#39;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">查询mappings信息。</span><br><span class="line">[root@bigdata01 ~]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;stuinfo&#x2F;_mapping?pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;stuinfo&quot; : &#123;</span><br><span class="line">    &quot;mappings&quot; : &#123;</span><br><span class="line">      &quot;_source&quot; : &#123;</span><br><span class="line">        &quot;excludes&quot; : [</span><br><span class="line">          &quot;address&quot;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;properties&quot; : &#123;</span><br><span class="line">        &quot;address&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;age&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;integer&quot;,</span><br><span class="line">          &quot;index&quot; : false</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;name&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;sex&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;index&quot; : false</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">向索引库中添加一条数据</span><br><span class="line">curl -H &quot;Content-Type: application&#x2F;json&quot; -XPOST &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;stuinfo&#x2F;_doc&#x2F;1&#39; -d &#39;&#123;&quot;name&quot;:&quot;zs&quot;,&quot;age&quot;:20,&quot;sex&quot;:&quot;man&quot;,&quot;address&quot;:&quot;bj&quot;&#125;&#39;</span><br><span class="line"></span><br><span class="line">查看这条数据，验证一下效果。</span><br><span class="line">[root@bigdata01 ~]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;stuinfo&#x2F;_search?pretty&#39; </span><br><span class="line">&#123;</span><br><span class="line"> ......</span><br><span class="line">  &quot;_source&quot; : &#123;</span><br><span class="line">    &quot;sex&quot; : &quot;man&quot;,</span><br><span class="line">    &quot;name&quot; : &quot;zs&quot;,</span><br><span class="line">    &quot;age&quot; : 20</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">发现返回的_source字段中确实没有address字段的内容了。</span><br><span class="line"></span><br><span class="line">但是此时我们还是可以根据address进行查询的，因为倒排索引中有这个字段的内容。</span><br><span class="line">在这里扩展一个知识点，使用RestAPI执行query查询。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121015221.png" alt="image-20230612101521802"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">根据address可以查询到数据，说明address的index属性生效了</span><br><span class="line"></span><br><span class="line">[root@bigdata01 ~]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;stuinfo&#x2F;_search?pretty&#39; -d&#39;&#123;&quot;query&quot;:&#123;&quot;match&quot;:&#123;&quot;address&quot;:&quot;bj&quot;&#125;&#125;&#125;&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;took&quot; : 5,</span><br><span class="line">  &quot;timed_out&quot; : false,</span><br><span class="line">  &quot;_shards&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : 1,</span><br><span class="line">    &quot;successful&quot; : 1,</span><br><span class="line">    &quot;skipped&quot; : 0,</span><br><span class="line">    &quot;failed&quot; : 0</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;hits&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : &#123;</span><br><span class="line">      &quot;value&quot; : 1,</span><br><span class="line">      &quot;relation&quot; : &quot;eq&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;max_score&quot; : 0.2876821,</span><br><span class="line">    &quot;hits&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;stuinfo&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">        &quot;_score&quot; : 0.2876821,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;sex&quot; : &quot;man&quot;,</span><br><span class="line">          &quot;name&quot; : &quot;zs&quot;,</span><br><span class="line">          &quot;age&quot; : 20</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果我们使用sex字段进行查询，会看到报错信息，因为sex字段没有建立索引是无法作为查询字段的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata01 ~]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;stuinfo&#x2F;_search?pretty&#39; -d&#39;&#123;&quot;query&quot;:&#123;&quot;match&quot;:&#123;&quot;sex&quot;:&quot;man&quot;&#125;&#125;&#125;&#39;    </span><br><span class="line">&#123;</span><br><span class="line">  &quot;error&quot; : &#123;</span><br><span class="line">    &quot;root_cause&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;type&quot; : &quot;query_shard_exception&quot;,</span><br><span class="line">        &quot;reason&quot; : &quot;failed to create query: Cannot search on field [sex] since it is not indexed.&quot;,</span><br><span class="line">        &quot;index_uuid&quot; : &quot;sPuh_JJNSYW33Oie4KSRcg&quot;,</span><br><span class="line">        &quot;index&quot; : &quot;stuinfo&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ],</span><br><span class="line">    &quot;type&quot; : &quot;search_phase_execution_exception&quot;,</span><br><span class="line">    &quot;reason&quot; : &quot;all shards failed&quot;,</span><br><span class="line">    &quot;phase&quot; : &quot;query&quot;,</span><br><span class="line">    &quot;grouped&quot; : true,</span><br><span class="line">    &quot;failed_shards&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;shard&quot; : 0,</span><br><span class="line">        &quot;index&quot; : &quot;stuinfo&quot;,</span><br><span class="line">        &quot;node&quot; : &quot;_6ff1IjTTGm3jZ_edi6-KA&quot;,</span><br><span class="line">        &quot;reason&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;query_shard_exception&quot;,</span><br><span class="line">          &quot;reason&quot; : &quot;failed to create query: Cannot search on field [sex] since it is not indexed.&quot;,</span><br><span class="line">          &quot;index_uuid&quot; : &quot;sPuh_JJNSYW33Oie4KSRcg&quot;,</span><br><span class="line">          &quot;index&quot; : &quot;stuinfo&quot;,</span><br><span class="line">          &quot;caused_by&quot; : &#123;</span><br><span class="line">            &quot;type&quot; : &quot;illegal_argument_exception&quot;,</span><br><span class="line">            &quot;reason&quot; : &quot;Cannot search on field [sex] since it is not indexed.&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;status&quot; : 400</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-开发仿百度搜索引擎项目"><a href="#4-开发仿百度搜索引擎项目" class="headerlink" title="4 开发仿百度搜索引擎项目"></a>4 开发仿百度搜索引擎项目</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">这个搜索引擎项目主要涉及到数据采集、数据存储、建立索引和数据展现环节。</span><br><span class="line">针对一个搜索引擎项目而言，它的数据基本上都是来源于互联网上的公开数据，想要获取这些数据就需要使用爬虫工具了，目前市面上有一些爬虫产品，但是在使用的时候基本上都需要二次开发，所以企业里面都会有专门的爬虫工程师负责这个工作。</span><br><span class="line">我们在开发这个搜索引擎项目的时候就不再针对爬虫数据采集模块进行扩展了，到时候我会提供一个数据接口，大家通过接口可以直接获取到一些互联网上的公开数据。</span><br><span class="line">数据大致格式是这样的：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121050949.png" alt="image-20230612105000321"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">我们在开发这个搜索引擎项目的时候会重点实现数据存储、建立索引这两个环节。</span><br><span class="line"></span><br><span class="line">大致的开发步骤是这样的：</span><br><span class="line">1：调用接口获取数据导入HBase和Redis(存储Rowkey)。</span><br><span class="line">2：通过ES对HBase中的数据建立索引。</span><br><span class="line">3：对接Web项目，提供页面检索功能。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在具体开发项目之前，我们首先分析一下项目中的数据和具体的查询要求，这样就知道ES中索引库的mapping应该如何设计了。</span><br><span class="line">在这个搜索引擎项目中，我们需要对爬虫采集到的文章数据在ES中建立索引。</span><br><span class="line"></span><br><span class="line">由于文章数据的核心内容主要在标题、描述和正文这3个字段中，所以在查询的时候需要用到这3个字段。</span><br><span class="line">那ES在返回满足条件的数据的时候，都需要返回哪些字段呢？</span><br><span class="line">参考一下百度的结果列表界面，可以发现，百度的列表页面会显示标题、描述和作者信息。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121052050.png" alt="image-20230612105219912"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">那针对我们这里的文章数据，还有一个时间字段，其实也可以显示在列表页面中，具体显示哪些字段，可以根据工作中的具体需求来定。</span><br><span class="line">在这里我们希望在列表页面显示的是文章的标题、作者、描述、时间这4个字段。</span><br><span class="line">针对文章的ID，在这里直接作为ES中数据的ID，ES中的ID是必须要存储和建立索引的。</span><br><span class="line">所以最终总结一下是这样的：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121053192.png" alt="image-20230612105345979"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">文章ID：需要建立索引，并且存储，这是ES中ID字段必须要具备的特性。</span><br><span class="line">标题：因为查询的时候会用到，所以需要建立索引，并且在返回结果列表信息的时候需要直接从ES中返回，所以需要存储。</span><br><span class="line">作者：查询用不到，所以不需要建立索引，但是需要在返回结果列表信息的时候一块返回，所以需要存储。</span><br><span class="line">描述：查询会用到，返回的结果列表信息中也有这个字段内容，所以需要建立索引，并且存储。</span><br><span class="line">正文：因为查询的时候会用到，所以需要建立索引，但是在返回结果列表信息的时候不需要返回这个字段，所以不需要存储。其实还有一点很重要的原因是因为这个字段内容太长了，如果在ES中存储，会额外占用很多的存储空间，最终会影响ES的性能。</span><br><span class="line">时间：查询用不到，所以不需要建立索引，但是需要在返回结果列表信息的时候一块返回，所以需要存储。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">接下来我们来手工指定一下索引库的settings和mapping参数。</span><br><span class="line">由于这里的字段比较多，最好把settings和mapping信息写到一个文件中，使用起来比较方便。</span><br><span class="line">创建一个文件：article.json，内容如下：</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">        &quot;settings&quot;:&#123;</span><br><span class="line">                &quot;number_of_shards&quot;:5,</span><br><span class="line">                &quot;number_of_replicas&quot;:1</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;mappings&quot;:&#123;</span><br><span class="line">				&quot;dynamic&quot;:&quot;strict&quot;,</span><br><span class="line">				&quot;_source&quot;:&#123;&quot;excludes&quot;:[&quot;content&quot;]&#125;,</span><br><span class="line">				&quot;properties&quot;:&#123;</span><br><span class="line">						&quot;title&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;analyzer&quot;:&quot;ik_max_word&quot;&#125;,</span><br><span class="line">						&quot;author&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;index&quot;:false&#125;,</span><br><span class="line">						&quot;describe&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;analyzer&quot;:&quot;ik_max_word&quot;&#125;,</span><br><span class="line">						&quot;content&quot;:&#123;&quot;type&quot;:&quot;text&quot;,&quot;analyzer&quot;:&quot;ik_max_word&quot;&#125;,</span><br><span class="line">						&quot;time&quot;:&#123;&quot;type&quot;:&quot;date&quot;,&quot;index&quot;:false,&quot;format&quot;:&quot;yyyy-MM-dd HH:mm:ss&quot;&#125;</span><br><span class="line">				&#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">解释：</span><br><span class="line">dynamic参数有4个选项值(后期ES中如果用于建立索引的字段多了一些未知字段的场景)：</span><br><span class="line"></span><br><span class="line">true是默认的，表示开启动态映射(自动识别)</span><br><span class="line">false表示忽略没有定义的字段</span><br><span class="line">strict表示遇到未知字段时抛出异常</span><br><span class="line">runtime表示遇到未知字段时将它作为运行时字段，运行时字段是在ES7.11版本中增加的，运行时字段不会被索引，但是可以从_source中获取运行时字段内容，所以runtime可以适合公共字段已知，并且想兼容未知扩展字段的场景。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121321626.png" alt="image-20230612132118974"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dynamic具体选择哪个参数，就需要根据需求来定了，在这里不希望在ES中保存未知字段，所以使用strict。</span><br><span class="line"></span><br><span class="line">将article.json上传到&#x2F;data&#x2F;soft&#x2F;elasticsearch-7.13.4目录下</span><br><span class="line">[root@bigdata01 elasticsearch-7.13.4]# ll article.json </span><br><span class="line">-rw-r--r--. 1 root root 534 Apr  2 17:44 article.json</span><br></pre></td></tr></table></figure>
+
+<h3 id="调用接口获取数据导入HBase和Redis"><a href="#调用接口获取数据导入HBase和Redis" class="headerlink" title="调用接口获取数据导入HBase和Redis"></a>调用接口获取数据导入HBase和Redis</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在Idea中直接打开已有项目：db_fullsearch，里面有一个web_fullsearch子model项目。</span><br><span class="line">接着再创建一个子Model项目：data_manager</span><br><span class="line">在子Model项目data_manager的pom.xml中添加此项目需要用到的依赖。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;slf4j-api&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;slf4j-log4j12&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;org.apache.httpcomponents&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;httpclient&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;org.apache.hbase&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;hbase-client&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;org.elasticsearch.client&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;elasticsearch-rest-high-level-client&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">	&lt;dependency&gt;</span><br><span class="line">		&lt;groupId&gt;redis.clients&lt;&#x2F;groupId&gt;</span><br><span class="line">		&lt;artifactId&gt;jedis&lt;&#x2F;artifactId&gt;</span><br><span class="line">	&lt;&#x2F;dependency&gt;</span><br><span class="line">&lt;&#x2F;dependencies&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">在子Model项目data_manager中添加log4j.properties配置文件。</span><br><span class="line">log4j.rootLogger&#x3D;info,stdout</span><br><span class="line"></span><br><span class="line">log4j.appender.stdout &#x3D; org.apache.log4j.ConsoleAppender</span><br><span class="line">log4j.appender.stdout.Target &#x3D; System.out</span><br><span class="line">log4j.appender.stdout.layout&#x3D;org.apache.log4j.PatternLayout </span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern&#x3D;[%p] %m%n</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在子Model项目data_manager中创建package：com.imooc.core和com.imooc.utils</span><br><span class="line">在com.imooc.utils包中引入工具类：HttpUtil、RedisUtil、HBaseUtil（开发）。</span><br><span class="line">接着在com.imooc.core中创建类：DataImport，负责实现数据导入到HBase和Redis。</span><br><span class="line">HBaseUtil代码如下：</span><br></pre></td></tr></table></figure>
+
+<h4 id="com-imooc-utils"><a href="#com-imooc-utils" class="headerlink" title="com.imooc.utils"></a>com.imooc.utils</h4><h5 id="HBaseUtil"><a href="#HBaseUtil" class="headerlink" title="HBaseUtil"></a>HBaseUtil</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.bcel.internal.generic.TABLESWITCH;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.Cell;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.CellUtil;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.TableName;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.client.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.util.Bytes;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HBase工具类</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HBaseUtil</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HBaseUtil</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Connection conn = getConn();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Connection <span class="title">getConn</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//获取hbase链接</span></span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        <span class="comment">//指定hbase使用的zk地址</span></span><br><span class="line">        <span class="comment">//注意：需要在执行hbase hava代码的机器上配置zk和hbase集群的主机名和ip的映射关系</span></span><br><span class="line">        conf.set(<span class="string">"hbase.zookeeper.quorum"</span>,<span class="string">"bigdata01:2181"</span>);</span><br><span class="line">        <span class="comment">//指定hbase在hdfs上的根目录</span></span><br><span class="line">        conf.set(<span class="string">"hbase.rootdir"</span>,<span class="string">"hdfs://bigdata01:9000/hbase"</span>);</span><br><span class="line">        <span class="comment">//创建HBase数据库链接</span></span><br><span class="line">        Connection co = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            co = ConnectionFactory.createConnection(conf);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">            System.out.println(<span class="string">"获取链接失败："</span>+e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> co;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 对外提供的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建表</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> cfs</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createTable</span><span class="params">(String tableName,String... cfs)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Admin admin = conn.getAdmin();</span><br><span class="line">        ArrayList&lt;ColumnFamilyDescriptor&gt; cfArr = <span class="keyword">new</span> ArrayList&lt;ColumnFamilyDescriptor&gt;();</span><br><span class="line">        <span class="keyword">for</span> (String cf : cfs) &#123;</span><br><span class="line">            ColumnFamilyDescriptor cfDesc = ColumnFamilyDescriptorBuilder</span><br><span class="line">                    .newBuilder(Bytes.toBytes(cf))</span><br><span class="line">                    .build();</span><br><span class="line">            cfArr.add(cfDesc);</span><br><span class="line">        &#125;</span><br><span class="line">        TableDescriptor tableDesc = TableDescriptorBuilder</span><br><span class="line">                .newBuilder(TableName.valueOf(tableName))</span><br><span class="line">                .setColumnFamilies(cfArr)</span><br><span class="line">                .build();</span><br><span class="line">        admin.createTable(tableDesc);</span><br><span class="line">        admin.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加一个单元格(列)的数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rowKey</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> columnFamily</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> column</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">put2HBaseCell</span><span class="params">(String tableName,String rowKey,String columnFamily,String column,String value)</span><span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Table table = conn.getTable(TableName.valueOf(tableName));</span><br><span class="line">        Put put = <span class="keyword">new</span> Put(Bytes.toBytes(rowKey));</span><br><span class="line">        put.addColumn(Bytes.toBytes(columnFamily),Bytes.toBytes(column),Bytes.toBytes(value));</span><br><span class="line">        table.put(put);</span><br><span class="line">        table.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 向hbase中添加一批数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> list</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">put2HBaseList</span><span class="params">(String tableName, List&lt;Put&gt; list)</span><span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Table table = conn.getTable(TableName.valueOf(tableName));</span><br><span class="line">        table.put(list);</span><br><span class="line">        table.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">把这个构造方法私有化的意义是为了防止外部类创建RedisUtil的实例对象。这样可以保证RedisUtil是一个单例类，只有一个实例存在。这样可以节省内存空间，避免多个实例之间的同步问题，提高性能。😊</span><br><span class="line"></span><br><span class="line">已收到消息. 把这个构造方法私有化的意义是为了防止外部类创建RedisUtil的实例对象。这样可以保证RedisUtil是一个单例类，只有一个实例存在。这样可以节省内存空间，避免多个实例之间的同步问题，提高性能。😊</span><br></pre></td></tr></table></figure>
+
+<h4 id="com-imooc-core"><a href="#com-imooc-core" class="headerlink" title="com.imooc.core"></a>com.imooc.core</h4><h5 id="DataImport"><a href="#DataImport" class="headerlink" title="DataImport"></a>DataImport</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataImport代码如下：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.core;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSONArray;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSONObject;</span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.HBaseUtil;</span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.HttpUtil;</span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.RedisUtil;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过接口获取文章数据，入库HBase和Redis（Rowkey）</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 注意：HBase建表语句 create 'article','info'</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataImport</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Logger logger = LoggerFactory.getLogger(DataImport<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//通过接口获取文章数据</span></span><br><span class="line">        String dataUrl = <span class="string">"http://data.xuwei.tech/a1/wz1"</span>;</span><br><span class="line">        JSONObject paramObj = <span class="keyword">new</span> JSONObject();</span><br><span class="line">        paramObj.put(<span class="string">"code"</span>,<span class="string">"imooc"</span>);<span class="comment">//校验码</span></span><br><span class="line">        paramObj.put(<span class="string">"num"</span>,<span class="number">100</span>);<span class="comment">//数据条数，默认返回100条，最大支持返回1000条</span></span><br><span class="line">        JSONObject dataObj = HttpUtil.doPost(dataUrl, paramObj);</span><br><span class="line">        <span class="keyword">boolean</span> flag = dataObj.containsKey(<span class="string">"error"</span>);</span><br><span class="line">        <span class="keyword">if</span>(!flag)&#123;</span><br><span class="line">            JSONArray resArr = dataObj.getJSONArray(<span class="string">"data"</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;resArr.size();i++)&#123;</span><br><span class="line">                JSONObject jsonObj = resArr.getJSONObject(i);</span><br><span class="line">                <span class="comment">//System.out.println(jsonObj.toJSONString());</span></span><br><span class="line">                <span class="comment">//文章ID作为HBase的Rowkey和ES的ID</span></span><br><span class="line">                String id = jsonObj.getString(<span class="string">"id"</span>);</span><br><span class="line">                String title = jsonObj.getString(<span class="string">"title"</span>);</span><br><span class="line">                String author = jsonObj.getString(<span class="string">"author"</span>);</span><br><span class="line">                String describe = jsonObj.getString(<span class="string">"describe"</span>);</span><br><span class="line">                String content = jsonObj.getString(<span class="string">"content"</span>);</span><br><span class="line">                String time = jsonObj.getString(<span class="string">"time"</span>);</span><br><span class="line">                Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">try</span>&#123;</span><br><span class="line">                    <span class="comment">//将数据入库到HBase</span></span><br><span class="line">                    String tableName = <span class="string">"article"</span>;</span><br><span class="line">                    String cf = <span class="string">"info"</span>;</span><br><span class="line">                    HBaseUtil.put2HBaseCell(tableName,id,cf,<span class="string">"title"</span>,title);</span><br><span class="line">                    HBaseUtil.put2HBaseCell(tableName,id,cf,<span class="string">"author"</span>,author);</span><br><span class="line">                    HBaseUtil.put2HBaseCell(tableName,id,cf,<span class="string">"describe"</span>,describe);</span><br><span class="line">                    HBaseUtil.put2HBaseCell(tableName,id,cf,<span class="string">"content"</span>,content);</span><br><span class="line">                    HBaseUtil.put2HBaseCell(tableName,id,cf,<span class="string">"time"</span>,time);</span><br><span class="line">                    <span class="comment">//将Rowkey保存到Redis中</span></span><br><span class="line">                    jedis = RedisUtil.getJedis();</span><br><span class="line">                    jedis.lpush(<span class="string">"l_article_ids"</span>,id);</span><br><span class="line">                &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                    <span class="comment">//注意：由于hbase的put操作属于幂等操作，多次操作，对最终的结果没有影响，所以不需要额外处理</span></span><br><span class="line">                    logger.error(<span class="string">"数据添加失败："</span>+e.getMessage());</span><br><span class="line">                &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">                    <span class="comment">//向连接池返回连接</span></span><br><span class="line">                    <span class="keyword">if</span>(jedis!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                        RedisUtil.returnResource(jedis);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            logger.error(<span class="string">"获取文章数据失败："</span>+dataObj.toJSONString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过ES对HBase中的数据建立索引"><a href="#通过ES对HBase中的数据建立索引" class="headerlink" title="通过ES对HBase中的数据建立索引"></a>通过ES对HBase中的数据建立索引</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在com.imooc.core中创建类：DataIndex，负责实现在ES中对数据建立索引。</span><br><span class="line">在开发DataIndex代码的时候，需要向Es中写入数据，所以最好封装一个EsUtil工具类。</span><br><span class="line">同时需要对HBaseUtil工具类进行完善，增加一个getFromHBase方法，负责从HBase中获取数据</span><br><span class="line"></span><br><span class="line">EsUtil工具类代码如下：</span><br></pre></td></tr></table></figure>
+
+<h4 id="com-imooc-utils-1"><a href="#com-imooc-utils-1" class="headerlink" title="com.imooc.utils"></a>com.imooc.utils</h4><h5 id="EsUtil"><a href="#EsUtil" class="headerlink" title="EsUtil"></a>EsUtil</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.http.HttpHost;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.impl.nio.client.HttpAsyncClientBuilder;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.impl.nio.reactor.IOReactorConfig;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.action.index.IndexRequest;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RequestOptions;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestClient;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestClientBuilder;</span><br><span class="line"><span class="keyword">import</span> org.elasticsearch.client.RestHighLevelClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ES工具类</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EsUtil</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">EsUtil</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> RestHighLevelClient client;</span><br><span class="line">    <span class="keyword">static</span>&#123;</span><br><span class="line">        <span class="comment">//获取RestClient连接</span></span><br><span class="line">        <span class="comment">//注意：高级别客户端其实是对低级别客户端的代码进行了封装，所以连接池使用的是低级别客户端中的连接池</span></span><br><span class="line">        client = <span class="keyword">new</span> RestHighLevelClient(</span><br><span class="line">                RestClient.builder(</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata01"</span>,<span class="number">9200</span>,<span class="string">"http"</span>),</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata01"</span>,<span class="number">9200</span>,<span class="string">"http"</span>),</span><br><span class="line">                        <span class="keyword">new</span> HttpHost(<span class="string">"bigdata01"</span>,<span class="number">9200</span>,<span class="string">"http"</span>))</span><br><span class="line">                        .setHttpClientConfigCallback(<span class="keyword">new</span> RestClientBuilder.HttpClientConfigCallback() &#123;</span><br><span class="line">                            <span class="function"><span class="keyword">public</span> HttpAsyncClientBuilder <span class="title">customizeHttpClient</span><span class="params">(HttpAsyncClientBuilder httpClientBuilder)</span> </span>&#123;</span><br><span class="line">                                <span class="keyword">return</span> httpClientBuilder.setDefaultIOReactorConfig(</span><br><span class="line">                                        IOReactorConfig.custom()</span><br><span class="line">                                                <span class="comment">//设置线程池中线程的数量，默认是1个，建议设置为和客户端机器可用CPU数量一致</span></span><br><span class="line">                                                .setIoThreadCount(<span class="number">1</span>)</span><br><span class="line">                                                .build());</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取客户端</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RestHighLevelClient <span class="title">getRestClient</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> client;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 关闭客户端</span></span><br><span class="line"><span class="comment">     * 注意：调用高级别客户单的close方法时，会将低级别客户端创建的连接池整个关闭掉，最终导致client无法继续使用</span></span><br><span class="line"><span class="comment">     * 所以正常是用不到这个close方法的，只有在程序结束的时候才需要调用</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">closeRestClient</span><span class="params">()</span><span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        client.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 建立索引</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> index</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> map</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addIndex</span><span class="params">(String index, String id, Map&lt;String,String&gt; map)</span><span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">        IndexRequest request = <span class="keyword">new</span> IndexRequest(index);</span><br><span class="line">        request.id(id);</span><br><span class="line">        request.source(map);</span><br><span class="line">        <span class="comment">//执行</span></span><br><span class="line">        client.index(request, RequestOptions.DEFAULT);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="HBaseUtil-1"><a href="#HBaseUtil-1" class="headerlink" title="HBaseUtil"></a>HBaseUtil</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HBaseUtil工具类代码如下：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.bcel.internal.generic.TABLESWITCH;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.Cell;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.CellUtil;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.TableName;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.client.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.hbase.util.Bytes;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * HBase工具类</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HBaseUtil</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HBaseUtil</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Connection conn = getConn();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Connection <span class="title">getConn</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//获取hbase链接</span></span><br><span class="line">        Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">        <span class="comment">//指定hbase使用的zk地址</span></span><br><span class="line">        <span class="comment">//注意：需要在执行hbase hava代码的机器上配置zk和hbase集群的主机名和ip的映射关系</span></span><br><span class="line">        conf.set(<span class="string">"hbase.zookeeper.quorum"</span>,<span class="string">"bigdata01:2181"</span>);</span><br><span class="line">        <span class="comment">//指定hbase在hdfs上的根目录</span></span><br><span class="line">        conf.set(<span class="string">"hbase.rootdir"</span>,<span class="string">"hdfs://bigdata01:9000/hbase"</span>);</span><br><span class="line">        <span class="comment">//创建HBase数据库链接</span></span><br><span class="line">        Connection co = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            co = ConnectionFactory.createConnection(conf);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">            System.out.println(<span class="string">"获取链接失败："</span>+e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> co;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 对外提供的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建表</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> cfs</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createTable</span><span class="params">(String tableName,String... cfs)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Admin admin = conn.getAdmin();</span><br><span class="line">        ArrayList&lt;ColumnFamilyDescriptor&gt; cfArr = <span class="keyword">new</span> ArrayList&lt;ColumnFamilyDescriptor&gt;();</span><br><span class="line">        <span class="keyword">for</span> (String cf : cfs) &#123;</span><br><span class="line">            ColumnFamilyDescriptor cfDesc = ColumnFamilyDescriptorBuilder</span><br><span class="line">                    .newBuilder(Bytes.toBytes(cf))</span><br><span class="line">                    .build();</span><br><span class="line">            cfArr.add(cfDesc);</span><br><span class="line">        &#125;</span><br><span class="line">        TableDescriptor tableDesc = TableDescriptorBuilder</span><br><span class="line">                .newBuilder(TableName.valueOf(tableName))</span><br><span class="line">                .setColumnFamilies(cfArr)</span><br><span class="line">                .build();</span><br><span class="line">        admin.createTable(tableDesc);</span><br><span class="line">        admin.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加一个单元格(列)的数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rowKey</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> columnFamily</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> column</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">put2HBaseCell</span><span class="params">(String tableName,String rowKey,String columnFamily,String column,String value)</span><span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Table table = conn.getTable(TableName.valueOf(tableName));</span><br><span class="line">        Put put = <span class="keyword">new</span> Put(Bytes.toBytes(rowKey));</span><br><span class="line">        put.addColumn(Bytes.toBytes(columnFamily),Bytes.toBytes(column),Bytes.toBytes(value));</span><br><span class="line">        table.put(put);</span><br><span class="line">        table.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 向hbase中添加一批数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> list</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">put2HBaseList</span><span class="params">(String tableName, List&lt;Put&gt; list)</span><span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Table table = conn.getTable(TableName.valueOf(tableName));</span><br><span class="line">        table.put(list);</span><br><span class="line">        table.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据Rowkey获取数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rowKey</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String,String&gt; <span class="title">getFromHBase</span><span class="params">(String tableName,String rowKey)</span><span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">        Table table = conn.getTable(TableName.valueOf(tableName));</span><br><span class="line">        Get get = <span class="keyword">new</span> Get(Bytes.toBytes(rowKey));</span><br><span class="line">        Result result = table.get(get);</span><br><span class="line">        List&lt;Cell&gt; cells = result.listCells();</span><br><span class="line">        HashMap&lt;String, String&gt; resMap = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Cell cell: cells) &#123;</span><br><span class="line">            <span class="comment">//列</span></span><br><span class="line">            <span class="keyword">byte</span>[] column_bytes = CellUtil.cloneQualifier(cell);</span><br><span class="line">            <span class="comment">//值</span></span><br><span class="line">            <span class="keyword">byte</span>[] value_bytes = CellUtil.cloneValue(cell);</span><br><span class="line">            resMap.put(<span class="keyword">new</span> String(column_bytes),<span class="keyword">new</span> String(value_bytes));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> resMap;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="com-imooc-core-1"><a href="#com-imooc-core-1" class="headerlink" title="com.imooc.core"></a>com.imooc.core</h4><h5 id="DataIndex"><a href="#DataIndex" class="headerlink" title="DataIndex"></a>DataIndex</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataIndex代码如下：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.imooc.core;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.EsUtil;</span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.HBaseUtil;</span><br><span class="line"><span class="keyword">import</span> com.imooc.utils.RedisUtil;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 在ES中对HBase中的数据建立索引</span></span><br><span class="line"><span class="comment"> * Created by xuwei</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataIndex</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Logger logger = LoggerFactory.getLogger(DataIndex<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; rowKeyList = <span class="keyword">null</span>;</span><br><span class="line">        Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//1：首先从Redis的列表中获取Rowkey</span></span><br><span class="line">            jedis = RedisUtil.getJedis();</span><br><span class="line">            <span class="comment">//brpop如果获取到了数据，返回的list里面有两列，第一列是key的名称，第二列是具体的数据</span></span><br><span class="line">            rowKeyList = jedis.brpop(<span class="number">3</span>, <span class="string">"l_article_ids"</span>);</span><br><span class="line">            <span class="keyword">while</span> (rowKeyList != <span class="keyword">null</span>) &#123;</span><br><span class="line">                String rowKey = rowKeyList.get(<span class="number">1</span>);</span><br><span class="line">                <span class="comment">//2：根据Rowkey到HBase中获取数据的详细信息</span></span><br><span class="line">                Map&lt;String, String&gt; map = HBaseUtil.getFromHBase(<span class="string">"article"</span>, rowKey);</span><br><span class="line">                <span class="comment">//3：在ES中对数据建立索引</span></span><br><span class="line">                EsUtil.addIndex(<span class="string">"article"</span>,rowKey,map);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//循环从Redis的列表中获取Rowkey</span></span><br><span class="line">                rowKeyList = jedis.brpop(<span class="number">3</span>, <span class="string">"l_article_ids"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            logger.error(<span class="string">"数据建立索引失败："</span>+e.getMessage());</span><br><span class="line">            <span class="comment">//在这里可以考虑把获取出来的rowKey再push到Redis中，这样可以保证数据不丢</span></span><br><span class="line">            <span class="keyword">if</span>(rowKeyList!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                jedis.rpush(<span class="string">"l_article_ids"</span>,rowKeyList.get(<span class="number">1</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//向连接池返回连接</span></span><br><span class="line">            <span class="keyword">if</span>(jedis!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                RedisUtil.returnResource(jedis);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//注意：确认ES连接不再使用了再关闭连接(当知识运行一次，就可以要下面的代码；如果要一直运行()相当于try外层再加一个while(True)，然后后面运行完了sleep一会)，就要慎重考虑下面的代码该如何编写)，否则会导致client无法继续使用</span></span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                EsUtil.closeRestClient();</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                logger.error(<span class="string">"ES连接关闭失败："</span>+e.getMessage());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="对接Web项目，提供页面检索功能"><a href="#对接Web项目，提供页面检索功能" class="headerlink" title="对接Web项目，提供页面检索功能"></a>对接Web项目，提供页面检索功能</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">完善web_fullsearch项目中和大数据相关的代码。</span><br><span class="line">最核心的代码就是EsUtil中的search方法：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 全文检索功能</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> key</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> index</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> start</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> row</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IOException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, Object&gt; <span class="title">search</span><span class="params">(String key, String index, <span class="keyword">int</span> start, <span class="keyword">int</span> row)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	SearchRequest searchRequest = <span class="keyword">new</span> SearchRequest();</span><br><span class="line">	<span class="comment">//指定索引库，支持指定一个或者多个，也支持通配符</span></span><br><span class="line">	searchRequest.indices(index);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//指定searchType</span></span><br><span class="line">	searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//组装查询条件</span></span><br><span class="line">	SearchSourceBuilder searchSourceBuilder = <span class="keyword">new</span> SearchSourceBuilder();</span><br><span class="line">	<span class="comment">//如果传递了搜索参数，则拼接查询条件</span></span><br><span class="line">	<span class="keyword">if</span>(StringUtils.isNotBlank(key))&#123;</span><br><span class="line">		searchSourceBuilder.query(QueryBuilders.multiMatchQuery(key,<span class="string">"title"</span>,<span class="string">"describe"</span>,<span class="string">"content"</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//分页</span></span><br><span class="line">	searchSourceBuilder.from(start);</span><br><span class="line">	searchSourceBuilder.size(row);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//高亮</span></span><br><span class="line">	<span class="comment">//设置高亮字段</span></span><br><span class="line">	HighlightBuilder highlightBuilder =  <span class="keyword">new</span> HighlightBuilder()</span><br><span class="line">			.field(<span class="string">"title"</span>)</span><br><span class="line">			.field(<span class="string">"describe"</span>);<span class="comment">//支持多个高亮字段</span></span><br><span class="line">	<span class="comment">//设置高亮字段的前缀和后缀内容</span></span><br><span class="line">	highlightBuilder.preTags(<span class="string">"&lt;font color='red'&gt;"</span>);</span><br><span class="line">	highlightBuilder.postTags(<span class="string">"&lt;/font&gt;"</span>);</span><br><span class="line">	searchSourceBuilder.highlighter(highlightBuilder);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//指定查询条件</span></span><br><span class="line">	searchRequest.source(searchSourceBuilder);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//执行查询操作</span></span><br><span class="line">	SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);</span><br><span class="line">	<span class="comment">//存储返回给页面的数据</span></span><br><span class="line">	Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</span><br><span class="line">	<span class="comment">//获取查询返回的结果</span></span><br><span class="line">	SearchHits hits = searchResponse.getHits();</span><br><span class="line">	<span class="comment">//获取数据总量</span></span><br><span class="line">	<span class="keyword">long</span> numHits = hits.getTotalHits().value;</span><br><span class="line">	map.put(<span class="string">"count"</span>,numHits);</span><br><span class="line">	ArrayList&lt;Article&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">	<span class="comment">//获取具体内容</span></span><br><span class="line">	SearchHit[] searchHits = hits.getHits();</span><br><span class="line">	<span class="comment">//迭代解析具体内容</span></span><br><span class="line">	<span class="keyword">for</span> (SearchHit hit: searchHits) &#123;</span><br><span class="line">		Map&lt;String, Object&gt; sourceAsMap = hit.getSourceAsMap();</span><br><span class="line">		String id = hit.getId();</span><br><span class="line">		String title = sourceAsMap.get(<span class="string">"title"</span>).toString();</span><br><span class="line">		String author = sourceAsMap.get(<span class="string">"author"</span>).toString();</span><br><span class="line">		String describe = sourceAsMap.get(<span class="string">"describe"</span>).toString();</span><br><span class="line">		String time = sourceAsMap.get(<span class="string">"time"</span>).toString();</span><br><span class="line"></span><br><span class="line">		<span class="comment">//获取高亮字段内容</span></span><br><span class="line">		Map&lt;String, HighlightField&gt; highlightFields = hit.getHighlightFields();</span><br><span class="line">		<span class="comment">//获取title字段的高亮内容</span></span><br><span class="line">		HighlightField highlightField = highlightFields.get(<span class="string">"title"</span>);</span><br><span class="line">		<span class="keyword">if</span>(highlightField!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			Text[] fragments = highlightField.getFragments();</span><br><span class="line">			title = <span class="string">""</span>;</span><br><span class="line">			<span class="keyword">for</span> (Text text : fragments) &#123;</span><br><span class="line">				title += text;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//获取describe字段的高亮内容</span></span><br><span class="line">		HighlightField highlightField2 = highlightFields.get(<span class="string">"describe"</span>);</span><br><span class="line">		<span class="keyword">if</span>(highlightField2!=<span class="keyword">null</span>)&#123;</span><br><span class="line">			Text[] fragments = highlightField2.fragments();</span><br><span class="line">			describe = <span class="string">""</span>;</span><br><span class="line">			<span class="keyword">for</span> (Text text : fragments) &#123;</span><br><span class="line">				describe += text;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//把文章信息封装到Article对象中</span></span><br><span class="line">		Article article = <span class="keyword">new</span> Article();</span><br><span class="line">		article.setId(id);</span><br><span class="line">		article.setTitle(title);</span><br><span class="line">		article.setAuthor(author);</span><br><span class="line">		article.setDescribe(describe);</span><br><span class="line">		article.setTime(time);</span><br><span class="line">		<span class="comment">//最后再把拼装好的article添加到list对象汇总</span></span><br><span class="line">		arrayList.add(article);</span><br><span class="line">	&#125;</span><br><span class="line">	map.put(<span class="string">"dataList"</span>,arrayList);</span><br><span class="line">	<span class="keyword">return</span> map;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="从0-1运行项目"><a href="#从0-1运行项目" class="headerlink" title="从0~1运行项目"></a>从0~1运行项目</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">首先要确保Hadoop、Zookeeper、HBase、Redis、Elasticsearch这些服务都是正常的。</span><br><span class="line">1：首先在HBase中创建表：article</span><br><span class="line">hbase(main):001:0&gt; create &#39;article&#39;,&#39;info&#39;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">2：在ES中创建索引库：article，通过article.json文件指定索引库的settings和mapping。</span><br><span class="line">[root@bigdata01 elasticsearch-7.13.4]# curl -H &quot;Content-Type: application&#x2F;json&quot; -XPUT &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;article&#39; -d @article.json</span><br><span class="line"></span><br><span class="line">确认一下索引库article的mapping信息：</span><br><span class="line">[root@bigdata01 elasticsearch-7.13.4]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;article&#x2F;_mapping?pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;article&quot; : &#123;</span><br><span class="line">    &quot;mappings&quot; : &#123;</span><br><span class="line">      &quot;dynamic&quot; : &quot;strict&quot;,</span><br><span class="line">      &quot;_source&quot; : &#123;</span><br><span class="line">        &quot;excludes&quot; : [</span><br><span class="line">          &quot;content&quot;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;properties&quot; : &#123;</span><br><span class="line">        &quot;author&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;index&quot; : false</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;content&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;analyzer&quot; : &quot;ik_max_word&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;describe&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;analyzer&quot; : &quot;ik_max_word&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;time&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;date&quot;,</span><br><span class="line">          &quot;index&quot; : false,</span><br><span class="line">          &quot;format&quot; : &quot;yyyy-MM-dd HH:mm:ss&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;title&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;analyzer&quot; : &quot;ik_max_word&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：需要确认ES集群中已经集成了ik分词器，否则这里执行会报错。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">3：在本地执行data_manager项目中的DataImport代码，将数据导入到HBase和Redis。</span><br><span class="line">修改项目中用到的HBaseUtil和RedisUtil工具类中的节点信息。</span><br><span class="line"></span><br><span class="line">注意：DataImport代码执行需要消耗一段时间。</span><br><span class="line"></span><br><span class="line">到HBase中验证数据：</span><br><span class="line">hbase(main):003:0&gt; count &#39;article&#39;</span><br><span class="line">100 row(s)</span><br><span class="line">Took 0.2357 seconds                                                   </span><br><span class="line">&#x3D;&gt; 100</span><br><span class="line"></span><br><span class="line">到Redis中验证数据：</span><br><span class="line">[root@bigdata04 redis-5.0.9]# redis-cli </span><br><span class="line">127.0.0.1:6379&gt; lrange l_article_ids 0 -1</span><br><span class="line">  1) &quot;0e52f3fb-50a7-43e6-ba1a-8f862464436e&quot;</span><br><span class="line">  2) &quot;0e0fbb25-421c-4419-9ccc-bbfcd7bc783f&quot;</span><br><span class="line">  3) &quot;0e0cbf00-d63c-4c1f-aa2e-9f96a5826029&quot;</span><br><span class="line">  4) &quot;0ddaccc1-af4c-47b1-b526-5a32b2d68aa5&quot;</span><br><span class="line">  5) &quot;0db74ee1-6243-4c3e-ba01-2eacba76188d&quot;</span><br><span class="line">  6) &quot;0d9eae28-b614-4347-9126-ad0ee7519ef1&quot;</span><br><span class="line">  7) &quot;0d7bd4de-159e-46ef-a75c-5d88de612def&quot;</span><br><span class="line">  8) &quot;0d5aeec8-3aa4-4fa5-b7eb-1ba0d0f2d715&quot;</span><br><span class="line">  9) &quot;0d286033-dcad-4514-85e1-2ae052ff531c&quot;</span><br><span class="line"> 10) &quot;0d239fca-c524-47ab-be9a-05133ea57a4f&quot;</span><br><span class="line"> 11) &quot;0d20beb1-a5c5-4638-99c5-9f69084b44c8&quot;</span><br><span class="line"> 12) &quot;0cd0ece6-9d61-4fda-bbcd-a9d9f0d7ff70&quot;</span><br><span class="line"> 13) &quot;0cc57b16-fbe6-488e-b080-dab0f0a71930&quot;</span><br><span class="line"> 14) &quot;0cb28936-e83f-46e9-8d36-70ae77018fdf&quot;</span><br><span class="line"> 15) &quot;0c85c890-57de-40cb-b7f6-8615eb1896fe&quot;</span><br><span class="line"> 16) &quot;0c30950e-8fb0-4212-ae13-e8e659515ff3&quot;</span><br><span class="line"> 17) &quot;0c2c9dca-b0db-42bc-aa6c-ad180501169d&quot;</span><br><span class="line"> 18) &quot;0bfdef9f-8ba9-4c2d-95e4-74284cf07500&quot;</span><br><span class="line"> 19) &quot;0bf5aef2-9ac4-4550-80f5-be862a04deba&quot;</span><br><span class="line"> 20) &quot;0be8351d-dd82-4e43-92c7-cb8819421b25&quot;</span><br><span class="line"> 21) &quot;0bbc79e8-9ab1-44c1-beec-ef2b22c48cfe&quot;</span><br><span class="line"> 22) &quot;0baf900c-2812-4bdf-8188-962ac9d17f23&quot;</span><br><span class="line"> 23) &quot;0ba2b80b-0b43-4916-9d04-8d67aa4e95b2&quot;</span><br><span class="line"> 24) &quot;0b672fc3-0737-467b-b32c-b888de1eaab6&quot;</span><br><span class="line"> 25) &quot;0b3dc9c2-96b6-4340-8af3-e07c8bac0ba8&quot;</span><br><span class="line"> 26) &quot;0b0161f5-d1d4-4109-8f12-a4b47dbff0e5&quot;</span><br><span class="line"> 27) &quot;0a088500-f708-470a-bda1-9e5a714c0b81&quot;</span><br><span class="line"> 28) &quot;09e8bd66-17e0-4e28-b804-a67df7312f90&quot;</span><br><span class="line"> 29) &quot;09d6e535-4f39-45ba-9857-c6ab01fe8823&quot;</span><br><span class="line"> 30) &quot;09a76b9e-030c-465b-8c80-b88fe5bbac16&quot;</span><br><span class="line"> 31) &quot;09a09479-56c1-4fd3-8893-3e4d307951b9&quot;</span><br><span class="line"> 32) &quot;09193761-e549-48ee-86fb-89295094f1e4&quot;</span><br><span class="line"> 33) &quot;090b766d-9f8e-4cb9-9a5f-b8c3373a9eb6&quot;</span><br><span class="line"> 34) &quot;09089c93-9848-4244-9eff-9034d434865b&quot;</span><br><span class="line"> 35) &quot;09036b9f-8b67-4275-837a-b884c8945a31&quot;</span><br><span class="line"> 36) &quot;08d8762e-dc47-49f5-ad14-de52f7fbb04e&quot;</span><br><span class="line"> 37) &quot;08839fde-1984-4739-bac2-f854989cdc6c&quot;</span><br><span class="line"> 38) &quot;0872be3a-2545-4a98-ba33-6ec148999130&quot;</span><br><span class="line"> 39) &quot;0862af37-2047-470d-a8b8-c57740a0df8b&quot;</span><br><span class="line"> 40) &quot;085f3acc-1f92-4dd2-b516-d0991b660680&quot;</span><br><span class="line"> 41) &quot;08210f1a-f553-4d3c-a09f-420dc8e6fe8c&quot;</span><br><span class="line"> 42) &quot;080639ea-ee70-47ff-b7d1-de75eb1e1196&quot;</span><br><span class="line"> 43) &quot;07ef53b0-9179-416e-bf8b-7720079fc87a&quot;</span><br><span class="line"> 44) &quot;07d79c1d-ceaa-4cd0-a3be-96186037b0c1&quot;</span><br><span class="line"> 45) &quot;07b71e20-a4b3-4f9d-b7c6-6db163cbabd1&quot;</span><br><span class="line"> 46) &quot;07928b77-a31e-4646-aff0-79ab61f8b605&quot;</span><br><span class="line"> 47) &quot;076077f1-8324-4ef3-9e8f-66c806644db6&quot;</span><br><span class="line"> 48) &quot;074a36a1-c7b4-4d1a-b8a1-3a01d0c1a2ec&quot;</span><br><span class="line"> 49) &quot;0734a9d3-4aa6-4206-aa12-9e26e67f0ef2&quot;</span><br><span class="line"> 50) &quot;072b6883-3258-4cff-8e90-77d4f011acfe&quot;</span><br><span class="line"> 51) &quot;06d75712-1fac-4a19-927f-f4c13ceba899&quot;</span><br><span class="line"> 52) &quot;06d498d1-97cd-4384-8ec1-82e9a1e0070b&quot;</span><br><span class="line"> 53) &quot;06beaece-c734-4eba-bcf7-64a9e43d6c55&quot;</span><br><span class="line"> 54) &quot;0682b625-f247-4c70-a628-4919946ff588&quot;</span><br><span class="line"> 55) &quot;0659a1c3-2f34-4342-827b-7c867a3394e3&quot;</span><br><span class="line"> 56) &quot;0647046c-2129-4c16-83f9-7857e9da6e2c&quot;</span><br><span class="line"> 57) &quot;0643961e-74ea-46d2-8da8-02309c6cc489&quot;</span><br><span class="line"> 58) &quot;061776ad-5742-4fcc-b997-9a25f5b6a4e0&quot;</span><br><span class="line"> 59) &quot;05ec598f-4b02-448f-88b6-f17f3891bd3f&quot;</span><br><span class="line"> 60) &quot;058ca914-aa70-4cf5-b69f-852e03729b52&quot;</span><br><span class="line"> 61) &quot;0504f099-995c-475d-97e8-f4d691673cbb&quot;</span><br><span class="line"> 62) &quot;04fce8dc-e27c-4f1c-bb4c-34597fad1810&quot;</span><br><span class="line"> 63) &quot;04b00310-c09a-44e2-9895-1fd22cd14148&quot;</span><br><span class="line"> 64) &quot;04997210-1552-4dcb-b13d-16e79ced1320&quot;</span><br><span class="line"> 65) &quot;04943196-717d-4594-bc83-a76189187c2e&quot;</span><br><span class="line"> 66) &quot;04940647-ff85-497d-b2fd-44f43600a569&quot;</span><br><span class="line"> 67) &quot;04755a1e-32b2-42b7-933e-405c8143eb8f&quot;</span><br><span class="line"> 68) &quot;047139c9-c351-4275-83be-c96b8105811b&quot;</span><br><span class="line"> 69) &quot;0451dbce-f8da-4862-b563-bee0bc5abdc6&quot;</span><br><span class="line"> 70) &quot;042bed42-fbb9-4c51-a424-089f579697e0&quot;</span><br><span class="line"> 71) &quot;03f3a775-6736-4ffb-bda0-b6e3ae215394&quot;</span><br><span class="line"> 72) &quot;03dde3c0-300f-4431-9f58-82dc3869020a&quot;</span><br><span class="line"> 73) &quot;03dd67bf-9044-4c00-a34d-c480d221afdb&quot;</span><br><span class="line"> 74) &quot;03b79d39-ddcb-48b2-8cdf-bd480041018d&quot;</span><br><span class="line"> 75) &quot;039b6212-3760-4261-a3ad-66427ca3ece2&quot;</span><br><span class="line"> 76) &quot;034e7e37-0e9a-49d0-86f7-f74956ad9c1c&quot;</span><br><span class="line"> 77) &quot;032f6cc9-0ec8-4014-a37c-ee233afad174&quot;</span><br><span class="line"> 78) &quot;02ce202c-4b37-4e21-b8c6-241323daaf4f&quot;</span><br><span class="line"> 79) &quot;02c32611-8f4c-44cc-85e6-9aabe50c5deb&quot;</span><br><span class="line"> 80) &quot;02617a09-af48-4885-9193-e36c73e1cc93&quot;</span><br><span class="line"> 81) &quot;022ec4b4-9061-489e-9c1f-d702187d9173&quot;</span><br><span class="line"> 82) &quot;022bfe1c-c04a-4dfd-83d1-545a2fa37d62&quot;</span><br><span class="line"> 83) &quot;0221116d-1140-4161-976e-780166b409ee&quot;</span><br><span class="line"> 84) &quot;0211f787-5122-4b95-90b2-36a60da5072c&quot;</span><br><span class="line"> 85) &quot;01f80b6f-ef70-4cf3-af3c-0c39cc1ca6df&quot;</span><br><span class="line"> 86) &quot;01ae3dff-19bf-4dfe-a417-f00c5cbee89e&quot;</span><br><span class="line"> 87) &quot;017b4fc5-a5b4-40f4-a22c-c0585dce1b8c&quot;</span><br><span class="line"> 88) &quot;0157ba2a-e6ea-4272-8257-be4d07278f41&quot;</span><br><span class="line"> 89) &quot;01476c80-aa75-46ed-b912-cad708cfb6da&quot;</span><br><span class="line"> 90) &quot;0125e066-aeb7-4053-ab85-e358076a23b0&quot;</span><br><span class="line"> 91) &quot;00ded12e-3974-46ff-b425-a1f4202d5380&quot;</span><br><span class="line"> 92) &quot;00b5546f-04a5-4d98-80b2-dbf2254f8f81&quot;</span><br><span class="line"> 93) &quot;0087283d-3773-4788-a86e-3a3a425d2240&quot;</span><br><span class="line"> 94) &quot;005dc64e-0134-43d8-b9bf-b3390e59ab12&quot;</span><br><span class="line"> 95) &quot;004ecf75-54b9-4aa7-a3ff-7ee2e0907f85&quot;</span><br><span class="line"> 96) &quot;004a2fb2-1547-4c63-8bfb-abfe812681aa&quot;</span><br><span class="line"> 97) &quot;0025b235-f4cd-45e4-90c3-46acbb3165fb&quot;</span><br><span class="line"> 98) &quot;001b046c-f1c9-457d-a8b7-cd157bc5d889&quot;</span><br><span class="line"> 99) &quot;00119d1d-b587-478f-86c0-ceb4f15c5cf7&quot;</span><br><span class="line">100) &quot;00093f78-11c7-43e1-abed-86c735252155&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">4：在本地执行data_manager项目中的DataIndex代码，在ES中建立索引。</span><br><span class="line"></span><br><span class="line">注意：需要修改项目中用到的EsUtil工具类中的节点信息。</span><br><span class="line"></span><br><span class="line">到ES中验证数据：</span><br><span class="line">[root@bigdata01 ~]# curl -XGET &#39;http:&#x2F;&#x2F;bigdata01:9200&#x2F;article&#x2F;_search?pretty&#39;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;took&quot; : 393,</span><br><span class="line">  &quot;timed_out&quot; : false,</span><br><span class="line">  &quot;_shards&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : 5,</span><br><span class="line">    &quot;successful&quot; : 5,</span><br><span class="line">    &quot;skipped&quot; : 0,</span><br><span class="line">    &quot;failed&quot; : 0</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;hits&quot; : &#123;</span><br><span class="line">    &quot;total&quot; : &#123;</span><br><span class="line">      &quot;value&quot; : 100,</span><br><span class="line">      &quot;relation&quot; : &quot;eq&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;max_score&quot; : 1.0,</span><br><span class="line">    &quot;hits&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;article&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;01476c80-aa75-46ed-b912-cad708cfb6da&quot;,</span><br><span class="line">        &quot;_score&quot; : 1.0,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;author&quot; : &quot;腾讯新闻&quot;,</span><br><span class="line">          &quot;describe&quot; : &quot;　　浙江在线11月11日讯由于感情纠葛，阿松(化名)的婚外恋女友一怒之下抄起剪刀，几乎剪断了他的整根“命根子”。所幸医生及时抢救，周密施术，才保住了他的“男儿身”。昨天，正在义乌进行康复治疗的阿松，回想起前几天的经历，依旧百感交集。　　“小三”怒剪命根只因疑其不忠　　三十多岁的阿松是重庆人，在义乌工作，妻子女儿也都在义乌。　　阿松还有一个婚外恋女友，是在一家工厂里认识的，两个人相恋已经有一年多了。女友30多岁，也有自己的家庭。　　阿松说，最近一段时间，女友屡屡怀疑阿松“不忠”，据说是听到了一些传言。　　十几天前，被妒忌之火冲昏头脑的女友，居然想到了断其“命根”的“教训”办法。当时是下午3点多，&quot;,</span><br><span class="line">          &quot;time&quot; : &quot;2021-10-17 11:13:19&quot;,</span><br><span class="line">          &quot;title&quot; : &quot;“小三”怀疑男友不忠怒剪其“命根”&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;_index&quot; : &quot;article&quot;,</span><br><span class="line">        &quot;_type&quot; : &quot;_doc&quot;,</span><br><span class="line">        &quot;_id&quot; : &quot;01f80b6f-ef70-4cf3-af3c-0c39cc1ca6df&quot;,</span><br><span class="line">        &quot;_score&quot; : 1.0,</span><br><span class="line">        &quot;_source&quot; : &#123;</span><br><span class="line">          &quot;author&quot; : &quot;腾讯新闻&quot;,</span><br><span class="line">          &quot;describe&quot; : &quot;　　　　两岸几十年的隔阂已经使共同的汉语言演变出一些差异。图为在台湾书店里的内地游客。　　　　台湾中华语文研习所董事长何景贤，手捧两种版本的《两岸现代汉语常用词典》。　　中新网11月11日电教育部语言文字应用管理司司长王登峰在接受香港《文汇报》访问时表示，两岸合编《中华大辞典》主要将以民间方式进行，届时将推出简体字括注繁体字以及繁体字括注简体字两个版本。另有消息人士透露，预计该项目将于年底启动。　　第五届两岸经贸文化论坛共同建议7月份曾就两岸合编《中华大辞典》达成初步意向。王登峰表示，大陆方面已经作好充分的准备工作，将主要以1996年两岸合编的《两岸现代汉语常用词典》为工作基础。两岸有关部门达&quot;,</span><br><span class="line">          &quot;time&quot; : &quot;2021-10-17 11:13:19&quot;,</span><br><span class="line">          &quot;title&quot; : &quot;两岸将合编中华大辞典收集新词汇(组图)&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">......</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重点关注_source字段中是否包含content字段，如果包含此字段内容说明前面的mapping配置有问题，如果不包含此字段内容说明是正确的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">5：对web_fullsearch项目打包并运行。</span><br><span class="line">web_fullsearch项目是一个Javaweb项目，所以需要打war包，最终在Web容器中运行，在这里我们使用Tomcat这个web容器。</span><br><span class="line">打war包。</span><br><span class="line"></span><br><span class="line">D:\IdeaProjects\db_fullsearch\web_fullsearch&gt;mvn clean package -DskipTests</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: 24.974s</span><br><span class="line">[INFO] Final Memory: 35M&#x2F;348M</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">使用之前在学习ES课程的时候在bigdata04上部署的tomcat，将war包上传到tomcat的webapps目录下：</span><br><span class="line">[root@bigdata04 apache-tomcat-8.0.52]# cd webapps&#x2F;</span><br><span class="line">[root@bigdata04 webapps]# ll</span><br><span class="line">total 84888</span><br><span class="line">drwxr-xr-x. 14 root root     4096 Mar 16 20:37 docs</span><br><span class="line">drwxr-xr-x.  6 root root       83 Mar 16 20:37 examples</span><br><span class="line">drwxr-xr-x.  5 root root       87 Mar 16 20:37 host-manager</span><br><span class="line">drwxr-xr-x.  5 root root      103 Mar 16 20:37 manager</span><br><span class="line">drwxr-xr-x.  3 root root     4096 Mar 16 20:45 ROOT</span><br><span class="line">-rw-r--r--.  1 root root 86913853 Oct 17  2021 web_fullsearch.war</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">启动tomcat：</span><br><span class="line">[root@bigdata04 apache-tomcat-8.0.52]# bin&#x2F;startup.sh </span><br><span class="line"></span><br><span class="line">访问项目：</span><br><span class="line">http:&#x2F;&#x2F;bigdata04:8080&#x2F;web_fullsearch&#x2F;article</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121511613.png" alt="image-20230612151125293"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">6：验证搜索功能。</span><br><span class="line">确认分页、高亮、查询文章明细数据等功能是否正常。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121511028.png" alt="image-20230612151144676"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306121512497.png" alt="image-20230612151156591"></p>
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-ES+HBase%E5%AE%9E%E7%8E%B0%E4%BB%BF%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-1.html">大数据开发工程师-ES+HBase实现仿百度搜索引擎-1</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年06月02日 - 18:06</p>
+  <p><span>最后更新:</span>2023年06月13日 - 12:06</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-ES+HBase%E5%AE%9E%E7%8E%B0%E4%BB%BF%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-1.html" title="大数据开发工程师-ES+HBase实现仿百度搜索引擎-1">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-ES+HBase%E5%AE%9E%E7%8E%B0%E4%BB%BF%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-1.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-ES+HBase%E5%AE%9E%E7%8E%B0%E4%BB%BF%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-1.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-2.html" rel="next" title="大数据开发工程师-全文检索引擎Elasticsearch-2">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-全文检索引擎Elasticsearch-2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2%E5%BC%95%E6%93%8EElasticsearch-1.html" rel="prev" title="大数据开发工程师-全文检索引擎Elasticsearch-1">
+                大数据开发工程师-全文检索引擎Elasticsearch-1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">372</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">51</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">115</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ES-HBase实现仿百度搜索引擎-1"><span class="nav-number">1.</span> <span class="nav-text">ES+HBase实现仿百度搜索引擎-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-企业中快速复杂查询痛点分析"><span class="nav-number">1.1.</span> <span class="nav-text">1 企业中快速复杂查询痛点分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#大数据领域海量数据存储现状"><span class="nav-number">1.1.1.</span> <span class="nav-text">大数据领域海量数据存储现状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大数据领域常见的SQL分析引擎"><span class="nav-number">1.1.2.</span> <span class="nav-text">大数据领域常见的SQL分析引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目前常见的全文检索引擎"><span class="nav-number">1.1.3.</span> <span class="nav-text">目前常见的全文检索引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#海量数据存储-快速复杂查询需求"><span class="nav-number">1.1.4.</span> <span class="nav-text">海量数据存储+快速复杂查询需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#海量数据存储-快速复杂查询的解决方案"><span class="nav-number">1.1.5.</span> <span class="nav-text">海量数据存储+快速复杂查询的解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-仿百度搜索引擎项目架构设计"><span class="nav-number">1.2.</span> <span class="nav-text">2 仿百度搜索引擎项目架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目概览"><span class="nav-number">1.2.1.</span> <span class="nav-text">项目概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目整体架构流程"><span class="nav-number">1.2.2.</span> <span class="nav-text">项目整体架构流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES和HBase数据同步的三种方案"><span class="nav-number">1.2.3.</span> <span class="nav-text">ES和HBase数据同步的三种方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#项目整体执行流程"><span class="nav-number">1.2.4.</span> <span class="nav-text">项目整体执行流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ES高级特性扩展"><span class="nav-number">1.3.</span> <span class="nav-text">3 ES高级特性扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ES中的-source字段"><span class="nav-number">1.3.1.</span> <span class="nav-text">ES中的_source字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES中字段的index和store特性"><span class="nav-number">1.3.2.</span> <span class="nav-text">ES中字段的index和store特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-开发仿百度搜索引擎项目"><span class="nav-number">1.4.</span> <span class="nav-text">4 开发仿百度搜索引擎项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调用接口获取数据导入HBase和Redis"><span class="nav-number">1.4.1.</span> <span class="nav-text">调用接口获取数据导入HBase和Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#com-imooc-utils"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">com.imooc.utils</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#HBaseUtil"><span class="nav-number">1.4.1.1.1.</span> <span class="nav-text">HBaseUtil</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#com-imooc-core"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">com.imooc.core</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DataImport"><span class="nav-number">1.4.1.2.1.</span> <span class="nav-text">DataImport</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过ES对HBase中的数据建立索引"><span class="nav-number">1.4.2.</span> <span class="nav-text">通过ES对HBase中的数据建立索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#com-imooc-utils-1"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">com.imooc.utils</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#EsUtil"><span class="nav-number">1.4.2.1.1.</span> <span class="nav-text">EsUtil</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HBaseUtil-1"><span class="nav-number">1.4.2.1.2.</span> <span class="nav-text">HBaseUtil</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#com-imooc-core-1"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">com.imooc.core</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DataIndex"><span class="nav-number">1.4.2.2.1.</span> <span class="nav-text">DataIndex</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对接Web项目，提供页面检索功能"><span class="nav-number">1.4.3.</span> <span class="nav-text">对接Web项目，提供页面检索功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从0-1运行项目"><span class="nav-number">1.4.4.</span> <span class="nav-text">从0~1运行项目</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">710.4k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
