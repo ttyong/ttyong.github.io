@@ -100,7 +100,7 @@
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303302105852.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303302106891.png">
 <meta property="article:published_time" content="2023-03-30T12:27:10.000Z">
-<meta property="article:modified_time" content="2023-03-30T13:17:21.292Z">
+<meta property="article:modified_time" content="2023-06-15T16:31:45.620Z">
 <meta property="article:author" content="TTYONG">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303302033047.png">
@@ -460,7 +460,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们在采集数据的时候可以分为两种情况</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303302033047.png" alt="image-20230330203300260"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">第一种是把采集工具部署到产生数据的服务器上面</span><br><span class="line">web项目产生的日志数据直接保存在服务器上面，并且这个服务器的性能比较高，可以允许我在上面部署Flume数据采集工具，这样也不会对上面的web项目的稳定性产生什么影响。</span><br><span class="line"></span><br><span class="line">第二种是把采集工具部署在一个独立的服务器上面</span><br><span class="line">web项目产生的日志数据直接保存在服务器上面，但是这个服务器的性能一般，并且对web项目的稳定性要求非常高，如果让你在上面部署一个其它服务，这样这个服务器的稳定性就没办法保证了，进而也就无法保证web项目的稳定性了，所以这个时候可以选择在产生日志的时候使用埋点上报的方式，通过http接</span><br><span class="line">口把日志数据传输到日志接收服务器中</span><br><span class="line"></span><br><span class="line">那针对第一种情况肯定是要选择一个性能消耗比较低的数据采集工具，优先选择FileBeat</span><br><span class="line">针对第二种情况的话就不需要考虑性能消耗了，因为采集工具是在独立的机器上，不会影响web项目，这个时候我们需要考虑的就是采集工具的功能是否完整，因为在采集数据的时候可能需要对数据进行一些简单的处理，以及后期可能会输出到不同的存储介质中。</span><br><span class="line"></span><br><span class="line">Flume和Logstash都是支持多种输入、多种输出、以及都可以在采集数据的时候对数据做一些处理，那这个时候该如何选择呢？</span><br><span class="line">注意了，这个时候我们就要考虑如果后期采集工具出现了问题，或者我们需要自定义一些功能，维护成本高不高，Flume是使用java开发的，而Logstash是使用ruby开发的，由于我们都是java出身，所以考虑到后期的维护成本，Flume是最优的选择。</span><br><span class="line"></span><br><span class="line">在采集数据的时候，除了日志数据，有时候还需要采集一些业务系统的数据，这些数据一般保存在关系型数据库中，例如：MySQL</span><br><span class="line">我们也需要把这些数据采集过来，如果MySQL开启了binlog，那我们可以使用Flume采集</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">第一种是把采集工具部署到产生数据的服务器上面</span><br><span class="line">web项目产生的日志数据直接保存在服务器上面，并且这个服务器的性能比较高，可以允许我在上面部署Flume数据采集工具，这样也不会对上面的web项目的稳定性产生什么影响。</span><br><span class="line"></span><br><span class="line">第二种是把采集工具部署在一个独立的服务器上面</span><br><span class="line">web项目产生的日志数据直接保存在服务器上面，但是这个服务器的性能一般，并且对web项目的稳定性要求非常高，如果让你在上面部署一个其它服务，这样这个服务器的稳定性就没办法保证了，进而也就无法保证web项目的稳定性了，所以这个时候可以选择在产生日志的时候使用埋点上报的方式，通过http接口把日志数据传输到日志接收服务器中</span><br><span class="line"></span><br><span class="line">那针对第一种情况肯定是要选择一个性能消耗比较低的数据采集工具，优先选择FileBeat</span><br><span class="line">针对第二种情况的话就不需要考虑性能消耗了，因为采集工具是在独立的机器上，不会影响web项目，这个时候我们需要考虑的就是采集工具的功能是否完整，因为在采集数据的时候可能需要对数据进行一些简单的处理，以及后期可能会输出到不同的存储介质中。</span><br><span class="line"></span><br><span class="line">Flume和Logstash都是支持多种输入、多种输出、以及都可以在采集数据的时候对数据做一些处理，那这个时候该如何选择呢？</span><br><span class="line">注意了，这个时候我们就要考虑如果后期采集工具出现了问题，或者我们需要自定义一些功能，维护成本高不高，Flume是使用java开发的，而Logstash是使用ruby开发的，由于我们都是java出身，所以考虑到后期的维护成本，Flume是最优的选择。</span><br><span class="line"></span><br><span class="line">在采集数据的时候，除了日志数据，有时候还需要采集一些业务系统的数据，这些数据一般保存在关系型数据库中，例如：MySQL</span><br><span class="line">我们也需要把这些数据采集过来，如果MySQL开启了binlog，那我们可以使用Flume采集</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">什么是MySQL的binlog呢？</span><br><span class="line">可以这样理解，MySQL对数据库的任何修改都会记录在binlog中，所以如果开启了binlog，那我们就可以使用Flume采集这个日志数据，就可以获取到MySQL中数据的变化了。</span><br><span class="line"></span><br><span class="line">但是目前我们的MySQL没有开启binlog，并且也没有打算开启binlog，那怎么办？</span><br><span class="line">因为我们这个需求不需要实时采集MySQL中的数据，所以不开启binlog也是没有问题的，Flume默认不支持直接采集MySQL中的数据，如果想要实现的话需要自定义Source，这样就比较麻烦了</span><br><span class="line"></span><br><span class="line">其实采集MySQL中的数据有一个比较常用的方式是通过Sqoop实现。</span><br><span class="line">Sqoop中有两大功能，数据导入和数据导出</span><br><span class="line"></span><br><span class="line">数据导入是指把关系型数据库中的数据导入HDFS中</span><br><span class="line">数据导出是指把HDFS中的数据导出到关系型数据库中</span><br><span class="line"></span><br><span class="line">我们后期在做一些报表的时候其实也是需要把数据仓库中的数据(APP层)导出到MySQL中的，所以在这选择Sqoop也是非常实用的。</span><br><span class="line"></span><br><span class="line">所以针对数据采集这块，我们主要选择了Flume和Sqoop</span><br></pre></td></tr></table></figure>
 
@@ -511,7 +511,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%932.html">大数据开发工程师-第十二周 综合项目:电商数据仓库之用户行为数仓2</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2023年03月30日 - 20:03</p>
-  <p><span>最后更新:</span>2023年03月30日 - 21:03</p>
+  <p><span>最后更新:</span>2023年06月16日 - 00:06</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%932.html" title="大数据开发工程师-第十二周 综合项目:电商数据仓库之用户行为数仓2">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%932.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%8D%81%E4%BA%8C%E5%91%A8-%E7%BB%BC%E5%90%88%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E4%B9%8B%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E4%BB%932.html" aria-label="复制成功！"></i></span>
   </p>
@@ -671,7 +671,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">372</span>
+			  <span class="site-state-item-count">371</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -693,7 +693,7 @@
 		  
 		  <div class="site-state-item site-state-tags">
 			<a href="/tags/index.html">
-			  <span class="site-state-item-count">115</span>
+			  <span class="site-state-item-count">116</span>
 			  <span class="site-state-item-name">标签</span>
 			</a>
 		  </div>
@@ -822,7 +822,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">714.5k</span>
+    <span title="Site words total count">726.5k</span>
   
 </div>
 
