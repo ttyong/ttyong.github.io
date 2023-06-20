@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Impala,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="数据分析引擎之Impala-11 快速了解Impala什么是Impala1234567咱们在最开始学习大数据的时候学到了MapReduce这个框架，他可以对海量数据进行分布式计算分析，但是由于需要一定学习成本，并且对非开发人员不够友好，所以后来出现了Hive这个数据分析工具。Hive的优点是可以通过SQL直接计算分析HDFS中的海量数据，不需要写代码。不过由于Hive底层引擎默认使用的是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据开发工程师-数据分析引擎之Impala-1">
+<meta property="og:url" content="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-1.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="数据分析引擎之Impala-11 快速了解Impala什么是Impala1234567咱们在最开始学习大数据的时候学到了MapReduce这个框架，他可以对海量数据进行分布式计算分析，但是由于需要一定学习成本，并且对非开发人员不够友好，所以后来出现了Hive这个数据分析工具。Hive的优点是可以通过SQL直接计算分析HDFS中的海量数据，不需要写代码。不过由于Hive底层引擎默认使用的是">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192236510.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192240701.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192249528.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192256560.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192257398.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192303071.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192303781.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192304635.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192304737.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192304058.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192305836.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192306573.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192306696.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192252632.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192252028.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192253017.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192253086.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192326319.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192326216.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192327779.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192328814.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192328428.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192329726.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192329706.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192330388.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192330988.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192330606.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192331328.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192331448.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192341003.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192341451.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192343505.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192344780.png">
+<meta property="article:published_time" content="2023-06-18T15:47:42.000Z">
+<meta property="article:modified_time" content="2023-06-19T15:53:39.955Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="Impala">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192236510.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/大数据开发工程师-数据分析引擎之Impala-1.html">
+
+
+
+
+
+  <title>大数据开发工程师-数据分析引擎之Impala-1 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据开发工程师-数据分析引擎之Impala-1</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-06-18T23:47:42+08:00">
+                2023-06-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据开发工程师</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  35
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="数据分析引擎之Impala-1"><a href="#数据分析引擎之Impala-1" class="headerlink" title="数据分析引擎之Impala-1"></a>数据分析引擎之Impala-1</h1><h2 id="1-快速了解Impala"><a href="#1-快速了解Impala" class="headerlink" title="1 快速了解Impala"></a>1 快速了解Impala</h2><h3 id="什么是Impala"><a href="#什么是Impala" class="headerlink" title="什么是Impala"></a>什么是Impala</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">咱们在最开始学习大数据的时候学到了MapReduce这个框架，他可以对海量数据进行分布式计算分析，但是由于需要一定学习成本，并且对非开发人员不够友好，所以后来出现了Hive这个数据分析工具。</span><br><span class="line">Hive的优点是可以通过SQL直接计算分析HDFS中的海量数据，不需要写代码。</span><br><span class="line">不过由于Hive底层引擎默认使用的是MapReduce，所以在Hive中提交的SQL任务的延迟度和计算效率相对一般。</span><br><span class="line"></span><br><span class="line">在工作中我们希望能够在页面中输入一个SQL语句，点击查询按钮之后，可以快速查看结果，最好是能够在秒级别返回结果，这种数据分析需求也可以称之为即席查询。</span><br><span class="line"></span><br><span class="line">此时如果使用Hive，基本上需要在分钟级别才能返回结果，因为Hive接收到用户在页面上输入的SQL之后，需要先把SQL转化为MapReduce、再把MapReduce任务提交到YARN集群中，这个流程就需要消耗几秒或者十几秒了。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">此时就需要有一个可以支持低延迟，并且计算效率也比较高的数据分析引擎了，所以Impala就出现了。</span><br><span class="line">Impala的出现主要就是为了解决Hive执行效率低下的问题。</span><br><span class="line"></span><br><span class="line">所以MapReduce、Hive和Impala之间的发展历程是这样的：MapReduce-&gt;Hive-&gt;Impala。</span><br><span class="line"></span><br><span class="line">官方一点的解释：</span><br><span class="line">Impala是一个开源的基于内存的快速查询分析引擎。</span><br><span class="line"></span><br><span class="line">他可以直接使用Hive的Metastore，也就是说Hive中创建的表，Impala可以直接使用；并且兼容HiveSQL，但是不是100%兼容，大部分的SQL语法都是兼容的。</span><br><span class="line"></span><br><span class="line">下面我们来分析一下Impala的优点和缺点</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impala的优点"><a href="#Impala的优点" class="headerlink" title="Impala的优点"></a>Impala的优点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1：基于内存运算，中间结果不落盘，节省大量的I&#x2F;O开销；因为在MapReduce任务中，Map阶段产生的中间结果需要先写磁盘，再通过Shuffle拷贝到Reduce阶段，所以会产生大量的I&#x2F;O，因此计算效率不如Impala。</span><br><span class="line">2：底层计算引擎由C++编写，通过LLVM统一编译运行，效率更高。LLVM是一个编译器。注意了，Impala底层的计算引擎没有使用大数据生态圈中的计算框架，它是自己单独实现的。</span><br><span class="line">3：兼容HiveSQL语法，学习成本低，容易上手。ImpalaSQL支持SQL92标准，并具有自己的解析器和优化器。SQL92是数据库的一个ANSI标准，HiveSQL也支持SQL92标准。</span><br><span class="line">4：兼容Hive的Metastore，可以直接使用Hive中的表。</span><br><span class="line">5：支持数据本地化(Data Locality)特性，提高计算效率。其实就是说Impala支持数据本地计算，前提是impala的服务需要和HDFS的datanode节点部署在一起。</span><br><span class="line">6：支持列式存储数据格式，可以和HBase整合。也就是说Impala可以通过SQL计算HBase中的数据。</span><br><span class="line">7：支持多种文件格式，例如：TextFile、SequenceFile、RCFile、ORC和Parquet。其实只要是Hive支持的数据格式，目前Impala都是支持的。</span><br><span class="line">8：支持ODBC&#x2F;JDBC远程访问，这样就可以无缝对接到Web项目，在页面操作起来更方便。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这是Impala的一些优点。</span><br><span class="line">当然了，没有绝对完美的技术框架，所以Impala也有一些缺点，下面我们来分析一下：</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impala的缺点"><a href="#Impala的缺点" class="headerlink" title="Impala的缺点"></a>Impala的缺点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1：基于内存进行计算，对内存依赖性较大。基于内存计算，既是优点，也是缺点。</span><br><span class="line">2：使用C++编写，意味着维护难度增加，相对而言，Java程序维护起来比较简单。</span><br><span class="line">3：分区数量超过一万，性能严重下降，容易出现问题。主要还是因为它是基于内存计算，单个SQL任务计算的数据量过大，对内存依赖就很大了，所以容易出现问题。</span><br><span class="line">4：基于Hive，与Hive共存亡。因为Impala需要使用Hive的Metastore来存储元数据信息。</span><br><span class="line">5：稳定性不如Hive。主要也是因为Impala是基于内存的，所以稳定性相对来说一般。</span><br><span class="line"></span><br><span class="line">这是Impala的一些缺点。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impala-Hive"><a href="#Impala-Hive" class="headerlink" title="Impala + Hive"></a>Impala + Hive</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Impala和Hive之间的关系从这个图里面可以比较清晰的进行了解</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192236510.png" alt="image-20230619223624219"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">最底层是HDFS，接着是MapReduce、Hive对MapReduce做了封装，提供了SQL支持。</span><br><span class="line">Hive的元数据信息存储在Metastore中，Metastore我们一般是使用MySQL。</span><br><span class="line"></span><br><span class="line">Impala自己使用C++实现了一套分布式计算引擎，也可以直接操作HDFS中的数据，并且和Hive共享一个Metastore。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impala三大核心组件"><a href="#Impala三大核心组件" class="headerlink" title="Impala三大核心组件"></a>Impala三大核心组件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Impala架构中主要包含三大核心组件：</span><br><span class="line"></span><br><span class="line">-Impala daemon：简称为impalad，它是Impala集群中的核心守护进程，需要在多个节点启动，一般会和DataNode节点部署在一起；他主要负责向Statestore保持通信，汇报工作。同时负责接收客户端的请求，执行查询，并把结果返回给客户端。</span><br><span class="line">-Statestore daemon：简称为statestored，他主要负责收集集群中各个Impalad进程的资源信息、各节点健康状况、同步节点信息，以及负责Query的协调调度。</span><br><span class="line">-Catalog daemon：简称为catalogd，他主要负责分发表的元数据信息到各个Impalad中，以及接收来自Statestore的所有请求。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impala的整体运行架构"><a href="#Impala的整体运行架构" class="headerlink" title="Impala的整体运行架构"></a>Impala的整体运行架构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Impala的整体运行架构是这样的：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192240701.png" alt="image-20230619224010407"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">这个图里面包含了客户端、Hive Metastore、HDFS NameNode、HDFS DataNode、HBase以及Impala中的Statestore、Catalog、Impalad这三个核心组件。</span><br><span class="line">其中Hive Metastore是负责维护Impala元数据信息的，HDFS和HBase都是可以作为Impala底层数据存储的组件</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">客户端向Impala发送请求时的整个执行流程是这样的：</span><br><span class="line">（1）客户端向某一个Impalad发送一个Query（SQL）。</span><br><span class="line">（2）Impalad将Query解析为具体的Planner（执行计划）, 然后交给当前机器的Coordinator（中心协调节点）。</span><br><span class="line">（3）Coordinator根据Planner，通过本机的Executor执行，并转发给其他有数据的Impalad。</span><br><span class="line">（4）多个Impalad的Executor之间会进行通信，可能需要一些数据的处理。</span><br><span class="line">（5）各个Impalad的Executor执行完成后，会将结果返回给Coordinator。</span><br><span class="line">（6）由Coordinator将汇聚的查询结果返回给客户端。</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-快速上手使用Impala"><a href="#2-快速上手使用Impala" class="headerlink" title="2 快速上手使用Impala"></a>2 快速上手使用Impala</h2><h3 id="Impala的安装部署"><a href="#Impala的安装部署" class="headerlink" title="Impala的安装部署"></a>Impala的安装部署</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">单独安装Impala是不靠谱的想法，尽快忘了它！！！，因为单独安装Impala需要自己编译、编译的时候需要依赖很多外部依赖，以及一些依赖冲突的问题，所以不建议单独安装。</span><br><span class="line"></span><br><span class="line">强烈推荐通过CDH平台安装Impala！！！CDH中集成的有Impala，安装非常方便，只需要点击下一步即可安装成功。</span><br><span class="line"></span><br><span class="line">咱们本套课程的配套电子书中提供了CDH的安装部署步骤，其中CDH的版本是6.2.1，这个CDH版本中集成的Impala是3.2.0版本。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">注意了：想要安装CDH，对机器配置有一定的要求，如果本地环境不允许的话，不建议去折腾了，意义不大。</span><br><span class="line"></span><br><span class="line">自己本地没有CDH集群的话，针对Impala的内容大家暂时就无法在本地实操了，其实也不用特别担心，因为只要掌握了Hive的使用，想要使用Impala基本上可以直接上手。</span><br><span class="line"></span><br><span class="line">咱们本次课程主要讲一些Impala和Hive的区别，这些内容大家前期有个概念，了解一下即可。</span><br><span class="line">Impala的内容其实之前没有规划到课程中，后来考虑到个别同学反馈了，所以把这块内容扩展到课程中。</span><br><span class="line"></span><br><span class="line">我的个人建议，Impala这块内容作为【选学】即可。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Impala集群节点的规划是这样的：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192249528.png" alt="image-20230619224922160"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Impala中的Catalog和Statestore进程所在的节点可以认为是主节点，建议把这两个进程部署在一起，因为他们两个之间需要经常通信。</span><br><span class="line"></span><br><span class="line">Impala中的Daemon进程所在的节点可以认为是从节点，Daemon进程建议和Hadoop集群中的DataNode节点部署在一起，这样可以实现数据本地计算，提高计算效率。</span><br><span class="line">Daemon进程可以根据需要部署多个。</span><br><span class="line"></span><br><span class="line">想要使用Impala，是需要在CDH平台中安装的。</span><br><span class="line"></span><br><span class="line">下面演示一下如何在CDH平台中安装Impala。</span><br></pre></td></tr></table></figure>
+
+<h3 id="CDH平台中安装Impala"><a href="#CDH平台中安装Impala" class="headerlink" title="CDH平台中安装Impala"></a>CDH平台中安装Impala</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">进入CM首页。</span><br><span class="line"></span><br><span class="line">注意：需要先启动Cloudera Management Service和Cluster 1。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">添加服务：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192256560.png" alt="image-20230619225626270"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">选择Impala，然后点击继续按钮：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192257398.png" alt="image-20230619225744765"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">如果cdh01主节点的内存足够使用的话，建议将StateStore和Catalog Server服务放到cdh01主节点中。</span><br><span class="line">Impala Daemon服务放在从节点中。</span><br><span class="line">当然了，也可以选择使用系统分配的，这样什么都不用改。</span><br><span class="line">点击继续按钮：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192303071.png" alt="image-20230619230300013"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">什么都不用改，点击继续按钮：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192303781.png" alt="image-20230619230328291"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">等待状态变为 已完成，然后点击继续按钮：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192304635.png" alt="image-20230619230400853"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">点击完成按钮即可：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192304737.png" alt="image-20230619230421779"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时Impala服务已经安装成功了，但是还需要重启HDFS服务，点击重启按钮：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192304058.png" alt="image-20230619230450678"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">确认更改信息，直接点击 重启过时服务按钮即可：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192305836.png" alt="image-20230619230549712"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注意：先选中【重新部署客户端配置】，然后再点击右下角的立即重启按钮：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192306573.png" alt="image-20230619230610504"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">等待服务重启成功，状态变为 已完成，最后点击完成按钮即可。到这位置，Impala就安装好了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192306696.png" alt="image-20230619230636217"></p>
+<h3 id="处理HDFS的权限问题"><a href="#处理HDFS的权限问题" class="headerlink" title="处理HDFS的权限问题"></a>处理HDFS的权限问题</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：由于我们现在默认使用的Linux中的root用户，所以在操作HDFS的时候会遇到一些权限问题，解决方案有2个：</span><br><span class="line"></span><br><span class="line">1：关闭HDFS的权限校验。(这种方式简单、直接、生产环境不推荐，测试环境推荐)。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192252632.png" alt="image-20230619225216524"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192252028.png" alt="image-20230619225257427"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192253017.png" alt="image-20230619225315978"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192253086.png" alt="image-20230619225343423"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">2：先在Linux添加supergroup组，把root用户添加到supergroup里，再同步权限到HDFS。</span><br><span class="line">具体命令如下【这些命令需要在CDH集群中所有节点执行】。</span><br><span class="line">(这种方式相对比较麻烦，但是更合理，生产环境下推荐，测试环境不推荐)。</span><br><span class="line"></span><br><span class="line"># 添加supergroup组</span><br><span class="line">groupadd supergroup</span><br><span class="line"># root用户加入supergroup组</span><br><span class="line">usermod -a -G supergroup root</span><br><span class="line"># 同步系统的权限信息到HDFS</span><br><span class="line">sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在测试环境建议使用第一种方式。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Impala的常见操作方式"><a href="#Impala的常见操作方式" class="headerlink" title="Impala的常见操作方式"></a>Impala的常见操作方式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Impala可以支持多种操作方式，在不同的应用场景中，可以选择不同的操作方式。</span><br><span class="line"></span><br><span class="line">-在开发阶段，一般会使用impala-shell这个客户端命令行操作。</span><br><span class="line">-如果想要在某一个Web项目中提供基于Impala的即席查询功能，那么需要使用JDBC代码的方式操作Impala。</span><br><span class="line">-在日常查询使用的时候，特别是针对非开发人员，常见的是在Hue这种Web页面中进行操作，不需要连接Linux服务器，直接在浏览器页面中操作，非常方便。</span><br></pre></td></tr></table></figure>
+
+<h4 id="impala-shell客户端命令行"><a href="#impala-shell客户端命令行" class="headerlink" title="impala-shell客户端命令行"></a>impala-shell客户端命令行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">进入cdh01机器：</span><br><span class="line">直接执行impala-shell脚本即可，因为CDH安装好Impala之后，会默认把Impala配置到环境变量中，所以它里面的脚本是可以在任意目录下使用的。</span><br><span class="line"></span><br><span class="line">在cdh01中直接执行impala-shell脚本：</span><br><span class="line">[root@cdh01 ~]# impala-shell </span><br><span class="line">Starting Impala Shell without Kerberos authentication</span><br><span class="line">Error connecting: TTransportException, Could not connect to cdh01:21000</span><br><span class="line">***********************************************************************************</span><br><span class="line">Welcome to the Impala shell.</span><br><span class="line">(Impala Shell v3.2.0-cdh6.2.1 (525e372) built on Wed Sep 11 01:30:44 PDT 2019)</span><br><span class="line"></span><br><span class="line">Press TAB twice to see a list of available commands.</span><br><span class="line">***********************************************************************************</span><br><span class="line">[Not connected] &gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">此时发现里面有报错信息，提示的是无法连接cdh01:21000。</span><br><span class="line">21000端口对应的是impalad服务的端口，但是在cdh01上并没有启动impalad服务，所以默认连不上，impala-shell默认会连接当前节点上的impalad服务。</span><br><span class="line">里面显示的也是[Not connected]，这种情况下是无法操作Impala的。</span><br><span class="line">因为在Impala中，只有连接到impalad所在的节点后才能执行查询操作，接受了连接的impalad节点将作为协调者运行查询任务。</span><br><span class="line"></span><br><span class="line">为了解决这个问题，可以通过下面三种方法：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">第一种方法：</span><br><span class="line">可以通过connect参数指定连接其它节点中的impalad服务。</span><br><span class="line">[Not connected] &gt; connect cdh02:21000;</span><br><span class="line">Connection lost, reconnecting...</span><br><span class="line">Error connecting: TTransportException, Could not connect to cdh01:21000</span><br><span class="line">Opened TCP connection to cdh02:21000</span><br><span class="line">Connected to cdh02:21000</span><br><span class="line">Server version: impalad version 3.2.0-cdh6.2.1 RELEASE (build 525e372410dd2ce206e2ad0f21f57cae7380c0cb)</span><br><span class="line">[cdh02:21000] default&gt; </span><br><span class="line"></span><br><span class="line">退出impala-shell客户端，使用ctrl+c无法强制退出：</span><br><span class="line">可以使用quit或者exit。</span><br><span class="line">[cdh02:21000] default&gt; quit;</span><br><span class="line">Goodbye root</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">第二种方法：</span><br><span class="line">也可以在启动impala-shell客户端的时候通过-i参数指定连接其它节点中的impalad服务。</span><br><span class="line">[root@cdh01 ~]# impala-shell -i cdh02:21000</span><br><span class="line">Starting Impala Shell without Kerberos authentication</span><br><span class="line">Opened TCP connection to cdh02:21000</span><br><span class="line">Connected to cdh02:21000</span><br><span class="line">Server version: impalad version 3.2.0-cdh6.2.1 RELEASE (build 525e372410dd2ce206e2ad0f21f57cae7380c0cb)</span><br><span class="line">***********************************************************************************</span><br><span class="line">Welcome to the Impala shell.</span><br><span class="line">(Impala Shell v3.2.0-cdh6.2.1 (525e372) built on Wed Sep 11 01:30:44 PDT 2019)</span><br><span class="line"></span><br><span class="line">After running a query, type SUMMARY to see a summary of where time was spent.</span><br><span class="line">***********************************************************************************</span><br><span class="line">[cdh02:21000] default&gt; </span><br><span class="line"></span><br><span class="line">退出impala-shell客户端：</span><br><span class="line">[cdh02:21000] default&gt; quit;</span><br><span class="line">Goodbye root</span><br><span class="line"></span><br><span class="line">注意：impalad服务的端口默认21000，如果没有修改的话，在使用-i和connect指定的时候，端口是可以省略不写的。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">第三种方法：</span><br><span class="line">在impalad服务所在的节点(cdh02 或者cdh03)执行使用impala-shell脚本即可</span><br><span class="line"></span><br><span class="line">[root@cdh02 ~]# impala-shell </span><br><span class="line">Starting Impala Shell without Kerberos authentication</span><br><span class="line">Opened TCP connection to cdh02:21000</span><br><span class="line">Connected to cdh02:21000</span><br><span class="line">Server version: impalad version 3.2.0-cdh6.2.1 RELEASE (build 525e372410dd2ce206e2ad0f21f57cae7380c0cb)</span><br><span class="line">***********************************************************************************</span><br><span class="line">Welcome to the Impala shell.</span><br><span class="line">(Impala Shell v3.2.0-cdh6.2.1 (525e372) built on Wed Sep 11 01:30:44 PDT 2019)</span><br><span class="line"></span><br><span class="line">The &#39;-B&#39; command line flag turns off pretty-printing for query results. Use this</span><br><span class="line">flag to remove formatting from results you want to save for later, or to benchmark</span><br><span class="line">Impala.</span><br><span class="line">***********************************************************************************</span><br><span class="line">[cdh02:21000] default&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">不过在实际工作中我们操作Impala一般都是在客户端节点操作的，所以还是需要通过-i或者connect参数指定impalad节点的。</span><br></pre></td></tr></table></figure>
+
+<h5 id="h-–help"><a href="#h-–help" class="headerlink" title="-h / –help"></a>-h / –help</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">在impala-shell脚本后面还可以指定一些高级命令，下面我们来看一些比较常见的：</span><br><span class="line"></span><br><span class="line">-h &#x2F; --help：这个属于帮助命令，可以查看impala-shell脚本后面都可以支持哪些命令，以及这些命令的含义。</span><br><span class="line"></span><br><span class="line">[root@cdh01 ~]# impala-shell -h</span><br><span class="line">Usage: impala_shell.py [options]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -h, --help            show this help message and exit</span><br><span class="line">  -i IMPALAD, --impalad&#x3D;IMPALAD</span><br><span class="line">                        &lt;host:port&gt; of impalad to connect to</span><br><span class="line">                        [default: cdh01:21000]</span><br><span class="line">  -b KERBEROS_HOST_FQDN, --kerberos_host_fqdn&#x3D;KERBEROS_HOST_FQDN</span><br><span class="line">                        If set, overrides the expected hostname of the</span><br><span class="line">                        Impalad&#39;s kerberos service principal. impala-shell</span><br><span class="line">                        will check that the server&#39;s principal matches this</span><br><span class="line">                        hostname. This may be used when impalad is configured</span><br><span class="line">                        to be accessed via a load-balancer, but it is desired</span><br><span class="line">                        for impala-shell to talk to a specific impalad</span><br><span class="line">                        directly. [default: none]</span><br><span class="line">  -q QUERY, --query&#x3D;QUERY</span><br><span class="line">                        Execute a query without the shell [default: none]</span><br><span class="line">........</span><br></pre></td></tr></table></figure>
+
+<h5 id="v：查询当前Impala的版本。"><a href="#v：查询当前Impala的版本。" class="headerlink" title="-v：查询当前Impala的版本。"></a>-v：查询当前Impala的版本。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@cdh01 ~]# impala-shell -v</span><br><span class="line">Impala Shell v3.2.0-cdh6.2.1 (525e372) built on Wed Sep 11 01:30:44 PDT 2019</span><br></pre></td></tr></table></figure>
+
+<h5 id="B-–delimited：对Impala的查询结果进行格式化。"><a href="#B-–delimited：对Impala的查询结果进行格式化。" class="headerlink" title="-B / –delimited：对Impala的查询结果进行格式化。"></a>-B / –delimited：对Impala的查询结果进行格式化。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">默认Impala中返回的结果数据是使用表格的样式格式化的，但是有时候我们想把impala查询的结果输出到文件中，便于后续其他的程序使用，这样就不希望把额外的表格输出到文件中了，只需要核心的数据内容即可。</span><br><span class="line">先来看一下默认的格式：</span><br><span class="line"></span><br><span class="line">[root@cdh01 ~]# impala-shell -i cdh02:21000</span><br><span class="line">[cdh02:21000] default&gt; create table im_t1(id int,name string);</span><br><span class="line">[cdh02:21000] default&gt; insert into im_t1(id,name) values(1,&#39;zs&#39;);</span><br><span class="line">[cdh02:21000] default&gt; insert into im_t1(id,name) values(2,&#39;ls&#39;);</span><br><span class="line">[cdh02:21000] default&gt; select * from im_t1;</span><br><span class="line">Query: select * from im_t1</span><br><span class="line">Query submitted at: 2022-08-16 15:52:27 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;5c47ba992fa4a26e:130a8aa600000000</span><br><span class="line">+----+------+</span><br><span class="line">| id | name |</span><br><span class="line">+----+------+</span><br><span class="line">| 1  | zs   |</span><br><span class="line">| 2  | ls   |</span><br><span class="line">+----+------+</span><br><span class="line">Fetched 2 row(s) in 0.39s</span><br><span class="line">[cdh02:21000] default&gt; quit;</span><br><span class="line">Goodbye root</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">此时可以发现结果数据会使用表格进行格式化，这样其实看起来是比较清晰的，但是这种数据格式不便于后期使用。</span><br><span class="line"></span><br><span class="line">使用-B参数。</span><br><span class="line"></span><br><span class="line">[root@cdh01 ~]# impala-shell -i cdh02:21000 -B</span><br><span class="line">[cdh02:21000] default&gt; select * from im_t1;</span><br><span class="line">Query: select * from im_t1</span><br><span class="line">Query submitted at: 2022-08-16 15:55:01 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;ef4080b39db068aa:9601e27400000000</span><br><span class="line">1       zs</span><br><span class="line">2       ls</span><br><span class="line">Fetched 2 row(s) in 0.35s</span><br><span class="line">[cdh02:21000] default&gt; quit;</span><br><span class="line">Goodbye root</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时可以看到结果数据就比较干净了，只有数据自身的内容，默认情况下字段之间的分隔符是制表符。</span><br></pre></td></tr></table></figure>
+
+<h5 id="–output-delimiter：指定字段分隔符，默认-t"><a href="#–output-delimiter：指定字段分隔符，默认-t" class="headerlink" title="–output_delimiter：指定字段分隔符，默认\t"></a>–output_delimiter：指定字段分隔符，默认\t</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">在使用-B对数据结果进行格式化的时候，如果想自定义字段分隔符，还需要使用这个参数。</span><br><span class="line">使用逗号作为字段分隔符：</span><br><span class="line">[root@cdh01 ~]# impala-shell -i cdh02:21000 -B --output_delimiter &#39;,&#39;</span><br><span class="line">[cdh02:21000] default&gt; select * from im_t1;</span><br><span class="line">Query: select * from im_t1</span><br><span class="line">Query submitted at: 2022-08-16 15:57:41 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;c44e0ac395b5a6fd:831ea74700000000</span><br><span class="line">2,ls</span><br><span class="line">1,zs</span><br><span class="line">Fetched 2 row(s) in 0.35s</span><br><span class="line">[cdh02:21000] default&gt; quit;</span><br><span class="line">Goodbye root</span><br></pre></td></tr></table></figure>
+
+<h5 id="o-–output-file：将查询结果输出到指定的文件中"><a href="#o-–output-file：将查询结果输出到指定的文件中" class="headerlink" title="-o / –output_file：将查询结果输出到指定的文件中"></a>-o / –output_file：将查询结果输出到指定的文件中</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">现在查询的结果还是输出在控制台中，想要将结果输出到文件中的话需要使用这个参数指定目标文件名。</span><br><span class="line"></span><br><span class="line">注意：这里不能使用hdfs路径，只能使用本地路径。</span><br><span class="line">[root@cdh01 ~]# impala-shell -i cdh02:21000 -B --output_delimiter &#39;,&#39; -o im_t1.dat</span><br><span class="line">[cdh02:21000] default&gt; select * from im_t1;</span><br><span class="line">Query: select * from im_t1</span><br><span class="line">Query submitted at: 2022-08-16 16:17:47 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;df43106813c0de1b:1dc183d000000000</span><br><span class="line">Fetched 2 row(s) in 0.35s</span><br><span class="line">[cdh02:21000] default&gt; quit;</span><br><span class="line">Goodbye root</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">此时发现在命令行中执行select语句是看不到返回结果的，因为这些结果数据会输出到im_t1.dat文件中。</span><br><span class="line">到当前目录下查看一下im_t1.dat文件中的内容：</span><br><span class="line">[root@cdh01 ~]# more im_t1.dat </span><br><span class="line">1,zs</span><br><span class="line">2,ls</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">但是这种方式用起来还是不方便，我们还需要先进入到impala-shell客户端里面之后才能执行查询命名，能不能在不进入impala-shell客户端的情况下实现这种需求呢？其实就是实现类似于hive -e这种效果。</span><br></pre></td></tr></table></figure>
+
+<h5 id="q-–query：指定查询语句"><a href="#q-–query：指定查询语句" class="headerlink" title="-q / –query：指定查询语句"></a>-q / –query：指定查询语句</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">通过-q参数可以在命令行中指定sql语句，不需要进入impala-shell客户端里面，适合在脚本中封装impala sql语句。</span><br><span class="line"></span><br><span class="line">在演示之前，先把im_t1.dat文件删掉，这样对比起来比较清晰。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@cdh01 ~]# rm -rf im_t1.dat</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">然后使用-q指定select查询语句。</span><br><span class="line"></span><br><span class="line">[root@cdh01 ~]# impala-shell -i cdh02:21000 -B --output_delimiter &#39;,&#39; -q &#39;select * from im_t1&#39; -o im_t1.dat</span><br><span class="line">Starting Impala Shell without Kerberos authentication</span><br><span class="line">Opened TCP connection to cdh02:21000</span><br><span class="line">Connected to cdh02:21000</span><br><span class="line">Server version: impalad version 3.2.0-cdh6.2.1 RELEASE (build 525e372410dd2ce206e2ad0f21f57cae7380c0cb)</span><br><span class="line">Query: select * from im_t1</span><br><span class="line">Query submitted at: 2022-08-16 16:25:43 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;2442747abbbf7f81:77c65fec00000000</span><br><span class="line">Fetched 2 row(s) in 0.34s</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">查看im_t1.dat文件中的内容：</span><br><span class="line">[root@cdh01 ~]# more im_t1.dat </span><br><span class="line">1,zs</span><br><span class="line">2,ls</span><br><span class="line"></span><br><span class="line">此时这条impala sql命令就可以封装到shell脚本中定时调度了。</span><br><span class="line">其实-q中指定的sql也可以使用insert into select这种形式的，这样就不需要使用-o指定输出文件路径信息了。</span><br><span class="line">-q里面可以指定多条SQL语句，多条SQL语句之间使用分割(;)隔开即可。</span><br></pre></td></tr></table></figure>
+
+<h4 id="JDBC访问"><a href="#JDBC访问" class="headerlink" title="JDBC访问"></a>JDBC访问</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">下面看一下如何使用JDBC代码操作Impala。</span><br><span class="line"></span><br><span class="line">创建项目：db_impala</span><br><span class="line">创建package：com.imooc.impala</span><br><span class="line"></span><br><span class="line">向pom.xml中添加依赖，直接使用Hive的jdbc依赖即可。</span><br><span class="line">&lt;!-- Hive JDBC依赖 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.hive&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;hive-jdbc&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.1.2&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;exclusions&gt;</span><br><span class="line">        &lt;exclusion&gt;</span><br><span class="line">            &lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;slf4j-log4j12&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;&#x2F;exclusion&gt;</span><br><span class="line">    &lt;&#x2F;exclusions&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line"></span><br><span class="line">向resources目录中添加日志配置文件：log4j2.xml，文件内容如下：</span><br><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;Configuration status&#x3D;&quot;INFO&quot;&gt;</span><br><span class="line">    &lt;Appenders&gt;</span><br><span class="line">        &lt;Console name&#x3D;&quot;Console&quot; target&#x3D;&quot;SYSTEM_OUT&quot;&gt;</span><br><span class="line">            &lt;PatternLayout pattern&#x3D;&quot;%d&#123;YYYY-MM-dd HH:mm:ss&#125; [%t] %-5p %c&#123;1&#125;:%L - %msg%n&quot; &#x2F;&gt;</span><br><span class="line">        &lt;&#x2F;Console&gt;</span><br><span class="line">    &lt;&#x2F;Appenders&gt;</span><br><span class="line">    &lt;Loggers&gt;</span><br><span class="line">        &lt;Root level&#x3D;&quot;info&quot;&gt;</span><br><span class="line">            &lt;AppenderRef ref&#x3D;&quot;Console&quot; &#x2F;&gt;</span><br><span class="line">        &lt;&#x2F;Root&gt;</span><br><span class="line">    &lt;&#x2F;Loggers&gt;</span><br><span class="line">&lt;&#x2F;Configuration&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">创建类：ImpalaJdbcDemo</span><br><span class="line"></span><br><span class="line">代码如下：</span><br><span class="line">package com.imooc.impala;</span><br><span class="line"></span><br><span class="line">import java.sql.Connection;</span><br><span class="line">import java.sql.DriverManager;</span><br><span class="line">import java.sql.ResultSet;</span><br><span class="line">import java.sql.Statement;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * JDBC代码操作Impala</span><br><span class="line"> *</span><br><span class="line"> * Created by xuwei</span><br><span class="line"> *&#x2F;</span><br><span class="line">public class ImpalaJdbcDemo &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        &#x2F;&#x2F;指定jdbcurl链接，需要连接到impalad服务(cdh02或者cdh03)</span><br><span class="line">        String jdbcUrl &#x3D; &quot;jdbc:hive2:&#x2F;&#x2F;cdh03:21050&#x2F;;auth&#x3D;noSasl&quot;;</span><br><span class="line">        &#x2F;&#x2F;获取链接</span><br><span class="line">        Connection conn &#x3D; DriverManager.getConnection(jdbcUrl);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;获取Statement</span><br><span class="line">        Statement stmt &#x3D; conn.createStatement();</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;指定查询的sql</span><br><span class="line">        String sql &#x3D; &quot;select * from im_t1&quot;;</span><br><span class="line">        &#x2F;&#x2F;执行sql</span><br><span class="line">        ResultSet res &#x3D; stmt.executeQuery(sql);</span><br><span class="line">        &#x2F;&#x2F;循环读取结果</span><br><span class="line">        while(res.next())&#123;</span><br><span class="line">            System.out.println(res.getInt(&quot;id&quot;)+&quot;\t&quot;+res.getString(&quot;name&quot;));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Hue访问"><a href="#Hue访问" class="headerlink" title="Hue访问"></a>Hue访问</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192326319.png" alt="image-20230619232622289"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192326216.png" alt="image-20230619232649293"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：第一次使用hue时，需要创建hue的账号，输入用户名和密码则会自动创建，这个账户将会是超级管理员账户。</span><br><span class="line"></span><br><span class="line">账号创建好之后会进入这个界面。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192327779.png" alt="image-20230619232756531"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在查询按钮中可以选择Hue支持查询的组件，里面默认是没有Impala的。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192328814.png" alt="image-20230619232830040"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">注意：默认CDH中提供的Hue里面是不支持访问Impala，需要在Hue配置中开启才可以。</span><br><span class="line"></span><br><span class="line">下面到Hue中进行配置，增加对Impala的支持。</span><br><span class="line"></span><br><span class="line">选中Impala、然后点击保存更改按钮。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192328428.png" alt="image-20230619232857541"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">保存更改后，需要重启Hue，因为配置发生了变化。</span><br><span class="line"></span><br><span class="line">点击重启过时服务按钮。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192329726.png" alt="image-20230619232941817"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192329706.png" alt="image-20230619232952645"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">选中重新部署客户端配置，然后点击立即重启按钮即可。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192330388.png" alt="image-20230619233024236"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">等待状态变为已完成，点击完成按钮即可。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192330988.png" alt="image-20230619233039862"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">最终的效果是这样的：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192330606.png" alt="image-20230619233056256"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">此时就可以选择Impala编辑器来操作Impala了。</span><br><span class="line"></span><br><span class="line">在Hue中执行Impala SQL语句：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192331328.png" alt="image-20230619233124191"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192331448.png" alt="image-20230619233143575"></p>
+<h3 id="Impala的常见使用"><a href="#Impala的常见使用" class="headerlink" title="Impala的常见使用"></a>Impala的常见使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Impala中的DDL和DML语句和Hive中的用法基本上是一样的，并且Impala中也支持内部表、外部表和分区表，下面我们来实际体验一下：</span><br></pre></td></tr></table></figure>
+
+<h4 id="内部表的使用"><a href="#内部表的使用" class="headerlink" title="内部表的使用"></a>内部表的使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">创建内部表：im_inner_table</span><br><span class="line"></span><br><span class="line">create table im_inner_table(</span><br><span class="line">  id int,</span><br><span class="line">  name string,</span><br><span class="line">  age int,</span><br><span class="line">  birthday timestamp</span><br><span class="line">)row format delimited </span><br><span class="line">fields terminated by &#39;\t&#39; </span><br><span class="line">lines terminated by &#39;\n&#39;;</span><br><span class="line"></span><br><span class="line">注意：Impala中日期类型不支持Date，只支持Timestamp。Hive中这两种日期类型都支持。</span><br></pre></td></tr></table></figure>
+
+<h5 id="desc"><a href="#desc" class="headerlink" title="desc"></a>desc</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">查看表中的字段信息，以及详细建表语句。</span><br><span class="line"></span><br><span class="line">[cdh02:21000] default&gt; desc im_inner_table;</span><br><span class="line">Query: describe im_inner_table</span><br><span class="line">+----------+-----------+---------+</span><br><span class="line">| name     | type      | comment |</span><br><span class="line">+----------+-----------+---------+</span><br><span class="line">| id       | int       |         |</span><br><span class="line">| name     | string    |         |</span><br><span class="line">| age      | int       |         |</span><br><span class="line">| birthday | timestamp |         |</span><br><span class="line">+----------+-----------+---------+</span><br><span class="line">Fetched 4 row(s) in 0.06s</span><br><span class="line">[cdh02:21000] default&gt; show create table im_inner_table;</span><br><span class="line">Query: show create table im_inner_table</span><br><span class="line">+-------------------------------------------------------------------------------------------+</span><br><span class="line">| result                                                                                    |</span><br><span class="line">+-------------------------------------------------------------------------------------------+</span><br><span class="line">| CREATE TABLE default.im_inner_table (                                                     |</span><br><span class="line">|   id INT,                                                                                 |</span><br><span class="line">|   name STRING,                                                                            |</span><br><span class="line">|   age INT,                                                                                |</span><br><span class="line">|   birthday TIMESTAMP                                                                      |</span><br><span class="line">| )                                                                                         |</span><br><span class="line">| ROW FORMAT DELIMITED FIELDS TERMINATED BY &#39;\t&#39; LINES TERMINATED BY &#39;\n&#39;                   |</span><br><span class="line">| WITH SERDEPROPERTIES (&#39;field.delim&#39;&#x3D;&#39;\t&#39;, &#39;line.delim&#39;&#x3D;&#39;\n&#39;, &#39;serialization.format&#39;&#x3D;&#39;\t&#39;) |</span><br><span class="line">| STORED AS TEXTFILE                                                                        |</span><br><span class="line">| LOCATION &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;user&#x2F;hive&#x2F;warehouse&#x2F;im_inner_table&#39;                           |</span><br><span class="line">|                                                                                           |</span><br><span class="line">+-------------------------------------------------------------------------------------------+</span><br><span class="line">Fetched 1 row(s) in 0.04s</span><br><span class="line">[cdh02:21000] default&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="load加载数据"><a href="#load加载数据" class="headerlink" title="load加载数据"></a>load加载数据</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">表需要加载的数据文件为im_inner_table.dat，字段分隔符使用制表符，文件内容如下：</span><br><span class="line">[root@cdh01 ~]# vi im_inner_table.dat</span><br><span class="line">1       zs      18      2001-01-01 10:10:10</span><br><span class="line">2       ls      17      2002-02-02 12:12:12</span><br><span class="line">3       jack    19      2000-09-21 18:10:10</span><br><span class="line"></span><br><span class="line">将此数据文件上传至hdfs中。</span><br><span class="line">因为impala中在使用load data命令加载数据时不支持local参数，所以需要指定hdfs路径。</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -mkdir &#x2F;data</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -put im_inner_table.dat &#x2F;data</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">使用load data命令加载数据：</span><br><span class="line">[cdh02:21000] default&gt; load data inpath &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat&#39; into table im_inner_table;</span><br><span class="line">Query: load data inpath &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat&#39; into table im_inner_table</span><br><span class="line">ERROR: AnalysisException: Unable to LOAD DATA from hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat because Impala does not have WRITE permissions on its parent directory hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data</span><br><span class="line"></span><br><span class="line">执行报错，提示impala针对&#x2F;data目录没有写权限。</span><br><span class="line"></span><br><span class="line">因为Impala是使用impala用户操作hdfs，所以没有权限，可以考虑修改hdfs中&#x2F;data目录的读写权限。</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -chmod -R 777 &#x2F;data</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">再尝试加载数据：</span><br><span class="line">[cdh02:21000] default&gt; load data inpath &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat&#39; into table im_inner_table;</span><br><span class="line">Query: load data inpath &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat&#39; into table im_inner_table</span><br><span class="line">+----------------------------------------------------------+</span><br><span class="line">| summary                                                  |</span><br><span class="line">+----------------------------------------------------------+</span><br><span class="line">| Loaded 1 file(s). Total files in destination location: 1 |</span><br><span class="line">+----------------------------------------------------------+</span><br><span class="line">Fetched 1 row(s) in 0.39s</span><br><span class="line"></span><br><span class="line">提示数据加载成功。</span><br><span class="line">查询表中的数据：</span><br><span class="line">[cdh02:21000] default&gt; select * from im_inner_table;             </span><br><span class="line">Query: select * from im_inner_table</span><br><span class="line">Query submitted at: 2022-08-17 11:34:23 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;e241cccdd748bc56:e25e63af00000000</span><br><span class="line">+----+------+-----+---------------------+</span><br><span class="line">| id | name | age | birthday            |</span><br><span class="line">+----+------+-----+---------------------+</span><br><span class="line">| 1  | zs   | 18  | 2001-01-01 10:10:10 |</span><br><span class="line">| 2  | ls   | 17  | 2002-02-02 12:12:12 |</span><br><span class="line">| 3  | jack | 19  | 2000-09-21 18:10:10 |</span><br><span class="line">+----+------+-----+---------------------+</span><br><span class="line">Fetched 3 row(s) in 0.57s</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意：impala中第一次查询一个表的时候会有点慢，后续查询就快了。</span><br><span class="line"></span><br><span class="line">此时到HDFS中验证一下表中的数据文件：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192341003.png" alt="image-20230619234100763"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192341451.png" alt="image-20230619234111203"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Impala中的元数据会存储在Hive的Metastore中，所以我们到Hive对应的MySQL中查看一下表信息：</span><br><span class="line">CDH中Hive的元数据库名称默认就是：metastore。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192343505.png" alt="image-20230619234348237"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看表tbls中的数据：</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306192344780.png" alt="image-20230619234421486"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">我们在impala中基于这个表执行一个group by功能，大家可以对比一下和Hive中执行的效率：</span><br><span class="line">[cdh02:21000] default&gt; select count(*),name from im_inner_table group by name;</span><br><span class="line">Query: select count(*),name from im_inner_table group by name</span><br><span class="line">Query submitted at: 2022-08-17 11:46:21 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;e43c81320d3157b:48ffbbfc00000000</span><br><span class="line">+----------+------+</span><br><span class="line">| count(*) | name |</span><br><span class="line">+----------+------+</span><br><span class="line">| 1        | ls   |</span><br><span class="line">| 1        | jack |</span><br><span class="line">| 1        | zs   |</span><br><span class="line">+----------+------+</span><br><span class="line">Fetched 3 row(s) in 0.46s</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时发现在impala中执行是很快的，只需要0.4秒左右。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">下面在hive中执行，因为他们使用的是同一个元数据库，所以在hive中也可以看到这个表，并且也可以正常使用：</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">[root@cdh01 ~]# hive</span><br><span class="line">hive&gt; show tables;</span><br><span class="line">OK</span><br><span class="line">im_inner_table</span><br><span class="line">im_t1</span><br><span class="line">Time taken: 5.503 seconds, Fetched: 2 row(s)</span><br><span class="line">hive&gt; select count(*),name from im_inner_table group by name;</span><br><span class="line">Query ID &#x3D; root_20220817114954_acf8dfbe-e2c2-44ec-9e1a-f70436f53d51</span><br><span class="line">Total jobs &#x3D; 1</span><br><span class="line">Launching Job 1 out of 1</span><br><span class="line">Number of reduce tasks not specified. Estimated from input data size: 1</span><br><span class="line">In order to change the average load for a reducer (in bytes):</span><br><span class="line">  set hive.exec.reducers.bytes.per.reducer&#x3D;&lt;number&gt;</span><br><span class="line">In order to limit the maximum number of reducers:</span><br><span class="line">  set hive.exec.reducers.max&#x3D;&lt;number&gt;</span><br><span class="line">In order to set a constant number of reducers:</span><br><span class="line">  set mapreduce.job.reduces&#x3D;&lt;number&gt;</span><br><span class="line">22&#x2F;08&#x2F;17 11:50:00 INFO client.RMProxy: Connecting to ResourceManager at cdh01&#x2F;192.168.1.101:8032</span><br><span class="line">22&#x2F;08&#x2F;17 11:50:01 INFO client.RMProxy: Connecting to ResourceManager at cdh01&#x2F;192.168.1.101:8032</span><br><span class="line">Starting Job &#x3D; job_1660295939533_0003, Tracking URL &#x3D; http:&#x2F;&#x2F;cdh01:8088&#x2F;proxy&#x2F;application_1660295939533_0003&#x2F;</span><br><span class="line">Kill Command &#x3D; &#x2F;opt&#x2F;cloudera&#x2F;parcels&#x2F;CDH-6.2.1-1.cdh6.2.1.p0.1425774&#x2F;lib&#x2F;hadoop&#x2F;bin&#x2F;hadoop job  -kill job_1660295939533_0003</span><br><span class="line">Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1</span><br><span class="line">2022-08-17 11:50:31,713 Stage-1 map &#x3D; 0%,  reduce &#x3D; 0%</span><br><span class="line">2022-08-17 11:50:51,427 Stage-1 map &#x3D; 100%,  reduce &#x3D; 0%</span><br><span class="line">2022-08-17 11:51:06,828 Stage-1 map &#x3D; 100%,  reduce &#x3D; 100%, Cumulative CPU 19.05 sec</span><br><span class="line">MapReduce Total cumulative CPU time: 19 seconds 50 msec</span><br><span class="line">Ended Job &#x3D; job_1660295939533_0003</span><br><span class="line">MapReduce Jobs Launched: </span><br><span class="line">Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 19.05 sec   HDFS Read: 8701 HDFS Write: 140 HDFS EC Read: 0 SUCCESS</span><br><span class="line">Total MapReduce CPU Time Spent: 19 seconds 50 msec</span><br><span class="line">OK</span><br><span class="line">1       jack</span><br><span class="line">1       ls</span><br><span class="line">1       zs</span><br><span class="line">Time taken: 75.01 seconds, Fetched: 3 row(s)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在hive中执行就比较慢了，大致需要75秒，而Impala执行只需要0.4秒（第一次大致需要0.57秒），所以他们之间的对比就非常明显了。</span><br></pre></td></tr></table></figure>
+
+<h4 id="外部表的使用"><a href="#外部表的使用" class="headerlink" title="外部表的使用"></a>外部表的使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">创建外部表：im_external_table</span><br><span class="line">create external table im_external_table(</span><br><span class="line">  id int,</span><br><span class="line">  name string,</span><br><span class="line">  age int,</span><br><span class="line">  birthday timestamp</span><br><span class="line">)row format delimited </span><br><span class="line">fields terminated by &#39;\t&#39; </span><br><span class="line">lines terminated by &#39;\n&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;im_external_table&#39;;</span><br><span class="line"></span><br><span class="line">表需要加载的数据文件为im_external_table.dat，字段分隔符使用制表符，文件内容如下：</span><br><span class="line">[root@cdh01 ~]# vi im_external_table.dat</span><br><span class="line">1       zs      18      2001-01-01 10:10:10</span><br><span class="line">2       ls      17      2002-02-02 12:12:12</span><br><span class="line">3       jack    19      2000-09-21 18:10:10</span><br><span class="line"></span><br><span class="line">此时可以直接使用hdfs的put命令将数据文件上传到指定目录中，使用load data命令也可以。</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -put im_external_table.dat &#x2F;data&#x2F;im_external_table</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">查询外部表中的数据：</span><br><span class="line">[cdh02:21000] default&gt; select * from im_external_table;</span><br><span class="line">Query: select * from im_external_table</span><br><span class="line">Query submitted at: 2022-08-17 15:07:09 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;b94b60c8dbdb4967:bbd4f2ff00000000</span><br><span class="line">+----+------+-----+---------------------+</span><br><span class="line">| id | name | age | birthday            |</span><br><span class="line">+----+------+-----+---------------------+</span><br><span class="line">| 1  | zs   | 18  | 2001-01-01 10:10:10 |</span><br><span class="line">| 2  | ls   | 17  | 2002-02-02 12:12:12 |</span><br><span class="line">| 3  | jack | 19  | 2000-09-21 18:10:10 |</span><br><span class="line">+----+------+-----+---------------------+</span><br><span class="line">Fetched 3 row(s) in 4.35s</span><br><span class="line">[cdh02:21000] default&gt; select count(*),name from im_external_table group by name;</span><br><span class="line">Query: select count(*),name from im_external_table group by name</span><br><span class="line">Query submitted at: 2022-08-17 15:07:28 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;ae4cdaeafd180dbc:5bbda11b00000000</span><br><span class="line">+----------+------+</span><br><span class="line">| count(*) | name |</span><br><span class="line">+----------+------+</span><br><span class="line">| 1        | ls   |</span><br><span class="line">| 1        | jack |</span><br><span class="line">| 1        | zs   |</span><br><span class="line">+----------+------+</span><br><span class="line">Fetched 3 row(s) in 0.47s</span><br></pre></td></tr></table></figure>
+
+<h4 id="分区表的使用"><a href="#分区表的使用" class="headerlink" title="分区表的使用"></a>分区表的使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">分区表也可以分为外部分区表和内部分区表，在这里我们以外部分区表为例演示一下：</span><br><span class="line"></span><br><span class="line">创建外部分区表：im_external_partition_table</span><br><span class="line"></span><br><span class="line">create external table im_external_partition_table(</span><br><span class="line">  id int,</span><br><span class="line">  name string,</span><br><span class="line">  age int,</span><br><span class="line">  birthday timestamp</span><br><span class="line">)partitioned by(dt string)</span><br><span class="line">row format delimited </span><br><span class="line">fields terminated by &#39;\t&#39; </span><br><span class="line">lines terminated by &#39;\n&#39;</span><br><span class="line">location &#39;&#x2F;data&#x2F;im_external_partition_table&#39;;</span><br><span class="line"></span><br><span class="line">注意：现在直接使用load data向分区中加载数据是会报错的，他会提示分区不存在。(Hive中这样执行是可以的。)</span><br><span class="line"></span><br><span class="line">[cdh02:21000] default&gt; load data inpath &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat&#39; into table im_external_partition_table partition(dt&#x3D;&#39;20220101&#39;);</span><br><span class="line">Query: load data inpath &#39;hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_inner_table.dat&#39; into table im_external_partition_table partition(dt&#x3D;&#39;20220101&#39;)</span><br><span class="line">ERROR: AnalysisException: Partition spec does not exist: (dt&#x3D;&#39;20220101&#39;).</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">此时需要先到HDFS里面创建分区目录，再使用alter的方式添加分区，这种思路也是正常的操作流程，因为在实际工作中，外部分区表的数据是由专门的程序负责写入的。</span><br><span class="line"></span><br><span class="line">手工在HDFS中创建分区表需要的分区目录，并且上传数据文件：</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -mkdir -p &#x2F;data&#x2F;im_external_partition_table&#x2F;20220101</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -mkdir -p &#x2F;data&#x2F;im_external_partition_table&#x2F;20220102</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -put im_external_table.dat &#x2F;data&#x2F;im_external_partition_table&#x2F;20220101</span><br><span class="line">[root@cdh01 ~]# hdfs dfs -put im_external_table.dat &#x2F;data&#x2F;im_external_partition_table&#x2F;20220102</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">在impala中添加分区。</span><br><span class="line"></span><br><span class="line">[cdh02:21000] default&gt; alter table im_external_partition_table add partition(dt&#x3D;&#39;20220101&#39;) location &#39;&#x2F;data&#x2F;im_external_partition_table&#x2F;20220101&#39;;</span><br><span class="line">Query: alter table im_external_partition_table add partition(dt&#x3D;&#39;20220101&#39;) location &#39;&#x2F;data&#x2F;im_external_partition_table&#x2F;20220101&#39;</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| summary                                    |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| New partition has been added to the table. |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">Fetched 1 row(s) in 6.16s</span><br><span class="line">[cdh02:21000] default&gt; alter table im_external_partition_table add partition(dt&#x3D;&#39;20220102&#39;) location &#39;&#x2F;data&#x2F;im_external_partition_table&#x2F;20220102&#39;;</span><br><span class="line">Query: alter table im_external_partition_table add partition(dt&#x3D;&#39;20220102&#39;) location &#39;&#x2F;data&#x2F;im_external_partition_table&#x2F;20220102&#39;</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| summary                                    |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">| New partition has been added to the table. |</span><br><span class="line">+--------------------------------------------+</span><br><span class="line">Fetched 1 row(s) in 0.18s</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">查询表中的分区信息：</span><br><span class="line">[cdh02:21000] default&gt; show partitions im_external_partition_table;</span><br><span class="line">Query: show partitions im_external_partition_table</span><br><span class="line">+----------+-------+--------+------+--------------+-------------------+--------+-------------------+-------------------------------------------------------------+</span><br><span class="line">| dt       | #Rows | #Files | Size | Bytes Cached | Cache Replication | Format | Incremental stats | Location                                                    |</span><br><span class="line">+----------+-------+--------+------+--------------+-------------------+--------+-------------------+-------------------------------------------------------------+</span><br><span class="line">| 20220101 | -1    | 1      | 86B  | NOT CACHED   | NOT CACHED        | TEXT   | false             | hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_external_partition_table&#x2F;20220101 |</span><br><span class="line">| 20220102 | -1    | 1      | 86B  | NOT CACHED   | NOT CACHED        | TEXT   | false             | hdfs:&#x2F;&#x2F;cdh01:8020&#x2F;data&#x2F;im_external_partition_table&#x2F;20220102 |</span><br><span class="line">| Total    | -1    | 2      | 172B | 0B           |                   |        |                   |                                                             |</span><br><span class="line">+----------+-------+--------+------+--------------+-------------------+--------+-------------------+-------------------------------------------------------------+</span><br><span class="line">Fetched 3 row(s) in 0.03s</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">查询表中的数据：</span><br><span class="line">[cdh02:21000] default&gt; select * from im_external_partition_table;</span><br><span class="line">Query: select * from im_external_partition_table</span><br><span class="line">Query submitted at: 2022-08-17 16:08:40 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;1e486988e548514d:6c432b1700000000</span><br><span class="line">+----+------+-----+---------------------+----------+</span><br><span class="line">| id | name | age | birthday            | dt       |</span><br><span class="line">+----+------+-----+---------------------+----------+</span><br><span class="line">| 1  | zs   | 18  | 2001-01-01 10:10:10 | 20220101 |</span><br><span class="line">| 2  | ls   | 17  | 2002-02-02 12:12:12 | 20220101 |</span><br><span class="line">| 3  | jack | 19  | 2000-09-21 18:10:10 | 20220101 |</span><br><span class="line">| 1  | zs   | 18  | 2001-01-01 10:10:10 | 20220102 |</span><br><span class="line">| 2  | ls   | 17  | 2002-02-02 12:12:12 | 20220102 |</span><br><span class="line">| 3  | jack | 19  | 2000-09-21 18:10:10 | 20220102 |</span><br><span class="line">+----+------+-----+---------------------+----------+</span><br><span class="line">Fetched 6 row(s) in 0.56s</span><br><span class="line">[cdh02:21000] default&gt; select * from im_external_partition_table where dt&#x3D;&#39;20220101&#39;;</span><br><span class="line">Query: select * from im_external_partition_table where dt&#x3D;&#39;20220101&#39;</span><br><span class="line">Query submitted at: 2022-08-17 16:08:51 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;6040eadaa0e73718:2fe9f99000000000</span><br><span class="line">+----+------+-----+---------------------+----------+</span><br><span class="line">| id | name | age | birthday            | dt       |</span><br><span class="line">+----+------+-----+---------------------+----------+</span><br><span class="line">| 1  | zs   | 18  | 2001-01-01 10:10:10 | 20220101 |</span><br><span class="line">| 2  | ls   | 17  | 2002-02-02 12:12:12 | 20220101 |</span><br><span class="line">| 3  | jack | 19  | 2000-09-21 18:10:10 | 20220101 |</span><br><span class="line">+----+------+-----+---------------------+----------+</span><br><span class="line">Fetched 3 row(s) in 0.53s</span><br><span class="line">[cdh02:21000] default&gt; select name,count(*) from im_external_partition_table group by name;      </span><br><span class="line">Query: select name,count(*) from im_external_partition_table group by name</span><br><span class="line">Query submitted at: 2022-08-17 16:09:28 (Coordinator: http:&#x2F;&#x2F;cdh02:25000)</span><br><span class="line">Query progress can be monitored at: http:&#x2F;&#x2F;cdh02:25000&#x2F;query_plan?query_id&#x3D;cc4f17d9431288eb:304a855700000000</span><br><span class="line">+------+----------+</span><br><span class="line">| name | count(*) |</span><br><span class="line">+------+----------+</span><br><span class="line">| ls   | 2        |</span><br><span class="line">| jack | 2        |</span><br><span class="line">| zs   | 2        |</span><br><span class="line">+------+----------+</span><br><span class="line">Fetched 3 row(s) in 0.46s</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<hr>
+<blockquote>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-1.html">大数据开发工程师-数据分析引擎之Impala-1</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2023年06月18日 - 23:06</p>
+  <p><span>最后更新:</span>2023年06月19日 - 23:06</p>
+  <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-1.html" title="大数据开发工程师-数据分析引擎之Impala-1">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-1.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-1.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Impala/" rel="tag"><i class="fa fa-tag"></i> Impala</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%9E%81%E9%80%9F%E4%B8%8A%E6%89%8B%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE%E5%BA%93Redis-2.html" rel="next" title="大数据开发工程师-极速上手内存数据库Redis-2">
+                <i class="fa fa-chevron-left"></i> 大数据开发工程师-极速上手内存数据库Redis-2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E4%B9%8BImpala-2.html" rel="prev" title="大数据开发工程师-数据分析引擎之Impala-2">
+                大数据开发工程师-数据分析引擎之Impala-2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">372</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">51</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">120</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据分析引擎之Impala-1"><span class="nav-number">1.</span> <span class="nav-text">数据分析引擎之Impala-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-快速了解Impala"><span class="nav-number">1.1.</span> <span class="nav-text">1 快速了解Impala</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是Impala"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是Impala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的优点"><span class="nav-number">1.1.2.</span> <span class="nav-text">Impala的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的缺点"><span class="nav-number">1.1.3.</span> <span class="nav-text">Impala的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala-Hive"><span class="nav-number">1.1.4.</span> <span class="nav-text">Impala + Hive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala三大核心组件"><span class="nav-number">1.1.5.</span> <span class="nav-text">Impala三大核心组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的整体运行架构"><span class="nav-number">1.1.6.</span> <span class="nav-text">Impala的整体运行架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-快速上手使用Impala"><span class="nav-number">1.2.</span> <span class="nav-text">2 快速上手使用Impala</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的安装部署"><span class="nav-number">1.2.1.</span> <span class="nav-text">Impala的安装部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CDH平台中安装Impala"><span class="nav-number">1.2.2.</span> <span class="nav-text">CDH平台中安装Impala</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理HDFS的权限问题"><span class="nav-number">1.2.3.</span> <span class="nav-text">处理HDFS的权限问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的常见操作方式"><span class="nav-number">1.2.4.</span> <span class="nav-text">Impala的常见操作方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#impala-shell客户端命令行"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">impala-shell客户端命令行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#h-–help"><span class="nav-number">1.2.4.1.1.</span> <span class="nav-text">-h &#x2F; –help</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#v：查询当前Impala的版本。"><span class="nav-number">1.2.4.1.2.</span> <span class="nav-text">-v：查询当前Impala的版本。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#B-–delimited：对Impala的查询结果进行格式化。"><span class="nav-number">1.2.4.1.3.</span> <span class="nav-text">-B &#x2F; –delimited：对Impala的查询结果进行格式化。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#–output-delimiter：指定字段分隔符，默认-t"><span class="nav-number">1.2.4.1.4.</span> <span class="nav-text">–output_delimiter：指定字段分隔符，默认\t</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#o-–output-file：将查询结果输出到指定的文件中"><span class="nav-number">1.2.4.1.5.</span> <span class="nav-text">-o &#x2F; –output_file：将查询结果输出到指定的文件中</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#q-–query：指定查询语句"><span class="nav-number">1.2.4.1.6.</span> <span class="nav-text">-q &#x2F; –query：指定查询语句</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDBC访问"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">JDBC访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hue访问"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">Hue访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的常见使用"><span class="nav-number">1.2.5.</span> <span class="nav-text">Impala的常见使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内部表的使用"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">内部表的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#desc"><span class="nav-number">1.2.5.1.1.</span> <span class="nav-text">desc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#load加载数据"><span class="nav-number">1.2.5.1.2.</span> <span class="nav-text">load加载数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#外部表的使用"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">外部表的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分区表的使用"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">分区表的使用</span></a></li></ol></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">755.7k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
