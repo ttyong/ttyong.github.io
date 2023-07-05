@@ -107,7 +107,7 @@
 <meta property="og:image" content="https://s4.ax1x.com/2022/02/15/HWPKk6.md.png">
 <meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303161713017.png">
 <meta property="article:published_time" content="2022-02-13T06:05:55.000Z">
-<meta property="article:modified_time" content="2023-06-06T13:03:41.316Z">
+<meta property="article:modified_time" content="2023-07-04T02:14:33.353Z">
 <meta property="article:author" content="TTYONG">
 <meta property="article:tag" content="hadoop">
 <meta name="twitter:card" content="summary">
@@ -477,7 +477,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">但是这个数值是对不上的，我的linux机器每台只给它分配了2G的内存  通过free -m可以看到</span><br><span class="line"></span><br><span class="line">CPU只分配了1个 通过top命令可以看到</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202303161626192.png" alt="image-20230316162601856"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">那为什么在这里显示是内存是8G，CPU是8个呢？</span><br><span class="line">不要着急，我们先喝杯咖啡，看一下下面这2个参数</span><br><span class="line"></span><br><span class="line">yarn.nodemanager.resource.memory-mb：单节点可分配的物理内存总量，默认是8MB*1024，即8G</span><br><span class="line">yarn.nodemanager.resource.cpu-vcores：单节点可分配的虚拟CPU个数，默认是8</span><br><span class="line">看到没有，这都是默认单节点的内存和CPU信息，就算你这个机器没有这么多资源，但是在yarn-default.xml中有这些默认资源的配置，这样当nodemanager去上报资源的时候就会读取这两个参数的值，这也就是为什么我们在前面看到了单节点都是8G内存和8个cpu，其实我们的linux机器是没有这么大资源的，那你这就是虚标啊，肯定不能这样干，你实际有多少就是多少，所以我们可以修改这些参数的值，修改的话就在yarn-site.xml中进行配置即可，改完之后就可以看到真实的信息了，在这我就先不改了，针对我们的学习环境不影响使用，修改的意义不大，你知道这回事就行了。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">那为什么在这里显示是内存是8G，CPU是8个呢？</span><br><span class="line">不要着急，我们先喝杯咖啡，看一下下面这2个参数</span><br><span class="line"></span><br><span class="line">yarn.nodemanager.resource.memory-mb：单节点可分配的物理内存总量，默认是8MB*1024，即8G</span><br><span class="line">yarn.nodemanager.resource.cpu-vcores：单节点可分配的虚拟CPU个数，默认是8</span><br><span class="line"></span><br><span class="line">看到没有，这都是默认单节点的内存和CPU信息，就算你这个机器没有这么多资源，但是在yarn-default.xml中有这些默认资源的配置，这样当nodemanager去上报资源的时候就会读取这两个参数的值，这也就是为什么我们在前面看到了单节点都是8G内存和8个cpu，其实我们的linux机器是没有这么大资源的，那你这就是虚标啊，肯定不能这样干，你实际有多少就是多少，所以我们可以修改这些参数的值，修改的话就在yarn-site.xml中进行配置即可，改完之后就可以看到真实的信息了，在这我就先不改了，针对我们的学习环境不影响使用，修改的意义不大，你知道这回事就行了。</span><br></pre></td></tr></table></figure>
 
 <h3 id="YARN中的调度器-面试中经常问"><a href="#YARN中的调度器-面试中经常问" class="headerlink" title="YARN中的调度器(面试中经常问)"></a>YARN中的调度器(面试中经常问)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">接下来我们来详细分析一下YARN中的调度器，这个是非常实用的东西，面试的时候也会经常问到。</span><br><span class="line">大家可以想象一个场景，我们集群的资源是有限的，在实际工作中会有很多人向集群中提交任务，那这时候资源如何分配呢？</span><br><span class="line">如果你提交了一个很占资源的任务，这一个任务就把集群中90%的资源都占用了，后面别人再提交任务，剩下的资源就不够用了，这个时候怎么办？</span><br><span class="line"></span><br><span class="line">让他们等你的任务执行完了再执行？还是说你把你的资源匀出来一些分给他，你少占用一些，让他也能慢慢的开始执行？</span><br><span class="line">[root@bigdata02 ~]# free -m</span><br><span class="line">	total used free shared buff&#x2F;cache availab</span><br><span class="line">Mem: 1819  372  1133   9        313     12</span><br><span class="line">Swap: 2047  0   2047</span><br><span class="line">1234</span><br><span class="line">top - 11:30:35 up 1:05, 1 user, load average: 0.00, 0.08, 0.10</span><br><span class="line">Tasks: 99 total, 1 running, 98 sleeping, 0 stopped, 0 zombie</span><br><span class="line">%Cpu0 : 0.3 us, 0.3 sy, 0.0 ni, 99.3 id, 0.0 wa, 0.0 hi, 0.0 si</span><br></pre></td></tr></table></figure>
 
@@ -537,7 +537,7 @@
   <p><span>本文标题:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-YARN%E5%AE%9E%E6%88%98.html">大数据开发工程师-第六周 第三章 YARN实战</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
   <p><span>发布时间:</span>2022年02月13日 - 14:02</p>
-  <p><span>最后更新:</span>2023年06月06日 - 21:06</p>
+  <p><span>最后更新:</span>2023年07月04日 - 10:07</p>
   <p><span>原始链接:</span><a href="/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-YARN%E5%AE%9E%E6%88%98.html" title="大数据开发工程师-第六周 第三章 YARN实战">http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-YARN%E5%AE%9E%E6%88%98.html</a>
     <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%BC%80%E5%8F%91%E5%B7%A5%E7%A8%8B%E5%B8%88-%E7%AC%AC%E5%85%AD%E5%91%A8-%E7%AC%AC%E4%B8%89%E7%AB%A0-YARN%E5%AE%9E%E6%88%98.html" aria-label="复制成功！"></i></span>
   </p>
@@ -703,7 +703,7 @@
 		
 		  <div class="site-state-item site-state-posts">
 			<a href="/archives/%7C%7C%20archive">
-			  <span class="site-state-item-count">375</span>
+			  <span class="site-state-item-count">377</span>
 			  <span class="site-state-item-name">日志</span>
 			</a>
 		  </div>
@@ -714,7 +714,7 @@
 		  
 		  <div class="site-state-item site-state-categories">
 			<a href="/categories/index.html">
-			  <span class="site-state-item-count">51</span>
+			  <span class="site-state-item-count">52</span>
 			  <span class="site-state-item-name">分类</span>
 			</a>
 		  </div>
@@ -854,7 +854,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">794.4k</span>
+    <span title="Site words total count">807.8k</span>
   
 </div>
 

@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<script src="https://cdn.jsdelivr.net/gh/wallleap/cdn/js/piao.js"></script>
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="baidu-site-verification" content="s8Pe1TBqyy">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-big-counter.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/animal_bear_panda_32px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/animal_bear_panda_16px_4023_easyicon.net.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="SQL Server,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="TianYong's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁SQL Server编程结构变量声明局部变量12DECLARE @局部变量名 数据类型[， @局部变量名 数据类型]  可以同时定义多个变量，中间用逗号隔开 赋值局部变量为局部变量赋值可以用SET或SELECT语句 123456SET @变量名&#x3D;表达式SELECT 列1,..,列n@变量名&#x3D;表达式FROM 表名WHERE 条件表达">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库系统-变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁">
+<meta property="og:url" content="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E5%8F%98%E9%87%8F%E6%B3%A8%E9%87%8A%E6%89%B9%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%87%BD%E6%95%B0%E6%B8%B8%E6%A0%87%E4%BA%8B%E5%8A%A1%E9%94%81.html">
+<meta property="og:site_name" content="TianYong&#39;s Blog">
+<meta property="og:description" content="变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁SQL Server编程结构变量声明局部变量12DECLARE @局部变量名 数据类型[， @局部变量名 数据类型]  可以同时定义多个变量，中间用逗号隔开 赋值局部变量为局部变量赋值可以用SET或SELECT语句 123456SET @变量名&#x3D;表达式SELECT 列1,..,列n@变量名&#x3D;表达式FROM 表名WHERE 条件表达">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/19/Y5Mhaq.th.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/20/YTFdDP.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281815379.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281816950.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281820890.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281821151.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281822258.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281823178.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281824694.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281825437.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281827839.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281828318.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281829854.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281830957.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281830443.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281833310.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281834907.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281835912.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281836650.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281839648.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281841069.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281846480.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/19/Y5Y8jf.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/20/YTuBVA.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/20/YTkJaT.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/19/Y5dghQ.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271814543.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271816001.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271819530.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271823260.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271824676.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271825173.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271827812.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271829928.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271829989.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271831981.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271831922.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271833867.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271833598.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271834172.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271834541.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271834507.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271835236.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271835154.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271837277.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271838590.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839421.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839894.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839790.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839579.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271840181.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271723158.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271724396.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271727816.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271729560.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271729416.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271730001.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271732624.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271733246.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271734249.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271734277.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271735225.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271735366.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271736663.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271737228.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271738766.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271746576.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271747766.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271748000.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281056444.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281058525.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281058157.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281059964.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281059121.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281101533.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281103687.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281106044.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281107882.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281109026.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281110456.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281111370.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281112353.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281113276.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281118283.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281127744.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281129579.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281130944.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281132738.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281120839.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281120365.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281123067.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281134280.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281136696.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281137179.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281137702.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281144189.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281146042.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281147976.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281156441.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281158021.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281803027.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281803385.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281804151.png">
+<meta property="og:image" content="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281804206.png">
+<meta property="article:published_time" content="2020-05-19T06:14:37.000Z">
+<meta property="article:modified_time" content="2023-06-28T11:02:36.838Z">
+<meta property="article:author" content="TTYONG">
+<meta property="article:tag" content="SQL Server">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/05/19/Y5Mhaq.th.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tianyong.fun/数据库系统-变量注释批处理流程控制存储过程函数游标事务锁.html">
+
+
+
+
+
+  <title>数据库系统-变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁 | TianYong's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">TianYong's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">比你优秀的人都努力，有什么理由不努力！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E5%8F%98%E9%87%8F%E6%B3%A8%E9%87%8A%E6%89%B9%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%87%BD%E6%95%B0%E6%B8%B8%E6%A0%87%E4%BA%8B%E5%8A%A1%E9%94%81.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TTYONG">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="TianYong's Blog">
+    </span>
+
+    
+      <header class="post-header">
+	  
+	  
+
+
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据库系统-变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-19T14:14:37+08:00">
+                2020-05-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<script type="text/javascript" src="/js/src/bai.js"></script>
+
+
+
+<h1 id="变量-注释-批处理-流程控制-存储过程函数-游标-事务-锁"><a href="#变量-注释-批处理-流程控制-存储过程函数-游标-事务-锁" class="headerlink" title="变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁"></a>变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁</h1><h2 id="SQL-Server编程结构"><a href="#SQL-Server编程结构" class="headerlink" title="SQL Server编程结构"></a>SQL Server编程结构</h2><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><h4 id="声明局部变量"><a href="#声明局部变量" class="headerlink" title="声明局部变量"></a>声明局部变量</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DECLARE</span> @局部变量名 数据类型</span><br><span class="line">[， @局部变量名 数据类型]</span><br></pre></td></tr></table></figure>
+
+<p><em>可以同时定义多个变量，中间用逗号隔开</em></p>
+<h4 id="赋值局部变量"><a href="#赋值局部变量" class="headerlink" title="赋值局部变量"></a>赋值局部变量</h4><p><em>为局部变量赋值可以用SET或SELECT语句</em></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> @变量名=表达式</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> 列<span class="number">1</span>,..,列n</span><br><span class="line">@变量名=表达式</span><br><span class="line"><span class="keyword">FROM</span> 表名</span><br><span class="line"><span class="keyword">WHERE</span> 条件表达式</span><br></pre></td></tr></table></figure>
+
+<p><em>注: 如果SELECT语句返回多个值，则局部变量取最后一个返回值。例：</em></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> @Sname = Sname </span><br><span class="line"><span class="keyword">FROM</span> Student</span><br><span class="line"><span class="keyword">WHERE</span> Ssex = <span class="string">'男'</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="显示信息"><a href="#显示信息" class="headerlink" title="显示信息"></a>显示信息</h4><h5 id="Print语句"><a href="#Print语句" class="headerlink" title="Print语句"></a>Print语句</h5><p><em>print语句只能显示字符数据类型</em></p>
+<h5 id><a href="#" class="headerlink" title></a></h5><h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*注释文本*/</span></span><br><span class="line">或</span><br><span class="line"><span class="comment">-- 注释文本</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="批处理"><a href="#批处理" class="headerlink" title="批处理"></a>批处理</h3><p><em>批处理是成组执行的一条或多条T-SQL指令</em></p>
+<p><em>GO语句用于指定批处理语句的结束处，单独使用一行。本身不是T-SQL的部分</em></p>
+<p><strong>注意</strong>：</p>
+<p>不能在同一个批处理处，先删除，后使用</p>
+<p>不在在同一个批处理处，先修改，后使用</p>
+<h3 id="流程控制语句"><a href="#流程控制语句" class="headerlink" title="流程控制语句"></a>流程控制语句</h3><h4 id="BEGIN…END"><a href="#BEGIN…END" class="headerlink" title="BEGIN…END"></a>BEGIN…END</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">语句</span><br><span class="line">....</span><br><span class="line"><span class="keyword">END</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="IF语句"><a href="#IF语句" class="headerlink" title="IF语句"></a>IF语句</h4><h5 id="IF-THEN语句"><a href="#IF-THEN语句" class="headerlink" title="IF-THEN语句"></a>IF-THEN语句</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IF condition THEN</span><br><span class="line">	Sequence_of_statements;</span><br><span class="line"><span class="keyword">END</span> <span class="keyword">IF</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="IF-THEN-ELSE语句"><a href="#IF-THEN-ELSE语句" class="headerlink" title="IF-THEN-ELSE语句"></a>IF-THEN-ELSE语句</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IF condition THEN</span><br><span class="line">	Sequence_of_statements1;</span><br><span class="line">ELSE</span><br><span class="line">	Sequence_of_statements2;</span><br><span class="line"><span class="keyword">END</span> <span class="keyword">IF</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="嵌套的IF语句"><a href="#嵌套的IF语句" class="headerlink" title="嵌套的IF语句"></a>嵌套的IF语句</h5><p><em>在THEN和ELSE子句中还可以包含IF语句</em></p>
+<h5 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h5><p><a href="https://imgchr.com/i/Y5Mhaq" target="_blank" rel="external nofollow noopener noreferrer"><img src="https://s1.ax1x.com/2020/05/19/Y5Mhaq.th.png" alt="Y5Mhaq.png" border="0"></a></p>
+<img src="https://s1.ax1x.com/2020/05/20/YTFdDP.png" alt="YTFdDP.png" border="0">
+
+<h4 id="WHILE"><a href="#WHILE" class="headerlink" title="WHILE"></a>WHILE</h4><h4 id="GOTO"><a href="#GOTO" class="headerlink" title="GOTO"></a>GOTO</h4><h4 id="WAITFOR"><a href="#WAITFOR" class="headerlink" title="WAITFOR"></a>WAITFOR</h4><h4 id="RETURN"><a href="#RETURN" class="headerlink" title="RETURN"></a>RETURN</h4><h4 id="CASE"><a href="#CASE" class="headerlink" title="CASE"></a>CASE</h4><h2 id="存储过程-重点"><a href="#存储过程-重点" class="headerlink" title="存储过程(重点)"></a>存储过程(重点)</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281815379.png" alt="image-20230628181507337"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281816950.png" alt="image-20230628181658909"></p>
+<p><em>过程化 SQL块主要有两种类型，即命名块和匿名块</em></p>
+<p><em>匿名块每次执行时都要进行编译，它不能被存储到数据库中，也不能在其他过程化SQ L块中调用</em></p>
+<p>  <em>过程和函数是命名块，它们被编译后保存在数据库中，称 为持久性存储模块) ,可以被反复调用，运行速度较快</em></p>
+<h3 id="存储过程类型"><a href="#存储过程类型" class="headerlink" title="存储过程类型"></a>存储过程类型</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281820890.png" alt="image-20230628182009733"></p>
+<h4 id="用户自定义的存储过程"><a href="#用户自定义的存储过程" class="headerlink" title="用户自定义的存储过程"></a>用户自定义的存储过程</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281821151.png" alt="image-20230628182135119"></p>
+<h5 id="Transact-SQL"><a href="#Transact-SQL" class="headerlink" title="Transact-SQL"></a>Transact-SQL</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281822258.png" alt="image-20230628182251852"></p>
+<h5 id="CLR"><a href="#CLR" class="headerlink" title="CLR"></a>CLR</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281823178.png" alt="image-20230628182307146"></p>
+<h4 id="系统存储过程"><a href="#系统存储过程" class="headerlink" title="系统存储过程"></a>系统存储过程</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281824694.png" alt="image-20230628182429413"></p>
+<h3 id="设计存储过程"><a href="#设计存储过程" class="headerlink" title="设计存储过程"></a>设计存储过程</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281825437.png" alt="image-20230628182531569"></p>
+<h4 id="存储过程的设计规则"><a href="#存储过程的设计规则" class="headerlink" title="存储过程的设计规则"></a>存储过程的设计规则</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281827839.png" alt="image-20230628182741905"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281828318.png" alt="image-20230628182842975"></p>
+<h4 id="限定存储过程内的名称"><a href="#限定存储过程内的名称" class="headerlink" title="限定存储过程内的名称"></a>限定存储过程内的名称</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281829854.png" alt="image-20230628182929635"></p>
+<h4 id="对过程定义进行模糊处理"><a href="#对过程定义进行模糊处理" class="headerlink" title="对过程定义进行模糊处理"></a>对过程定义进行模糊处理</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281830957.png" alt="image-20230628183007931"></p>
+<h4 id="SET语句选项"><a href="#SET语句选项" class="headerlink" title="SET语句选项"></a>SET语句选项</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281830443.png" alt="image-20230628183051168"></p>
+<h3 id="存储过程的基本概念"><a href="#存储过程的基本概念" class="headerlink" title="存储过程的基本概念"></a>存储过程的基本概念</h3><p><em>存储过程是由过程化SQL语句书写的过程，这个过程经编译和优化后存储在数据库服务器中，因此称它为存储过程，使用时只要调用即可</em>  </p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>存储过程降低了客户机和服务器之间的通信量  </p>
+<p>运行效率高  </p>
+<p>方便实施企业规则  </p>
+<h3 id="创建存储过程"><a href="#创建存储过程" class="headerlink" title="创建存储过程"></a>创建存储过程</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281833310.png" alt="image-20230628183356349"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281834907.png" alt="image-20230628183437951"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281835912.png" alt="image-20230628183520082"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281836650.png" alt="image-20230628183651352"></p>
+<h4 id="带参数存储过程实例"><a href="#带参数存储过程实例" class="headerlink" title="带参数存储过程实例"></a>带参数存储过程实例</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281839648.png" alt="image-20230628183914762"></p>
+<h4 id="带输出参数实例"><a href="#带输出参数实例" class="headerlink" title="带输出参数实例"></a>带输出参数实例</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281841069.png" alt="image-20230628184158078"></p>
+<h4 id="带返回状态值实例"><a href="#带返回状态值实例" class="headerlink" title="带返回状态值实例"></a>带返回状态值实例</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281846480.png" alt="image-20230628184631093"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> 过程名([@参数<span class="number">1</span> 类型,.., @参数n 类型)</span><br><span class="line"><span class="keyword">AS</span> &lt;过程化<span class="keyword">SQL</span>块&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--参数不带括号也可以</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> 过程名</span><br><span class="line">@参数<span class="number">1</span> 类型,.., @参数n 类型</span><br><span class="line"><span class="keyword">AS</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><em>可简写成PROC</em></p>
+<h4 id="无参数"><a href="#无参数" class="headerlink" title="无参数"></a>无参数</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> aa</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SQL</span>语句</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><img src="https://s1.ax1x.com/2020/05/19/Y5Y8jf.png" alt="Y5Y8jf.png" border="0">
+
+<img src="https://s1.ax1x.com/2020/05/20/YTuBVA.png" alt="YTuBVA.png" border="0">
+
+<h4 id="默认参数"><a href="#默认参数" class="headerlink" title="默认参数"></a>默认参数</h4><img src="https://s1.ax1x.com/2020/05/20/YTkJaT.png" alt="YTkJaT.png" border="0">
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXECUTE</span> exp4</span><br><span class="line"><span class="keyword">EXECUTE</span> exp4 <span class="string">'%...'</span></span><br><span class="line"><span class="keyword">EXECUTE</span> exp4 @pno=<span class="string">'....'</span></span><br><span class="line"><span class="keyword">EXECUTE</span> exp4 <span class="string">'...'</span>, <span class="string">'...'</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="执行存储过程"><a href="#执行存储过程" class="headerlink" title="执行存储过程"></a>执行存储过程</h3><img src="https://s1.ax1x.com/2020/05/19/Y5dghQ.png" alt="Y5dghQ.png" border="0">
+
+<p><em>可简写成EXEC</em></p>
+<h3 id="修改存储过程"><a href="#修改存储过程" class="headerlink" title="修改存储过程"></a>修改存储过程</h3><h4 id="重命名"><a href="#重命名" class="headerlink" title="重命名"></a>重命名</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">PROCEDURE</span> 过程名<span class="number">1</span> <span class="keyword">RENAME</span> <span class="keyword">TO</span> 过程名<span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重编译"><a href="#重编译" class="headerlink" title="重编译"></a>重编译</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">PROCEDURE</span> 过程名(参数)</span><br><span class="line"><span class="keyword">AS</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="删除存储过程"><a href="#删除存储过程" class="headerlink" title="删除存储过程"></a>删除存储过程</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> 过程名;</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271814543.png" alt="image-20230627181423609"></p>
+<p><em>和存储过程一样都是持久性存储模块；不同的是函数要指定返回类型</em></p>
+<h3 id="自定义函数"><a href="#自定义函数" class="headerlink" title="自定义函数"></a>自定义函数</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271816001.png" alt="image-20230627181608352"></p>
+<h4 id="标量值函数"><a href="#标量值函数" class="headerlink" title="标量值函数"></a>标量值函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271819530.png" alt="image-20230627181919688"></p>
+<h4 id="内联表值函数"><a href="#内联表值函数" class="headerlink" title="内联表值函数"></a>内联表值函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271823260.png" alt="image-20230627182303422"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271824676.png" alt="image-20230627182435852"></p>
+<h4 id="多语句表值函数"><a href="#多语句表值函数" class="headerlink" title="多语句表值函数"></a>多语句表值函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271825173.png" alt="image-20230627182510793"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271827812.png" alt="image-20230627182737834"></p>
+<h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> 函数名([参数<span class="number">1</span>, ..., 参数n]) <span class="keyword">RETURNS</span>&lt;类型&gt;</span><br><span class="line"><span class="keyword">AS</span> &lt;过程化<span class="keyword">SQL</span>块&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span>/<span class="keyword">SELECT</span> 函数名([参数<span class="number">1</span>, ..., 参数n])</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">FUNCTION</span> 过程名 <span class="number">1</span> <span class="keyword">RENAME</span> <span class="keyword">TO</span> 过程名 <span class="number">2</span>; <span class="comment">--重命名</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">FUNCTION</span> 函数名 COMPILE; <span class="comment">--重新编译一个函数</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="内置函数"><a href="#内置函数" class="headerlink" title="内置函数"></a>内置函数</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271829928.png" alt="image-20230627182915896"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271829989.png" alt="image-20230627182928490"></p>
+<h4 id="聚集函数"><a href="#聚集函数" class="headerlink" title="聚集函数"></a>聚集函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271831981.png" alt="image-20230627183106755"></p>
+<h4 id="字符串函数"><a href="#字符串函数" class="headerlink" title="字符串函数"></a>字符串函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271831922.png" alt="image-20230627183157027"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271833867.png" alt="image-20230627183320746"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271833598.png" alt="image-20230627183344420"></p>
+<h4 id="日期函数"><a href="#日期函数" class="headerlink" title="日期函数"></a>日期函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271834172.png" alt="image-20230627183401452"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271834541.png" alt="image-20230627183434394"></p>
+<h4 id="数学函数"><a href="#数学函数" class="headerlink" title="数学函数"></a>数学函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271834507.png" alt="image-20230627183446749"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271835236.png" alt="image-20230627183534239"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271835154.png" alt="image-20230627183553132"></p>
+<h4 id="数据类型转换函数"><a href="#数据类型转换函数" class="headerlink" title="数据类型转换函数"></a>数据类型转换函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271837277.png" alt="image-20230627183659272"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271838590.png" alt="image-20230627183856643"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839421.png" alt="image-20230627183906996"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839894.png" alt="image-20230627183918226"></p>
+<h4 id="系统函数"><a href="#系统函数" class="headerlink" title="系统函数"></a>系统函数</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839790.png" alt="image-20230627183941014"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271839579.png" alt="image-20230627183955787"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271840181.png" alt="image-20230627184004014"></p>
+<h2 id="游标"><a href="#游标" class="headerlink" title="游标"></a>游标</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271723158.png" alt="image-20230627172342865"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271724396.png" alt="image-20230627172413236"></p>
+<h3 id="使用游标的步骤"><a href="#使用游标的步骤" class="headerlink" title="使用游标的步骤"></a>使用游标的步骤</h3><h4 id="声明游标"><a href="#声明游标" class="headerlink" title="声明游标"></a>声明游标</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271727816.png" alt="image-20230627172740854"></p>
+<h5 id="INSENSITIVE"><a href="#INSENSITIVE" class="headerlink" title="INSENSITIVE"></a>INSENSITIVE</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271729560.png" alt="image-20230627172905452"></p>
+<h5 id="SCROLL"><a href="#SCROLL" class="headerlink" title="SCROLL"></a>SCROLL</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271729416.png" alt="image-20230627172923654"></p>
+<h5 id="游标类型"><a href="#游标类型" class="headerlink" title="游标类型"></a>游标类型</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271730001.png" alt="image-20230627173021164"></p>
+<h5 id="SELECT-STATEMENT"><a href="#SELECT-STATEMENT" class="headerlink" title="SELECT_STATEMENT"></a>SELECT_STATEMENT</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271732624.png" alt="image-20230627173255471"></p>
+<h5 id="READ-ONLY"><a href="#READ-ONLY" class="headerlink" title="READ_ONLY"></a>READ_ONLY</h5><h5 id="UPDATE"><a href="#UPDATE" class="headerlink" title="UPDATE"></a>UPDATE</h5><h4 id="打开游标"><a href="#打开游标" class="headerlink" title="打开游标"></a>打开游标</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271733246.png" alt="image-20230627173329463"></p>
+<h4 id="读取数据"><a href="#读取数据" class="headerlink" title="读取数据"></a>读取数据</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271734249.png" alt="image-20230627173433404"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271734277.png" alt="image-20230627173453217"></p>
+<h4 id="关闭游标"><a href="#关闭游标" class="headerlink" title="关闭游标"></a>关闭游标</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271735225.png" alt="image-20230627173508316"></p>
+<h4 id="释放游标"><a href="#释放游标" class="headerlink" title="释放游标"></a>释放游标</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271735366.png" alt="image-20230627173524423"></p>
+<h3 id="游标运用"><a href="#游标运用" class="headerlink" title="游标运用"></a>游标运用</h3><h4 id="使用游标逐行读取"><a href="#使用游标逐行读取" class="headerlink" title="使用游标逐行读取"></a>使用游标逐行读取</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271736663.png" alt="image-20230627173636851"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271737228.png" alt="image-20230627173713173"></p>
+<h4 id="返回指定行记录"><a href="#返回指定行记录" class="headerlink" title="返回指定行记录"></a>返回指定行记录</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271738766.png" alt="image-20230627173846851"></p>
+<h4 id="使用游标修改数据"><a href="#使用游标修改数据" class="headerlink" title="使用游标修改数据"></a>使用游标修改数据</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271746576.png" alt="image-20230627174621686"></p>
+<h4 id="使用游标删除数据"><a href="#使用游标删除数据" class="headerlink" title="使用游标删除数据"></a>使用游标删除数据</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271747766.png" alt="image-20230627174716635"></p>
+<h4 id="使用ORDER关键字改变游标中行的顺序"><a href="#使用ORDER关键字改变游标中行的顺序" class="headerlink" title="使用ORDER关键字改变游标中行的顺序"></a>使用ORDER关键字改变游标中行的顺序</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306271748000.png" alt="image-20230627174805233"></p>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281056444.png" alt="image-20230628105646288"></p>
+<h3 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281058525.png" alt="image-20230628105804097"></p>
+<h3 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281058157.png" alt="image-20230628105840169"></p>
+<h3 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281059964.png" alt="image-20230628105927683"></p>
+<h3 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281059121.png" alt="image-20230628105945187"></p>
+<h3 id="控制事务流程"><a href="#控制事务流程" class="headerlink" title="控制事务流程"></a>控制事务流程</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281101533.png" alt="image-20230628110105411"></p>
+<h4 id="显示事务"><a href="#显示事务" class="headerlink" title="显示事务"></a>显示事务</h4><h4 id="-1"><a href="#-1" class="headerlink" title></a><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281103687.png" alt="image-20230628110309931"></h4><h5 id="启动事务"><a href="#启动事务" class="headerlink" title="启动事务"></a>启动事务</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281106044.png" alt="image-20230628110600141"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281107882.png" alt="image-20230628110724477"></p>
+<h6 id="事务名称"><a href="#事务名称" class="headerlink" title="事务名称"></a>事务名称</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281109026.png" alt="image-20230628110916104"></p>
+<h6 id="事务变量名称"><a href="#事务变量名称" class="headerlink" title="事务变量名称"></a>事务变量名称</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281110456.png" alt="image-20230628111012533"></p>
+<h6 id="WITH-MARK"><a href="#WITH-MARK" class="headerlink" title="WITH MARK"></a>WITH MARK</h6><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281111370.png" alt="image-20230628111130309"></p>
+<h5 id="提交事务"><a href="#提交事务" class="headerlink" title="提交事务"></a>提交事务</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281112353.png" alt="image-20230628111229391"></p>
+<h5 id="回滚事务"><a href="#回滚事务" class="headerlink" title="回滚事务"></a>回滚事务</h5><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281113276.png" alt="image-20230628111259526"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281118283.png" alt="image-20230628111835274"></p>
+<h4 id="自动提交事务"><a href="#自动提交事务" class="headerlink" title="自动提交事务"></a>自动提交事务</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281127744.png" alt="image-20230628112708042"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281129579.png" alt="image-20230628112958566"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281130944.png" alt="image-20230628113009847"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281132738.png" alt="image-20230628113243700"></p>
+<h4 id="隐式事务"><a href="#隐式事务" class="headerlink" title="隐式事务"></a>隐式事务</h4><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281120839.png" alt="image-20230628112000960"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281120365.png" alt="image-20230628112022358"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281123067.png" alt="image-20230628112344326"></p>
+<h2 id="数据锁定"><a href="#数据锁定" class="headerlink" title="数据锁定"></a>数据锁定</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281134280.png" alt="image-20230628113438700"></p>
+<h3 id="丢失更新"><a href="#丢失更新" class="headerlink" title="丢失更新"></a>丢失更新</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281136696.png" alt="image-20230628113648731"></p>
+<h3 id="脏读"><a href="#脏读" class="headerlink" title="脏读"></a>脏读</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281137179.png" alt="image-20230628113720153"></p>
+<h3 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281137702.png" alt="image-20230628113754875"></p>
+<h2 id="数据锁分类"><a href="#数据锁分类" class="headerlink" title="数据锁分类"></a>数据锁分类</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281144189.png" alt="image-20230628114413216"></p>
+<h3 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281146042.png" alt="image-20230628114641834"></p>
+<h3 id="更新锁"><a href="#更新锁" class="headerlink" title="更新锁"></a>更新锁</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281147976.png" alt="image-20230628114741150"></p>
+<h3 id="排它锁"><a href="#排它锁" class="headerlink" title="排它锁"></a>排它锁</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281156441.png" alt="image-20230628115601543"></p>
+<h3 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281158021.png" alt="image-20230628115816496"></p>
+<h2 id="锁的粒度与时间"><a href="#锁的粒度与时间" class="headerlink" title="锁的粒度与时间"></a>锁的粒度与时间</h2><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281803027.png" alt="image-20230628180307058"></p>
+<h3 id="自定义锁"><a href="#自定义锁" class="headerlink" title="自定义锁"></a>自定义锁</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281803385.png" alt="image-20230628180354945"></p>
+<h3 id="使用注意事项"><a href="#使用注意事项" class="headerlink" title="使用注意事项"></a>使用注意事项</h3><p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281804151.png" alt="image-20230628180427351"></p>
+<p><img src="https://gitee.com/ttyong/hexoBlog/raw/master/%E6%9E%97%E5%AD%90%E9%9B%A8%20%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8/202306281804206.png" alt="image-20230628180439260"></p>
+<hr>
+<blockquote>
+<p>你未必万丈光芒，但始终温暖有光。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E5%8F%98%E9%87%8F%E6%B3%A8%E9%87%8A%E6%89%B9%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%87%BD%E6%95%B0%E6%B8%B8%E6%A0%87%E4%BA%8B%E5%8A%A1%E9%94%81.html">数据库系统-变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 TTYONG 的个人博客">TTYONG</a></p>
+  <p><span>发布时间:</span>2020年05月19日 - 14:05</p>
+  <p><span>最后更新:</span>2023年06月28日 - 19:06</p>
+  <p><span>原始链接:</span><a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E5%8F%98%E9%87%8F%E6%B3%A8%E9%87%8A%E6%89%B9%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%87%BD%E6%95%B0%E6%B8%B8%E6%A0%87%E4%BA%8B%E5%8A%A1%E9%94%81.html" title="数据库系统-变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁">http://tianyong.fun/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E5%8F%98%E9%87%8F%E6%B3%A8%E9%87%8A%E6%89%B9%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%87%BD%E6%95%B0%E6%B8%B8%E6%A0%87%E4%BA%8B%E5%8A%A1%E9%94%81.html</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://tianyong.fun/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-%E5%8F%98%E9%87%8F%E6%B3%A8%E9%87%8A%E6%89%B9%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%87%BD%E6%95%B0%E6%B8%B8%E6%A0%87%E4%BA%8B%E5%8A%A1%E9%94%81.html" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+	</div>
+
+
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>多少都是爱</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_reward.jpg" alt="TTYONG 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay_reward.jpg" alt="TTYONG 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SQL-Server/" rel="tag"><i class="fa fa-tag"></i> SQL Server</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/hadoop%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8-%E5%A5%BD%E5%8F%8B%E6%8E%A8%E8%8D%90(%E5%AE%9E%E9%AA%8C%E8%AF%BE).html" rel="next" title="hadoop理论课-好友推荐">
+                <i class="fa fa-chevron-left"></i> hadoop理论课-好友推荐
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F-sql%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E9%81%87%E5%88%B0%E7%9A%84%E5%BC%82%E5%B8%B8.html" rel="prev" title="数据库系统-sql执行过程遇到的异常">
+                数据库系统-sql执行过程遇到的异常 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+      
+        
+          <ul class="sidebar-nav motion-element">
+            <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+              文章目录
+            </li>
+            <li class="sidebar-nav-overview" data-target="site-overview">
+              站点概览
+            </li>
+          </ul>
+        
+      
+
+	<section class="site-overview sidebar-panel">
+	  <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+		<img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="TTYONG">
+		<p class="site-author-name" itemprop="name">TTYONG</p>
+		 
+			<p class="site-description motion-element" itemprop="description"></p>
+		 
+	  </div>
+	  <nav class="site-state motion-element">
+
+		
+		  <div class="site-state-item site-state-posts">
+			<a href="/archives/%7C%7C%20archive">
+			  <span class="site-state-item-count">377</span>
+			  <span class="site-state-item-name">日志</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-categories">
+			<a href="/categories/index.html">
+			  <span class="site-state-item-count">52</span>
+			  <span class="site-state-item-name">分类</span>
+			</a>
+		  </div>
+		
+
+		
+		  
+		  
+		  <div class="site-state-item site-state-tags">
+			<a href="/tags/index.html">
+			  <span class="site-state-item-count">107</span>
+			  <span class="site-state-item-name">标签</span>
+			</a>
+		  </div>
+		
+
+	  </nav>
+
+	  
+		<div class="feed-link motion-element">
+		  <a href="/atom.xml" rel="alternate">
+			<i class="fa fa-rss"></i>
+			RSS
+		  </a>
+		</div>
+	  
+
+	  <div class="links-of-author motion-element">
+		
+		  
+			<span class="links-of-author-item">
+			  <a href="2364076207@qq.com || envelope" target="_blank" title="E-Mail">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				E-Mail
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://wpa.qq.com/msgrd?v=3&uin=2364076207&site=qq&menu=yes || qq" target="_blank" title="QQ" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				QQ
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://weibo.com/p/1005051833844383/home || weixin" target="_blank" title="WeiXin" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				WeiXin
+			  </a>
+			</span>
+		  
+			<span class="links-of-author-item">
+			  <a href="https://www.zhihu.com/people/he-he-ty || zhihu" target="_blank" title="ZhiHu" rel="external nofollow noopener noreferrer">
+				
+				  <i class="fa fa-fw fa-globe"></i>
+				
+				ZhiHu
+			  </a>
+			</span>
+		  
+		
+	  </div>
+
+	  
+	  
+
+	  
+	  
+		<div class="links-of-blogroll motion-element links-of-blogroll-block">
+		  <div class="links-of-blogroll-title">
+			<i class="fa  fa-fw fa-link"></i>
+			友链
+		  </div>
+		  <ul class="links-of-blogroll-list">
+			
+			  <li class="links-of-blogroll-item">
+				<a href="https://www.baidu.com/" target="_blank" rel="external nofollow noopener noreferrer">百度</a>
+			  </li>
+			
+		  </ul>
+		</div>
+	  
+
+	  
+
+
+	</section>
+	
+	  
+	  <!--noindex-->
+		<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+		  <div class="post-toc">
+
+			
+			  
+			
+
+			
+			  <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#变量-注释-批处理-流程控制-存储过程函数-游标-事务-锁"><span class="nav-number">1.</span> <span class="nav-text">变量|注释|批处理|流程控制|存储过程函数|游标|事务|锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-Server编程结构"><span class="nav-number">1.1.</span> <span class="nav-text">SQL Server编程结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">1.1.1.</span> <span class="nav-text">变量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#声明局部变量"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">声明局部变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#赋值局部变量"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">赋值局部变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显示信息"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">显示信息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Print语句"><span class="nav-number">1.1.1.3.1.</span> <span class="nav-text">Print语句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#"><span class="nav-number">1.1.1.3.2.</span> <span class="nav-text"></span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注释"><span class="nav-number">1.1.2.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#批处理"><span class="nav-number">1.1.3.</span> <span class="nav-text">批处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流程控制语句"><span class="nav-number">1.1.4.</span> <span class="nav-text">流程控制语句</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BEGIN…END"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">BEGIN…END</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IF语句"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">IF语句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IF-THEN语句"><span class="nav-number">1.1.4.2.1.</span> <span class="nav-text">IF-THEN语句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IF-THEN-ELSE语句"><span class="nav-number">1.1.4.2.2.</span> <span class="nav-text">IF-THEN-ELSE语句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#嵌套的IF语句"><span class="nav-number">1.1.4.2.3.</span> <span class="nav-text">嵌套的IF语句</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例题"><span class="nav-number">1.1.4.2.4.</span> <span class="nav-text">例题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WHILE"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">WHILE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GOTO"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">GOTO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WAITFOR"><span class="nav-number">1.1.4.5.</span> <span class="nav-text">WAITFOR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RETURN"><span class="nav-number">1.1.4.6.</span> <span class="nav-text">RETURN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CASE"><span class="nav-number">1.1.4.7.</span> <span class="nav-text">CASE</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储过程-重点"><span class="nav-number">1.2.</span> <span class="nav-text">存储过程(重点)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储过程类型"><span class="nav-number">1.2.1.</span> <span class="nav-text">存储过程类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#用户自定义的存储过程"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">用户自定义的存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Transact-SQL"><span class="nav-number">1.2.1.1.1.</span> <span class="nav-text">Transact-SQL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CLR"><span class="nav-number">1.2.1.1.2.</span> <span class="nav-text">CLR</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统存储过程"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">系统存储过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计存储过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">设计存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#存储过程的设计规则"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">存储过程的设计规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限定存储过程内的名称"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">限定存储过程内的名称</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对过程定义进行模糊处理"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">对过程定义进行模糊处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SET语句选项"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">SET语句选项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储过程的基本概念"><span class="nav-number">1.2.3.</span> <span class="nav-text">存储过程的基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">1.2.4.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建存储过程"><span class="nav-number">1.2.5.</span> <span class="nav-text">创建存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#带参数存储过程实例"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">带参数存储过程实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#带输出参数实例"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">带输出参数实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#带返回状态值实例"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">带返回状态值实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无参数"><span class="nav-number">1.2.5.4.</span> <span class="nav-text">无参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例"><span class="nav-number">1.2.5.5.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#默认参数"><span class="nav-number">1.2.5.6.</span> <span class="nav-text">默认参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行存储过程"><span class="nav-number">1.2.6.</span> <span class="nav-text">执行存储过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改存储过程"><span class="nav-number">1.2.7.</span> <span class="nav-text">修改存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#重命名"><span class="nav-number">1.2.7.1.</span> <span class="nav-text">重命名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重编译"><span class="nav-number">1.2.7.2.</span> <span class="nav-text">重编译</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除存储过程"><span class="nav-number">1.2.8.</span> <span class="nav-text">删除存储过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数"><span class="nav-number">1.3.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">自定义函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#标量值函数"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">标量值函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内联表值函数"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">内联表值函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多语句表值函数"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">多语句表值函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内置函数"><span class="nav-number">1.3.2.</span> <span class="nav-text">内置函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#聚集函数"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">聚集函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串函数"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">字符串函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#日期函数"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">日期函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数学函数"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">数学函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据类型转换函数"><span class="nav-number">1.3.2.5.</span> <span class="nav-text">数据类型转换函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统函数"><span class="nav-number">1.3.2.6.</span> <span class="nav-text">系统函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#游标"><span class="nav-number">1.4.</span> <span class="nav-text">游标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用游标的步骤"><span class="nav-number">1.4.1.</span> <span class="nav-text">使用游标的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#声明游标"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">声明游标</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#INSENSITIVE"><span class="nav-number">1.4.1.1.1.</span> <span class="nav-text">INSENSITIVE</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SCROLL"><span class="nav-number">1.4.1.1.2.</span> <span class="nav-text">SCROLL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#游标类型"><span class="nav-number">1.4.1.1.3.</span> <span class="nav-text">游标类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SELECT-STATEMENT"><span class="nav-number">1.4.1.1.4.</span> <span class="nav-text">SELECT_STATEMENT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#READ-ONLY"><span class="nav-number">1.4.1.1.5.</span> <span class="nav-text">READ_ONLY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UPDATE"><span class="nav-number">1.4.1.1.6.</span> <span class="nav-text">UPDATE</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打开游标"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">打开游标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取数据"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">读取数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关闭游标"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">关闭游标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#释放游标"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">释放游标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#游标运用"><span class="nav-number">1.4.2.</span> <span class="nav-text">游标运用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用游标逐行读取"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">使用游标逐行读取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#返回指定行记录"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">返回指定行记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用游标修改数据"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">使用游标修改数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用游标删除数据"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">使用游标删除数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用ORDER关键字改变游标中行的顺序"><span class="nav-number">1.4.2.5.</span> <span class="nav-text">使用ORDER关键字改变游标中行的顺序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务"><span class="nav-number">1.5.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原子性"><span class="nav-number">1.5.1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一致性"><span class="nav-number">1.5.2.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#隔离性"><span class="nav-number">1.5.3.</span> <span class="nav-text">隔离性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持久性"><span class="nav-number">1.5.4.</span> <span class="nav-text">持久性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#控制事务流程"><span class="nav-number">1.5.5.</span> <span class="nav-text">控制事务流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#显示事务"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">显示事务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#-1"><span class="nav-number">1.5.5.2.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#启动事务"><span class="nav-number">1.5.5.2.1.</span> <span class="nav-text">启动事务</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#事务名称"><span class="nav-number">1.5.5.2.1.1.</span> <span class="nav-text">事务名称</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#事务变量名称"><span class="nav-number">1.5.5.2.1.2.</span> <span class="nav-text">事务变量名称</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#WITH-MARK"><span class="nav-number">1.5.5.2.1.3.</span> <span class="nav-text">WITH MARK</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#提交事务"><span class="nav-number">1.5.5.2.2.</span> <span class="nav-text">提交事务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#回滚事务"><span class="nav-number">1.5.5.2.3.</span> <span class="nav-text">回滚事务</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自动提交事务"><span class="nav-number">1.5.5.3.</span> <span class="nav-text">自动提交事务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐式事务"><span class="nav-number">1.5.5.4.</span> <span class="nav-text">隐式事务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据锁定"><span class="nav-number">1.6.</span> <span class="nav-text">数据锁定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#丢失更新"><span class="nav-number">1.6.1.</span> <span class="nav-text">丢失更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#脏读"><span class="nav-number">1.6.2.</span> <span class="nav-text">脏读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不可重复读"><span class="nav-number">1.6.3.</span> <span class="nav-text">不可重复读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据锁分类"><span class="nav-number">1.7.</span> <span class="nav-text">数据锁分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#共享锁"><span class="nav-number">1.7.1.</span> <span class="nav-text">共享锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更新锁"><span class="nav-number">1.7.2.</span> <span class="nav-text">更新锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排它锁"><span class="nav-number">1.7.3.</span> <span class="nav-text">排它锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#意向锁"><span class="nav-number">1.7.4.</span> <span class="nav-text">意向锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的粒度与时间"><span class="nav-number">1.8.</span> <span class="nav-text">锁的粒度与时间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义锁"><span class="nav-number">1.8.1.</span> <span class="nav-text">自定义锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用注意事项"><span class="nav-number">1.8.2.</span> <span class="nav-text">使用注意事项</span></a></li></ol></li></ol></li></ol></div>
+			
+
+		  </div>
+		</section>
+	  <!--/noindex-->
+	  
+	
+
+	
+
+  </div>
+</aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020.3.4 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TTYONG</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">807.8k</span>
+  
+</div>
+
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow>Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next rel="external nofollow">NexT.Pisces</a> v5.1.4</div>
+
+
+
+-->  
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 访问总量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <div id="gitalk-container"></div>
+  <script src="/js/src/md5.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: 'd3f3299eb0cc69c8f171',
+      clientSecret: '23bf8796e5dda2daf0a1b12964d89f4cc88f9ddf',
+      repo: 'comments_repository',
+      owner: 'ttyong',
+      admin: ['ttyong'],
+      id: md5(location.pathname),
+      distractionFreeMode: 'false'
+    })
+    gitalk.render('gitalk-container')
+  </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+
+  
+
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+  
+  
+  
+  
+
+  <canvas id="evanyou"></canvas>
+  <style>
+    #evanyou {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+  <script src="/js/src/evan-you.js"></script>
+
+
+
+
+  <script src="/js/src/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+
+
+  <script async src="/js/cursor/fireworks.js"></script>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
